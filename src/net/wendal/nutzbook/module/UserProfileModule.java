@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.util.Toolkit;
 
-import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;

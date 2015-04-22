@@ -1,8 +1,6 @@
 package org.nutz.integration.quartz;
 
 import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.quartz.CronScheduleBuilder;
@@ -13,14 +11,13 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.TriggerBuilder;
 
-@IocBean(create="init")
 public class NutQuartzCronJobFactory {
 	
 	private static final Log log = Logs.get();
 
-	@Inject protected PropertiesProxy conf;
+	protected PropertiesProxy conf;
 	
-	@Inject protected Scheduler scheduler;
+	protected Scheduler scheduler;
 	
 	@SuppressWarnings("unchecked")
 	public void init() throws Exception {
