@@ -15,7 +15,7 @@ public class MainSetup implements Setup {
 	public void init(NutConfig conf) {
 		Ioc ioc = conf.getIoc();
 		Dao dao = ioc.get(Dao.class);
-		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", true);
+		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
 		
 		// 初始化默认根用户
 		if (dao.count(User.class) == 0) {
