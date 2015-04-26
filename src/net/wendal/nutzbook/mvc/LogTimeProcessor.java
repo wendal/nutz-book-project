@@ -24,7 +24,7 @@ public class LogTimeProcessor extends AbstractProcessor {
 			sw.stop();
 			if (log.isDebugEnabled()) {
 				HttpServletRequest req = ac.getRequest();
-				log.debugf("[%4s]URI=%s %sms", req.getMethod(), req.getRequestURI(), sw.getDuration());
+				log.debugf("[%-4s]URI=%s %sms", req.getMethod(), req.getRequestURI(), sw.getDuration());
 			}
 		}
 	}
