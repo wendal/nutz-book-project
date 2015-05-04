@@ -12,8 +12,6 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import cn.apiclub.captcha.Captcha;
-import cn.apiclub.captcha.backgrounds.GradiatedBackgroundProducer;
-import cn.apiclub.captcha.gimpy.FishEyeGimpyRenderer;
 
 @IocBean
 @At("/captcha")
@@ -27,9 +25,10 @@ public class CaptchaModule {
 			h = 60;
 		}
 		Captcha captcha = new Captcha.Builder(w, h)
-								.addText().addBackground(new GradiatedBackgroundProducer())
+								.addText()
+//								.addBackground(new GradiatedBackgroundProducer())
 //								.addNoise(new StraightLineNoiseProducer()).addBorder()
-								.gimp(new FishEyeGimpyRenderer())
+//								.gimp(new FishEyeGimpyRenderer())
 								.build();
 		String text = captcha.getAnswer();
 		session.setAttribute(Toolkit.captcha_attr, text);
