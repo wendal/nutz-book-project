@@ -1,4 +1,5 @@
 @import "effect/ripple";
+@import "effect/shadow";
 
 .md-button {
   position: relative;
@@ -115,7 +116,8 @@
   min-width: @button-min-width;
   background-color: inherit;
   color: inherit;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24), 0 1px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: @zd1-shadow;
+  .ease-out();
 
   .touch-ripple {
     background: @raised-button-primary-ripple-color;
@@ -128,6 +130,7 @@
   &:hover,
   &.is-focus {
     background-color: @raised-button-hover-color;
+    box-shadow: @zd2-shadow;
   }
 
   &.is-disabled {

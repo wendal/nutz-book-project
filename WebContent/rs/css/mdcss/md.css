@@ -344,13 +344,50 @@ input[type=password] {
     -webkit-transform: scale(0.85);
   }
 }
+.ripple-circle-mini {
+  position: absolute;
+  border-radius: 50%;
+}
+.ripple-circle-mini.touch-ripple {
+  animation: touch-ripple-mini-animation 2s cubic-bezier(0.23, 1, 0.32, 1);
+  -webkit-animation: touch-ripple-mini-animation 2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.ripple-circle-mini.focus-ripple {
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  -webkit-transition: all transform cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -moz-transition: all transform cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -ms-transition: all transform cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -o-transition: all transform cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  transition: all transform cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  animation: focus-ripple-animation 1.5s ease 0s infinite;
+  -webkit-animation: focus-ripple-animation 1.5s ease 0s infinite;
+}
+@keyframes focus-ripple-animation {
+  0%,
+  100% {
+    transform: scale(0.75);
+  }
+  50% {
+    transform: scale(0.85);
+  }
+}
+@-webkit-keyframes focus-ripple-animation {
+  0%,
+  100% {
+    -webkit-transform: scale(0.75);
+  }
+  50% {
+    -webkit-transform: scale(0.85);
+  }
+}
 @keyframes touch-ripple-animation {
   from {
     transform: scale(0);
     opacity: 1;
   }
   to {
-    transform: scale(3);
+    transform: scale(3.5);
     opacity: 0;
   }
 }
@@ -360,7 +397,27 @@ input[type=password] {
     opacity: 1;
   }
   to {
-    -webkit-transform: scale(3);
+    -webkit-transform: scale(3.5);
+    opacity: 0;
+  }
+}
+@keyframes touch-ripple-mini-animation {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+@-webkit-keyframes touch-ripple-mini-animation {
+  from {
+    -webkit-transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: scale(1);
     opacity: 0;
   }
 }
@@ -453,11 +510,6 @@ input[type=password] {
   background: rgba(33, 150, 243, 0.2);
 }
 .raised-button {
-  -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  -moz-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  -ms-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   letter-spacing: 0;
   text-transform: uppercase;
   font-weight: 600;
@@ -466,6 +518,11 @@ input[type=password] {
   background-color: inherit;
   color: inherit;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.24), 0 1px 6px rgba(0, 0, 0, 0.12);
+  -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -moz-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -ms-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
 .raised-button .touch-ripple {
   background: rgba(255, 255, 255, 0.5);
@@ -476,6 +533,7 @@ input[type=password] {
 .raised-button:hover,
 .raised-button.is-focus {
   background-color: #e6e6e6;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
 }
 .raised-button.is-disabled {
   color: rgba(0, 0, 0, 0.3);
@@ -1439,21 +1497,21 @@ input[type=password] {
   -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.md-text-filed {
+.md-text-field {
   font-size: 16px;
   line-height: 24px;
-  width: 256px;
+  width: 100%;
   display: inline-block;
   position: relative;
-  -webkit-transition: height 200ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  -moz-transition: height 200ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  -ms-transition: height 200ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  -o-transition: height 200ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  transition: height 200ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -moz-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -ms-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   height: 48px;
   margin-top: 24px;
 }
-.md-text-filed label {
+.md-text-field label {
   position: absolute;
   top: 24px;
   line-height: 48px;
@@ -1474,7 +1532,7 @@ input[type=password] {
   -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.md-text-filed input {
+.md-text-field input {
   width: 100%;
   height: 100%;
   border: none;
@@ -1487,7 +1545,7 @@ input[type=password] {
   -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.md-text-filed ._underline {
+.md-text-field ._underline {
   position: absolute;
   width: 100%;
   bottom: 8px;
@@ -1495,7 +1553,7 @@ input[type=password] {
   border: none;
   border-bottom: solid 1px rgba(0, 0, 0, 0.12);
 }
-.md-text-filed hr.underline {
+.md-text-field hr.underline {
   position: absolute;
   width: 100%;
   bottom: 8px;
@@ -1503,7 +1561,7 @@ input[type=password] {
   border: none;
   border-bottom: solid 1px rgba(0, 0, 0, 0.12);
 }
-.md-text-filed hr.underline-focus {
+.md-text-field hr.underline-focus {
   position: absolute;
   width: 100%;
   bottom: 8px;
@@ -1523,7 +1581,7 @@ input[type=password] {
   -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.md-text-filed .err-tip {
+.md-text-field .err-tip {
   position: absolute;
   bottom: -10px;
   font-size: 12px;
@@ -1536,7 +1594,7 @@ input[type=password] {
   -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
 }
-.md-text-filed.is-focus label {
+.md-text-field.is-focus label {
   -webkit-transform: scale(0.75) translate3d(0, -18px, 0);
   -moz-transform: scale(0.75) translate3d(0, -18px, 0);
   -ms-transform: scale(0.75) translate3d(0, -18px, 0);
@@ -1544,33 +1602,33 @@ input[type=password] {
   transform: scale(0.75) translate3d(0, -18px, 0);
   color: #2196f3;
 }
-.md-text-filed.is-focus input {
+.md-text-field.is-focus input {
   opacity: 1;
 }
-.md-text-filed.is-focus hr.underline-focus {
+.md-text-field.is-focus hr.underline-focus {
   -webkit-transform: scaleX(1);
   -moz-transform: scaleX(1);
   -ms-transform: scaleX(1);
   -o-transform: scaleX(1);
   transform: scaleX(1);
 }
-.md-text-filed.has-value label {
+.md-text-field.has-value label {
   -webkit-transform: scale(0.75) translate3d(0, -18px, 0);
   -moz-transform: scale(0.75) translate3d(0, -18px, 0);
   -ms-transform: scale(0.75) translate3d(0, -18px, 0);
   -o-transform: scale(0.75) translate3d(0, -18px, 0);
   transform: scale(0.75) translate3d(0, -18px, 0);
 }
-.md-text-filed.has-value input {
+.md-text-field.has-value input {
   opacity: 1;
 }
-.md-text-filed.has-err label {
+.md-text-field.has-err label {
   color: #f44336;
 }
-.md-text-filed.has-err hr.underline {
+.md-text-field.has-err hr.underline {
   border-bottom: solid 1px #f44336;
 }
-.md-text-filed.has-err hr.underline-focus {
+.md-text-field.has-err hr.underline-focus {
   border-bottom: solid 2px #f44336;
   -webkit-transform: scaleX(1);
   -moz-transform: scaleX(1);
@@ -1578,16 +1636,100 @@ input[type=password] {
   -o-transform: scaleX(1);
   transform: scaleX(1);
 }
-.md-text-filed.has-err .err-tip {
+.md-text-field.has-err .err-tip {
   opacity: 1;
 }
-.md-text-filed.has-err input {
+.md-text-field.has-err input {
   opacity: 1;
 }
-.md-text-filed.has-float-label {
+.md-text-field.has-float-label {
   height: 72px;
   margin-top: 0;
 }
-.md-text-filed.has-float-label input {
+.md-text-field.has-float-label input {
   padding-top: 24px;
+}
+.md-checkbox-field {
+  font-size: 16px;
+  line-height: 24px;
+  width: 100%;
+  display: inline-block;
+  height: 48px;
+  margin-top: 24px;
+}
+.md-checkbox-field label {
+  display: block;
+  float: left;
+  width: auto;
+  height: 48px;
+  line-height: 48px;
+}
+.md-checkbox-field .checkbox-wrap {
+  display: block;
+  float: right;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+}
+.md-checkbox-field .checkbox-wrap .touch-ripple {
+  background: #2196f3;
+}
+.md-checkbox-field .checkbox-wrap .focus-ripple {
+  background: rgba(33, 150, 243, 0.2);
+}
+.md-checkbox-field .checkbox-wrap input[type=checkbox] {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.md-checkbox-field .checkbox-wrap > .md-icon {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  color: #2196f3;
+  -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -moz-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -ms-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+}
+.md-checkbox-field .checkbox-wrap > .md-icon.checked {
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -ms-transform: scale(0);
+  -o-transform: scale(0);
+  transform: scale(0);
+}
+.md-checkbox-field .checkbox-wrap > .md-icon.checked:before {
+  content: "\f2e1";
+}
+.md-checkbox-field .checkbox-wrap > .md-icon.unchecked {
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  transform: scale(1);
+}
+.md-checkbox-field .checkbox-wrap > .md-icon.unchecked:before {
+  content: "\f2e2";
+}
+.md-checkbox-field.has-checked .checkbox-wrap > .md-icon.checked {
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  transform: scale(1);
+}
+.md-checkbox-field.has-checked .checkbox-wrap > .md-icon.unchecked {
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -ms-transform: scale(0);
+  -o-transform: scale(0);
+  transform: scale(0);
+}
+.md-checkbox-field.check-left .checkbox-wrap {
+  float: left;
 }

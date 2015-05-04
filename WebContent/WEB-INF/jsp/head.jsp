@@ -10,9 +10,8 @@
     <link rel="stylesheet" type="text/css" href="${base}/rs/css/font-md/css/material-design-iconic-font.css">
     <script src="${base}/rs/js/jquery.js"></script>
     <script src="${base}/rs/js/jquery.easing.js"></script>
-    <!--语法高亮-->
-    <link rel='stylesheet' type='text/css' href='${base}/rs/css/shCoreDefault.css'/>
     <!--MDCSS-->
     <link rel="stylesheet" type="text/css" href="${base}/rs/css/mdcss/md.css">
     <script src="${base}/rs/css/mdcss/md.js"></script>
-    <link rel="stylesheet" type="text/css" href="${base}/rs/css/demo.css">
+    <!--NUTZ-book-->
+    <link rel="stylesheet" type="text/css" href="${base}/rs/css/nutzbook.css">
