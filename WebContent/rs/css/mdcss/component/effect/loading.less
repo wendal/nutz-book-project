@@ -1,0 +1,52 @@
+@md-loading-size: 128px;
+@md-loading-color: @white;
+@anim-duration: 1000ms;
+
+.md-loading {
+  position: relative;
+  width: @md-loading-size;
+  height: @md-loading-size;
+
+  .spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 0.3em solid;
+    border-color: @transparent;
+    border-left-color: @md-loading-color;
+    border-right-color: @md-loading-color;
+    -webkit-animation: anim-loading @anim-duration infinite linear;
+    -o-animation: anim-loading @anim-duration infinite linear;
+    animation: anim-loading @anim-duration infinite linear;
+  }
+
+  .tip-label {
+    float: left;
+    text-align: center;
+    line-height: @md-loading-size;
+    width: @md-loading-size;
+    height: @md-loading-size;
+    color: @md-loading-color;
+    font-size: @font-size-h4;
+    font-weight: bolder;
+  }
+
+  @keyframes anim-loading {
+    from {
+      .user-transform(rotate(0deg));
+    }
+    to {
+      .user-transform(rotate(360deg));
+    }
+  }
+
+  @-webkit-keyframes anim-loading {
+    from {
+      .user-transform(rotate(0deg));
+    }
+    to {
+      .user-transform(rotate(360deg));
+    }
+  }
+}

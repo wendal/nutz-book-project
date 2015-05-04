@@ -1,0 +1,82 @@
+@icon-space: @trigger-area/2 - @icon-small-size/2;
+
+// 小按钮
+.md-icon-wrap {
+  width: @trigger-area;
+  height: @trigger-area;
+  padding: @icon-space;
+}
+
+.md-icon {
+  color: @white;
+  font-size: @icon-small-size;
+}
+
+.md-icon-flip {
+  position: relative;
+
+  .close-icon {
+    position: absolute;
+    top: @icon-space;
+    left: @icon-space;
+    .ease-out();
+    opacity: 1;
+    .user-transform(rotate(0deg));
+  }
+
+  .open-icon {
+    position: absolute;
+    top: @icon-space;
+    left: @icon-space;
+    .ease-out();
+    opacity: 0;
+    .user-transform(rotate(-225deg));
+
+    &:after {
+      .ease-out();
+      content: "";
+      display: block;
+      background: rgba(255, 255, 255, 0.3);
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin-left: -6px;
+      margin-top: -6px;
+      .user-transform(scale(0));
+    }
+  }
+
+  &.open {
+
+    .close-icon {
+      opacity: 0;
+      .user-transform(rotate(225deg));
+    }
+    .open-icon {
+      opacity: 1;
+      .user-transform(rotate(0deg));
+      &:after {
+        .user-transform(scale(1));
+      }
+    }
+  }
+}
+
+// fa-icon
+
+.fa-icon {
+  color: @white;
+  display: inline-block;
+  width: @icon-small-size;
+  line-height: @icon-small-size;
+  text-align: center;
+  font: normal normal normal 14px/1 FontAwesome;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: (@icon-small-size - 2);
+  transform: translate(0, 0);
+}

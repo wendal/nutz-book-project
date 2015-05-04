@@ -1,0 +1,57 @@
+@charset "UTF-8";
+// base
+@base : 8px;
+//@base-font-size: @base * 2;
+//@base-line-height: @@base * 3;
+@base-font-size: 13px;
+@base-line-height: 18px;
+
+// font size
+@font-size-small: (@base-font-size * 0.8);
+@font-size: @base-font-size;
+@font-size-h1: (@base-font-size * 2.75);
+@font-size-h2: (@base-font-size * 2.25);
+@font-size-h3: (@base-font-size * 1.75);
+@font-size-h4: (@base-font-size * 1.25);
+@font-size-h5: (@base-font-size * 1);
+@font-size-h6: (@base-font-size * 0.75);
+@font-size-lg: (@base-font-size * 4);
+
+// line height
+@line-height: @base-line-height;
+@line-height-h1: (@base-line-height * 2);
+@line-height-h2: (@base-line-height * 2);
+@line-height-h3: (@base-line-height * 2);
+@line-height-h4: (@base-line-height * 1);
+@line-height-h5: (@base-line-height * 1);
+@line-height-h6: (@base-line-height * 1);
+@line-height-lg: (@base-line-height * 3);
+
+// other
+@btn-height: (@base-line-height * 1.5);
+@cell-height: (@base-line-height * 2);
+@input-height: (@base-line-height * 1.5);
+
+.font-weight-light {
+  font-weight: 300
+}
+
+.font-weight-normal {
+  font-weight: 400
+}
+
+.font-weight-medium {
+  font-weight: 600
+}
+
+// 按钮
+.font-style-button {
+  letter-spacing: 0;
+  text-transform: uppercase;
+  .font-weight-medium;
+}
+
+@font-fam: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-fam-mono: Monaco, Menlo, Consolas, "Courier New", monospace;
+@font-fam-serif: Georgia, serif;
+@font-fam-pw: Roboto, 'Hiragino Sans GB', "Helvetica Neue", Helvetica, Arial, Tahoma, "Microsoft YaHei", SimSun, sans-serif;

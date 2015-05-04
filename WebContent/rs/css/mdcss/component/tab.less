@@ -1,0 +1,48 @@
+@tab-size: 48px;
+
+.md-tab-group {
+  position: relative;
+  width: 100%;
+  height: @tab-size;
+  background-color: @primary-1-color;
+  padding-right: @tab-size;
+  padding-left: @tab-size;
+  text-align: left;
+  display: table;
+  word-spacing: -1em;
+
+  li {
+    display: inline-block;
+    cursor: pointer;
+    overflow: hidden;
+    word-spacing: 0;
+
+    &.active {
+      .ripple-button {
+        color: @white;
+      }
+    }
+
+    .ripple-button {
+      line-height: @tab-size;
+      font-size: @font-size-h4;
+      color: @min-white;
+      padding: 0 24px;
+      position: relative;
+
+      .touch-ripple {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .tab-bottom {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: @accent-1-color;
+    bottom: 0;
+    left: 0;
+    .ease-out();
+  }
+}

@@ -1,0 +1,118 @@
+// 文字框
+.md-text-filed {
+
+  font-size: 16px;
+  line-height: 24px;
+  width: (64px * 4);
+  display: inline-block;
+  position: relative;
+  .ease-out(@property: height, @duration: 200ms);
+
+  // 普通样式 48px, 没有Float lable
+  height: 48px;
+  margin-top: 24px;
+
+  label {
+    position: absolute;
+    top: 24px;
+    line-height: 48px;
+    .user-transform-orgin(left top);
+    .user-transform(scale(1) translate3d(0, 0, 0));
+    color: @hint-color;
+    .ease-out();
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: @transparent;
+    opacity: 0;
+    .ease-out()
+  }
+
+  ._underline {
+    position: absolute;
+    width: 100%;
+    bottom: 8px;
+    margin: 0;
+    border: none;
+    border-bottom: solid 1px @divider-color;
+  }
+
+  hr.underline {
+    ._underline;
+  }
+
+  hr.underline-focus {
+    ._underline;
+    border-color: @primary-1-color;
+    border-bottom-width: 2px;
+    .user-transform(scaleX(0));
+    .ease-out();
+  }
+
+  .err-tip {
+    position: absolute;
+    bottom: -10px;
+    font-size: 12px;
+    line-height: 12px;
+    color: @err-color;
+    opacity: 0;
+    .ease-out();
+  }
+
+  // 选中状态
+  &.is-focus {
+    label {
+      .user-transform(scale(0.75) translate3d(0, -18px, 0));
+      color: @primary-1-color;
+    }
+    input {
+      opacity: 1;
+    }
+    hr.underline-focus {
+      .user-transform(scaleX(1));
+    }
+  }
+
+  // 有内容的状态
+  &.has-value {
+    label {
+      .user-transform(scale(0.75) translate3d(0, -18px, 0));
+    }
+    input {
+      opacity: 1;
+    }
+  }
+
+  // 错误的状态
+  &.has-err {
+    label {
+      color: @err-color;
+    }
+    hr.underline {
+      border-bottom: solid 1px @err-color;
+    }
+    hr.underline-focus {
+      border-bottom: solid 2px @err-color;
+      .user-transform(scaleX(1));
+    }
+    .err-tip {
+      opacity: 1;
+    }
+    input {
+      opacity: 1;
+    }
+  }
+
+  // Float样式 72px
+  &.has-float-label {
+    height: 72px;
+    margin-top: 0;
+    input {
+      padding-top: 24px;
+    }
+  }
+}

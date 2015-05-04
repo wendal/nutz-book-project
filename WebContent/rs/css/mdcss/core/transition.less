@@ -1,0 +1,55 @@
+@ease-out-function: cubic-bezier(0.23, 1, 0.32, 1);
+@animation-duration: 450ms;
+
+.user-trans(@ts: all @animation-duration @ease-out-function 0ms) {
+  -webkit-transition: @ts;
+  -moz-transition: @ts;
+  -ms-transition: @ts;
+  -o-transition: @ts;
+  transition: @ts;
+}
+
+.user-transform(@ts:scaleX(1)) {
+  -webkit-transform: @ts;
+  -moz-transform: @ts;
+  -ms-transform: @ts;
+  -o-transform: @ts;
+  transform: @ts;
+}
+
+.user-transform-orgin(@ts: left top) {
+  -webkit-transform-origin: @ts;
+  -moz-transform-origin: @ts;
+  -ms-transform-origin: @ts;
+  -o-transform-origin: @ts;
+  transform-origin: @ts;
+}
+
+.ease-out(@duration: @animation-duration; @property: all; @delay: 0ms) {
+  -webkit-transition: @property @duration @ease-out-function @delay;
+  -moz-transition: @property @duration @ease-out-function @delay;
+  -ms-transition: @property @duration @ease-out-function @delay;
+  -o-transition: @property @duration @ease-out-function @delay;
+  transition: @property @duration @ease-out-function @delay;
+}
+
+.pulsate(@animation-name; @start-size: 0.75; @end-size: 1; @duration: 1.5s) {
+  @keyframes ~"@{animation-name}" {
+    0%, 100% {
+      transform: scale(@start-size);
+    }
+    50% {
+      transform: scale(@end-size);
+    }
+  }
+  animation: @animation-name @duration ease 0s infinite;
+  @-webkit-keyframes ~"@{animation-name}" {
+    0%, 100% {
+      -webkit-transform: scale(@start-size);
+    }
+    50% {
+      -webkit-transform: scale(@end-size);
+    }
+  }
+  -webkit-animation: @animation-name @duration ease 0s infinite;
+}
