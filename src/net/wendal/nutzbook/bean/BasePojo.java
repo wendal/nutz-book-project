@@ -1,12 +1,15 @@
 package net.wendal.nutzbook.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
 
-public abstract class BasePojo {
+public abstract class BasePojo implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Column("ct")
 	protected Date createTime;

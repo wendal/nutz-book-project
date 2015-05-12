@@ -5,7 +5,7 @@ pageEncoding="UTF-8"%>
 <html>
 <head lang="en">
     <title>${msg['user.login.title']}</title>
-    <c:import url="/WEB-INF/jsp/head.jsp"></c:import>
+    <jsp:include page="/WEB-INF/jsp/_include/_css_js.jsp"></jsp:include>
     <script type="text/javascript">
         var me = '<%=session.getAttribute("me")%>';
         var base = '${base}';

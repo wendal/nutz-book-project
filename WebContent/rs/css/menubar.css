@@ -1,0 +1,23 @@
+.menubar-left {
+  position: fixed;
+  z-index: 310;
+  top: 50px;
+  left: 0;
+  width: 80px;
+  height: 100%;
+  background: #999;
+}
+
+.meanbar-list-item span {
+    display: block;
+    padding-left: 8px;
+    padding-bottom: 5px;
+}
+
+.meanbar-list-item b {
+    color: #000;
+    font-size: 8px;
+    text-align: center;
+    display: block;
+    width: 100%;
+}

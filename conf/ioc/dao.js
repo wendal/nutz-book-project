@@ -22,8 +22,27 @@ var ioc = {
 	            connectionProperties : "druid.stat.slowSqlMillis=2000"
 	        }
 	    },
-	    dao : {
-	    	type : "org.nutz.dao.impl.NutDao",
-	    	args : [{refer:"dataSource"}]
-	    }
+		dao : {
+			type : "org.nutz.dao.impl.NutDaoExt",
+			args : [{refer:"dataSource"}],
+			fields : {
+				executor : {refer:"cacheExecutor"}
+			}
+		},
+		cacheExecutor : {
+			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
+			fields : {
+				cacheProvider : {refer:"cacheProvider"},
+				cachedTableNames : ["t_user_profile"]
+			}
+		},
+		cacheProvider : {
+			type : "org.nutz.plugins.cache.dao.impl.provider.MemoryDaoCacheProvider",
+			fields : {
+				cacheSize : 10000000
+			},
+			events : {
+				create : "init"
+			}
+		}
 };

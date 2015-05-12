@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德纳服务-3G流量统计中心</title>
+    <!--依赖-->
+    <link rel="stylesheet" type="text/css" href="../../rs/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rs/css/animate.css">
+    <link rel="stylesheet" type="text/css" href="../../rs/css/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="../../rs/css/font-md/css/material-design-iconic-font.css">
+    <script src="../../rs/js/jquery.js"></script>
+    <script src="../../rs/js/jquery.easing.js"></script>
+    <script src="../../rs/js/zhttp.js"></script>
+    <script src="../../rs/js/zutil.js"></script>
+    <!-- 当前页面-->
+    <link rel="stylesheet" type="text/css" href="../../rs/css/mdcss/md.css">
+    <script src="../../rs/css/mdcss/md.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../rs/css/mdcss/page/home.css">
+    <script src="../../rs/css/mdcss/page/home.js"></script>
+    <script>
+        // home页的配置信息
+        _md_page_home_ = {
+            profile: {
+                name: "未登录",
+                email: "无法获取邮箱信息"
+            },
+            nav_user: [{
+                label: '登陆系统',
+                icon: 'md-person',
+                type: 'action',
+                action: 'login'
+            }],
+            nav_main: [],
+            actions: {
+                'login': function () {
+                    alert('暂时不提供该服务');
+                }
+            },
+            closeQuick: true
+        }
+    </script>
+</head>
+<body>
+<!--主菜单-->
+<div id="md-page-header">
+    <!--左边菜单-->
+    <ul class="mp-header-left clearfix nav-btn-group">
+        <li>
+            <a href="#" onclick="return false;" class="md-icon-wrap md-icon-flip nav-switch">
+                <i class="md-icon md-menu close-icon"></i>
+                <i class="md-icon md-close open-icon"></i>
+            </a>
+        </li>
+        <li id="logo">流量统计中心</li>
+        <li class="md-icon-wrap module-arrow">
+            <i class="md-icon md-chevron-right"></i>
+        </li>
+        <li id="module-label" labelBlock="back">
+            <div class="front animated"></div>
+            <div class="back animated"></div>
+        </li>
+    </ul>
+</div>
+<!--主操作区-->
+<div id="md-page-main">
+    <link rel="stylesheet" type="text/css" href="../../rs/flow/dayflow.css">
+    <div id="dayflow-top-view">
+        <div class="dayflow-row">选择查询日期: <input class="dayflow-querydate" type="date"/></div>
+        <div class="dayflow-row">数据更新时间: <span class="dayflow-uptime">000000 00:00:00</span></div>
+        <div class="dayflow-container">
+            <div class="dayflow-table paper z-depth-1 rounded" id="iccid_df">
+                <div class="dft-tille">ICCID 下载排名</div>
+                <div class="dft-tille right">流量排行(从高到低)</div>
+                <table class="dft-grid">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>时间</th>
+                        <th>iccid</th>
+                        <th class="number">上传(MB)</th>
+                        <th class="number">下载(MB)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="dayflow-container">
+            <div class="dayflow-table paper z-depth-1 rounded" id="iccid_uf">
+                <div class="dft-tille">ICCID 上传排名</div>
+                <table class="dft-grid">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>时间</th>
+                        <th>iccid</th>
+                        <th class="number">上传(MB)</th>
+                        <th class="number">下载(MB)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="dayflow-container">
+            <div class="dayflow-table paper z-depth-1 rounded" id="mac_df">
+                <div class="dft-tille">MAC 下载排名</div>
+                <table class="dft-grid">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>时间</th>
+                        <th>mac</th>
+                        <th class="number">上传(MB)</th>
+                        <th class="number">下载(MB)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="dayflow-container">
+            <div class="dayflow-table paper z-depth-1 rounded" id="mac_uf">
+                <div class="dft-tille">MAC 上传排名</div>
+                <table class="dft-grid">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>时间</th>
+                        <th>mac</th>
+                        <th class="number">上传(MB)</th>
+                        <th class="number">下载(MB)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            function myInit(args) {
+
+            }
+        </script>
+    </div>
+</div>
+<div id="md-page-main-overlay"></div>
+<!--导航-->
+<div id="md-page-nav">
+    <div class="nav-inner-scroll">
+        <div class="nav-inner">
+            <div class="user-profile">
+                <div class="user-info">
+                    <img class="user-avatar"></img>
+                    <span class="user-name"></span>
+                </div>
+                <div class="user-menu-switch">
+                    <span class="user-email"></span>
+                    <i class="md-icon md-expand-more"></i>
+                </div>
+            </div>
+            <!-- 用户相关操作 -->
+            <ul id="user-menu"></ul>
+            <!-- 系统操作 -->
+            <ul id="main-menu"></ul>
+        </div>
+    </div>
+</div>
+<!--系统loading页面-->
+<div id="md-system-loading">
+</div>
+<div id="md-system-loading-tip">
+    <div class="spinner"></div>
+    <div class="tip-label">系统加载中...</div>
+</div>
+</body>
+</html>

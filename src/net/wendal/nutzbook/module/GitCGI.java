@@ -47,7 +47,7 @@ public class GitCGI {
 		InputStream inFromCgi = p.getInputStream();
 		String line = "";
 		OutputStream os = null;
-        try {
+		try {
 			while ((line = getTextLineFromStream(inFromCgi)).length() > 0) {
 				if (!line.startsWith("HTTP")) {
 					int k = line.indexOf(':');
@@ -71,7 +71,8 @@ public class GitCGI {
 			os = res.getOutputStream();
 			Streams.write(os, inFromCgi);
 			// 打印出错信息
-			//System.out.println(new String(Streams.readBytes(p.getErrorStream())));
+			// System.out.println(new
+			// String(Streams.readBytes(p.getErrorStream())));
 			p.waitFor();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -82,7 +83,8 @@ public class GitCGI {
 		}
 	}
 
-	public static String[] buildEnv(HttpServletRequest req, String root, String path) {
+	public static String[] buildEnv(HttpServletRequest req, String root,
+			String path) {
 
 		// 逐一构建CGI所需要的一堆环境变量
 		NutMap env = new NutMap();
@@ -116,7 +118,10 @@ public class GitCGI {
 		while (enm.hasMoreElements()) {
 			String name = (String) enm.nextElement();
 			String value = req.getHeader(name);
-			env.setv("HTTP_" + name.toUpperCase(Locale.ENGLISH).replace('-', '_'), value);
+			env.setv(
+					"HTTP_"
+							+ name.toUpperCase(Locale.ENGLISH)
+									.replace('-', '_'), value);
 		}
 
 		// GIT 所需要的环境变量
@@ -131,7 +136,8 @@ public class GitCGI {
 		return _env;
 	}
 
-	public static String getTextLineFromStream(InputStream is) throws IOException {
+	public static String getTextLineFromStream(InputStream is)
+			throws IOException {
 		StringBuilder buffer = new StringBuilder();
 		int b;
 

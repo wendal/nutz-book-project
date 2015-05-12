@@ -1,11 +1,15 @@
 package net.wendal.nutzbook.bean;
 
+import java.io.Serializable;
+
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_user_profile")
-public class UserProfile extends BasePojo {
+public class UserProfile extends BasePojo implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	/**关联的用户id*/
 	@Id(auto=false)

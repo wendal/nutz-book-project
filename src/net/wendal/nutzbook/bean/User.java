@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.nutz.dao.entity.annotation.ColDefine;
@@ -11,7 +12,9 @@ import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_user")
-public class User extends BasePojo {
+public class User extends BasePojo implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	protected int id;

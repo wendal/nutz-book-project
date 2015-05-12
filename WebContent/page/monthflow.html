@@ -1,0 +1,212 @@
+<link rel="stylesheet" type="text/css" href="../../rs/flow/dayflow.css">
+<div id="monthflow-view" class="flow3g-view">
+    <div class="dayflow-row">
+        选择查询月份: <input class="dayflow-querymonth" type="month"/>
+        <button class="md-button raised-button is-primary flow_download_xls">
+            <span class="md-button-label">下载统计报表</span>
+        </button>
+    </div>
+    <div class="dayflow-container fullwidth">
+        <div class="dayflow-chart-title">最近一个月</div>
+        <div class="dayflow-chart  paper z-depth-1 rounded day30">
+        </div>
+    </div>
+    <div class="dayflow-container fullwidth">
+        <div class="dayflow-table paper z-depth-1 rounded flow_df">
+            <div class="dft-tille flow_count">下载:<em class="dw"></em> 上传:<em class="up"></em></div>
+            <div class="dft-tille flow_count_num right">点位:<em class="ln"></em></div>
+            <table class="dft-grid">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>iccid or mac</th>
+                    <th class="number">下载(MB)</th>
+                    <th class="number">上传(MB)</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="../../rs/js/echarts-all.js"></script>
+    <script>
+        function myInit(args) {
+
+            var $flowdf = $('#monthflow-view .flow_df');
+            var $flowcount = $('#monthflow-view .flow_count');
+            var $locNum = $('#monthflow-view .flow_count_num .ln');
+            var $qdate = $('#monthflow-view .dayflow-querymonth');
+            var $dwbtn = $('#monthflow-view .flow_download_xls');
+            var $dc30 = $('#monthflow-view .dayflow-chart.day30');
+            var $dc30EChart = null;
+
+            function resetChart($dcChart) {
+                $dcChart.setOption({
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            scale: true,
+                            data: ['0']
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['上传', '下载']
+                    },
+                    series: [
+                        {
+                            name: '上传',
+                            type: 'line',
+                            data: [0]
+                        },
+                        {
+                            name: '下载',
+                            type: 'line',
+                            data: [0]
+                        }]
+                });
+            }
+
+            function loadChart(mo, $dcChart) {
+                $http.get('/3g/df/diagram/month/' + mo, function (re) {
+                    if (re.data) {
+                        var fDiagram = re.data;
+                        for (var i = 0, size = fDiagram.days.length; i < size; i++) {
+                            fDiagram.days[i] = fDiagram.days[i].substr(6);
+                            fDiagram.upflows[i] = fDiagram.upflows[i].toFixed(2);
+                            fDiagram.downflows[i] = fDiagram.downflows[i].toFixed(2);
+                        }
+                        $dcChart.setOption({
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    boundaryGap: true,
+                                    scale: true,
+                                    data: fDiagram.days
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value} GB'
+                                    }
+                                }
+                            ],
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                data: ['上传', '下载']
+                            },
+                            series: [
+                                {
+                                    name: '上传',
+                                    type: 'line',
+                                    data: fDiagram.upflows
+                                },
+                                {
+                                    name: '下载',
+                                    type: 'line',
+                                    data: fDiagram.downflows
+                                }]
+                        });
+                    } else {
+                        resetChart($dcChart);
+                    }
+                });
+            }
+
+            $('.dayflow-table').delegate('tbody .df-key', 'click', function () {
+                var $df = $(this);
+                var $mac = $df.find('.mac');
+                var key = $mac.length > 0 ? $mac.html() : $df.html();
+                window.open("/#/locationAndFlow.html?qt=" + key);
+            });
+
+            function report2html(rps) {
+                var html = '';
+                for (var i = 0, size = rps.length; i < size; i++) {
+                    var rp = rps[i];
+                    html += '<tr>';
+                    html += '   <td>' + (i + 1) + '</td>';
+                    html += '   <td class="df-key">' + (rp.iccid ? rp.iccid : ('<em class="mac">' + rp.mac + "</em>")) + '</td>';
+                    html += '   <td class="number">' + rp.df1024 + '</td>';
+                    html += '   <td class="number">' + rp.uf1024 + '</td>';
+                    html += '</tr>';
+                }
+                return html;
+            }
+
+            function loadDayReport(date) {
+                var date = date || new Date();
+                var year = date.getFullYear();
+                var month = date.getMonth() + 1;
+                var monthString = year + "" + $z.alignLeft(month, 2, '0');
+
+                // 图示
+                loadChart(monthString, $dc30EChart);
+
+                // 报告
+                $http.get('/3g/df/query/report/' + monthString, function (re) {
+                    if (re.data) {
+                        // 更新table
+                        $flowdf.find('tbody')[0].innerHTML = report2html(re.data);
+                        $locNum.html(re.data.length);
+                    } else {
+                        $flowdf.find('tbody')[0].innerHTML = "";
+                        $locNum.html(0);
+                    }
+                });
+
+                // 总流量
+                $http.get('/3g/df/query/total/' + monthString, function (re) {
+                    if (re.data) {
+                        var dw = re.data.download.toFixed(2);
+                        var up = re.data.upload.toFixed(2);
+                        var total = re.data.total.toFixed(2);
+                        $flowcount.find('em.dw').html(dw + "GB");
+                        $flowcount.find('em.up').html(up + "GB");
+                    } else {
+                        $flowcount.find('em.dw').html(0 + "GB");
+                        $flowcount.find('em.up').html(0 + "GB");
+                    }
+                });
+            }
+
+            function loadByQdate() {
+                var ndate = $qdate.val();
+                var regEx = new RegExp("\\-", "gi");
+                ndate = ndate.replace(regEx, "/");
+                loadDayReport(new Date(Date.parse(ndate + "/01")));
+            }
+
+            $qdate.on('change', loadByQdate);
+            $dwbtn.on('click', function () {
+                var ndate = $qdate.val();
+                var monthStr = ndate.substr(0, 4) + ndate.substr(5);
+                window.location.href = "/3g/df/download/report/" + monthStr;
+            });
+
+
+            setTimeout(function () {
+                if (!$dc30EChart) {
+                    $dc30EChart = echarts.init($dc30[0]);
+                    resetChart($dc30EChart);
+                }
+
+                $qdate.val($z.dateToYYMMDD().substr(0, 7));
+                loadDayReport();
+            }, 200);
+        }
+    </script>
+</div>

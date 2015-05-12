@@ -169,7 +169,6 @@
     var button = {
         events: {
             'touch_ripple': function (e) {
-                console.log('touch-ripple');
                 var box = $(this);
                 if (box.hasClass(_clz_isDisabled)) {
                     return false;

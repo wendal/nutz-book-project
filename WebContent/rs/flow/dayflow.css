@@ -1733,3 +1733,249 @@ input[type=password] {
 .md-checkbox-field.check-left .checkbox-wrap {
   float: left;
 }
+.flow3g-view {
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: block;
+  zoom: 1;
+}
+.flow3g-view:after {
+  content: " ";
+  display: block;
+  font-size: 0;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.dayflow-row {
+  margin: 8px 16px;
+  font-size: 13px;
+}
+.dayflow-row > span {
+  margin-left: 8px;
+  padding: 0 8px;
+  color: #f50057;
+  font-size: 13px;
+  width: 180px;
+}
+.dayflow-row > input {
+  margin-left: 8px;
+  padding: 0 8px;
+  color: #f50057;
+  font-size: 13px;
+  width: 180px;
+}
+.dayflow-row .md-checkbox-field {
+  width: 150px;
+  overflow: hidden;
+  margin: 0;
+}
+.dayflow-location {
+  padding: 16px;
+}
+.dayflow-location span {
+  display: block;
+  color: #00bcd4;
+  font-size: 13px;
+  margin-top: 16px;
+  padding: 0 8px;
+}
+.dayflow-location .dayflow-location-info {
+  width: 100%;
+  height: 48px;
+  padding: 0 8px;
+  border: none;
+  border-bottom: 2px solid #00bcd4;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 16.25px;
+}
+.dayflow-container {
+  float: left;
+  width: 25%;
+}
+.dayflow-container.fullwidth {
+  width: 100%;
+}
+.dayflow-container .dayflow-chart-title {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.87);
+  padding-left: 16px;
+}
+.dayflow-container .dayflow-chart {
+  height: 256px;
+}
+.dayflow-container .dayflow-table,
+.dayflow-container .dayflow-chart,
+.dayflow-container .dayflow-location {
+  margin: 16px 16px;
+  background: #ffffff;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.dayflow-container .dayflow-table .dft-tille,
+.dayflow-container .dayflow-chart .dft-tille,
+.dayflow-container .dayflow-location .dft-tille {
+  font-size: 16.25px;
+  height: 64px;
+  line-height: 64px;
+  color: rgba(0, 0, 0, 0.87);
+  padding-left: 24px;
+  float: left;
+}
+.dayflow-container .dayflow-table .dft-tille.right,
+.dayflow-container .dayflow-chart .dft-tille.right,
+.dayflow-container .dayflow-location .dft-tille.right {
+  float: right;
+  padding-left: 0px;
+  padding-right: 24px;
+}
+.dayflow-container .dayflow-table .dft-grid,
+.dayflow-container .dayflow-chart .dft-grid,
+.dayflow-container .dayflow-location .dft-grid {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  max-width: 100%;
+}
+.dayflow-container .dayflow-table .dft-grid thead tr,
+.dayflow-container .dayflow-chart .dft-grid thead tr,
+.dayflow-container .dayflow-location .dft-grid thead tr {
+  height: 56px;
+}
+.dayflow-container .dayflow-table .dft-grid thead tr th,
+.dayflow-container .dayflow-chart .dft-grid thead tr th,
+.dayflow-container .dayflow-location .dft-grid thead tr th {
+  font-size: 11.7px;
+  color: rgba(0, 0, 0, 0.54);
+  vertical-align: middle;
+  font-weight: 500;
+  border-width: 1px;
+  border-bottom: 2px solid #f0f0f0;
+  padding: 10px;
+}
+.dayflow-container .dayflow-table .dft-grid thead tr th:first-child,
+.dayflow-container .dayflow-chart .dft-grid thead tr th:first-child,
+.dayflow-container .dayflow-location .dft-grid thead tr th:first-child {
+  padding-left: 24px;
+}
+.dayflow-container .dayflow-table .dft-grid thead tr th:last-child,
+.dayflow-container .dayflow-chart .dft-grid thead tr th:last-child,
+.dayflow-container .dayflow-location .dft-grid thead tr th:last-child {
+  padding-right: 24px;
+}
+.dayflow-container .dayflow-table .dft-grid thead tr th.number,
+.dayflow-container .dayflow-chart .dft-grid thead tr th.number,
+.dayflow-container .dayflow-location .dft-grid thead tr th.number {
+  text-align: right;
+}
+.dayflow-container .dayflow-table .dft-grid tbody tr,
+.dayflow-container .dayflow-chart .dft-grid tbody tr,
+.dayflow-container .dayflow-location .dft-grid tbody tr {
+  height: 48px;
+}
+.dayflow-container .dayflow-table .dft-grid tbody tr td,
+.dayflow-container .dayflow-chart .dft-grid tbody tr td,
+.dayflow-container .dayflow-location .dft-grid tbody tr td {
+  color: rgba(0, 0, 0, 0.87);
+  padding: 10px;
+  line-height: 1.42857143;
+  vertical-align: top;
+  border-top: 1px solid #f0f0f0;
+  white-space: normal;
+}
+.dayflow-container .dayflow-table .dft-grid tbody tr td:first-child,
+.dayflow-container .dayflow-chart .dft-grid tbody tr td:first-child,
+.dayflow-container .dayflow-location .dft-grid tbody tr td:first-child {
+  padding-left: 24px;
+}
+.dayflow-container .dayflow-table .dft-grid tbody tr td:last-child,
+.dayflow-container .dayflow-chart .dft-grid tbody tr td:last-child,
+.dayflow-container .dayflow-location .dft-grid tbody tr td:last-child {
+  padding-right: 24px;
+}
+.dayflow-container .dayflow-table .dft-grid tbody tr td.number,
+.dayflow-container .dayflow-chart .dft-grid tbody tr td.number,
+.dayflow-container .dayflow-location .dft-grid tbody tr td.number {
+  text-align: right;
+}
+.dayflow-container .dayflow-table .dft-grid tbody tr td em.mac,
+.dayflow-container .dayflow-chart .dft-grid tbody tr td em.mac,
+.dayflow-container .dayflow-location .dft-grid tbody tr td em.mac {
+  color: #00bcd4;
+}
+@media screen and (max-width: 1600px) {
+  .dayflow-container {
+    width: 50%;
+  }
+  .dayflow-container.fullwidth {
+    width: 100%;
+  }
+  .dayflow-row .md-checkbox-field {
+    width: 150px;
+  }
+}
+@media screen and (max-width: 900px) {
+  .flow3g-view {
+    padding: 8px 2px;
+  }
+  .dayflow-row {
+    margin: 8px 10px;
+  }
+  .dayflow-row .md-checkbox-field {
+    width: 35%;
+  }
+  .dayflow-row > input {
+    width: 100px;
+  }
+  .dayflow-row > input.dayflow-querylocation {
+    width: 200px;
+  }
+  .dayflow-container {
+    width: 100%;
+  }
+  .dayflow-container .dayflow-chart-title {
+    padding-left: 8px;
+  }
+  .dayflow-container .dayflow-table,
+  .dayflow-container .dayflow-chart {
+    margin: 16px 8px;
+  }
+  .dayflow-container .dayflow-table .dft-grid thead tr th,
+  .dayflow-container .dayflow-chart .dft-grid thead tr th {
+    word-break: break-word;
+    padding: 10px 2px;
+  }
+  .dayflow-container .dayflow-table .dft-grid thead tr th:first-child,
+  .dayflow-container .dayflow-chart .dft-grid thead tr th:first-child {
+    padding-left: 12px;
+  }
+  .dayflow-container .dayflow-table .dft-grid thead tr th:last-child,
+  .dayflow-container .dayflow-chart .dft-grid thead tr th:last-child {
+    padding-right: 12px;
+  }
+  .dayflow-container .dayflow-table .dft-grid tbody tr td,
+  .dayflow-container .dayflow-chart .dft-grid tbody tr td {
+    word-break: break-word;
+    padding: 10px 2px;
+  }
+  .dayflow-container .dayflow-table .dft-grid tbody tr td:first-child,
+  .dayflow-container .dayflow-chart .dft-grid tbody tr td:first-child {
+    padding-left: 12px;
+  }
+  .dayflow-container .dayflow-table .dft-grid tbody tr td:last-child,
+  .dayflow-container .dayflow-chart .dft-grid tbody tr td:last-child {
+    padding-right: 12px;
+  }
+  .dayflow-container .dayflow-table .dft-grid tbody tr td.df-key,
+  .dayflow-container .dayflow-chart .dft-grid tbody tr td.df-key {
+    padding: 10px 0px;
+    width: 220px;
+    cursor: pointer;
+  }
+}
+.flow_download_xls {
+  float: right;
+}
