@@ -33,6 +33,7 @@
                 email: "${obj.email}",
                 avatar : "${base}/user/profile/avatar"
             },
+            closeQuick : true,
             nav_user: [{
                 label: '登陆系统',
                 icon: 'md-person',

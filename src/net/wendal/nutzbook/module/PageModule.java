@@ -6,9 +6,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
-import org.nutz.lang.util.Context;
 import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
@@ -42,4 +40,5 @@ public class PageModule {
 			profile = new UserProfile();
 		return profile;
 	}
+	
 }
