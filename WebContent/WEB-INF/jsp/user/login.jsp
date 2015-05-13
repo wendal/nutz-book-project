@@ -23,8 +23,8 @@ pageEncoding="UTF-8"%>
                     dataType: "json",
                     success: function (data) {
                         if (data && data.ok) {
-                            alert("登陆成功");
-                            window.location = base + "/user/profile";
+                            //alert("登陆成功");
+                            window.location = base + "/home";
                         } else {
                             var emsg = data.msg;
                             if (emsg.substr(0, 3) == '验证码') {

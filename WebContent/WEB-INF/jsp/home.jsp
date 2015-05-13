@@ -34,12 +34,20 @@
                 avatar : "${base}/user/profile/avatar"
             },
             closeQuick : true,
-            nav_user: [{
+            nav_user: [
+            /*{
                 label: '登陆系统',
                 icon: 'md-person',
                 type: 'action',
                 action: 'login'
-            }],
+            },*/
+            {
+                label: '安全退出',
+                icon: 'md-person',
+                type: 'action',
+                action: 'logout'
+            }
+            ],
             nav_main: [{
                 label: '用户信息',
                 icon: 'md-cast',
@@ -64,6 +72,9 @@
             actions: {
                 'login': function () {
                     alert('暂时不提供该服务');
+                },
+                'logout' : function() {
+                	window.location.href = base + "/user/logout";
                 }
             }
         }

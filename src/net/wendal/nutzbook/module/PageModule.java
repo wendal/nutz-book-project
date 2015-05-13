@@ -6,7 +6,6 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
 import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
@@ -19,17 +18,17 @@ public class PageModule {
 	
 	@RequiresAuthentication
 	@At(value={"/", "/index"})
-	@Ok(">>:/admin")
+	@Ok(">>:/home")
 	public void index() {}
 	
-	@RequiresAuthentication
-	@At(value={"/admin/?", "/admin"})
-	@Ok("jsp:jsp.page.${obj}")
-	public String page(String page) {
-		if (Strings.isBlank(page))
-			page = "index";
-		return page;
-	}
+//	@RequiresAuthentication
+//	@At(value={"/admin/?", "/admin"})
+//	@Ok("jsp:jsp.page.${obj}")
+//	public String page(String page) {
+//		if (Strings.isBlank(page))
+//			page = "index";
+//		return page;
+//	}
 	
 	@RequiresAuthentication
 	@At("/home")
