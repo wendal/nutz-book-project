@@ -62,7 +62,7 @@
                 label: '权限管理',
                 icon: 'md-event',
                 type: 'url',
-                url: '/roles.jsp'
+                url: '/authority.jsp'
             }, {
                 label: '系统配置',
                 icon: 'md-insert-chart',
@@ -77,7 +77,7 @@
                 	window.location.href = base + "/user/logout";
                 }
             }
-        }
+        };
     </script>
 </head>
 <body>

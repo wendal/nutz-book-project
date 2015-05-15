@@ -76,7 +76,7 @@ public class PermisssionServiceImpl implements PermisssionService {
 		}
 	}
 
-	protected void addPermission(String permission) {
+	public void addPermission(String permission) {
 		Permission p = new Permission();
 		p.setName(permission);
 		p.setUpdateTime(new Date());
@@ -84,11 +84,11 @@ public class PermisssionServiceImpl implements PermisssionService {
 		dao.insert(p);
 	}
 
-	protected void addRole(String role) {
+	public Role addRole(String role) {
 		Role r = new Role();
 		r.setName(role);
 		r.setUpdateTime(new Date());
 		r.setCreateTime(new Date());
-		dao.insert(r);
+		return dao.insert(r);
 	}
 }

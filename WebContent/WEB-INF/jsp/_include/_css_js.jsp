@@ -14,3 +14,5 @@
     <!--NUTZ-book-->
     <link rel="stylesheet" type="text/css" href="${base}/rs/css/nutzbook.css">
     <link rel="stylesheet" type="text/css" href="${base}/rs/css/nav.css">
+    <!-- JSON -->
+    <script src="${base}/rs/js/json2.js"></script>
