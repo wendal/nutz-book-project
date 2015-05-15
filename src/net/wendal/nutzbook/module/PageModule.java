@@ -4,6 +4,8 @@ import net.wendal.nutzbook.bean.UserProfile;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.nutz.dao.Dao;
+import org.nutz.dao.FieldFilter;
+import org.nutz.dao.util.Daos;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.Scope;
@@ -34,7 +36,7 @@ public class PageModule {
 	@At("/home")
 	@Ok("jsp:jsp.home")
 	public Object home(@Attr(scope=Scope.SESSION, value="me")long uid) {
-		UserProfile profile = dao.fetch(UserProfile.class, uid);
+		UserProfile profile = Daos.ext(dao, FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, uid);
 		if (profile == null)
 			profile = new UserProfile();
 		return profile;

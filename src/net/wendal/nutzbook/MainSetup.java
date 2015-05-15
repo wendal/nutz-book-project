@@ -3,6 +3,7 @@ package net.wendal.nutzbook;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.FaqItem;
 import net.wendal.nutzbook.bean.Permission;
 import net.wendal.nutzbook.bean.Role;
@@ -18,10 +19,15 @@ import org.nutz.dao.entity.Record;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.nutz.plugins.cache.dao.CachedNutDaoExecutor;
 
 public class MainSetup implements Setup {
+	
+	private static final Log log = Logs.get();
 	
 	public void init(NutConfig conf) {
 		Ioc ioc = conf.getIoc();
@@ -72,6 +78,11 @@ public class MainSetup implements Setup {
 		}
 		
 		ioc.get(FaqService.class);
+		
+		// 检查一下Ehcache CacheManager 是否正常.
+		CacheManager cacheManager = ioc.get(CacheManager.class);
+		log.debug("Ehcache CacheManager = " + cacheManager);
+		CachedNutDaoExecutor.DEBUG = true;
 	}
 	
 	public void destroy(NutConfig conf) {
