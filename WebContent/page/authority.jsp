@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <div class="row">
+	<!-- 下面的ul是3个Table -->
 	<ul class="md-tab-group">
 		<li>
 			<div class="ripple-button" id="_user_role" onclick="showTab('user_role')">用户权限一览</div>
@@ -14,6 +14,8 @@
 		<div class="tab-bottom"></div>
 	</ul>
 	<div>
+		
+		<!-- 用户列表 -->
 		<div id="user_role">
 			<form action="#" id="user_query">
 				用户过滤<input name="query">
@@ -23,6 +25,7 @@
 			<p id="user_count"></p>
 			<div id="user_list"></div>
 		</div>
+		<!-- 角色列表 -->
 		<div id="roles">
 			<form action="#" id="role_query">
 				角色过滤<input name="query">
@@ -46,8 +49,8 @@
 					<tbody id="role_list"></tbody>
 				</table>
 			</div>
-			
 		</div>
+		<!-- 权限列表 -->
 		<div id="permissions">
 			<form action="#" id="permission_query">
 				权限过滤<input name="query">
@@ -71,11 +74,13 @@
 					<tbody id="permission_list"></tbody>
 				</table>
 			</div>
-			
 		</div>
 	</div>
+	
+	<!-- 各种默认隐藏的div -->
 	<div style="display: none;" id="user_modify">
 	</div>
+	<!-- 修改角色所拥有的权限 -->
 	<div style="display: none;" id="role_permission_modify">
 		<p>
 			<input id="role_permission_modify_id" value="" hidden="true">
@@ -86,6 +91,7 @@
 		</form>
 		<button onclick="role_permission_modify_submit();">提交</button>
 	</div>
+	<!-- 修改角色的一般属性,如别称,描述 -->
 	<div style="display: none;" id="role_modify">
 		<div style="display: none;">
 			<input name="role_modify_id" id="role_modify_id">
@@ -117,6 +123,7 @@
             </button>
         </div>
 	</div>
+	<!-- 修改权限的一般属性 -->
 	<div style="display: none;" id="permission_modify">
 		<div style="display: none;">
 			<input name="permission_modify_id" id="permission_modify_id">
@@ -150,13 +157,19 @@
 	</div>
 </div>
 <script type="text/javascript">
-	_r = {};
+	//_r = {};
+	/*页面片段的初始化方法*/
 	function myInit(args) {
-		$("#_user_role").click();
+		// 载入用户列表
 		loadUsers();
+		// 载入角色列表
 		loadRoles();
+		// 载入权限列表
 		loadPermissions();
+		// 默认显示用户列表的Tab
+		$("#_user_role").click();
 	};
+	/*切换Tab的函数*/
 	function showTab(tab) {
 		$(".ripple-button").each(function(_, z) {
 			z = $(z);
@@ -173,6 +186,7 @@
 			}
 		});
 	};
+	/*载入用户列表*/
 	function loadUsers() {
 		$.ajax({
 			url : home_base + "/admin/authority/users",
@@ -198,11 +212,12 @@
 					list_html += tmp;
 				}
 				$("#user_list").html(list_html);
-				_r._user_roles = data;
+				//_r._user_roles = data;
 				//console.log(window._user_roles);
 			}
 		});
 	};
+	/*载入角色列表*/
 	function loadRoles() {
 		$.ajax({
 			url : home_base + "/admin/authority/roles",
@@ -246,11 +261,12 @@
 					list_html += tmp;
 				}
 				$("#role_list").html(list_html);
-				_r._roles = data;
+				//_r._roles = data;
 				//console.log(window._user_roles);
 			}
 		});
 	};
+	/*载入权限列表*/
 	function loadPermissions() {
 		$.ajax({
 			url : home_base + "/admin/authority/permissions",
@@ -282,7 +298,7 @@
 					list_html += tmp;
 				}
 				$("#permission_list").html(list_html);
-				_r._permissions = data;
+				//_r._permissions = data;
 				//console.log(window._user_roles);
 			}
 		});
@@ -295,6 +311,8 @@
 	};
 	
 	//----------------------------------------------------
+	// 角色相关的操作
+	/*更新角色的一般属性,显示所需要的输入框*/
 	function role_update(role_id) {
 		for (var i=0;i<_r._roles.list.length;i++) {
 			var role = _r._roles.list[i];
@@ -307,6 +325,7 @@
 			}
 		};
 	};
+	/*将角色的一般属性的修改发送到服务器进行修改*/
 	function role_update_submit() {
 		var role_id = $("#role_modify_id").val();
 		var p = {id:role_id};
@@ -321,9 +340,12 @@
 				loadRoles();
 				$("#role_modify").hide();
 			}
+			// TODO 处理异常
 		});
 	};
+	/*删除一个角色*/
 	function role_delete(role_id) {
+		// TODO 提示用户确认
 		$.ajax({
 			url : home_base + "/admin/authority/role/delete",
 			type : "POST",
@@ -331,6 +353,7 @@
 		});
 		loadRoles();
 	};
+	/*新增角色*/
 	function role_add() {
 		var role_name = prompt("请输入新角色的名词,仅限英文字母,长度3到10个字符");
 		var re = /[a-zA-Z]{3,10}/;  
@@ -345,7 +368,7 @@
 			});
 		}
 	};
-	
+	/*更新角色所拥有的权限列表,这个方法用于显示多选框*/
 	function role_permission_update(role_id) {
 		$.ajax({
 			url : home_base + "/admin/authority/role/fetch",
@@ -384,6 +407,7 @@
 			}
 		});
 	};
+	/*将角色的权限列表提交到服务器去*/
 	function role_permission_modify_submit() {
 		var role_id = $("#role_permission_modify_id").val();
 		var ps = $("input[t='checkbox_role_permission']:checked");
@@ -403,7 +427,7 @@
 			}
 		});
 	}
-	
+	/*更新权限的一般信息,显示输入框*/
 	function permission_update(permission_id) {
 		for (var i=0;i<_r._permissions.list.length;i++) {
 			var permission = _r._permissions.list[i];
@@ -416,6 +440,7 @@
 			}
 		};
 	};
+	/*把权限的一般信息的修改提交到服务器*/
 	function permission_update_submit() {
 		var permission_id = $("#permission_modify_id").val();
 		var p = {id:permission_id};
@@ -432,6 +457,7 @@
 			}
 		});
 	};
+	/*删除一个权限*/
 	function permission_delete(permission_id) {
 		$.ajax({
 			url : home_base + "/admin/authority/permission/delete",
@@ -444,6 +470,7 @@
 		});
 		loadPermissions();
 	};
+	/*新增一个权限*/
 	function permission_add() {
 		var permission_name = prompt("请输入新角色的名词,仅限英文字母/冒号/米号,长度3到30个字符");
 		var re = /[a-zA-Z\:\*]{3,10}/;  
