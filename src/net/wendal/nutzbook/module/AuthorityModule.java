@@ -10,10 +10,13 @@ import net.wendal.nutzbook.bean.User;
 import oracle.jdbc.proxy.annotation.Post;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.FieldFilter;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.adaptor.JsonAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
@@ -32,19 +35,19 @@ public class AuthorityModule extends BaseModule {
 	@At
 	@Ok("json:{locked:'password|salt',ignoreNull:true}")
 	public Object users(@Param("query")String query, @Param("..")Pager pager) {
-		return ajaxOk(query(User.class, null, pager, null));
+		return ajaxOk(query(User.class, Cnd.NEW().asc("id"), pager, null));
 	}
 	
 	@RequiresPermissions("authority:role:query")
 	@At
 	public Object roles(@Param("query")String query, @Param("..")Pager pager) {
-		return ajaxOk(query(Role.class, null, pager, null));
+		return ajaxOk(query(Role.class, Cnd.NEW().asc("id"), pager, null));
 	}
 	
 	@RequiresPermissions("authority:permission:query")
 	@At
 	public Object permissions(@Param("query")String query, @Param("..")Pager pager) {
-		return ajaxOk(query(Permission.class, null, pager, null));
+		return ajaxOk(query(Permission.class, Cnd.NEW().asc("id"), pager, null));
 	}
 	
 
@@ -126,26 +129,44 @@ public class AuthorityModule extends BaseModule {
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:role:update")
 	@At("/role/update")
-	public void updateRole(@Param("role")Role role, @Param("permissions")List<String> permissions) {
+	public void updateRole(@Param("role")Role role, @Param("permissions")List<Long> permissions) {
 		if (role == null)
 			return;
 		if (dao.fetch(Role.class, role.getId()) == null)
 			return;
-		dao.update(role);
+		if (!Strings.isBlank(role.getAlias()) || !Strings.isBlank(role.getDescription()))
+			Daos.ext(dao, FieldFilter.create(Role.class, "alias|desc")).update(role);
 		if (permissions != null) {
 			List<Permission> ps = new ArrayList<Permission>();
-			for (String permission : permissions) {
+			for (Long permission : permissions) {
 				Permission p = dao.fetch(Permission.class, permission);
 				if (p != null)
 					ps.add(p);
 			}
+			// 如果有老的权限,先清空,然后插入新的记录
 			dao.fetchLinks(role, "permissions");
 			if (role.getPermissions().size() > 0) {
 				dao.clearLinks(role, "permissions");
 			}
 			role.setPermissions(ps);
-			dao.updateLinks(role, "permissions");
+			dao.insertRelation(role, "permissions");
 		}
+	}
+	
+	@Ok("json")
+	@RequiresPermissions("authority:role:update")
+	@At("/role/fetch")
+	public Object fetchRolePermissions(@Param("id")long id) {
+		Role role = dao.fetch(Role.class, id);
+		if (role == null)
+			return ajaxFail("not such role");
+		role = dao.fetchLinks(role, null);
+		// TODO 优化为逐步加载
+		List<Permission> permissions = dao.query(Permission.class, Cnd.orderBy().asc("name"));
+		NutMap data = new NutMap();
+		data.put("role", role);
+		data.put("permissions", permissions);
+		return ajaxOk(data);
 	}
 	
 	//--------------------------------------------------------------------

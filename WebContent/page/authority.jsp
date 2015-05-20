@@ -29,6 +29,7 @@
 				页数<input name="pageNumber" type="number" value="1" onchange="loadRoles();">
 				每页大小<input name="pageSize" type="number" value="10" onchange="loadRoles();">
 			</form>
+			<button onclick="role_add();">新增</button>
 			<p id="role_count"></p>
 			<div>
 				<table>
@@ -53,6 +54,7 @@
 				页数<input name="pageNumber" type="number" value="1" onchange="loadPermissions();">
 				每页大小<input name="pageSize" type="number" value="10" onchange="loadPermissions();">
 			</form>
+			<button onclick="permission_add();">新增</button>
 			<p id="permission_count"></p>
 			
 			<div>
@@ -73,7 +75,47 @@
 		</div>
 	</div>
 	<div style="display: none;" id="user_modify">
-		
+	</div>
+	<div style="display: none;" id="role_permission_modify">
+		<p>
+			<input id="role_permission_modify_id" value="" hidden="true">
+			<input id="role_permission_modify_name" value="" hidden="true">
+		</p>
+		<form action="#">
+			<div id="role_permissions_div"></div>
+		</form>
+		<button onclick="role_permission_modify_submit();">提交</button>
+	</div>
+	<div style="display: none;" id="role_modify">
+		<div style="display: none;">
+			<input name="role_modify_id" id="role_modify_id">
+		</div>
+		<div>
+            <div class="md-text-field has-float-label">
+                <label>${msg['authority.role.alias']}</label>
+                <input type="text" id="role_modify_alias" name="alias" nm="${msg['authority.role.alias']}" value="">
+                <hr class="underline">
+                <hr class="underline-focus">
+                <div class="err-tip">别名不能为空</div>
+            </div>
+        </div>
+        <div>
+            <div class="md-text-field has-float-label">
+                <label>${msg['authority.role.description']}</label>
+                <input type="text" id="role_modify_description" name="description" nm="${msg['authority.role.description']}" value="">
+                <hr class="underline">
+                <hr class="underline-focus">
+                <div class="err-tip">描述不能为空</div>
+            </div>
+        </div>
+        <div>
+            <button class="md-button raised-button is-primary" type="submit" onclick="role_update_submit();">
+                <span class="md-button-label">修改</span>
+            </button>
+            <button class="md-button raised-button is-primary" type="submit" onclick="$('#role_modify').hide();">
+                <span class="md-button-label">取消</span>
+            </button>
+        </div>
 	</div>
 	<div style="display: none;" id="permission_modify">
 		<div style="display: none;">
@@ -180,12 +222,14 @@
 				for (var i=0;i<data.list.length;i++) {
 					var role = data.list[i];
 					var pstr = "";
-					for ( var p in role.permissions) {
+					for (var j=0;j<role.permissions.length;j++) {
+						var p = role.permissions[j];
 						if (p.alias)
 							pstr += p.alias;
 						else
 							pstr += p.name;
 						pstr += " ";
+						console.log(p);
 					}
 					var tmp = "\n<tr>"
 							  +"<td>" + role.id + "</td>"
@@ -194,7 +238,8 @@
 							  +"<td></td>"
 							  +"<td>" + pstr + "</td>"
 							  +"<td> "
-							  +"<button onclick='role_update(" + role.id +");'>修改</button> "
+							  +"<button onclick='role_update(" + role.id +");'>修改描述</button> "
+							  +"<button onclick='role_permission_update(" + role.id +");'>修改权限</button> "
 							  +"<button onclick='role_delete(" + role.id +");'>删除</button> "
 							  +"</td>"
 							  + "</tr>";
@@ -248,17 +293,117 @@
 	function user_role_update(user_id) {
 		alert("暂无实现");
 	};
+	
+	//----------------------------------------------------
 	function role_update(role_id) {
-		
+		for (var i=0;i<_r._roles.list.length;i++) {
+			var role = _r._roles.list[i];
+			if (role.id == role_id) {
+				$("#role_modify_id").attr("value", role_id);
+				$("#role_modify_alias").attr("value", role.alias);
+				$("#role_modify_description").attr("value", role.description);
+				$("#role_modify").show();
+				return;
+			}
+		};
+	};
+	function role_update_submit() {
+		var role_id = $("#role_modify_id").val();
+		var p = {id:role_id};
+		p["alias"] = $("#role_modify_alias").val();
+		p["description"] = $("#role_modify_description").val();
+		console.log(p);
+		$.ajax({
+			url : home_base + "/admin/authority/role/update",
+			type : "POST",
+			data : JSON.stringify({"role":p}),
+			success : function() {
+				loadRoles();
+				$("#role_modify").hide();
+			}
+		});
 	};
 	function role_delete(role_id) {
 		$.ajax({
-			url : base + "/admin/authority/role/delete",
+			url : home_base + "/admin/authority/role/delete",
 			type : "POST",
-			data : $.toJSON({id:role_id})
+			data : JSON.stringify({id:role_id})
 		});
 		loadRoles();
 	};
+	function role_add() {
+		var role_name = prompt("请输入新角色的名词,仅限英文字母,长度3到10个字符");
+		var re = /[a-zA-Z]{3,10}/;  
+		if (role_name && re.exec(role_name)) {
+			$.ajax({
+				url : home_base + "/admin/authority/role/add",
+				type : "POST",
+				data : JSON.stringify({name:role_name}),
+				success : function () {
+					loadRoles();
+				}
+			});
+		}
+	};
+	
+	function role_permission_update(role_id) {
+		$.ajax({
+			url : home_base + "/admin/authority/role/fetch",
+			dataType : "json",
+			data : {id:role_id},
+			success : function (re) {
+				if (re && re.ok) {
+					console.log(re.data);
+					var html = "";
+					var ps = re.data.permissions;
+					for (var i = 0; i < ps.length; i++) {
+						var p = ps[i];
+						var flag = false;
+						for (var j = 0; j < re.data.role.permissions.length; j++) {
+							if (re.data.role.permissions[j].id == p.id) {
+								flag = true;
+								break;
+							}
+						}
+						if (p.alias) {
+							html += p.alias;
+						} else {
+							html += p.name;
+						}
+						if (flag) {
+							html += "<input type='checkbox' t='checkbox_role_permission' pid='" + p.id + "' checked='true'>\n"
+						} else {
+							html += "<input type='checkbox' t='checkbox_role_permission' pid='" + p.id + "'>\n"
+						}
+					}
+					$("#role_permission_modify_id").val(""+role_id);
+					$("#role_permission_modify_name").val(""+re.data.role.name);
+					$("#role_permissions_div").html(html);
+					$("#role_permission_modify").show();
+				}
+			}
+		});
+	};
+	function role_permission_modify_submit() {
+		var role_id = $("#role_permission_modify_id").val();
+		var ps = $("input[t='checkbox_role_permission']:checked");
+		console.log(ps);
+		console.log(role_id);
+		var pids = [];
+		ps.each(function(i, p_input) {
+			pids.push($(p_input).attr("pid"));
+		});
+		$.ajax({
+			url : home_base + "/admin/authority/role/update",
+			type : "POST",
+			data : JSON.stringify({"role":{id:role_id}, "permissions":pids}),
+			success : function() {
+				loadRoles();
+				$("#role_permission_modify").hide();
+			}
+		});
+	}
+	
 	function permission_update(permission_id) {
 		for (var i=0;i<_r._permissions.list.length;i++) {
 			var permission = _r._permissions.list[i];
@@ -276,6 +421,7 @@
 		var p = {id:permission_id};
 		p["alias"] = $("#permission_modify_alias").val();
 		p["description"] = $("#permission_modify_description").val();
+		console.log(p);
 		$.ajax({
 			url : home_base + "/admin/authority/permission/update",
 			type : "POST",
@@ -297,6 +443,20 @@
 			}
 		});
 		loadPermissions();
+	};
+	function permission_add() {
+		var permission_name = prompt("请输入新角色的名词,仅限英文字母/冒号/米号,长度3到30个字符");
+		var re = /[a-zA-Z\:\*]{3,10}/;  
+		if (permission_name && re.exec(permission_name)) {
+			$.ajax({
+				url : home_base + "/admin/authority/permission/add",
+				type : "POST",
+				data : JSON.stringify({name:permission_name}),
+				success : function () {
+					loadPermissions();
+				}
+			});
+		}
 	};
 	
 </script>

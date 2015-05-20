@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.wendal.nutzbook.service.EmailService;
 
-import org.nutz.dao.Cnd;
+import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
@@ -18,7 +18,7 @@ public abstract class BaseModule {
 
 	@Inject protected EmailService emailService;
 	
-	protected QueryResult query(Class<?> klass, Cnd cnd, Pager pager, String regex) {
+	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {
 			pager.setPageNumber(1);
 		}

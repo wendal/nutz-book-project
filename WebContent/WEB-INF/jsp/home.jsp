@@ -74,7 +74,7 @@
                     alert('暂时不提供该服务');
                 },
                 'logout' : function() {
-                	window.location.href = base + "/user/logout";
+                	window.location.href = home_base + "/user/logout";
                 }
             }
         };
