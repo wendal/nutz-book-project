@@ -516,7 +516,7 @@
 	};
 	/*新增角色*/
 	function role_add() {
-		var role_name = prompt("请输入新角色的名词,仅限英文字母,长度3到10个字符");
+		var role_name = prompt("请输入新角色的名称,仅限英文字母,长度3到10个字符");
 		var re = /[a-zA-Z]{3,10}/;  
 		if (role_name && re.exec(role_name)) {
 			$.ajax({

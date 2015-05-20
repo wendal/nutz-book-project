@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.module;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,9 +12,13 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.adaptor.VoidAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
@@ -21,29 +26,47 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 
+
+/**
+ * Git的Http-backend封装
+ */
+@IocBean(create="init")
 public class GitCGI {
 
+	private static final Log log = Logs.get();
 	String GIT_PROJECT_ROOT = "H:\\git\\";
+	@Inject GitAdminModule gitAdminModule;
+	protected static boolean DEBUG = false;
+	
+	public void init() {
+		GIT_PROJECT_ROOT = gitAdminModule.root.getAbsolutePath();
+	}
 
+	// TODO 权限管理
 	@AdaptBy(type = VoidAdaptor.class)
 	@Ok("void")
-	@At("/git/?/*")
+	@At("/git/?/?/*")
 	@Fail("http:503")
-	public void cgi(String repo) throws IOException {
+	public void cgi(String user, String repo) throws IOException {
 		HttpServletRequest req = Mvcs.getReq();
 		HttpServletResponse res = Mvcs.getResp();
 
 		// 生成git库下的相对路径
-		List<String> paths = Mvcs.getActionContext().getPathArgs();
+		List<String> paths = new ArrayList<String>(Mvcs.getActionContext().getPathArgs());
+		paths.remove(0);
 		paths.remove(0);
 		String path = "/" + Strings.join("/", paths.toArray());
 		// 启动git http-backend
 		Process p = Runtime.getRuntime().exec(
 				new String[] { "git", "http-backend" },
-				buildEnv(req, GIT_PROJECT_ROOT + repo, path));
+				buildEnv(req, GIT_PROJECT_ROOT + "/" + user + "/" +  repo, path));
 		// 将客户端的post/put传入的流传给git-http-backend
 		Streams.write(p.getOutputStream(), req.getInputStream());
 		// 读取响应, 格式与标准的Http响应就相差个响应行
+		writeBack(p, res);
+	}
+	
+	protected void writeBack(Process p, HttpServletResponse res) {
 		InputStream inFromCgi = p.getInputStream();
 		String line = "";
 		OutputStream os = null;
@@ -83,9 +106,12 @@ public class GitCGI {
 		}
 	}
 
-	public static String[] buildEnv(HttpServletRequest req, String root,
-			String path) {
-
+	public static String[] buildEnv(HttpServletRequest req, String root, String path) {
+		try {
+			root = new File(root).getCanonicalPath();
+		} catch (IOException e) {
+		}
+		log.debug("git repo root=" + root);
 		// 逐一构建CGI所需要的一堆环境变量
 		NutMap env = new NutMap();
 
@@ -132,6 +158,8 @@ public class GitCGI {
 		List<String> keys = new ArrayList<String>(env.keySet());
 		for (int i = 0; i < _env.length; i++) {
 			_env[i] = keys.get(i) + "=" + env.getString(keys.get(i), "");
+			if (DEBUG)
+				log.debug("ENV: " + _env[i]);
 		}
 		return _env;
 	}
@@ -144,6 +172,8 @@ public class GitCGI {
 		while ((b = is.read()) != -1 && b != '\n') {
 			buffer.append((char) b);
 		}
+		if (DEBUG)
+			log.debug(">>" + buffer.toString().trim());
 		return buffer.toString().trim();
 	}
 }

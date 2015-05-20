@@ -68,6 +68,11 @@
                 icon: 'md-insert-chart',
                 type: 'url',
                 url: '/sys.jsp'
+            }, {
+                label: 'Git配置',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/gitadmin.jsp'
             }],
             actions: {
                 'login': function () {
