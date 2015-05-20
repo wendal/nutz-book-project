@@ -80,18 +80,18 @@ public class AuthorityModule extends BaseModule {
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:user:update")
 	@At("/user/update")
-	public void updateUser(@Param("userId")long userId,
-						   @Param("roles")List<String> roles, 
-						   @Param("permissions")List<String> permissions) {
-		User user = dao.fetch(User.class, userId);
+	public void updateUser(@Param("user")User user,
+						   @Param("roles")List<Long> roles, 
+						   @Param("permissions")List<Long> permissions) {
+		if (user == null)
+			return;
+		user = dao.fetch(User.class, user.getId());
 		if (user == null)
 			return;
 		if (roles != null) {
 			List<Role> rs = new ArrayList<Role>(roles.size());
-			for (String role : roles) {
-				if (role == null)
-					continue;
-				Role r = dao.fetch(Role.class, role);
+			for (long roleId : roles) {
+				Role r = dao.fetch(Role.class, roleId);
 				if (r != null) {
 					rs.add(r);
 				}
@@ -101,12 +101,12 @@ public class AuthorityModule extends BaseModule {
 				dao.clearLinks(user, "roles");
 			}
 			user.setRoles(rs);
-			dao.updateLinks(user, "roles");
+			dao.insertRelation(user, "roles");
 		}
 		if (permissions != null) {
 			List<Permission> ps = new ArrayList<Permission>();
-			for (String permission : permissions) {
-				Permission p = dao.fetch(Permission.class, permission);
+			for (long permissionId : permissions) {
+				Permission p = dao.fetch(Permission.class, permissionId);
 				if (p != null)
 					ps.add(p);
 			}
@@ -115,8 +115,46 @@ public class AuthorityModule extends BaseModule {
 				dao.clearLinks(user, "permissions");
 			}
 			user.setPermissions(ps);
-			dao.updateLinks(user, "permissions");
+			dao.insertRelation(user, "permissions");
 		}
+	}
+	
+	/**
+	 * 用于显示用户-权限修改对话框的信息
+	 */
+	@Ok("json")
+	@RequiresPermissions("authority:user:update")
+	@At("/user/fetch/permission")
+	public Object fetchUserPermissions(@Param("id")long id) {
+		User user = dao.fetch(User.class, id);
+		if (user == null)
+			return ajaxFail("not such user");
+		user = dao.fetchLinks(user, "permissions");
+		// TODO 优化为逐步加载
+		List<Permission> permissions = dao.query(Permission.class, Cnd.orderBy().asc("name"));
+		NutMap data = new NutMap();
+		data.put("user", user);
+		data.put("permissions", permissions);
+		return ajaxOk(data);
+	}
+	
+	/**
+	 * 用于显示用户-权限修改对话框的信息
+	 */
+	@Ok("json")
+	@RequiresPermissions("authority:user:update")
+	@At("/user/fetch/role")
+	public Object fetchUserRoles(@Param("id")long id) {
+		User user = dao.fetch(User.class, id);
+		if (user == null)
+			return ajaxFail("not such user");
+		user = dao.fetchLinks(user, "roles");
+		// TODO 优化为逐步加载
+		List<Role> roles = dao.query(Role.class, Cnd.orderBy().asc("name"));
+		NutMap data = new NutMap();
+		data.put("user", user);
+		data.put("roles", roles);
+		return ajaxOk(data);
 	}
 
 	//---------------------------------------------

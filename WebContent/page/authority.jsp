@@ -78,7 +78,27 @@
 	</div>
 	
 	<!-- 各种默认隐藏的div -->
-	<div style="display: none;" id="user_modify">
+	<!-- 修改用户的特许权限 -->
+	<div style="display: none;" id="user_permission_modify">
+		<p>
+			<input id="user_permission_modify_id" value="" hidden="true">
+			<input id="user_permission_modify_name" value="" hidden="true">
+		</p>
+		<form action="#">
+			<div id="user_permissions_div"></div>
+		</form>
+		<button onclick="user_permission_modify_submit();">提交</button>
+	</div>
+	<!-- 修改用户所属的角色 -->
+	<div style="display: none;" id="user_role_modify">
+		<p>
+			<input id="user_role_modify_id" value="" hidden="true">
+			<input id="user_role_modify_name" value="" hidden="true">
+		</p>
+		<form action="#">
+			<div id="user_roles_div"></div>
+		</form>
+		<button onclick="user_role_modify_submit();">提交</button>
 	</div>
 	<!-- 修改角色所拥有的权限 -->
 	<div style="display: none;" id="role_permission_modify">
@@ -157,7 +177,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-	//_r = {};
+	_r = {};
 	/*页面片段的初始化方法*/
 	function myInit(args) {
 		// 载入用户列表
@@ -206,13 +226,42 @@
 				for (var i=0;i<data.list.length;i++) {
 					var user = data.list[i];
 					console.log(user);
-					var tmp = "\n<p>" + user.id + " " + user.name
-							  + " <button onclick='user_role_update(" + user.id +");'>修改</button> "
-							  + "</p>";
+					var pstr = "";
+					for (var j=0;j<user.permissions.length;j++) {
+						var p = user.permissions[j];
+						if (p.alias)
+							pstr += p.alias;
+						else
+							pstr += p.name;
+						pstr += " ";
+						//console.log(p);
+					}
+					var rstr = "";
+					for (var j=0;j<user.roles.length;j++) {
+						var r = user.roles[j];
+						if (r.alias)
+							rstr += r.alias;
+						else
+							rstr += r.name;
+						rstr += " ";
+						//console.log(p);
+					}
+					var tmp = "\n<tr>"
+						  	+"<td>" + user.id + "</td>"
+						  	+"<td>" + user.name + "</td>"
+						  	+"<td>" + (user.alias ? user.alias : "" ) + "</td>"
+						  	+"<td></td>"
+						  	+"<td>" + rstr + "</td>"
+						  	+"<td>" + pstr + "</td>"
+						  	+"<td> "
+							+ " <button onclick='user_role_update(" + user.id +");'>修改角色</button> "
+							+ " <button onclick='user_permission_update(" + user.id +");'>修改特许权限</button> "
+							+"</td>"
+							+ "</tr>";
 					list_html += tmp;
 				}
 				$("#user_list").html(list_html);
-				//_r._user_roles = data;
+				_r._user_roles = data;
 				//console.log(window._user_roles);
 			}
 		});
@@ -244,7 +293,7 @@
 						else
 							pstr += p.name;
 						pstr += " ";
-						console.log(p);
+						//console.log(p);
 					}
 					var tmp = "\n<tr>"
 							  +"<td>" + role.id + "</td>"
@@ -261,7 +310,7 @@
 					list_html += tmp;
 				}
 				$("#role_list").html(list_html);
-				//_r._roles = data;
+				_r._roles = data;
 				//console.log(window._user_roles);
 			}
 		});
@@ -298,7 +347,7 @@
 					list_html += tmp;
 				}
 				$("#permission_list").html(list_html);
-				//_r._permissions = data;
+				_r._permissions = data;
 				//console.log(window._user_roles);
 			}
 		});
@@ -306,10 +355,122 @@
 	
 	// 各种操作哦哦哦
 	
-	function user_role_update(user_id) {
-		alert("暂无实现");
+	/*更新用户特许权限*/
+	function user_permission_update(user_id) {
+		$.ajax({
+			url : home_base + "/admin/authority/user/fetch/permission",
+			dataType : "json",
+			data : {id:user_id},
+			success : function (re) {
+				if (re && re.ok) {
+					console.log(re.data);
+					var html = "";
+					var ps = re.data.permissions;
+					for (var i = 0; i < ps.length; i++) {
+						var p = ps[i];
+						var flag = false;
+						for (var j = 0; j < re.data.user.permissions.length; j++) {
+							if (re.data.user.permissions[j].id == p.id) {
+								flag = true;
+								break;
+							}
+						}
+						if (p.alias) {
+							html += p.alias;
+						} else {
+							html += p.name;
+						}
+						if (flag) {
+							html += "<input type='checkbox' t='checkbox_user_permission' pid='" + p.id + "' checked='true'>\n"
+						} else {
+							html += "<input type='checkbox' t='checkbox_user_permission' pid='" + p.id + "'>\n"
+						}
+					}
+					$("#user_permission_modify_id").val(""+user_id);
+					$("#user_permission_modify_name").val(""+re.data.user.name);
+					$("#user_permissions_div").html(html);
+					$("#user_permission_modify").show();
+				}
+			}
+		});
 	};
-	
+	/*将用户的特许权限提交到服务器*/
+	function user_permission_modify_submit() {
+		var user_id = $("#user_permission_modify_id").val();
+		var ps = $("input[t='checkbox_user_permission']:checked");
+		console.log(ps);
+		console.log(user_id);
+		var pids = [];
+		ps.each(function(i, p_input) {
+			pids.push($(p_input).attr("pid"));
+		});
+		$.ajax({
+			url : home_base + "/admin/authority/user/update",
+			type : "POST",
+			data : JSON.stringify({"user":{id:user_id}, "permissions":pids}),
+			success : function() {
+				loadUsers();
+				$("#user_permission_modify").hide();
+			}
+		});
+	};
+	function user_role_update(user_id) {
+		$.ajax({
+			url : home_base + "/admin/authority/user/fetch/role",
+			dataType : "json",
+			data : {id:user_id},
+			success : function (re) {
+				if (re && re.ok) {
+					console.log(re.data);
+					var html = "";
+					var ps = re.data.roles;
+					for (var i = 0; i < ps.length; i++) {
+						var p = ps[i];
+						var flag = false;
+						for (var j = 0; j < re.data.user.roles.length; j++) {
+							if (re.data.user.roles[j].id == p.id) {
+								flag = true;
+								break;
+							}
+						}
+						if (p.alias) {
+							html += p.alias;
+						} else {
+							html += p.name;
+						}
+						if (flag) {
+							html += "<input type='checkbox' t='checkbox_user_role' pid='" + p.id + "' checked='true'>\n"
+						} else {
+							html += "<input type='checkbox' t='checkbox_user_role' pid='" + p.id + "'>\n"
+						}
+					}
+					$("#user_role_modify_id").val(""+user_id);
+					$("#user_role_modify_name").val(""+re.data.user.name);
+					$("#user_roles_div").html(html);
+					$("#user_role_modify").show();
+				}
+			}
+		});
+	};
+	function user_role_modify_submit() {
+		var user_id = $("#user_role_modify_id").val();
+		var ps = $("input[t='checkbox_user_role']:checked");
+		console.log(ps);
+		console.log(user_id);
+		var pids = [];
+		ps.each(function(i, p_input) {
+			pids.push($(p_input).attr("pid"));
+		});
+		$.ajax({
+			url : home_base + "/admin/authority/user/update",
+			type : "POST",
+			data : JSON.stringify({"user":{id:user_id}, "roles":pids}),
+			success : function() {
+				loadUsers();
+				$("#user_role_modify").hide();
+			}
+		});
+	}
 	//----------------------------------------------------
 	// 角色相关的操作
 	/*更新角色的一般属性,显示所需要的输入框*/
