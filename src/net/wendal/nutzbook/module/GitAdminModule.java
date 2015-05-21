@@ -13,6 +13,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -49,15 +50,23 @@ public class GitAdminModule extends BaseModule {
 		if (!userGitHome.exists()) {
 			return ajaxOk(Collections.EMPTY_LIST);
 		}
-		List<String> gitNames = new ArrayList<String>();
+		List<NutMap> repos = new ArrayList<NutMap>();
 		for (File dir :userGitHome.listFiles()) {
 			if (!dir.isDirectory())
 				continue;
 			File _git = new File(dir, ".git");
-			if (_git.exists() && _git.isDirectory())
-				gitNames.add(dir.getName());
+			if (_git.exists() && _git.isDirectory()) {
+				NutMap repo = new NutMap();
+				repo.setv("name", dir.getName());
+				if (new File(_git, "repo_public").exists()) {
+					repo.setv("public", true);
+				} else {
+					repo.setv("public", false);
+				}
+				repos.add(repo);
+			}
 		}
-		return ajaxOk(gitNames);
+		return ajaxOk(repos);
 	}
 	
 	@At
@@ -108,6 +117,25 @@ public class GitAdminModule extends BaseModule {
 		File gitDir = new File(root, me.getName() + "/" + name);
 		Files.clearDir(gitDir);
 		gitDir.delete();
+		return ajaxOk(null);
+	}
+	
+	@At("/update/public")
+	@RequiresUser
+	public Object asPublic(@Attr("me")long userId, @Param("name")String name, @Param("public")boolean flag) {
+		User me = dao.fetch(User.class, userId);
+		if (Strings.isBlank(name) || !name.matches("[a-zA-Z0-9\\-_]{3,20}")) {
+			return ajaxFail("名字不合法");
+		}
+		File _gitDir = new File(root, me.getName() + "/" + name + "/.git");
+		if (!_gitDir.exists()) {
+			return ajaxFail("没有这个repo");
+		}
+		File tag = new File(_gitDir, "repo_public");
+		if (flag)
+			Files.createFileIfNoExists(tag);
+		else
+			tag.delete();
 		return ajaxOk(null);
 	}
 	

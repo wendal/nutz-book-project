@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div>
-	<h2>敬请期待</h2>
 	<div>
 		<span>repo列表</span>
 		<div id="git_repo_list"></div>
@@ -25,10 +24,20 @@
 				if (re.ok) {
 					var tmp = "";
 					for (var i = 0; i < re.data.length; i++) {
-						var repoName = re.data[i];
-						tmp += "<p>" + repoName + "</p>"
+						var repo = re.data[i];
+						console.log(repo);
+						console.log(repo.name);
+						tmp += "<p><h3>";
+						tmp += repo.name + "      " + (repo["public"] ? "公开" : "私有");
+						tmp += "</h3>";
+						tmp += "  <button onclick='git_repo_delete('"+ repo.name+"');\">" + "删除" + "</button>" ;
+						if (!repo["public"]) {
+							tmp += "  <button onclick=\"git_repo_public('"+ repo.name+"', true);\">" + "设置为公开" + "</button>" ;
+						} else {
+							tmp += "  <button onclick=\"git_repo_public('"+ repo.name+"', false);\">" + "转为私有" + "</button>" ;
+						}
+						tmp += "</p>";
 					}
-					
 					$("#git_repo_list").html(tmp);
 				}
 			}
@@ -53,5 +62,33 @@
 				}
 			});
 		}
-	}
+	};
+	function git_repo_delete(repo_name) {
+		$.ajax({
+			url : home_base + "/admin/git/delete",
+			data : {name:repo_name},
+			dataType : "json",
+			success : function(re) {
+				if (re && re.ok) {
+					load_git_list();
+				} else {
+					alert(re.msg);
+				}
+			}
+		});
+	};
+	function git_repo_public(repo_name, is_public) {
+		$.ajax({
+			url : home_base + "/admin/git/update/public",
+			data : {name:repo_name, "public":is_public},
+			dataType : "json",
+			success : function(re) {
+				if (re && re.ok) {
+					load_git_list();
+				} else {
+					alert(re.msg);
+				}
+			}
+		});
+	};
 </script>
