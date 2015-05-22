@@ -27,7 +27,7 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
 /**
- * 角色/权限管理
+ * 角色/权限管理. 基本假设: 一个用户属于多种角色,拥有多种特许权限. 每种角色拥有多种权限
  * @author wendal
  *
  */
@@ -80,12 +80,15 @@ public class AuthorityModule extends BaseModule {
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:user:update")
 	@At("/user/update")
+	@Aop(TransAop.READ_COMMITTED)
 	public void updateUser(@Param("user")User user,
 						   @Param("roles")List<Long> roles, 
 						   @Param("permissions")List<Long> permissions) {
+		// 防御一下
 		if (user == null)
 			return;
 		user = dao.fetch(User.class, user.getId());
+		// 就在那么一瞬间,那个用户已经被其他用户删掉了呢
 		if (user == null)
 			return;
 		if (roles != null) {
@@ -186,6 +189,7 @@ public class AuthorityModule extends BaseModule {
 		role = dao.fetch(Role.class, role.getId());
 		if (role == null)
 			return;
+		// 不允许删除admin角色
 		if ("admin".equals(role.getName()))
 			return;
 		dao.delete(Role.class, role.getId());
@@ -215,6 +219,7 @@ public class AuthorityModule extends BaseModule {
 					ps.add(p);
 			}
 			// 如果有老的权限,先清空,然后插入新的记录
+			// TODO 优化为直接清理中间表
 			dao.fetchLinks(role, "permissions");
 			if (role.getPermissions().size() > 0) {
 				dao.clearLinks(role, "permissions");

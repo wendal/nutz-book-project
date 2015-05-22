@@ -4,6 +4,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
@@ -39,7 +40,7 @@ public class UserModule extends BaseModule {
 	@Ok("jsp:jsp.user.login")
 	public void loginPage() {}
 
-	@RequiresUser
+	@RequiresPermissions("user:add")
 	@At
 	public Object add(@Param("..")User user) { // 两个点号是按对象属性一一设置
 		NutMap re = new NutMap();
@@ -51,7 +52,7 @@ public class UserModule extends BaseModule {
 		return re.setv("ok", true).setv("data", user);
 	}
 
-	@RequiresUser
+	@RequiresPermissions("user:update")
 	@At
 	public Object update(@Param("password")String password, @Param("id")int userId) {
 		if (Strings.isBlank(password) || password.length() < 6)
@@ -60,7 +61,7 @@ public class UserModule extends BaseModule {
 		return new NutMap().setv("ok", true);
 	}
 
-	@RequiresUser
+	@RequiresPermissions("user:delete")
 	@At
 	@Aop(TransAop.READ_COMMITTED)
 	public Object delete(@Param("id")int id, @Attr("me")int me) {
@@ -72,7 +73,7 @@ public class UserModule extends BaseModule {
 		return new NutMap().setv("ok", true);
 	}
 
-	@RequiresUser
+	@RequiresPermissions("user:query")
 	@At
 	public Object query(@Param("name")String name, @Param("..")Pager pager) {
 		Cnd cnd = Strings.isBlank(name)? null : Cnd.where("name", "like", "%"+name+"%");

@@ -1,0 +1,108 @@
+body {
+	margin: 0;
+	pading: 0;
+	text-align: left;
+	font-family: Arial, sans-serif, Helvetica, Tahoma;
+	font-size: 12px;
+	line-height: 1.5;
+	color: black;
+}
+
+.node {
+	width: 120px;
+	text-align: left;
+	vertical-align: middle;
+	border: 1px solid #fff;
+}
+
+.mover {
+	border: 1px solid #ddd;
+	background-color: #ddd;
+}
+
+.selected {
+	background-color: #ddd;
+}
+
+.state {
+	
+}
+
+#pointer {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#path {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#task {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#state {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+#toolbox {
+    border:1px solid #9AC3E1;
+	position: absolute;
+	top: 10;
+	left: 10;
+	background-color: #fff;
+	width: 120px;
+	cursor: default;
+	padding: 3px;
+}
+#toolbox_handle {
+	border:1px solid #9AC3E1;
+	margin-top:1px;
+	margin-bottom:10px;
+	width:98%;
+	align:center;
+	text-align:left;
+	font-weight: bold;
+	background-color: #CDF07F;
+}
+#properties {
+    border:1px solid #9AC3E1;
+	position: absolute;
+	top: 400;
+	right: 10;
+	width: 560px;
+	padding: 3px;
+}
+#properties_handle {
+	border:1px solid #9AC3E1;
+	margin-top:1px;
+	font-weight: bold;
+	align:center;
+	text-align:left;
+	background-color: #CDF07F;
+}
+.properties_all {
+	border-right:1px solid #9AC3E1;
+	width:100%;
+	text-align:left;
+	font-family: Arial, sans-serif, Helvetica, Tahoma;
+	font-size: 12px;
+}
+.properties_name {
+	background-color:#CDF07F;
+	border-left:1px solid #9AC3E1;
+	border-bottom:1px solid #9AC3E1;
+	color:#000;
+	font-weight: bold;
+	text-align:left;
+	width:100px;
+}
+.properties_value {
+	border-left:1px solid #9AC3E1;
+	border-bottom:1px solid #9AC3E1;
+	height: 24px;
+	width:460px;
+}

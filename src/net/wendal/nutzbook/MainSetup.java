@@ -1,21 +1,15 @@
 package net.wendal.nutzbook;
 
 import java.util.Date;
-import java.util.List;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.FaqItem;
-import net.wendal.nutzbook.bean.Permission;
-import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.service.FaqService;
-import net.wendal.nutzbook.service.PermisssionService;
+import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.UserService;
 
-import org.nutz.dao.Chain;
-import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
-import org.nutz.dao.entity.Record;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
@@ -23,7 +17,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
-import org.nutz.plugins.cache.dao.CachedNutDaoExecutor;
+import org.snaker.engine.SnakerEngine;
 
 public class MainSetup implements Setup {
 	
@@ -44,28 +38,10 @@ public class MainSetup implements Setup {
 		// 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
 		ioc.get(NutQuartzCronJobFactory.class);
 		
-		PermisssionService ps = ioc.get(PermisssionService.class);
-		ps.initFormPackage("net.wendal.nutzbook");
-		
+		AuthorityService as = ioc.get(AuthorityService.class);
+		as.initFormPackage("net.wendal.nutzbook");
+		as.checkBasicRoles(admin);
 
-		// 检查一下admin的权限
-		Role adminRole = dao.fetch(Role.class, "admin");
-		if (adminRole == null) {
-			adminRole = ps.addRole("admin");
-		}
-		// admin账号必须存在与admin组
-		if (0 == dao.count("t_user_role", Cnd.where("u_id", "=", admin.getId()).and("role_id", "=", adminRole.getId()))) {
-			dao.insert("t_user_role", Chain.make("u_id", admin.getId()).add("role_id", adminRole.getId()));
-		}
-		// admin组必须有authority:* 也就是权限管理相关的权限
-		List<Record> res = dao.query("t_role_permission", Cnd.where("role_id", "=", adminRole.getId()));
-		OUT: for (Permission permission : dao.query(Permission.class, Cnd.where("name", "like", "authority:%"), null)) {
-			for (Record re : res) {
-				if (re.getInt("permission_id") == permission.getId())
-					continue OUT;
-			}
-			dao.insert("t_role_permission", Chain.make("role_id", adminRole.getId()).add("permission_id", permission.getId()));
-		};
 		
 		// faq 初始化
 		if (dao.count(FaqItem.class) == 0) {
@@ -82,7 +58,10 @@ public class MainSetup implements Setup {
 		// 检查一下Ehcache CacheManager 是否正常.
 		CacheManager cacheManager = ioc.get(CacheManager.class);
 		log.debug("Ehcache CacheManager = " + cacheManager);
-		CachedNutDaoExecutor.DEBUG = true;
+		//CachedNutDaoExecutor.DEBUG = true;
+		
+		SnakerEngine snakerEngine = ioc.get(SnakerEngine.class);
+		log.info("snakerflow init complete == " + snakerEngine);
 	}
 	
 	public void destroy(NutConfig conf) {

@@ -73,6 +73,11 @@
                 icon: 'md-insert-chart',
                 type: 'url',
                 url: '/gitadmin.jsp'
+            }, {
+                label: '流程管理',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/snakerflow.jsp'
             }],
             actions: {
                 'login': function () {

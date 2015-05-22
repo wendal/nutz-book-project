@@ -2,6 +2,7 @@ package net.wendal.nutzbook.module;
 
 import java.util.List;
 
+import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.service.EmailService;
 
 import org.nutz.dao.Condition;
@@ -17,6 +18,8 @@ public abstract class BaseModule {
 	@Inject protected Dao dao;
 
 	@Inject protected EmailService emailService;
+	
+	@Inject protected CacheManager cacheManager;
 	
 	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {
