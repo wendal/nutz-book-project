@@ -1,57 +1,58 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<div>
-	<div>
+
+<!-- 用bootstrap先应付一下 -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+
+<div class="container">
+	<div class="row">
 		头像 <img alt="用户头像" src="${base}/user/profile/avatar">
 		<p />
 		<form action="${base}/user/profile/avatar" method="post"
 			enctype="multipart/form-data">
 			头像文件 <input type="file" name="file">
-			<button type="submit">更新头像</button>
+			<button type="submit" class="btn btn-default">更新头像</button>
 		</form>
-		<span class="color:#f00"> <%
- 	if (session.getAttribute("upload-error-msg") != null) {
- 		String msg = session.getAttribute("upload-error-msg")
- 				.toString();
- 		out.print(msg);
- 		session.removeAttribute("upload-error-msg");
- 	}
- %>
-		</span>
 		<p />
 	</div>
-</div>
-<div>
+<div class="row">
 	<form action="#" id="user_profile" method="post">
-		<div>
-			昵称:<input name="nickname" value="${user_profile.nickname}">
-			<p />
+		<div class="input-group">
+			<span class="input-group-addon">昵称</span>
+			<input name="nickname" value="${user_profile.nickname}" class="form-control">
 		</div>
-		<div>
-			邮箱:<input name="email" value="${user_profile.email}">
-			<p />
+		<div class="input-group">
+			<span class="input-group-addon">邮箱</span>
+			<input name="email" value="${user_profile.email}" class="form-control">
 		</div>
-		<div>
+		<div class="input-group">
 			<span id="user_emailChecked"></span>
 			<div id="send_email_check">
-				<button type="button" onclick="send_email_check();return false;">发送验证邮件</button>
+				<button type="button" onclick="send_email_check();return false;" class="btn btn-default">发送验证邮件</button>
 			</div>
 		</div>
-		<div>
-			性别:<input name="gender" value="${user_profile.gender}">
-			<p />
+		<div class="input-group">
+			<span class="input-group-addon">性别</span>
+			<input name="gender" value="${user_profile.gender}" class="form-control">
 		</div>
-		<div>
-			自我介绍:<input name="description" value="${user_profile.description}">
-			<p />
+		<div class="input-group">
+			<span class="input-group-addon">自我介绍</span>
+			<input name="description" value="${user_profile.description}" class="form-control">
 		</div>
-		<div>
-			地理位置:<input name="location" value="${user_profile.location}">
-			<p />
+		<div class="input-group">
+			<span class="input-group-addon">地理位置</span>
+			<input name="location" value="${user_profile.location}" class="form-control">
 		</div>
 	</form>
-	<button type="button" id="user_profile_btn">更新</button>
+	<button type="button" id="user_profile_btn"  class="btn btn-default">更新</button>
+</div>
 </div>
 
 

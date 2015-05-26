@@ -1,8 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<div>
+<div class="row">
 	<form action="#" id="user_query_form">
-		条件<input type="text" name="name">
+		<div class="input-group">
+			<span class="input-group-addon">过滤</span>
+			<input type="text" name="name" class="form-contrl">
+		</div>
 		页数<input type="number" name="pageNumber" value="1">
 		每页<input type="number" name="pageSize" value="10">
 	</form>
@@ -16,7 +19,7 @@
 <div>
 	<p>---------------------------------------------------------------</p>
 </div>
-<div id="user_add">
+<div id="user_add" class="row">
 	<form action="#" id="user_add_form">
 		用户名<input name="name">
 		密码<input name="password">
