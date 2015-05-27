@@ -7,7 +7,6 @@ import java.util.List;
 import net.wendal.nutzbook.bean.Permission;
 import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
-import oracle.jdbc.proxy.annotation.Post;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.aop.interceptor.ioc.TransAop;
@@ -76,7 +75,7 @@ public class AuthorityModule extends BaseModule {
 	/**
 	 * 更新用户所属角色/特许权限
 	 */
-	@Post
+	@POST
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:user:update")
 	@At("/user/update")
@@ -166,7 +165,7 @@ public class AuthorityModule extends BaseModule {
 	/**
 	 * 新增一个角色
 	 */
-	@Post
+	@POST
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:role:add")
 	@At("/role/add")
@@ -198,7 +197,7 @@ public class AuthorityModule extends BaseModule {
 	/**
 	 * 更新权限的一般信息或所拥有的权限
 	 */
-	@Post
+	@POST
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:role:update")
 	@At("/role/update")
@@ -255,7 +254,7 @@ public class AuthorityModule extends BaseModule {
 	/**
 	 * 新增一个权限
 	 */
-	@Post
+	@POST
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:permission:add")
 	@At("/permission/add")
@@ -283,7 +282,7 @@ public class AuthorityModule extends BaseModule {
 	/**
 	 * 修改权限的一般信息
 	 */
-	@Post
+	@POST
 	@AdaptBy(type=JsonAdaptor.class)
 	@RequiresPermissions("authority:permission:update")
 	@At("/permission/update")
