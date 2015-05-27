@@ -1,4 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<!-- 用bootstrap先应付一下 -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+
 <div class="row">
 	<!-- 下面的ul是3个Table -->
 	<ul class="md-tab-group">
@@ -13,29 +23,55 @@
 		</li>
 		<div class="tab-bottom"></div>
 	</ul>
+</div>
 	<div>
 		
 		<!-- 用户列表 -->
-		<div id="user_role">
+		<div id="user_role" class="container">
+			<h2>用户管理</h2>
+			<p id="user_count"></p>
 			<form action="#" id="user_query">
 				用户过滤<input name="query">
 				页数<input name="pageNumber" type="number" value="1" onchange="loadUsers();">
 				每页大小<input name="pageSize" type="number" value="10" onchange="loadUsers();">
 			</form>
-			<p id="user_count"></p>
-			<div id="user_list"></div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">用户一览</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>名称</th>
+							<th>别称</th>
+							<th>角色</th>
+							<th>特许权限</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="user_list"></tbody>
+				</table>
+			</div>
 		</div>
+
+
+
 		<!-- 角色列表 -->
-		<div id="roles">
+		<div id="roles" class="container">
+			<h2>角色管理</h2>
+			<p id="role_count"></p>
 			<form action="#" id="role_query">
 				角色过滤<input name="query">
 				页数<input name="pageNumber" type="number" value="1" onchange="loadRoles();">
 				每页大小<input name="pageSize" type="number" value="10" onchange="loadRoles();">
 			</form>
-			<button onclick="role_add();">新增</button>
-			<p id="role_count"></p>
 			<div>
-				<table>
+			
+			</div>
+			<button onclick="role_add();" class="btn btn-default">新增角色</button>
+			<div class="panel panel-default">
+				<div class="panel-heading">角色一览</div>
+				<table class="table">
 					<thead>
 						<tr>
 							<th>#</th>
@@ -51,17 +87,19 @@
 			</div>
 		</div>
 		<!-- 权限列表 -->
-		<div id="permissions">
+		<div id="permissions" class="container">
+			<h2>权限管理</h2>
+			<p id="permission_count"></p>
 			<form action="#" id="permission_query">
 				权限过滤<input name="query">
 				页数<input name="pageNumber" type="number" value="1" onchange="loadPermissions();">
 				每页大小<input name="pageSize" type="number" value="10" onchange="loadPermissions();">
 			</form>
-			<button onclick="permission_add();">新增</button>
-			<p id="permission_count"></p>
+			<button onclick="permission_add();" class="btn btn-default">新增</button>
 			
-			<div>
-				<table>
+			<div class="panel panel-default">
+				<div class="panel-heading">权限一览</div>
+				<table class="table">
 					<thead>
 						<tr>
 							<th>#</th>
@@ -175,7 +213,7 @@
             </button>
         </div>
 	</div>
-</div>
+	
 <script type="text/javascript">
 	_r = {};
 	/*页面片段的初始化方法*/
@@ -235,6 +273,10 @@
 							pstr += p.name;
 						pstr += " ";
 						//console.log(p);
+						if (j > 4 && user.permissions.length > 4) {
+							pstr += " 等" + user.permissions.length + "种权限";
+							break;
+						}
 					}
 					var rstr = "";
 					for (var j=0;j<user.roles.length;j++) {
@@ -245,12 +287,15 @@
 							rstr += r.name;
 						rstr += " ";
 						//console.log(p);
+						if (j > 4 && user.roles.length > 4) {
+							rstr += " 等" + user.roles.length + "种角色";
+							break;
+						}
 					}
 					var tmp = "\n<tr>"
 						  	+"<td>" + user.id + "</td>"
 						  	+"<td>" + user.name + "</td>"
 						  	+"<td>" + (user.alias ? user.alias : "" ) + "</td>"
-						  	+"<td></td>"
 						  	+"<td>" + rstr + "</td>"
 						  	+"<td>" + pstr + "</td>"
 						  	+"<td> "
@@ -294,6 +339,10 @@
 							pstr += p.name;
 						pstr += " ";
 						//console.log(p);
+						if (j > 4 && role.permissions.length > 4) {
+							pstr += " 等" + role.permissions.length + "种权限";
+							break;
+						}
 					}
 					var tmp = "\n<tr>"
 							  +"<td>" + role.id + "</td>"
@@ -623,7 +672,7 @@
 		$.ajax({
 			url : home_base + "/admin/authority/permission/delete",
 			type : "POST",
-			data : JSON.stringify({id:role_id}),
+			data : JSON.stringify({permission_id}),
 			success : function() {
 				loadPermissions();
 				$("#permission_modify").hide();

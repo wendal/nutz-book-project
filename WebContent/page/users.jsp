@@ -11,37 +11,23 @@
 
 
 <div class="container">
-	<div id="user_add" class="row">
+	<h2>用户管理</h2>
+	<div id="user_add" class="panel panel-default">
 		<p id="user_count"></p>
 		<form action="#" id="user_add_form">
-			<div class="input-group">
-				<span class="input-group-addon">用户名</span>
-				<input type="text" name="name" class="form-contrl">
-			</div>
-			<div class="input-group">
-				<span class="input-group-addon">密码</span>
-				<input type="text" name="password" class="form-contrl">
-			</div>
+			用户名<input type="text" name="name" class="form-contrl">
+			密码   <input type="text" name="password" class="form-contrl">
+			<button id="user_add_btn" type="button">新增</button>
 		</form>
-		<button id="user_add_btn">新增</button>
 	</div>
-	<div class="row">
+	<div class="panel panel-default">
 		<form action="#" id="user_query_form">
-			<div class="input-group">
-				<span class="input-group-addon">过滤</span>
-				<input type="text" name="name" class="form-contrl" onchange="user_reload();">
-			</div>
-			<div class="input-group">
-				<span class="input-group-addon">页数</span> 
-				<input type="number" name="pageNumber" class="form-contrl" value="1" onchange="user_reload();">
-			</div>
-			<div class="input-group">
-				<span class="input-group-addon">每页记录数</span> 
-				<input type="number" name="pageSize" class="form-contrl" value="10" onchange="user_reload();">
-			</div>
+			过滤<input type="text" name="name" class="form-contrl" onchange="user_reload();">
+			页数<input type="number" name="pageNumber" class="form-contrl" value="1" onchange="user_reload();">
+			每页<input type="number" name="pageSize" class="form-contrl" value="10" onchange="user_reload();">
 		</form>
 	</div>
-	<div class="row">
+	<div class="panel panel-default">
 		<div class="panel panel-default">
 			<div class="panel-heading">用户一览</div>
 			<table class="table">
@@ -71,9 +57,7 @@
 			dataType : "json",
 			success : function(data) {
 				console.log(data);
-				$("#user_count").html(
-						"共" + data.pager.recordCount + "个用户, 总计"
-								+ data.pager.pageCount + "页");
+				$("#user_count").html("共" + data.pager.recordCount + "个用户, 总计" + data.pager.pageCount + "页");
 				var list_html = "";
 				console.log(data.list);
 				for (var i = 0; i < data.list.length; i++) {
