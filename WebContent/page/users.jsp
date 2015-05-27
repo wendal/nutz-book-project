@@ -1,32 +1,64 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<div class="row">
-	<form action="#" id="user_query_form">
-		<div class="input-group">
-			<span class="input-group-addon">过滤</span>
-			<input type="text" name="name" class="form-contrl">
+	pageEncoding="UTF-8"%>
+
+<!-- 用bootstrap先应付一下 -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+
+<div class="container">
+	<div id="user_add" class="row">
+		<p id="user_count"></p>
+		<form action="#" id="user_add_form">
+			<div class="input-group">
+				<span class="input-group-addon">用户名</span>
+				<input type="text" name="name" class="form-contrl">
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">密码</span>
+				<input type="text" name="password" class="form-contrl">
+			</div>
+		</form>
+		<button id="user_add_btn">新增</button>
+	</div>
+	<div class="row">
+		<form action="#" id="user_query_form">
+			<div class="input-group">
+				<span class="input-group-addon">过滤</span>
+				<input type="text" name="name" class="form-contrl" onchange="user_reload();">
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">页数</span> 
+				<input type="number" name="pageNumber" class="form-contrl" value="1" onchange="user_reload();">
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">每页记录数</span> 
+				<input type="number" name="pageSize" class="form-contrl" value="10" onchange="user_reload();">
+			</div>
+		</form>
+	</div>
+	<div class="row">
+		<div class="panel panel-default">
+			<div class="panel-heading">用户一览</div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>名称</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="user_list">
+
+				</tbody>
+			</table>
 		</div>
-		页数<input type="number" name="pageNumber" value="1">
-		每页<input type="number" name="pageSize" value="10">
-	</form>
-	<button id="user_query_btn">查询</button>
-	<p>---------------------------------------------------------------</p>
-	<p id="user_count"></p>
-	<div id="user_list">
-		
 	</div>
 </div>
-<div>
-	<p>---------------------------------------------------------------</p>
-</div>
-<div id="user_add" class="row">
-	<form action="#" id="user_add_form">
-		用户名<input name="name">
-		密码<input name="password">
-	</form>
-	<button id="user_add_btn">新增</button>
-</div>
-
 
 <script type="text/javascript">
 	var pageNumber = 1;
@@ -39,16 +71,24 @@
 			dataType : "json",
 			success : function(data) {
 				console.log(data);
-				$("#user_count").html("共"+data.pager.recordCount+"个用户, 总计"+data.pager.pageCount+"页");
+				$("#user_count").html(
+						"共" + data.pager.recordCount + "个用户, 总计"
+								+ data.pager.pageCount + "页");
 				var list_html = "";
 				console.log(data.list);
-				for (var i=0;i<data.list.length;i++) {
+				for (var i = 0; i < data.list.length; i++) {
 					var user = data.list[i];
 					console.log(user);
-					var tmp = "\n<p>" + user.id + " " + user.name
-							  + " <button onclick='user_update(" + user.id +");'>修改</button> "
-							  + " <button onclick='user_delete(" + user.id +");'>删除</button> "
-							  + "</p>";
+					var tmp = "<tr>";
+					tmp += "<td>" + user.id + "</td>";
+					tmp += "<td>" + user.name + "</td>";
+					tmp += "<td>";
+					tmp	+= " <button onclick='user_update(" + user.id
+							+ ");'>修改密码</button> "
+							+ " <button onclick='user_delete(" + user.id
+							+ ");'>删除</button> ";
+					tmp += "</td>";
+					tmp += "</tr>";
 					list_html += tmp;
 				}
 				$("#user_list").html(list_html);
@@ -81,9 +121,12 @@
 		if (passwd) {
 			$.ajax({
 				url : base + "/user/update",
-				data : {"id":userId,"password":passwd},
+				data : {
+					"id" : userId,
+					"password" : passwd
+				},
 				dataType : "json",
-				success : function (data) {
+				success : function(data) {
 					if (data.ok) {
 						user_reload();
 						alert("修改成功");
@@ -99,9 +142,11 @@
 		if (s == "y") {
 			$.ajax({
 				url : base + "/user/delete",
-				data : {"id":userId},
+				data : {
+					"id" : userId
+				},
 				dataType : "json",
-				success : function (data) {
+				success : function(data) {
 					if (data.ok) {
 						user_reload();
 						alert("删除成功");

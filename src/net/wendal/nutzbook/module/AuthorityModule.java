@@ -295,4 +295,8 @@ public class AuthorityModule extends BaseModule {
 		permission.setCreateTime(null);
 		Daos.ext(dao, FieldFilter.create(Permission.class, null, "name", true)).update(permission);
 	}
+	
+	public static void main(String[] args) {
+		System.out.println("6ce873dd1eb4".toUpperCase());
+	}
 }

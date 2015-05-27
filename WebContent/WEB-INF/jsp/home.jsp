@@ -74,6 +74,11 @@
                 type: 'url',
                 url: '/gitadmin.jsp'
             }, {
+                label: '动态表单',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/dyform.jsp'
+            }, {
                 label: '流程管理',
                 icon: 'md-insert-chart',
                 type: 'url',

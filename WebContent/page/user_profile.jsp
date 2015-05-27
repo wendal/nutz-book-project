@@ -96,8 +96,13 @@
 					$("#user_emailChecked").html("邮箱验证状态:已验证");
 					$("#send_email_check").hide();
 				} else {
-					$("#user_emailChecked").html("邮箱验证状态:未验证");
-					$("#send_email_check").show();
+					if (profile.email) {
+						$("#user_emailChecked").html("邮箱验证状态:未验证");
+						$("#send_email_check").show();
+					} else {
+						$("#user_emailChecked").html("请更新邮箱地址");
+						$("#send_email_check").hide();
+					}
 				}
 				$("input[name='gender']").attr("value", profile.gender);
 				$("input[name='description']").attr("value",
