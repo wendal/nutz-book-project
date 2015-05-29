@@ -299,8 +299,8 @@
 						  	+"<td>" + rstr + "</td>"
 						  	+"<td>" + pstr + "</td>"
 						  	+"<td> "
-							+ " <button onclick='user_role_update(" + user.id +");'>修改角色</button> "
-							+ " <button onclick='user_permission_update(" + user.id +");'>修改特许权限</button> "
+							+ " <button onclick='user_role_update(" + user.id +");' class='btn btn-default'>修改角色</button> "
+							+ " <button onclick='user_permission_update(" + user.id +");' class='btn btn-default'>修改特许权限</button> "
 							+"</td>"
 							+ "</tr>";
 					list_html += tmp;
@@ -351,9 +351,9 @@
 							  +"<td></td>"
 							  +"<td>" + pstr + "</td>"
 							  +"<td> "
-							  +"<button onclick='role_update(" + role.id +");'>修改描述</button> "
-							  +"<button onclick='role_permission_update(" + role.id +");'>修改权限</button> "
-							  +"<button onclick='role_delete(" + role.id +");'>删除</button> "
+							  +"<button onclick='role_update(" + role.id +");' class='btn btn-default'>修改描述</button> "
+							  +"<button onclick='role_permission_update(" + role.id +");' class='btn btn-default'>修改权限</button> "
+							  +"<button onclick='role_delete(" + role.id +");' class='btn btn-default'>删除</button> "
 							  +"</td>"
 							  + "</tr>";
 					list_html += tmp;
@@ -389,8 +389,8 @@
 						  +"<td>" + (permission.alias ? permission.alias : "" ) + "</td>"
 						  +"<td>" + (permission.description? permission.description : "") + "</td>"
 						  +"<td> "
-						  +"<button onclick='permission_update(" + permission.id +");'>修改</button> "
-						  +"<button onclick='permission_delete(" + permission.id +");'>删除</button> "
+						  +"<button onclick='permission_update(" + permission.id +");' class='btn btn-default'>修改</button> "
+						  +"<button onclick='permission_delete(" + permission.id +");' class='btn btn-default'>删除</button> "
 						  +"</td>"
 						  + "</tr>";
 					list_html += tmp;

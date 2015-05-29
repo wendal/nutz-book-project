@@ -12,6 +12,10 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
+<div class="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>提醒:</strong> 关联动态表单后流程才能启动流程!!
+</div>
 <h2>流程管理</h2>
 	<h4 id="wf_count"></h4>
 	<div class="panel panel-default">
@@ -27,9 +31,12 @@
 		<thead>
 			<tr>
 				<th>#</th>
-				<th>名称</th>
+				<th>定义名词</th>
+				<th>显示名称</th>
+				<th>版本号</th>
 				<th>关联表单</th>
 				<th>最后修改者</th>
+				<td>最后修改时间</td>
 				<th>状态</th>
 				<th>操作</th>
 			</tr>
@@ -38,6 +45,16 @@
 		</tbody>
 	</table>
 </div>
+	<div class="panel panel-default" id="wf_update_div">
+		<form action="#" id="wf_update_form">
+			<input hidden="true" name="processId" id="wf_update_processId">
+			请选择需要关联的表单<select id="wf_form_select" name="formId">
+			
+			</select>
+		</form>
+		<button type="button" onclick="wf_update_submit();">提交</button>
+		<button type="button" onclick="$('#wf_update_div').hide();">取消</button>
+	</div>
 <script type="text/javascript">
 function wf_reload(){
 	$.ajax({
@@ -48,7 +65,7 @@ function wf_reload(){
 			if (re && re.ok) {
 				var data = re.data;
 				console.log(data);
-				$("#form_count").html("共" + data.pager.recordCount + "个流程定义, 总计" + data.pager.pageCount + "页");
+				$("#wf_count").html("共" + data.pager.recordCount + "个流程定义, 总计" + data.pager.pageCount + "页");
 				var list_html = "";
 				console.log(data.list);
 				for (var i = 0; i < data.ps.length; i++) {
@@ -57,6 +74,8 @@ function wf_reload(){
 					var tmp = "<tr>";
 					tmp += "<td>" + wf.id + "</td>";
 					tmp += "<td>" + wf.name + "</td>";
+					tmp += "<td>" + wf.displayName + "</td>";
+					tmp += "<td>" + wf.version + "</td>";
 					// 关联的动态表单
 					if (data.es[i] && data.es[i].form && data.es[i].form.name) {
 						tmp += "<td>" + data.es[i].form.name + "</td>";
@@ -69,7 +88,7 @@ function wf_reload(){
 					} else {
 						tmp += "<td>" + "未知" + "</td>";
 					}
-					
+					tmp += "<td>" + wf.createTime + "</td>";
 					if (wf.state == 0) {
 						tmp += "<td style=\"color: red;\">" + "已删除" + "</td>";
 					} else {
@@ -77,14 +96,19 @@ function wf_reload(){
 					}
 					
 					tmp += "<td>";
-					tmp	+= " <button onclick='wf_start(\"" + wf.id + "\");'>启动</button> ";
-					tmp	+= " <button onclick='wf_update(\"" + wf.id + "\");'>修改定义</button> ";
-					tmp	+= " <button onclick='wf_update_other(\"" + wf.id + "\");'>修改其他属性</button> ";
-					//tmp	+= " <button onclick='wf_preview(\"" + wf.id + "\");'>预览</button> ";
 					if (wf.state == 0) {
-						tmp	+= " <button onclick='wf_resume(\"" + wf.id + "\");'>恢复</button> ";
+						tmp	+= " <button onclick='wf_resume(\"" + wf.id + "\");' class='btn btn-default'>恢复</button> ";
 					} else {
-						tmp	+= " <button onclick='wf_delete(\"" + wf.id + "\");'>删除</button> ";
+						if (data.es[i] && data.es[i].form && data.es[i].form.name) {
+							tmp	+= " <button onclick='wf_start(\"" + wf.id + "\");' class='btn btn-default'>启动</button> ";
+						} else {
+							tmp += " <button onclick='wf_start(\"" + wf.id + "\");' class='btn btn-default' disabled='disabled'>启动</button> ";
+						}
+						
+						tmp	+= " <button onclick='wf_update(\"" + wf.id + "\");' class='btn btn-default'>修改定义</button> ";
+						tmp	+= " <button onclick='wf_update_other(\"" + wf.id + "\");' class='btn btn-default'>修改其他属性</button> ";
+						//tmp	+= " <button onclick='wf_preview(\"" + wf.id + "\");'>预览</button> ";
+						tmp	+= " <button onclick='wf_delete(\"" + wf.id + "\");' class='btn btn-default'>删除</button> ";
 					}
 					tmp += "</td>";
 					tmp += "</tr>";
@@ -117,7 +141,44 @@ function wf_resume(wf_id) {
 		});
 	}
 };
+function wf_update(wf_id) {
+	window.location.href = home_base + "/admin/process/design/" + wf_id;
+};
+function wf_update_other(wf_id) {
+	$.ajax({
+		url : home_base + "/admin/form/list",
+		data : {pageNumber:-1},
+		dataType : "json",
+		success : function(re) {
+			if (re && re.ok) {
+				var data = re.data.list;
+				var tmp = "";
+				for (var int = 0; int < data.length; int++) {
+					var form = data[int];
+					tmp += "<option value=\"" + form.id + "\">" + form.name +"</option>\n";
+				}
+				$("#wf_form_select").html(tmp);
+				$("#wf_update_processId").attr("value", wf_id);
+				$("#wf_update_div").show();
+			} else {
+				alert(re.msg);
+			}
+		}
+	});
+};
+function wf_update_submit() {
+	$.ajax({
+		url : home_base + "/admin/process/ext/update",
+		data : $("#wf_update_form").serialize(),
+		success : function(){
+			$("#wf_update_div").hide();
+			wf_reload();
+		}
+	});
+}
 function myInit(args) {
+	$("#wf_update_div").hide();
 	wf_reload();
 };
+
 </script>

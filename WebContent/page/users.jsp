@@ -68,9 +68,9 @@
 					tmp += "<td>" + user.name + "</td>";
 					tmp += "<td>";
 					tmp	+= " <button onclick='user_update(" + user.id
-							+ ");'>修改密码</button> "
+							+ ");' class='btn btn-default'>修改密码</button> "
 							+ " <button onclick='user_delete(" + user.id
-							+ ");'>删除</button> ";
+							+ ");' class='btn btn-default'>删除</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;

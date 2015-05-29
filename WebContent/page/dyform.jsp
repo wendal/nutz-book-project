@@ -54,10 +54,10 @@ function dform_reload(){
 					tmp += "<td>" + form.id + "</td>";
 					tmp += "<td>" + form.name + "</td>";
 					tmp += "<td>";
-					tmp	+= " <button onclick='form_update(" + form.id + ");'>修改</button> ";
-					tmp	+= " <button onclick='form_preview(" + form.id + ");'>预览</button> ";
-					tmp	+= " <button onclick='form_clone(" + form.id + ");'>克隆</button> ";
-					tmp	+= " <button onclick='form_delete(" + form.id + ");'>删除</button> ";
+					tmp	+= " <button onclick='form_update(" + form.id + ");' class='btn btn-default'>修改</button> ";
+					tmp	+= " <button onclick='form_preview(" + form.id + ");' class='btn btn-default'>预览</button> ";
+					tmp	+= " <button onclick='form_clone(" + form.id + ");' class='btn btn-default'>克隆</button> ";
+					tmp	+= " <button onclick='form_delete(" + form.id + ");' class='btn btn-default'>删除</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;

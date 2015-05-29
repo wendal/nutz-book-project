@@ -1,3 +1,5 @@
+<%@page import="org.nutz.json.Json"%>
+<%@page import="org.snaker.engine.entity.Process"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -22,33 +24,54 @@
 		<script src="${ctx}/styles/js/snaker/snaker.editors.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			$(function() {
-				var json="${process }";
-				var model = "";
-				if(json) {
-					model=eval("(" + json + ")");
-				}
-				$('#snakerflow').snakerflow({
-					basePath : "${ctx}/styles/js/snaker/",
-                    ctxPath : "${ctx}",
-					restore : model,
-                    formPath : "forms/",
-					tools : {
-						save : {
-							onclick : function(data) {
-								saveModel(data);
-							}
+				var pid = "${processId}";
+				if (pid && pid != "") {
+					$.ajax({
+						url : "${ctx}/admin/process/json/" + pid,
+						//dataType : "",
+						success: function(model) {
+							// TODO 这里是因为后台生成的json是非标准的,高版本的jquery无法直接识别!!
+							model = eval("(" + model + ")");
+							console.log(model);
+							$('#snakerflow').snakerflow({
+								basePath : "${ctx}/styles/js/snaker/",
+			                    ctxPath : "${ctx}",
+								restore : model,
+			                    formPath : "forms/",
+								tools : {
+									save : {
+										onclick : function(data) {
+											saveModel(data);
+										}
+									}
+								}
+							});
+						},
+						fail : function(re, re2) {
+							console.log(re, re2);
+						}, error : function(re, re2) {
+							console.log(re, re2);
 						}
-					}
-				});
+					});
+				}
 			});
 			
 			function saveModel(data) {
 				//alert(data);
+				var savetype = "old";
+				if ("${processId}" != "") {
+					if (confirm("覆盖已有流程请按确定,部署为新版本请按取消")) {
+						savetype = "new";
+					}
+				}
+				if (!confirm("确定要提交吗?")) {
+					return;
+				}
 				console.log(data);
 				$.ajax({
 					type:'POST',
-					url:"${ctx}/snaker/process/deploy",
-					data : {model:data, id:"${processId}"},
+					url:"${ctx}/admin/process/deploy",
+					data : {model:data, id:"${processId}", savetype : savetype},
 					async: false,
 					globle:false,
 					dataType : "json",
@@ -58,7 +81,8 @@
 					},
 					success: function(data){
 						if(data == true) {
-							window.location.href = "${ctx}/snaker/process/list";
+							alert("保存成功!");
+							//window.location.href = "${ctx}/snaker/process/list";
 						} else {
 							alert('数据处理错误！');
 						}
