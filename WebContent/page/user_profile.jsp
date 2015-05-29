@@ -11,48 +11,63 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 
-<div class="container">
-	<div class="row">
-		头像 <img alt="用户头像" src="${base}/user/profile/avatar">
-		<p />
-		<form action="${base}/user/profile/avatar" method="post"
-			enctype="multipart/form-data">
-			头像文件 <input type="file" name="file">
+<div class="row">
+	<div class="col-xs-3 col-sm-2">
+		<img alt="用户头像" src="${base}/user/profile/avatar" class="img-circle">
+		<form action="${base}/user/profile/avatar" method="post" enctype="multipart/form-data" class="form-group">
+			  <div class="form-group">
+    			<label for="exampleInputFile">头像文件</label>
+    			<input type="file" id="exampleInputFile" name="file">
+    			<p class="help-block">可上传100kb以内的图片文件</p>
+  			</div>
 			<button type="submit" class="btn btn-default">更新头像</button>
 		</form>
-		<p />
 	</div>
-<div class="row">
-	<form action="#" id="user_profile" method="post">
-		<div class="input-group">
-			<span class="input-group-addon">昵称</span>
-			<input name="nickname" value="${user_profile.nickname}" class="form-control">
+	<div class="col-xs-6 col-sm-4">
+	<form action="#" id="user_profile" method="post" class="form-horizontal">
+		<label class="form-group">个人信息</label>
+		<div class="form-group">
+			<label for="input_nickname" class="col-sm-2 control-label">昵称</label>
+    		<div class="col-sm-10">
+    			<input name="nickname" id="input_nickname" class="form-control" placeholder="也许填一下真实名称">
+    		</div>
 		</div>
-		<div class="input-group">
-			<span class="input-group-addon">邮箱</span>
-			<input name="email" value="${user_profile.email}" class="form-control">
-		</div>
-		<div class="input-group">
-			<span id="user_emailChecked"></span>
-			<div id="send_email_check">
+		<div class="form-group">
+			<label for="input_email" class="col-sm-2 control-label">邮箱</label>
+    		<div class="col-sm-4">
+				<input name="email" class="form-control" id="input_email" placeholder="请填真实邮箱" type="email">
+			</div>
+			<label id="user_emailChecked" class="col-sm-4"></label>
+			<div id="send_email_check" class="col-sm-4">
 				<button type="button" onclick="send_email_check();return false;" class="btn btn-default">发送验证邮件</button>
 			</div>
 		</div>
-		<div class="input-group">
-			<span class="input-group-addon">性别</span>
-			<input name="gender" value="${user_profile.gender}" class="form-control">
+		<div class="form-group">
+			<label for="input_gender" class="col-sm-2 control-label">性别</label>
+			<div class="col-sm-10">
+				<select name="gender" class="form-control" id="input_gender">
+					<option value="">未知</option>
+					<option value="male">男</option>
+					<option value="female">女</option>
+					<option value="3rd">第三性别</option>
+				</select>
+			</div>
 		</div>
-		<div class="input-group">
-			<span class="input-group-addon">自我介绍</span>
-			<input name="description" value="${user_profile.description}" class="form-control">
+		<div class="form-group">
+			<label for="input_description" class="col-sm-2 control-label">自我介绍</label>
+			<div class="col-sm-10">
+				<input name="description" class="form-control" id="input_description" placeholder="写点什么吧">
+			</div>
 		</div>
-		<div class="input-group">
-			<span class="input-group-addon">地理位置</span>
-			<input name="location" value="${user_profile.location}" class="form-control">
+		<div class="form-group">
+			<label for="input_location" class="col-sm-2 control-label">地理位置</label>
+			<div class="col-sm-10">
+				<input name="location" class="form-control"  id="input_location" placeholder="where are you?">
+			</div>
 		</div>
 	</form>
 	<button type="button" id="user_profile_btn"  class="btn btn-default">更新</button>
-</div>
+	</div>
 </div>
 
 
@@ -104,9 +119,17 @@
 						$("#send_email_check").hide();
 					}
 				}
-				$("input[name='gender']").attr("value", profile.gender);
-				$("input[name='description']").attr("value",
-						profile.description);
+				var gender = profile.gender;
+				if ("male" == gender) {
+					$("option[value='male']").attr("selected", "selected");
+				}
+				else if ("female" == gender) {
+					$("option[value='female']").attr("selected", "selected");
+				}
+				else if ("3rd" == gender) {
+					$("option[value='3rd']").attr("selected", "selected");
+				};
+				$("input[name='description']").attr("value", profile.description);
 				$("input[name='location']").attr("value", profile.location);
 			}
 		});
