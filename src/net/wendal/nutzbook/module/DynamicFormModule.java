@@ -3,6 +3,7 @@ package net.wendal.nutzbook.module;
 import net.wendal.nutzbook.bean.form.DyForm;
 import net.wendal.nutzbook.service.DynamicFormService;
 
+import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -23,7 +24,7 @@ public class DynamicFormModule extends BaseModule {
 
 	private static final Log log = Logs.get();
 	
-	@Inject(optional=true) 
+	@Inject
 	protected DynamicFormService dynamicFormService;
 	
 	@At("/")
@@ -31,16 +32,27 @@ public class DynamicFormModule extends BaseModule {
 	public void index(){}
 	
 	//---------------------- 维护方法
+	@At
 	public Object list(@Param("..")Pager pager, @Param("query")String query) {
-		return ajaxOk(dynamicFormService.list(query, pager));
+		if (pager == null)
+			pager = dao.createPager(1, 10);
+		pager.setRecordCount(dynamicFormService.count(query));
+		return ajaxOk(new QueryResult(dynamicFormService.list(query, pager), pager));
 	}
-	
+
+	@At
 	public void delete(long id) {
 		dynamicFormService.delete(id);
 	}
-	
+
+	@At
 	public void update(DyForm form) {
 		dynamicFormService.update(form);
+	}
+	
+	@At
+	public void clone(long id, String name) {
+		dynamicFormService.clone(id, name);
 	}
 	
 	
@@ -57,6 +69,19 @@ public class DynamicFormModule extends BaseModule {
 			return new HttpStatusView(404);
 		}
 		return form;
+	}
+	
+	@At
+	public Object preview(@Param("parse_form")String parse_form) {
+		DyForm form = Json.fromJson(DyForm.class, parse_form);
+		log.debug(Json.toJson(form));
+		return dynamicFormService.html(form);
+	}
+	
+	@At("/preview/?")
+	public Object preview(long id) {
+		DyForm form = dynamicFormService.fetch(id);
+		return ajaxOk(dynamicFormService.html(form));
 	}
 	
 	@At

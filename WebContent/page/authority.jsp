@@ -672,7 +672,7 @@
 		$.ajax({
 			url : home_base + "/admin/authority/permission/delete",
 			type : "POST",
-			data : JSON.stringify({permission_id}),
+			data : JSON.stringify({id:permission_id}),
 			success : function() {
 				loadPermissions();
 				$("#permission_modify").hide();

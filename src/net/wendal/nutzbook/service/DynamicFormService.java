@@ -24,11 +24,13 @@ public interface DynamicFormService {
 	
 	void update(DyForm form);
 	
-	DyForm clone(long id);
+	DyForm clone(long id, String name);
 	
 	// 表单数据相关
 	
 	long insertFormData(DyForm form, Map<String, Object> data);
 	
 	Map<String, Object> fetchFormData(long id);
+
+	int count(String query);
 }
