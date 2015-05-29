@@ -82,7 +82,7 @@
                 label: '流程管理',
                 icon: 'md-insert-chart',
                 type: 'url',
-                url: '/snakerflow.jsp'
+                url: '/workflow.jsp'
             }],
             actions: {
                 'login': function () {
