@@ -10,7 +10,7 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
-<div class="container">
+
 	<h2>Git库管理</h2>
 	<div class="panel panel-default">
 		<div class="panel-heading">Git库一览</div>
@@ -26,7 +26,7 @@
 			<tbody id="git_repo_list"></tbody>
 		</table>
 	</div>
-</div>
+
 
 <script type="text/javascript">
 	function myInit(args) {

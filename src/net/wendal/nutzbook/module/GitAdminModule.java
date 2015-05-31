@@ -44,7 +44,7 @@ public class GitAdminModule extends BaseModule {
 
 	@RequiresUser
 	@At
-	public Object list(@Attr("me")long userId) {
+	public Object list(@Attr("me")int userId) {
 		User me = dao.fetch(User.class, userId);
 		File userGitHome = new File(root, me.getName());
 		if (!userGitHome.exists()) {
@@ -71,7 +71,7 @@ public class GitAdminModule extends BaseModule {
 	
 	@At
 	@RequiresUser
-	public Object create(@Attr("me")long userId, @Param("name")String name) {
+	public Object create(@Attr("me")int userId, @Param("name")String name) {
 		// TODO 限制数量
 		User me = dao.fetch(User.class, userId);
 		if (Strings.isBlank(name) || !name.matches("[a-zA-Z0-9\\-_]{3,20}")) {
@@ -93,7 +93,7 @@ public class GitAdminModule extends BaseModule {
 	
 	@At
 	@RequiresUser
-	public Object fix(@Attr("me")long userId, @Param("name")String name) {
+	public Object fix(@Attr("me")int userId, @Param("name")String name) {
 		User me = dao.fetch(User.class, userId);
 		if (Strings.isBlank(name) || !name.matches("[a-zA-Z0-9\\-_]{3,20}")) {
 			return ajaxFail("名字不合法");
@@ -109,7 +109,7 @@ public class GitAdminModule extends BaseModule {
 	
 	@At
 	@RequiresUser
-	public Object delete(@Attr("me")long userId, @Param("name")String name) {
+	public Object delete(@Attr("me")int userId, @Param("name")String name) {
 		User me = dao.fetch(User.class, userId);
 		if (Strings.isBlank(name) || !name.matches("[a-zA-Z0-9\\-_]{3,20}")) {
 			return ajaxFail("名字不合法");
@@ -122,7 +122,7 @@ public class GitAdminModule extends BaseModule {
 	
 	@At("/update/public")
 	@RequiresUser
-	public Object asPublic(@Attr("me")long userId, @Param("name")String name, @Param("public")boolean flag) {
+	public Object asPublic(@Attr("me")int userId, @Param("name")String name, @Param("public")boolean flag) {
 		User me = dao.fetch(User.class, userId);
 		if (Strings.isBlank(name) || !name.matches("[a-zA-Z0-9\\-_]{3,20}")) {
 			return ajaxFail("名字不合法");

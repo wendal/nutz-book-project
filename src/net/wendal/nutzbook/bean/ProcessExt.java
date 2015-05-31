@@ -30,6 +30,9 @@ public class ProcessExt {
 	@Column("u_id")
 	private long userId;
 	
+	@Column("svg")
+	private byte[] svg;
+	
 	@One(target=DyForm.class, field="formId")
 	private DyForm form;
 	
@@ -74,6 +77,14 @@ public class ProcessExt {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public byte[] getSvg() {
+		return svg;
+	}
+
+	public void setSvg(byte[] svg) {
+		this.svg = svg;
 	}
 	
 	

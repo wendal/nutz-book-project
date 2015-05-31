@@ -35,7 +35,7 @@ public class PageModule {
 	@RequiresAuthentication
 	@At("/home")
 	@Ok("jsp:jsp.home")
-	public Object home(@Attr(scope=Scope.SESSION, value="me")long uid) {
+	public Object home(@Attr(scope=Scope.SESSION, value="me")int uid) {
 		UserProfile profile = Daos.ext(dao, FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, uid);
 		if (profile == null)
 			profile = new UserProfile();

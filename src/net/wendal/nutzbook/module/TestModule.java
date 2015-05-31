@@ -19,4 +19,10 @@ public class TestModule {
 		return users;
 	}
 	
+	
+	@Ok("raw:html")
+	@At
+	public String rawHtml(){
+		return "<html><head></head><body>123</body></html>";
+	}
 }

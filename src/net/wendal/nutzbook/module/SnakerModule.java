@@ -11,6 +11,7 @@ import net.wendal.nutzbook.snakerflow.SnakerHelper;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -47,17 +48,42 @@ public class SnakerModule extends BaseModule {
 		if (Strings.isBlank(pid))
 			return null;
 		org.snaker.engine.entity.Process p = snakerEngine.process().getProcessById(pid);
-		return SnakerHelper.getModelJson(p.getModel());
+		String json = SnakerHelper.getModelJson(p.getModel());
+		json = Json.toJson(Json.fromJson(json));
+		log.debug("model json=\n" + json);
+		return json;
 	}
 
+	@At("/xml/?")
+	@Ok("raw")
+	public Object processXml(String pid) {
+		if (Strings.isBlank(pid))
+			return null;
+		org.snaker.engine.entity.Process p = snakerEngine.process().getProcessById(pid);
+		return p.getDBContent();
+	}
+	
+	//Map<String, String> svgs = new HashMap<String, String>();
+	
+	@At("/svg/?")
+	@Ok("raw:image/svg+xml")
+	public Object processSvg(String pid) {
+		ProcessExt ext = dao.fetch(ProcessExt.class, pid);
+		if (ext != null && ext.getSvg() != null)
+			return new String(ext.getSvg()).replaceAll("width=\"2880\" height=\"1378.5\"", "width=\"100%\" height=\"100%\"");
+		return null;
+	}
+	
 	@Ok("json")
 	@At("/deploy")
 	public boolean processDeploy(@Param("model")String model,
 								 @Param("id")String id,
 								 @Param("savetype")String savetype,
-								 @Attr("me")long userId) {
+								 @Attr("me")int userId,
+								 @Param("svg")String svg) {
+		//log.debug("SVG = " + svg);
 		try {
-			log.debug("snaker xml=\n" + model);
+			//log.debug("snaker xml=\n" + model);
 			String pid = id;
 			if (Strings.isBlank(id) || "new".equals(savetype)) {
 				pid = snakerEngine.process().deploy(StreamHelper.getStreamFromString(model));
@@ -69,11 +95,15 @@ public class SnakerModule extends BaseModule {
 				ext = new ProcessExt();
 				ext.setProcessId(pid);
 				ext.setUserId(userId);
+				ext.setSvg(svg.getBytes());
 				dao.insert(ext);
 			} else {
+				ext.setSvg(svg.getBytes());
 				ext.setUserId(userId);
 				dao.update(ext);
 			}
+			//System.out.println("PUT: " + pid + "... " + svg);
+			//svgs.put(pid, svg);
 			return true;
 		} catch (Exception e) {
 			log.info("deploy snakerflow xml fail", e);
@@ -113,7 +143,7 @@ public class SnakerModule extends BaseModule {
 	}
 	
 	@At("/ext/update")
-	public void updateProcessExt(@Param("..")ProcessExt ext, @Attr("me")long userId) {
+	public void updateProcessExt(@Param("..")ProcessExt ext, @Attr("me")int userId) {
 		if (ext == null)
 			return;
 		if (ext.getProcessId() == null)

@@ -3,9 +3,6 @@ package net.wendal.nutzbook.module;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -63,20 +60,4 @@ public class QrcodeModule extends BaseModule {
 		}
 	}
 	
-	@At("/cs")
-	@Ok("raw:png")
-	public Object crossScreen(@Param("url")String url, HttpServletRequest req) {
-		if (Strings.isBlank(url)) {
-			String tmp = req.getRequestURL().toString();
-			url = tmp.substring(0, tmp.indexOf("/qrcode/cs"));
-		}
-		for (Cookie cookie : req.getCookies()) {
-			if (cookie.getName().equalsIgnoreCase("JSESSIONID")) {
-				url += ";jsessionid=" + cookie.getValue();
-				break;
-			}
-		}
-		log.debug("URL= " + url);
-		return get(url, 256, 256);
-	}
 }

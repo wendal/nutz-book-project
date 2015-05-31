@@ -25,6 +25,9 @@
     <script src="${base}/rs/css/mdcss/md.js"></script>
     <link rel="stylesheet" type="text/css" href="${base}/rs/css/mdcss/page/home.css">
     <script src="${base}/rs/css/mdcss/page/home.js"></script>
+    
+    <!-- 弹出层layer -->
+	<script src="${base}/rs/layer/layer.min.js" type="text/javascript"></script>
     <script>
         // home页的配置信息
         _md_page_home_ = {
@@ -46,6 +49,12 @@
                 icon: 'md-person',
                 type: 'action',
                 action: 'logout'
+            },
+            {
+                label: '跨屏二维码',
+                icon: 'md-person',
+                type: 'action',
+                action: 'cs_qr'
             }
             ],
             nav_main: [{
@@ -67,7 +76,12 @@
                 label: '系统配置',
                 icon: 'md-insert-chart',
                 type: 'url',
-                url: '/sys.jsp'
+                url: '/sys_configure.jsp'
+            }, {
+                label: '系统状态',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/sys_status.jsp'
             }, {
                 label: 'Git配置',
                 icon: 'md-insert-chart',
@@ -90,6 +104,14 @@
                 },
                 'logout' : function() {
                 	window.location.href = home_base + "/user/logout";
+                },
+                'cs_qr' : function() {
+                	window.$mp.home.nav.close();
+                	setTimeout(function() {
+                		var tmp = "<img src='${base}/cs/qr?url=";
+                		tmp += encodeURIComponent(window.location.href) +"'>";
+                    	$.layer({title:"跨屏二维码有效期2分钟", type:1, time:100, page:{html:tmp}, area : ['256px', '291px']}); // 256+35 = 291
+					}, 300);
                 }
             }
         };

@@ -10,7 +10,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 
-<div class="container">
+
 	<h2>用户管理</h2>
 	<div id="user_add" class="panel panel-default">
 		<p id="user_count"></p>
@@ -44,7 +44,6 @@
 			</table>
 		</div>
 	</div>
-</div>
 
 <script type="text/javascript">
 	var pageNumber = 1;

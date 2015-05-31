@@ -27,7 +27,7 @@
 	<div>
 		
 		<!-- 用户列表 -->
-		<div id="user_role" class="container">
+		<div id="user_role">
 			<h2>用户管理</h2>
 			<p id="user_count"></p>
 			<form action="#" id="user_query">
@@ -57,7 +57,7 @@
 
 
 		<!-- 角色列表 -->
-		<div id="roles" class="container">
+		<div id="roles">
 			<h2>角色管理</h2>
 			<p id="role_count"></p>
 			<form action="#" id="role_query">
@@ -87,7 +87,7 @@
 			</div>
 		</div>
 		<!-- 权限列表 -->
-		<div id="permissions" class="container">
+		<div id="permissions">
 			<h2>权限管理</h2>
 			<p id="permission_count"></p>
 			<form action="#" id="permission_query">

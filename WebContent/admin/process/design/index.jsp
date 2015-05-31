@@ -58,9 +58,10 @@
 			
 			function saveModel(data) {
 				//alert(data);
+				console.log(document.getElementById('snakerflow').innerHTML);
 				var savetype = "old";
 				if ("${processId}" != "") {
-					if (confirm("覆盖已有流程请按确定,部署为新版本请按取消")) {
+					if (confirm("部署为新版本请按确定,覆盖老版本请按取消")) {
 						savetype = "new";
 					}
 				}
@@ -71,7 +72,7 @@
 				$.ajax({
 					type:'POST',
 					url:"${ctx}/admin/process/deploy",
-					data : {model:data, id:"${processId}", savetype : savetype},
+					data : {model:data, id:"${processId}", savetype : savetype, svg : document.getElementById('snakerflow').innerHTML},
 					async: false,
 					globle:false,
 					dataType : "json",

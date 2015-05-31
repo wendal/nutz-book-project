@@ -87,7 +87,7 @@ public class DynamicFormModule extends BaseModule {
 	@At
 	public Object save(@Param("type")String type, @Param("formid")Long formid, 
 			@Param("form_name")String form_name, @Param("parse_form")String parse_form,
-			@Attr("me")long userId){
+			@Attr("me")int userId){
 		
 		DyForm form = Json.fromJson(DyForm.class, parse_form);
 		log.debug(Json.toJson(form));

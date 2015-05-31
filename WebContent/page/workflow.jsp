@@ -12,6 +12,9 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
+<!-- 弹出层layer -->
+<script src="${ctx}/rs/layer/layer.min.js" type="text/javascript"></script>
+
 <div class="alert">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     <strong>提醒:</strong> 关联动态表单后流程才能启动流程!!
@@ -64,13 +67,13 @@ function wf_reload(){
 		success : function(re) {
 			if (re && re.ok) {
 				var data = re.data;
-				console.log(data);
+				//console.log(data);
 				$("#wf_count").html("共" + data.pager.recordCount + "个流程定义, 总计" + data.pager.pageCount + "页");
 				var list_html = "";
-				console.log(data.list);
+				//console.log(data.list);
 				for (var i = 0; i < data.ps.length; i++) {
 					var wf = data.ps[i];
-					console.log(wf);
+					//console.log(wf);
 					var tmp = "<tr>";
 					tmp += "<td>" + wf.id + "</td>";
 					tmp += "<td>" + wf.name + "</td>";
@@ -96,6 +99,7 @@ function wf_reload(){
 					}
 					
 					tmp += "<td>";
+					tmp	+= " <button onclick='wf_preview(\"" + wf.id + "\");' class='btn btn-default'>预览</button> ";
 					if (wf.state == 0) {
 						tmp	+= " <button onclick='wf_resume(\"" + wf.id + "\");' class='btn btn-default'>恢复</button> ";
 					} else {
@@ -107,7 +111,6 @@ function wf_reload(){
 						
 						tmp	+= " <button onclick='wf_update(\"" + wf.id + "\");' class='btn btn-default'>修改定义</button> ";
 						tmp	+= " <button onclick='wf_update_other(\"" + wf.id + "\");' class='btn btn-default'>修改其他属性</button> ";
-						//tmp	+= " <button onclick='wf_preview(\"" + wf.id + "\");'>预览</button> ";
 						tmp	+= " <button onclick='wf_delete(\"" + wf.id + "\");' class='btn btn-default'>删除</button> ";
 					}
 					tmp += "</td>";
@@ -175,10 +178,20 @@ function wf_update_submit() {
 			wf_reload();
 		}
 	});
-}
+};
+function wf_preview(form_id) {
+	$.ajax({
+		url : home_base + "/admin/process/svg/" + form_id,
+		dataType : "xml",
+		success : function(re) {
+			//alert("...");
+			layer.alert('怎样显示SVG啊');
+		}
+	});
+};
+
 function myInit(args) {
 	$("#wf_update_div").hide();
 	wf_reload();
 };
-
 </script>
