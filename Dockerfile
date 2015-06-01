@@ -16,7 +16,7 @@ RUN cd $CATALINA_HOME \
 RUN cd $CATALINA_HOME/webapps && wget http://nutz.cn/nutzbook/rs/nutzbook.war \
 	&& unzip -d ROOT nutzbook.war && rm nutzbook.war
 
-RUN echo "db.url=jdbc:mysql://10.10.26.58:3306/x1klIZUwVqJXODpH" >> $CATALINA_HOME/webapps/ROOT/WEB-INF/classes/custom/db.properties && \
+RUN echo "\ndb.url=jdbc:mysql://10.10.26.58:3306/x1klIZUwVqJXODpH" >> $CATALINA_HOME/webapps/ROOT/WEB-INF/classes/custom/db.properties && \
 	echo "db.username=udKsC4vkxOFB0YDr" >> $CATALINA_HOME/webapps/ROOT/WEB-INF/classes/custom/db.properties && \
 	echo "db.password=pqxtomWDCPEuKhHOp" >> $CATALINA_HOME/webapps/ROOT/WEB-INF/classes/custom/db.properties && \
 	echo "db.maxActive=10" >> $CATALINA_HOME/webapps/ROOT/WEB-INF/classes/custom/db.properties
