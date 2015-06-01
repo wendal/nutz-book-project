@@ -14,11 +14,11 @@ RUN cd $CATALINA_HOME \
 	&& rm tomcat.tar.gz* && rm -fr /usr/local/tomcat/webapps/*
 
 RUN cd $CATALINA_HOME/webapps && wget http://nutz.cn/nutzbook/rs/nutzbook.war \
-	&& unzip -d ROOT nutzbook.war && rm -y nutzbook.war
+	&& unzip -d ROOT nutzbook.war && rm nutzbook.war
 	
 WORKDIR $CATALINA_HOME
 
 VOLUME /usr/local/tomcat/webapps
-	
+
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
