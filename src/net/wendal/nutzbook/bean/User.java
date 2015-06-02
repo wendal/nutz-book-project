@@ -35,6 +35,9 @@ public class User extends BasePojo implements Serializable {
 	@One(target=UserProfile.class, field="id", key="userId")
 	protected UserProfile profile;
 	
+	// 非数据库字段
+	public String displayName;
+	
 	public int getId() {
 		return id;
 	}
@@ -84,5 +87,11 @@ public class User extends BasePojo implements Serializable {
 	}
 	public void setProfile(UserProfile profile) {
 		this.profile = profile;
+	}
+	public String getDisplayName() {
+		return displayName;
+	}
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 }

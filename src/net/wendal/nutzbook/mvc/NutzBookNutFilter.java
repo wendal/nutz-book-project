@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutFilter;
 
 public class NutzBookNutFilter extends NutFilter {
@@ -30,6 +31,7 @@ public class NutzBookNutFilter extends NutFilter {
 			String uri = ((HttpServletRequest) req).getRequestURI();
 			for (String prefix : prefixs) {
 				if (uri.startsWith(prefix)) {
+					Mvcs.updateRequestAttributes((HttpServletRequest) req);
 					chain.doFilter(req, resp);
 					return;
 				}

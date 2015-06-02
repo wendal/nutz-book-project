@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
@@ -60,10 +59,22 @@ pageEncoding="UTF-8"%>
             setTimeout(function () {
                 $('input[name=username]').focus();
             }, 500);
+
+            $("#reg_button").click(function(){
+            	alert("尚未实现");
+            });
+            $("#github_login_button").click(function(){
+            	window.location.href = base + "/oauth/github";
+            });
+            $("#get_password_button").click(function(){
+            	alert("尚未实现");
+            });
+            if (console) {
+            	console.log("hi,这么巧? 本站的源码在 https://github.com/wendal/nutz-book-project")
+            };
         });
         function next_captcha() {
-            $("#captcha_img").attr("src",
-                    "${base}/captcha/next?w=120&h=48&_=" + new Date().getTime());
+            $("#captcha_img").attr("src", "${base}/captcha/next?w=120&h=48&_=" + new Date().getTime());
         }
     </script>
 </head>
@@ -115,14 +126,19 @@ pageEncoding="UTF-8"%>
                 <span class="md-button-label">登 陆</span>
             </button>
         </div>
-    </form>
-    <form class="body" id="logoutForm" action="${base}/user/logout">
         <div>
-            <h1>当前用户: <b><%=session.getAttribute("me")%></b></h1>
+            <button id="reg_button" class="md-button raised-button is-primary" type="button">
+                <span class="md-button-label">注册</span>
+            </button>
         </div>
         <div>
-            <button id="logout_button" class="md-button raised-button is-primary" type="submit">
-                <span class="md-button-label">登 出</span>
+            <button id="github_login_button" class="md-button raised-button is-primary" type="button">
+                <span class="md-button-label">Github登陆</span>
+            </button>
+        </div>
+        <div>
+            <button id="get_password_button" class="md-button raised-button is-primary" type="button">
+                <span class="md-button-label">找回密码</span>
             </button>
         </div>
     </form>

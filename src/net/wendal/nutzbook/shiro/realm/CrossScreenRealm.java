@@ -7,8 +7,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAccount;
-import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.cache.CacheManager;
 import org.nutz.lang.Lang;
 
 /**
@@ -33,22 +31,8 @@ public class CrossScreenRealm extends NutDaoRealm {
 	 */
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
 	}
-	
+
 	public CrossScreenRealm() {
-        this(null, null);
-    }
-
-    public CrossScreenRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
-        super(cacheManager, matcher);
-        setAuthenticationTokenClass(CrossScreenUserToken.class);
-    }
-
-    public CrossScreenRealm(CacheManager cacheManager) {
-    	this(cacheManager, null);
-    }
-
-    public CrossScreenRealm(CredentialsMatcher matcher) {
-    	this(null, matcher);
-    }
-
+		setAuthenticationTokenClass(CrossScreenUserToken.class);
+	}
 }
