@@ -47,19 +47,20 @@
 
 <div class="container-fluid" style="text-align: left; padding-right: 10px; padding-left: 10px;" >
 	<div id="top_nav" class="row">
-		<div class="col-md-2"></div>
+		<div class="col-md-1"></div>
 		<div class="col-md-1">
 			<img alt="" src="${base}/rs/favicon.ico" style="width: 30px; height: 30px;">
 		</div>
 		<div class="col-md-2">
 			<input type="search" class="form-control" id="search_input" placeholder="输入需要搜索的关键字">
 		</div>
-		<div class="col-md-3"></div>
-		<div class="col-md-2" id="nav_menu">
+		<div class="col-md-2"></div>
+		<div class="col-md-3" id="nav_menu">
 			<a href="${base}/ask/" class="btn btn-primary">首页</a>
 			<a href="${base}/ask/newbeer.jsp" class="btn btn-primary">新手入门</a>
 			<a href="#" class="btn btn-primary">关于</a>
 			<shiro:authenticated>
+				<a href="#" class="btn btn-primary">收件箱</a>
 				<a href="${base}/user/logout" class="btn btn-primary">登出</a>
 			</shiro:authenticated>
 			<shiro:notAuthenticated>
@@ -70,6 +71,7 @@
 				<a href="${base}/home" class="btn btn-primary">管理后台</a>
 			</shiro:hasRole>
 		</div>
+		<div class="col-md-1"></div>
 	</div>
 	<div class="row">
 		<div class="col-md-2"></div>
@@ -92,7 +94,7 @@
 				</div>
 				<!-- 作者及一般信息 -->
 				<div>
-					<div><h4>作者:${topic.user.displayName}</h4></div>
+					<div><h4>作者:${topic.user.name}</h4></div>
 					<div><h4>浏览:${topic.vistors}次</h4></div>
 				</div>
 				<!-- 文章内容 -->
@@ -126,16 +128,58 @@
 			</shiro:notAuthenticated>
 		</div>
     </div>
-	
+    
+	<!-- 
+提问弹出层
+ -->    
+    <div id="ask_md_div" style="display: none;" class="row">
+    	<div class="col-md-1"></div>
+        	<div id="layout" class="col-md-8">
+        		<div class="row">
+            		<div class="col-md-8">
+                		<h1>我要提问:</h1>
+                		<input type="text" id="new_topic_title">
+                		<button id="ask_submit_button">提交</button>
+            		</div>
+            		<div id="test-editormd" class="col-md-8">
+            			<!-- 里面放示例 -->
+                		<textarea style="display:none;" id="new_topic_content">
+#### 环境
+
+- nutz版本
+- 系统
+- java版本
+- 特别值得一提的jar
+
+#### 代码片段
+
+```java
+@At
+public void insert(@Param("...")Pet pet) {
+    dao.insert(pet);
+}
+```
+
+### 日志截取
+
+```log
+DEBUG - loading ioc js config from [dao.js]
+```
+</textarea>
+            	</div>
+        	</div>
+        </div>
+		<div class="col-md-1"></div>
+	</div>
 </div>
 	
 <!-- 列表table的模板 -->
-<script type="text/laytpl" id="ask_table_tpl">
+<script type="text/laytpl" id="ask_table_tpl" style="display: none;">
 {{# for(var i = 0, len = d.list.length; i < len; i++){ }}
 <div class="row">
 	<div class="col-md-1">
-		<a class="user_avatar pull-left" href="/u/{{ d.list[i].user.id}}">
-			<img src="${base}/user/profile/u/{{ d.list[i].user.id}}/avatar" title="{{ d.list[i].user.name}}" style="width: 30px; height: 30px;" class="img-rounded">
+		<a class="user_avatar pull-left" href="${base}/u/{{ d.list[i].user.name}}">
+			<img src="${base}/u/{{ d.list[i].user.name}}/avatar" title="{{ d.list[i].user.name}}" style="width: 30px; height: 30px;" class="img-rounded">
   		</a>
 	</div>
 
@@ -161,8 +205,8 @@
 {{# for(var i = 0, len = d.list.length; i < len; i++){ }}
 <div class="row jumbotron" style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;" >
 	<div class="col-md-1">
-		<a class="user_avatar pull-left" href="/u/{{ d.list[i].user.id}}">
-			<img src="${base}/user/profile/u/{{ d.list[i].user.id}}/avatar" title="{{ d.list[i].user.name}}" style="width: 30px; height: 30px;" class="img-rounded">
+		<a class="user_avatar pull-left" href="${base}/u/{{ d.list[i].user.name}}">
+			<img src="${base}/u/{{ d.list[i].user.name}}/avatar" title="{{ d.list[i].user.name}}" style="width: 30px; height: 30px;" class="img-rounded">
   		</a>
 	</div>
 	<div id="reply_md_{{ i}}" class="col-md-5">
@@ -173,44 +217,7 @@
 </script>
     
     
-<!-- 
-提问弹出层
- -->    
-    <div id="ask_md_div" style="display: none;" class="container">
-        <div id="layout">
-            <header>
-                <h1>我要提问:</h1>
-                <input type="text" id="new_topic_title">
-                <button id="ask_submit_button">提交</button>
-            </header>
-            <div id="test-editormd">
-            	<!-- 里面放示例 -->
-                <textarea style="display:none;" id="new_topic_content">
-#### 环境
 
-- nutz版本
-- 系统
-- java版本
-- 特别值得一提的jar
-
-#### 代码片段
-
-```java
-@At
-public void insert(@Param("...")Pet pet) {
-    dao.insert(pet);
-}
-```
-
-### 日志截取
-
-```log
-DEBUG - loading ioc js config from [dao.js]
-```
-</textarea>
-            </div>
-        </div>
-	</div>
 
     </body>
 </html>

@@ -145,17 +145,7 @@ public class UserProfileModule extends BaseModule {
 		return profile.getAvatar();
 	}
 	
-//	@RequiresUser
-	@Ok("raw:jpg")
-	@At("/u/?/avatar")
-	@GET
-	public Object readUserAvatar(int userId, HttpServletRequest req) throws SQLException {
-		UserProfile profile = Daos.ext(dao, FieldFilter.create(UserProfile.class, "^avatar$")).fetch(UserProfile.class, userId);
-		if (profile == null || profile.getAvatar() == null) {
-			return new File(req.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
-		}
-		return profile.getAvatar();
-	}
+
 
 	@RequiresUser
 	@At("/active/mail")

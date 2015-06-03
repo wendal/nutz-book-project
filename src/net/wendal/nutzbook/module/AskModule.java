@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.wendal.nutzbook.bean.Topic;
 import net.wendal.nutzbook.bean.TopicReply;
-import net.wendal.nutzbook.bean.UserProfile;
 
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Chain;
@@ -101,9 +100,6 @@ public class AskModule extends BaseModule {
 	public Object replies(String id){
 		List<TopicReply> list = dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"));
 		dao.fetchLinks(list, null);
-		for (TopicReply tr : list) {
-			handleTopic(tr);
-		}
 		return ajaxOk(list);
 	}
 	
@@ -202,24 +198,5 @@ public class AskModule extends BaseModule {
 	
 	protected void handleTopic(Topic topic) {
 		topic.replies = dao.count(TopicReply.class, Cnd.where("topicId", "=", topic.getId()));
-		if (topic.getUser() != null) {
-			UserProfile profile = dao.fetch(UserProfile.class, topic.getUserId());
-			if (profile != null && !Strings.isBlank(profile.getNickname())) {
-				topic.getUser().displayName = profile.getNickname();
-			} else {
-				topic.getUser().displayName = topic.getUser().getName();
-			}
-		}
-	}
-	
-	protected void handleTopic(TopicReply tr) {
-		if (tr.getUser() != null) {
-			UserProfile profile = dao.fetch(UserProfile.class, tr.getUserId());
-			if (profile != null && !Strings.isBlank(profile.getNickname())) {
-				tr.getUser().displayName = profile.getNickname();
-			} else {
-				tr.getUser().displayName = tr.getUser().getName();
-			}
-		}
 	}
 }

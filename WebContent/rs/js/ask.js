@@ -30,7 +30,14 @@ $(function() {
 			imageUploadURL : home_base + "/ask/image/upload",
 			onload : function() {
 				console.log('hi,你好,在找源码还是在debug?');
-			}
+			},
+			toolbarIcons : function() {
+				return [
+		            "link", "image", "code-block", "emoji", "|",
+		            "watch", "preview", "fullscreen", "clear", "|",
+		            "help"
+		        ]
+			},
 		});
 		editormd_open = 1;
 	});
@@ -67,10 +74,10 @@ $(function() {
 function md2html(_id) {
 	var _tmp = editormd.markdownToHTML(_id, {
 		emoji           : true,
-        taskList        : true,
-        tex             : true,  // 默认不解析
-        flowChart       : true,  // 默认不解析
-        sequenceDiagram : true,  // 默认不解析
+        //taskList        : true,
+        //tex             : true,  // 默认不解析
+        //flowChart       : true,  // 默认不解析
+        //sequenceDiagram : true,  // 默认不解析
 	});
 };
 
