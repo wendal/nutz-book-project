@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
     monitoring="autodetect" dynamicConfig="true" name="nutzbook">
     <!-- <diskStore path="java.io.tmpdir/shiro-ehcache"/> -->
+    <diskStore path="java.io.tmpdir/nutzbook"/>
     <defaultCache
             maxElementsInMemory="10000"
             eternal="false"
@@ -12,12 +14,4 @@
             diskExpiryThreadIntervalSeconds="120"
             statistics="true"
             />
-    <cache name="shiro-activeSessionCache"
-           maxElementsInMemory="10000"
-           overflowToDisk="true"
-           eternal="true"
-           timeToLiveSeconds="0"
-           timeToIdleSeconds="0"
-           diskPersistent="true"
-           diskExpiryThreadIntervalSeconds="600"/>
 </ehcache>

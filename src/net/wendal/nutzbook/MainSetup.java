@@ -1,12 +1,9 @@
 package net.wendal.nutzbook;
 
-import java.util.Date;
-
 import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.FaqItem;
 import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.service.FaqService;
 import net.wendal.nutzbook.service.AuthorityService;
+import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.service.UserService;
 
 import org.nutz.dao.Dao;
@@ -41,19 +38,8 @@ public class MainSetup implements Setup {
 		AuthorityService as = ioc.get(AuthorityService.class);
 		as.initFormPackage("net.wendal.nutzbook");
 		as.checkBasicRoles(admin);
-
 		
-		// faq 初始化
-		if (dao.count(FaqItem.class) == 0) {
-			FaqItem faq = new FaqItem();
-			faq.setTitle("nutz官网是什么?");
-			faq.setAnswer("http://nutzam.com".getBytes());
-			faq.setCreateTime(new Date());
-			faq.setUpdateTime(new Date());
-			dao.insert(faq);
-		}
-		
-		ioc.get(FaqService.class);
+		ioc.get(TopicService.class);
 		
 		// 检查一下Ehcache CacheManager 是否正常.
 		CacheManager cacheManager = ioc.get(CacheManager.class);
