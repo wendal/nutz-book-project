@@ -138,11 +138,8 @@ function submit_topic() {
 		type : "POST",
 		data : {"title":title, "content":content, "tab" : "ask"},
 		dataType : "json",
-		succss : function(re){
-			if (re && re.ok) {
-				alert("搞定");
-				reloadTopics();
-			}
+		success : function(re){
+			window.location.reload();
 		}
 	});
 };

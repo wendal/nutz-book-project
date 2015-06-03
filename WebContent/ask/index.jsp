@@ -49,7 +49,9 @@
 	<div id="top_nav" class="row">
 		<div class="col-md-1"></div>
 		<div class="col-md-1">
-			<img alt="" src="${base}/rs/favicon.ico" style="width: 30px; height: 30px;">
+			<a href="${base}/ask">
+				<img alt="" src="${base}/rs/favicon.ico" style="width: 40px; height: 40px;">
+			</a>
 		</div>
 		<div class="col-md-2">
 			<input type="search" class="form-control" id="search_input" placeholder="输入需要搜索的关键字">
@@ -73,7 +75,7 @@
 		</div>
 		<div class="col-md-1"></div>
 	</div>
-	<div class="row">
+	<div class="row" style="display: none;">
 		<div class="col-md-2"></div>
 		<div class="col-md-2">
 			<a href="#tab_all" class="topic-tab current-tab">全部</a>
