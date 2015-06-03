@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
@@ -33,6 +33,8 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.mvc.view.JspView;
 
 @IocBean(create = "init")
 @At("/oauth")
@@ -67,9 +69,12 @@ public class OauthModule extends BaseModule {
 		session.setAttribute("openid_manager", manager);
 	}
 
+	/**
+	 * 统一的OAuth回调入口
+	 */
 	@At("/?/callback")
 	@Ok(">>:/ask")
-	public void callback(String _provider, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+	public Object callback(String _providerId, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		SocialAuthManager manager = (SocialAuthManager) session.getAttribute("openid_manager");
 		if (manager == null)
 			throw new SocialAuthException("Not manager found!");
@@ -78,30 +83,57 @@ public class OauthModule extends BaseModule {
 		AuthProvider provider = manager.connect(paramsMap);
 		Profile p = provider.getUserProfile();
 		
-		// TODO 关联用户
-		String userName = provider.getProviderId() + "_" + p.getValidatedId();
-		User user = dao.fetch(User.class, userName);
-		if (user == null) {
-			user = userService.add(userName, R.UU32() + "@" + p.getProviderId());
-		}
-		UserProfile profile = dao.fetch(UserProfile.class, user.getId());
-		if (profile == null) {
-			profile = new UserProfile();
-			profile.setUserId(user.getId());
-			profile.setNickname(p.getDisplayName());
-			profile.setLocation(p.getLocation());
-			if (p.getEmail() != null) {
-				profile.setEmail(p.getEmail());
-				profile.setEmailChecked(true);
+		OAuthUser oAuthUser = dao.fetchx(OAuthUser.class, p.getProviderId(), p.getValidatedId());
+		if (oAuthUser == null) {
+			// 如果是github就直接一点,创建同名用户
+			if ("github".equals(p.getProviderId())) {
+				User user = dao.fetch(User.class, p.getDisplayName());
+				if (user == null) {
+					user = userService.add(p.getDisplayName(), R.UU32());
+					UserProfile profile = dao.fetch(UserProfile.class, user.getId());
+					if (profile == null) {
+						profile = new UserProfile();
+						profile.setUserId(user.getId());
+						profile.setNickname(p.getDisplayName());
+						profile.setLocation(p.getLocation());
+						if (p.getEmail() != null) {
+							profile.setEmail(p.getEmail());
+							profile.setEmailChecked(true);
+						}
+						profile.setCreateTime(new Date());
+						profile.setUpdateTime(profile.getCreateTime());
+						
+						dao.insert(profile);
+					}
+				}
+				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId());
+				dao.insert(oAuthUser);
+				doShiroLogin(session, user);
+				return null;
 			}
-			profile.setCreateTime(new Date());
-			profile.setUpdateTime(profile.getCreateTime());
 			
-			dao.insert(profile);
+			// TODO 跳到关联引导页
+			session.setAttribute("oauth.profile", p);
+			return new JspView("jsp.oauth.link");
 		}
-		// 进行Shiro登录
+		User user = dao.fetch(User.class, oAuthUser.getUserId());
+		if (user == null) {
+			log.debugf("关联用户不存在?!! ==> pid=%s, vid=%s",p.getProviderId(), p.getValidatedId());
+			return new HttpStatusView(500);
+		}
+		doShiroLogin(session, user);
+		return null;
+	}
+	
+	// 进行Shiro登录
+	protected void doShiroLogin(HttpSession session, User user) {
 		SecurityUtils.getSubject().login(new OAuthAuthenticationToken(user.getId()));
 		session.setAttribute("me", user.getId());
+	}
+	
+	@At
+	public void link() {
+		
 	}
 
 	private SocialAuthConfig config;
