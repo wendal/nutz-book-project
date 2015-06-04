@@ -37,7 +37,7 @@ public class TopicService implements Closeable {
 	protected IndexWriter writer;
 
 	public void init() throws IOException {
-		writer = luceneService.writer("faq");
+		writer = luceneService.writer("topic");
 		rebuildIndex();
 	}
 

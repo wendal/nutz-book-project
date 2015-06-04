@@ -17,11 +17,11 @@ public class FaqIndexCommitJob implements Job {
 	
 	private static final Log log = Logs.get();
 
-	@Inject TopicService faqService;
+	@Inject TopicService topicService;
 	
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		try {
-			faqService.commitIndex();
+			topicService.commitIndex();
 		} catch (IOException e) {
 			log.debug("commit faq index fail!!", e);
 		}
