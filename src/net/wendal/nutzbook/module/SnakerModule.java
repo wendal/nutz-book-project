@@ -5,9 +5,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.wendal.nutzbook.bean.ProcessExt;
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.snakerflow.SnakerHelper;
 
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -23,6 +24,8 @@ import org.nutz.mvc.annotation.Param;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.access.Page;
 import org.snaker.engine.access.QueryFilter;
+import org.snaker.engine.entity.Order;
+import org.snaker.engine.entity.Task;
 import org.snaker.engine.helper.StreamHelper;
 
 @IocBean
@@ -63,17 +66,6 @@ public class SnakerModule extends BaseModule {
 		return p.getDBContent();
 	}
 	
-	//Map<String, String> svgs = new HashMap<String, String>();
-	
-	@At("/svg/?")
-	@Ok("raw:image/svg+xml")
-	public Object processSvg(String pid) {
-		ProcessExt ext = dao.fetch(ProcessExt.class, pid);
-		if (ext != null && ext.getSvg() != null)
-			return new String(ext.getSvg()).replaceAll("width=\"2880\" height=\"1378.5\"", "width=\"100%\" height=\"100%\"");
-		return null;
-	}
-	
 	@Ok("json")
 	@At("/deploy")
 	public boolean processDeploy(@Param("model")String model,
@@ -84,23 +76,10 @@ public class SnakerModule extends BaseModule {
 		//log.debug("SVG = " + svg);
 		try {
 			//log.debug("snaker xml=\n" + model);
-			String pid = id;
 			if (Strings.isBlank(id) || "new".equals(savetype)) {
-				pid = snakerEngine.process().deploy(StreamHelper.getStreamFromString(model));
+				snakerEngine.process().deploy(StreamHelper.getStreamFromString(model));
 			} else {
 				snakerEngine.process().redeploy(id, StreamHelper.getStreamFromString(model));
-			}
-			ProcessExt ext = dao.fetch(ProcessExt.class, pid);
-			if (ext == null) {
-				ext = new ProcessExt();
-				ext.setProcessId(pid);
-				ext.setUserId(userId);
-				ext.setSvg(svg.getBytes());
-				dao.insert(ext);
-			} else {
-				ext.setSvg(svg.getBytes());
-				ext.setUserId(userId);
-				dao.update(ext);
 			}
 			//System.out.println("PUT: " + pid + "... " + svg);
 			//svgs.put(pid, svg);
@@ -122,16 +101,8 @@ public class SnakerModule extends BaseModule {
 		page.setPageSize(pager.getPageSize());
 		QueryFilter queryFilter = new QueryFilter();
 		List<org.snaker.engine.entity.Process> ps = snakerEngine.process().getProcesss(page, queryFilter);
-		List<ProcessExt> es = new ArrayList<ProcessExt>(ps.size());
-		for (org.snaker.engine.entity.Process p : ps) {
-			ProcessExt pe = dao.fetch(ProcessExt.class, p.getId());
-			if (pe != null)
-				dao.fetchLinks(pe, null); // TODO 过滤字段,不然form很大啊
-			es.add(pe);
-		}
 		NutMap map = new NutMap();
 		map.put("ps", ps);
-		map.put("es", es);
 		map.put("pager", pager);
 		pager.setRecordCount(1);
 		return ajaxOk(map);
@@ -142,17 +113,81 @@ public class SnakerModule extends BaseModule {
 		snakerEngine.process().undeploy(id);
 	}
 	
-	@At("/ext/update")
-	public void updateProcessExt(@Param("..")ProcessExt ext, @Attr("me")int userId) {
-		if (ext == null)
-			return;
-		if (ext.getProcessId() == null)
-			return;
-		ext.setUserId(userId);
-		if (dao.fetch(ProcessExt.class, ext.getProcessId()) != null) {
-			dao.updateIgnoreNull(ext);
-		} else {
-			dao.insert(ext);
+	@At("/start/?")
+	@RequiresUser
+	public Object start(String processId, @Attr("me")int userId) {
+		User user = dao.fetch(User.class, userId);
+		Order order = snakerEngine.startInstanceById(processId, user.getName());
+		//snakerEngine.task().
+		QueryFilter qf = new QueryFilter();
+		qf.setOperator(user.getName());
+		qf.setOrderId(order.getId());
+		List<Task> tasks = snakerEngine.query().getActiveTasks(qf);
+		System.out.println(Json.toJson(tasks));
+		return tasks;
+	}
+	
+	@Ok("json")
+	@At
+	public Object tasks(@Attr("me")int userId, @Param("..")Pager pager) {
+		User user = dao.fetch(User.class, userId);
+		QueryFilter qf = new QueryFilter();
+		qf.setOperator(user.getName());
+
+		if (pager == null)
+			pager = new Pager();
+		Page<Task> page = new Page<Task>();
+		List<Task> tasks = snakerEngine.query().getActiveTasks(toPage(pager, page), qf);
+		pager.setRecordCount((int) page.getTotalCount());
+		
+		NutMap re = new NutMap();
+		re.put("pager", pager);
+		re.put("tasks", tasks);
+		List<Order> orders = new ArrayList<Order>();
+		for (Task task : tasks) {
+			orders.add(snakerEngine.query().getOrder(task.getOrderId()));
 		}
+		re.put("orders", orders);
+		
+		List<org.snaker.engine.entity.Process> ps = new ArrayList<org.snaker.engine.entity.Process>(orders.size());
+		for (Order order : orders) {
+			if (order == null) {
+				ps.add(null);
+			} else {
+				ps.add(snakerEngine.process().getProcessById(order.getProcessId()));
+			}
+		}
+		re.put("ps", ps);
+		return ajaxOk(re);
+	}
+	
+	@At
+	@Ok("json")
+	public Object orders(@Param("..")Pager pager) {
+		if (pager == null)
+			pager = new Pager();
+		Page<Order> page = new Page<Order>();
+		List<Order> orders = snakerEngine.query().getActiveOrders(toPage(pager, page), new QueryFilter());
+		pager.setRecordCount((int) page.getTotalCount());
+		NutMap re = new NutMap();
+		re.put("pager", pager);
+		re.put("orders", orders);
+		List<org.snaker.engine.entity.Process> ps = new ArrayList<org.snaker.engine.entity.Process>(orders.size());
+		for (Order order : orders) {
+			ps.add(snakerEngine.process().getProcessById(order.getProcessId()));
+		}
+		re.put("ps", ps);
+		return ajaxOk(re);
+	}
+	
+	/**
+	 * nutz的Pager转snaker的Page
+	 * @param pager
+	 * @return
+	 */
+	protected <T> Page<T> toPage(Pager pager, Page<T> page) {
+		page.setPageNo(pager.getPageNumber());
+		page.setPageSize(pager.getPageSize());
+		return page;
 	}
 }

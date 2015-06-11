@@ -93,10 +93,20 @@
                 type: 'url',
                 url: '/dyform.jsp'
             }, {
-                label: '流程管理',
+                label: '流程定义管理',
                 icon: 'md-insert-chart',
                 type: 'url',
-                url: '/workflow.jsp'
+                url: '/workflow_define.jsp'
+            }, {
+                label: '流程实例管理',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/workflow_order.jsp'
+            }, {
+                label: '流程任务',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/workflow_task.jsp'
             }],
             actions: {
                 'login': function () {

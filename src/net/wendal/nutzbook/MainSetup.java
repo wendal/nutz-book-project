@@ -5,6 +5,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
@@ -15,6 +16,9 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.snaker.engine.SnakerEngine;
+import org.snaker.engine.core.ServiceContext;
+
+import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 
 public class MainSetup implements Setup {
 	
@@ -47,10 +51,18 @@ public class MainSetup implements Setup {
 		//CachedNutDaoExecutor.DEBUG = true;
 		
 		SnakerEngine snakerEngine = ioc.get(SnakerEngine.class);
+		// 塞点对象进去
+		ServiceContext.put("NutzbookAccessStrategy", ioc.get(NutzbookAccessStrategy.class));
+		ServiceContext.put("NutDao", dao);
 		log.info("snakerflow init complete == " + snakerEngine);
 	}
 	
 	public void destroy(NutConfig conf) {
+		// 非mysql数据,或多webapp共享mysql驱动的话,以下语句删掉
+		try {
+			AbandonedConnectionCleanupThread.shutdown();
+		} catch (InterruptedException e) {
+		}
 	}
 
 }

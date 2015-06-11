@@ -1,225 +1,158 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="shiro"  uri="http://shiro.apache.org/tags"%>
+
 <!DOCTYPE html>
-<html lang="zh">
-    <head>
-        <meta charset="utf-8">
-    	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>有问必答</title>
-        
-        <script type="text/javascript">
-        	var home_base = "${base}";
-        	var topicId = "${topic.id}";
-        </script>
-        
-        <link rel="stylesheet" href="${base}/rs/css/ask.css" />
-        <link rel="stylesheet" href="${base}/rs/editormd/css/editormd.css" />
-        
-        <script src="${base}/rs/editormd/jquery.min.js"></script>
-        
-        <script src="${base}/rs/editormd/lib/marked.min.js"></script>
-        <script src="${base}/rs/editormd/lib/prettify.min.js"></script>
-        
-        <script src="${base}/rs/editormd/lib/raphael.min.js"></script>
-        <script src="${base}/rs/editormd/lib/underscore.min.js"></script>
-        <script src="${base}/rs/editormd/lib/sequence-diagram.min.js"></script>
-        <script src="${base}/rs/editormd/lib/flowchart.min.js"></script>
-        <script src="${base}/rs/editormd/lib/jquery.flowchart.min.js"></script>
-        <script src="${base}/rs/editormd/editormd.js"></script>
-        
-        <!-- 用bootstrap先应付一下 -->
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-		<!-- Optional theme -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-		<!-- Latest compiled and minified JavaScript -->
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-		
-		<script type="text/javascript" src="${base}/rs/layer/layer.min.js"></script>
-		<script type="text/javascript" src="${base}/rs/laytpl/laytpl.js"></script>
-        
-        <script type="text/javascript" src="${base}/rs/js/ask.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="${base}/rs//favicon.ico">
 
-    </head>
-    <body>
+    <title>Ask For Help</title>
 
-<div class="container-fluid" style="text-align: left; padding-right: 10px; padding-left: 10px;" >
-	<div id="top_nav" class="row">
-		<div class="col-md-1"></div>
-		<div class="col-md-1">
-			<a href="${base}/ask">
-				<img alt="" src="${base}/rs/favicon.ico" style="width: 40px; height: 40px;">
-			</a>
-		</div>
-		<div class="col-md-2">
-			<input type="search" class="form-control" id="search_input" placeholder="输入需要搜索的关键字">
-		</div>
-		<div class="col-md-2"></div>
-		<div class="col-md-3" id="nav_menu">
-			<a href="${base}/ask/" class="btn btn-primary">首页</a>
-			<a href="${base}/ask/newbeer.jsp" class="btn btn-primary">新手入门</a>
-			<a href="#" class="btn btn-primary">关于</a>
-			<shiro:authenticated>
-				<a href="#" class="btn btn-primary">收件箱</a>
-				<a href="${base}/user/logout" class="btn btn-primary">登出</a>
-			</shiro:authenticated>
-			<shiro:notAuthenticated>
-				<a href="#" id="login_link" class="btn btn-primary">登陆</a>
-				<a href="${base}/oauth/github" id="login_link" class="btn btn-primary">Github登陆</a>
-			</shiro:notAuthenticated>
-			<shiro:hasRole name="admin">
-				<a href="${base}/home" class="btn btn-primary">管理后台</a>
-			</shiro:hasRole>
-		</div>
-		<div class="col-md-1"></div>
-	</div>
-	<div class="row" style="display: none;">
-		<div class="col-md-2"></div>
-		<div class="col-md-2">
-			<a href="#tab_all" class="topic-tab current-tab">全部</a>
-        	<a href="#tab_good" class="topic-tab ">精华</a>
-        	<a href="#tab_share" class="topic-tab ">分享</a>
-        	<a href="#tab_ask" class="topic-tab ">问答</a>
-		</div>
-		<div class="col-md-6"></div>
-    </div>
-    <div class="row">
-    	<div class="col-md-2"></div>
-		<div class="col-md-6">
-			<div class="list-group" id="topic_list" style="display: none;"></div>
-			<div id="topic_display" style="display: none;">
-				<!-- 标题 -->
-				<div>
-					<h2>${topic.title}</h2>
-				</div>
-				<!-- 作者及一般信息 -->
-				<div>
-					<div><h4>作者:${topic.user.name}</h4></div>
-					<div><h4>浏览:${topic.vistors}次</h4></div>
-				</div>
-				<!-- 文章内容 -->
-				<div id="topic_view_body" class="jumbotron" style="padding-right: 15px; padding-left: 15px; background-color: silver;">
-					<textarea>${topic.content}</textarea>
-				</div>
-				<!-- 回复信息 -->
-				<div>
-					<ol id="topic_replies"></ol>
-				</div>
-				<div id="topic_reply_div">
-					<shiro:authenticated>
-						<div class="form-group">
-    						<textarea class="form-control" id="topic_reply_body" placeholder="支持md语法"></textarea>
-  						</div>
-						<button id="topic_reply_button">回复</button>
-					</shiro:authenticated>
-					<shiro:notAuthenticated>
-						<a href="#">请先登录</a>
-					</shiro:notAuthenticated>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2" id="right_link">
-			<shiro:authenticated>
-				<button id="ask_link">我要提问</button>
-				<button id="cs_qr_link">跨屏二维码</button>
-			</shiro:authenticated>
-			<shiro:notAuthenticated>
-				<button id="login_link">登录后可提问</button>
-			</shiro:notAuthenticated>
-		</div>
-    </div>
-    
-	<!-- 
-提问弹出层
- -->    
-    <div id="ask_md_div" style="display: none;" class="row">
-    	<div class="col-md-1"></div>
-        	<div id="layout" class="col-md-8">
-        		<div class="row">
-            		<div class="col-md-8">
-                		<h1>我要提问:</h1>
-                		<input type="text" id="new_topic_title">
-                		<button id="ask_submit_button">提交</button>
-            		</div>
-            		<div id="test-editormd" class="col-md-8">
-            			<!-- 里面放示例 -->
-                		<textarea style="display:none;" id="new_topic_content">
-#### 环境
+    <!-- Bootstrap core CSS -->
+    <link href="${base}/rs/css/bootstrap.min.css" rel="stylesheet">
 
-- nutz版本
-- 系统
-- java版本
-- 特别值得一提的jar
+    <!-- Custom styles for this template -->
+    <link href="${base}/rs/css/jumbotron.css" rel="stylesheet">
 
-#### 代码片段
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
 
-```java
-@At
-public void insert(@Param("...")Pet pet) {
-    dao.insert(pet);
-}
-```
+  <body>
 
-### 日志截取
-
-```log
-DEBUG - loading ioc js config from [dao.js]
-```
-</textarea>
-            	</div>
-        	</div>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">ASH社区</a>
         </div>
-		<div class="col-md-1"></div>
-	</div>
-</div>
-	
-<!-- 列表table的模板 -->
-<script type="text/laytpl" id="ask_table_tpl" style="display: none;">
-{{# for(var i = 0, len = d.list.length; i < len; i++){ }}
-<div class="row">
-	<div class="col-md-1">
-		<a class="user_avatar pull-left" href="${base}/u/{{ d.list[i].user.name}}">
-			<img src="${base}/u/{{ d.list[i].user.name}}/avatar" title="{{ d.list[i].user.name}}" style="width: 30px; height: 30px;" class="img-rounded">
-  		</a>
-	</div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <shiro:notAuthenticated>
+          <form class="navbar-form navbar-right">
+          	<div style="display: none;">
+            <div class="form-group">
+              <input type="text" placeholder="用户名" class="form-control" name="username">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="密码" class="form-control" name="password">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="验证码" class="form-control" name="captcha">
+            </div>
+            <div class="form-group">
+              <img id="captcha_img" onclick="next_captcha();return false;" class="form-control"/>
+            </div>
+            <button type="button" class="btn btn-success">登陆</button>
+            </div>
+          	<a href="${base}/oauth/github" class="btn btn-success">Github登陆</a>
+          </form>
+          </shiro:notAuthenticated>
+          <shiro:authenticated>
+          	<form class="navbar-form navbar-right">
+          	  <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+              </div>
+          	  <button type="button" class="btn btn-success">Nutz官网</button>
+          	  <button type="button" class="btn btn-success">新手入门</button>
+          	  <button type="button" class="btn btn-success">定制Nutz</button>
+          	  <button type="button" class="btn btn-info">收件箱</button>
+          	  <button type="button" class="btn btn-danger">登出</button>
+          	</form>
+          </shiro:authenticated>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
 
-	<div class="col-md-1">
-		<span class="reply_count pull-left">
-    	<span title="回复数" style="color: blue;">{{ d.list[i].replies}}</span>
-    	<span >/</span>
-    	<span title="点击数" style="color: red;">{{ d.list[i].vistors}}</span>
-		</span>
-	</div>
-  	<div class="col-md-4" style="text-align: left;">
-    <a class="topic_title" href="${base}/ask/v/{{d.list[i].id}}" title="{{d.list[i].title}}">
-      {{d.list[i].title}}
-    </a>
-  </div>
-</div>
-{{# } }}
-{{# for(var i = 1, len = d.pager.pageCount; i <= len; i++){ }}
-	<button>第{{i}}页</button>
-{{# } }}
-</script>
-<script type="text/laytpl" id="topic_reply_tpl">
-{{# for(var i = 0, len = d.list.length; i < len; i++){ }}
-<div class="row jumbotron" style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;" >
-	<div class="col-md-1">
-		<a class="user_avatar pull-left" href="${base}/u/{{ d.list[i].user.name}}">
-			<img src="${base}/u/{{ d.list[i].user.name}}/avatar" title="{{ d.list[i].user.name}}" style="width: 30px; height: 30px;" class="img-rounded">
-  		</a>
-	</div>
-	<div id="reply_md_{{ i}}" class="col-md-5">
-		<textarea>{{ d.list[i].content}}</textarea>
-	</div>
-</div>
-{{# } }}
-</script>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h2>欢迎光临!</h2>
+        <shiro:notAuthenticated>
+    		<div class="alert alert-warning alert-dismissible" role="alert">
+    		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    		登陆后更精彩哦</div>
+    	</shiro:notAuthenticated>
+        <p style="display: none;"><a class="btn btn-primary btn-lg" href="http://nutzam.com" role="button">Nutz官网 &raquo;</a></p>
+      </div>
+    </div>
     
     
 
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-9">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-3">
+          <div class="">
+            <!-- 小登陆框及登陆后提示 -->
+          	<div>
+              <h3>ASH社区欢迎您</h3>
+              <shiro:notAuthenticated>
+                <a href="${base}/oauth/github" class="btn btn-success">Github登陆</a>
+              </shiro:notAuthenticated>
+              <shiro:authenticated>
+                <p>您好, ${user.name}</p>
+              </shiro:authenticated>
+            </div>
+            <hr>
+            <!-- 最新回复5条 -->
+            <div>
+              <h3>最新回复</h3>
+              <div id="last_replies"></div>
+            </div>
+            <hr>
+            <!-- 未回复的最新5条记录 -->
+            <div>
+              <h3>尚未回复的帖子</h3>
+              <div id="last_zero_replies"></div>
+            </div>
+          </div>
+       </div>
+      </div>
 
-    </body>
+      <hr>
+
+      <footer>
+        <p>&copy; Wendal 2015 <a href="http://github.com/wendal/nutz-book-project" class="btn btn-default">本站源码</a>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="${base}/rs/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="${base}/rs/js/ie10-viewport-bug-workaround.js"></script>
+    
+    <script type="text/javascript">
+    function next_captcha() {
+        $("#captcha_img").attr("src", "${base}/captcha/next?w=120&h=48&_=" + new Date().getTime());
+    };
+    $(function() {
+    	next_captcha();
+	});
+    </script>
+  </body>
 </html>

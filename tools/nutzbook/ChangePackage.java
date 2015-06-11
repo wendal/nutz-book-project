@@ -32,14 +32,25 @@ public class ChangePackage {
 		
 		//先整体拷贝
 		File dst = new File(args[1]);
-		Files.copyDir(source, dst);
+		boolean re = Files.copyDir(source, dst);
+		if (!re) {
+			System.out.println("拷贝失败");
+			return;
+		}
 		
 		System.out.println("args= " + Arrays.toString(args));
 		
 		// 先处理src目录
 		// 处理 src/net/wendal.net
 		File ppp = new File(dst, "src/" + srcPackage.replace(".", "/"));
-		ppp.renameTo(new File(dst, "src/" + dstPackage.replace(".", "/")));
+		File tmp = new File(dst, "src/" + dstPackage.replace(".", "/"));
+		Files.makeDir(tmp);
+		Files.deleteDir(tmp);
+		re = ppp.renameTo(new File(dst, "src/" + dstPackage.replace(".", "/")));
+		if (!re) {
+			System.out.println("移动package失败");
+			return;
+		}
 		Files.deleteDir(new File(dst, "src/" + srcPackage.replace(".", "/")));
 		
 		final Set<String> suffix = new HashSet<String>();
