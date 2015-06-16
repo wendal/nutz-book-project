@@ -19,6 +19,7 @@
 			每页<input type="number" name="pageSize" class="form-contrl" value="10" onchange="dform_reload();">
 		</form>
 	</div>
+	<button class="btn" onclick="form_add();">新建</button>
 <div class="panel panel-default">
 	<div class="panel-heading">表单一览</div>
 	<table class="table">
@@ -66,6 +67,10 @@ function dform_reload(){
 			}
 		}
 	});
+};
+
+function form_add(){
+	window.location.href = home_base + "/admin/form/design/";
 };
 
 function form_delete(form_id) {

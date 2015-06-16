@@ -95,6 +95,18 @@ function wf_reload(){
 		}
 	});
 };
+function wf_start(wf_id) {
+	var s = prompt("请输入y确认");
+	if (s != "y") {
+		return;
+	}
+	$.ajax({
+		url : home_base + "/admin/process/start/" + wf_id,
+		success : function() {
+			window.location.href = home_base + "/home#/workflow_task.jsp";
+		}
+	});
+}
 function wf_delete(wf_id) {
 	var s = prompt("请输入y确认禁用");
 	if (s == "y") {
@@ -106,8 +118,6 @@ function wf_delete(wf_id) {
 	}
 };
 function wf_resume(wf_id) {
-	alert("尚未实现");
-	return;
 	var s = prompt("请输入y确认删除");
 	if (s == "y") {
 		$.ajax({
@@ -117,6 +127,7 @@ function wf_resume(wf_id) {
 		});
 	}
 };
+
 function wf_update(wf_id) {
 	window.location.href = home_base + "/admin/process/design/" + wf_id;
 };

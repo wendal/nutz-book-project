@@ -8,7 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.snakerflow.SnakerHelper;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.nutz.dao.Chain;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -113,6 +116,11 @@ public class SnakerModule extends BaseModule {
 		snakerEngine.process().undeploy(id);
 	}
 	
+	@At
+	public void resume(@Param("id")String id) {
+		dao.update("wf_process", Chain.make("state", 1), Cnd.where("id", "=", id));
+	}
+	
 	@At("/start/?")
 	@RequiresUser
 	public Object start(String processId, @Attr("me")int userId) {
@@ -173,10 +181,16 @@ public class SnakerModule extends BaseModule {
 		re.put("pager", pager);
 		re.put("orders", orders);
 		List<org.snaker.engine.entity.Process> ps = new ArrayList<org.snaker.engine.entity.Process>(orders.size());
+		List<List<Task>> tasks = new ArrayList<List<Task>>(orders.size());
 		for (Order order : orders) {
 			ps.add(snakerEngine.process().getProcessById(order.getProcessId()));
+			QueryFilter filter = new QueryFilter();
+			filter.setOrderId(order.getId());
+			List<Task> t = snakerEngine.query().getActiveTasks(filter);
+			tasks.add(t);
 		}
 		re.put("ps", ps);
+		re.put("tasks", tasks);
 		return ajaxOk(re);
 	}
 	
@@ -189,5 +203,15 @@ public class SnakerModule extends BaseModule {
 		page.setPageNo(pager.getPageNumber());
 		page.setPageSize(pager.getPageSize());
 		return page;
+	}
+	
+	/**
+	 * 终止流程实例
+	 */
+	@RequiresRoles("admin")
+	@At("/order/?/terminate")
+	@Ok("json")
+	public void terminateOrder(String orderId) {
+		snakerEngine.order().terminate(orderId, SnakerEngine.ADMIN);
 	}
 }

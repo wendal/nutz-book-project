@@ -32,7 +32,6 @@
 				<th>#</th>
 				<th>任务名称</th>
 				<th>流程定义</th>
-				<th>流程定义版本</th>
 				<th>任务类型</th>
 				<th>参与方式</th>
 				<td>创建时间</td>
@@ -74,11 +73,9 @@ function wftask_reload(){
 					tmp += "<td>" + task.displayName + "</td>";
 					
 					if (p) {
-						tmp += "<td>" + p.displayName + "</td>";
-						tmp += "<td>" + p.version + "</td>";
+						tmp += "<td>" + p.displayName + ".r" +  p.version + "</td>";
 					} else {
 						tmp += "<td>" + "未知流程" + "</td>";
-						tmp += "<td>" + 0 + "</td>";
 					}
 					
 					if (task.taskType == 0) {
@@ -109,9 +106,7 @@ function wftask_reload(){
 					}
 					
 					tmp += "<td>";
-					tmp	+= " <button onclick='wftask_check(\"" + task.id + "\");' class='btn btn-default'>审批</button> ";
-					tmp	+= " <button onclick='wftask_check(\"" + task.id + "\");' class='btn btn-default'>转派</button> ";
-					tmp	+= " <button onclick='wftask_check(\"" + task.id + "\");' class='btn btn-default'>任意跳转</button> ";
+					tmp	+= " <button onclick='wftask_view(\"" + task.id + "\");' class='btn btn-default'>详情</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;

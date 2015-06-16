@@ -30,12 +30,10 @@
 		<thead>
 			<tr>
 				<th>#</th>
-				<th>版本号</th>
 				<th>流程定义</th>
-				<th>流程定义版本</th>
-				<th>优先级</th>
 				<th>创建者</th>
 				<td>创建时间</td>
+				<td>待完成任务</td>
 				<th>最后修改者</th>
 				<td>最后修改时间</td>
 				<th>操作</th>
@@ -59,7 +57,8 @@ function wforder_reload(){
 				$("#wforder_count").html("共" + data.pager.recordCount + "个流程实例, 总计" + data.pager.pageCount + "页");
 				var list_html = "";
 				var orders = data.orders;
-				var ps = data.ps
+				var ps = data.ps;
+				var tasks = data.tasks;
 				//console.log(data.list);
 				for (var i = 0; i < orders.length; i++) {
 					var order = orders[i];
@@ -67,24 +66,36 @@ function wforder_reload(){
 					//console.log(wf);
 					var tmp = "<tr>";
 					tmp += "<td>" + order.id + "</td>";
-					tmp += "<td>" + order.version + "</td>";
+					//tmp += "<td>" + order.version + "</td>";
 					if (p) {
-						tmp += "<td>" + p.displayName + "</td>";
-						tmp += "<td>" + p.version + "</td>";
+						tmp += "<td>" + p.displayName + ".r" +  p.version + "</td>";
 					} else {
-						tmp += "<td>" + 未知流程 + "</td>";
-						tmp += "<td>" + 0 + "</td>";
+						tmp += "<td>" + "未知流程" + "</td>";
 					}
 					
-					tmp += "<td>" + order.priority + "</td>";
+					//tmp += "<td>" + order.priority + "</td>";
 					// 用户信息
 					if (order.creator) {
 						tmp += "<td>" + order.creator + "</td>";
 					} else {
 						tmp += "<td>" + "未知" + "</td>";
 					}
-					
+
 					tmp += "<td>" + order.createTime + "</td>";
+					tmp += "<td>";
+					for (var j = 0; j < tasks[i].length; j++) {
+						var _task = tasks[i][j];
+						tmp += _task.displayName + "(";
+						if (_task.actorIds) {
+							for ( var actor in _task.actorIds) {
+								tmp += _task.actorIds[actor] + ",";
+							}
+						} else {
+							tmp += "未分配";
+						}
+						tmp += ")";
+					}
+					tmp += "</td>";
 					
 					if (order.lastUpdator) {
 						tmp += "<td>" + order.lastUpdator + "</td>";
@@ -94,7 +105,7 @@ function wforder_reload(){
 					tmp += "<td>" + order.lastUpdateTime + "</td>";
 					
 					tmp += "<td>";
-					tmp	+= " <button onclick='wforder_end(\"" + order.id + "\");' class='btn btn-default'>终止</button> ";
+					tmp	+= " <button onclick='wforder_terminate(\"" + order.id + "\");' class='btn btn-default'>终止</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;
@@ -104,21 +115,14 @@ function wforder_reload(){
 		}
 	});
 };
-function wforder_end(wforder_id) {
-	alert("尚未实现");
-	return;
-	var s = prompt("请输入y确认禁用");
+function wforder_terminate(wforder_id) {
+	var s = prompt("请输入y确认终止");
 	if (s == "y") {
 		$.ajax({
-			url : home_base + "/XXX",
-			data : {id:wforder_id},
+			url : home_base + "/admin/process/order/" + wforder_id + "/terminate",
 			success : wforder_reload
 		});
 	}
-};
-function wforder_resume(wforder_id) {
-	alert("尚未实现");
-	return;
 };
 
 function myInit(args) {

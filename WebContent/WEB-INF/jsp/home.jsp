@@ -83,6 +83,11 @@
                 type: 'url',
                 url: '/sys_status.jsp'
             }, {
+                label: 'Druid监控',
+                icon: 'md-insert-chart',
+                type: 'url',
+                url: '/druid_static.jsp'
+            }, {
                 label: 'Git配置',
                 icon: 'md-insert-chart',
                 type: 'url',

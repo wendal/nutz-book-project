@@ -67,19 +67,14 @@ $.extend(true, snakerflow.editors, {
 				//alert("选择:" + snakerflow.config.ctxPath + arg);
 				var element = document.getElementById("dialogEditor");
 				console.log(snakerflow.config.ctxPath + arg);
-				//var l  = window.showModalDialog(snakerflow.config.ctxPath + arg," ","dialogWidth:800px;dialogHeight:540px;center:yes;scrolling:yes");
-				//if (l == null )
-				//	return;
-				//var result = splitUsersAndAccounts(l);
-				//element.title = result[1];
-				//element.value = result[1];
-				//props[_k].value = result[1];
-				//props['assignee'].value = result[0];
-
-				element.title = "admin";
-				element.value = "admin";
-				props[_k].value = "admin";
-				props['assignee'].value = "admin";
+				var l  = window.showModalDialog(snakerflow.config.ctxPath + arg," ","dialogWidth:800px;dialogHeight:540px;center:yes;scrolling:yes");
+				if (l == null )
+					return;
+				var result = splitUsersAndAccounts(l);
+				element.title = result[1];
+				element.value = result[1];
+				props[_k].value = result[1];
+				props['assignee'].value = result[0];
 			}).appendTo('#'+_div);
 
 			$('#'+_div).data('editor', this);
