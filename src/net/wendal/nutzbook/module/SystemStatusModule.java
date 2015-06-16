@@ -35,7 +35,7 @@ public class SystemStatusModule extends BaseModule {
 			NutMap re = new NutMap();
 			re.put("name", cacheName);
 			for (Method method : sg.getClass().getMethods()) {
-				if (method.getParameterCount() != 0)
+				if (method.getParameterTypes().length != 0)
 					continue;
 				try {
 					Object z = method.invoke(sg);
@@ -44,7 +44,7 @@ public class SystemStatusModule extends BaseModule {
 					if (z instanceof ExtendedStatistics.Result) {
 						NutMap p = new NutMap();
 						for (Method m2 : sg.getClass().getMethods()) {
-							if (m2.getParameterCount() != 0)
+							if (m2.getParameterTypes().length != 0)
 								continue;
 							p.put(m2.getName(), method.invoke(z));
 						}
