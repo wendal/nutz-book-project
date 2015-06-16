@@ -1,9 +1,12 @@
 package net.wendal.nutzbook.module;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.snakerflow.SnakerHelper;
@@ -16,6 +19,7 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -24,6 +28,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.view.HttpStatusView;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.access.Page;
 import org.snaker.engine.access.QueryFilter;
@@ -60,12 +65,18 @@ public class SnakerModule extends BaseModule {
 		return json;
 	}
 
+	/**
+	 * 下载或读取xml格式的流程定义
+	 */
 	@At("/xml/?")
-	@Ok("raw")
-	public Object processXml(String pid) {
+	@Ok("raw:xml")
+	public Object processXml(String pid, HttpServletResponse resp) throws UnsupportedEncodingException {
 		if (Strings.isBlank(pid))
-			return null;
+			return HttpStatusView.HTTP_404;
 		org.snaker.engine.entity.Process p = snakerEngine.process().getProcessById(pid);
+		if (p == null)
+			return HttpStatusView.HTTP_404;
+		resp.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(p.getName(), Encoding.UTF8) + ".xml\"");
 		return p.getDBContent();
 	}
 	
@@ -74,18 +85,13 @@ public class SnakerModule extends BaseModule {
 	public boolean processDeploy(@Param("model")String model,
 								 @Param("id")String id,
 								 @Param("savetype")String savetype,
-								 @Attr("me")int userId,
-								 @Param("svg")String svg) {
-		//log.debug("SVG = " + svg);
+								 @Attr("me")int userId) {
 		try {
-			//log.debug("snaker xml=\n" + model);
 			if (Strings.isBlank(id) || "new".equals(savetype)) {
 				snakerEngine.process().deploy(StreamHelper.getStreamFromString(model));
 			} else {
 				snakerEngine.process().redeploy(id, StreamHelper.getStreamFromString(model));
 			}
-			//System.out.println("PUT: " + pid + "... " + svg);
-			//svgs.put(pid, svg);
 			return true;
 		} catch (Exception e) {
 			log.info("deploy snakerflow xml fail", e);

@@ -17,6 +17,7 @@
 
 <h2>流程定义管理</h2>
 	<h4 id="wf_count"></h4>
+	<div>直接上传流程定义XML<input type="file"></div>
 	<div class="panel panel-default">
 		<form action="#" id="wf_query_form">
 			过滤<input type="text" name="name" class="form-contrl" onchange="wf_reload();">
@@ -86,6 +87,7 @@ function wf_reload(){
 						tmp	+= " <button onclick='wf_update(\"" + wf.id + "\");' class='btn btn-default'>修改定义</button> ";
 						tmp	+= " <button onclick='wf_delete(\"" + wf.id + "\");' class='btn btn-default'>禁用</button> ";
 					}
+					tmp	+= " <button onclick='wf_dw(\"" + wf.id + "\");' class='btn btn-default'>下载定义</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;
@@ -130,6 +132,10 @@ function wf_resume(wf_id) {
 
 function wf_update(wf_id) {
 	window.location.href = home_base + "/admin/process/design/" + wf_id;
+};
+
+function wf_dw(wf_id) {
+	window.location.href = home_base + "/admin/process/xml/" + wf_id;
 };
 function myInit(args) {
 	wf_reload();

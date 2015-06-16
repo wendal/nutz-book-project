@@ -6,8 +6,11 @@
     <title>${msg['user.login.title']}</title>
     <jsp:include page="/WEB-INF/jsp/_include/_css_js.jsp"></jsp:include>
     <script type="text/javascript">
+    	var base = '${base}';
         var me = '<%=session.getAttribute("me")%>';
-        var base = '${base}';
+        if (me && me != "null") {
+        	window.location.href = base + "/home";
+        }
         $(function () {
             // 登陆
             $("#login_button").click(function () {
@@ -124,21 +127,6 @@
         <div>
             <button id="login_button" class="md-button raised-button is-primary" type="submit">
                 <span class="md-button-label">登 陆</span>
-            </button>
-        </div>
-        <div>
-            <button id="reg_button" class="md-button raised-button is-primary" type="button">
-                <span class="md-button-label">注册</span>
-            </button>
-        </div>
-        <div>
-            <button id="github_login_button" class="md-button raised-button is-primary" type="button">
-                <span class="md-button-label">Github登陆</span>
-            </button>
-        </div>
-        <div>
-            <button id="get_password_button" class="md-button raised-button is-primary" type="button">
-                <span class="md-button-label">找回密码</span>
             </button>
         </div>
     </form>

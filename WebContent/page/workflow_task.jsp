@@ -116,63 +116,6 @@ function wftask_reload(){
 		}
 	});
 };
-function wftask_delete(wftask_id) {
-	var s = prompt("请输入y确认删除");
-	if (s == "y") {
-		$.ajax({
-			url : home_base + "/admin/process/delete",
-			data : {id:wftask_id},
-			success : wftask_reload
-		});
-	}
-};
-function wftask_resume(wftask_id) {
-	alert("尚未实现");
-	return;
-	var s = prompt("请输入y确认删除");
-	if (s == "y") {
-		$.ajax({
-			url : home_base + "/admin/process/resume",
-			data : {id:wftask_id},
-			success : wftask_reload
-		});
-	}
-};
-function wftask_update(wftask_id) {
-	window.location.href = home_base + "/admin/process/design/" + wftask_id;
-};
-function wftask_update_other(wftask_id) {
-	$.ajax({
-		url : home_base + "/admin/form/list",
-		data : {pageNumber:-1},
-		dataType : "json",
-		success : function(re) {
-			if (re && re.ok) {
-				var data = re.data.list;
-				var tmp = "";
-				for (var int = 0; int < data.length; int++) {
-					var form = data[int];
-					tmp += "<option value=\"" + form.id + "\">" + form.name +"</option>\n";
-				}
-				$("#wftask_form_select").html(tmp);
-				$("#wftask_update_processId").attr("value", wftask_id);
-				$("#wftask_update_div").show();
-			} else {
-				alert(re.msg);
-			}
-		}
-	});
-};
-function wftask_update_submit() {
-	$.ajax({
-		url : home_base + "/admin/process/ext/update",
-		data : $("#wftask_update_form").serialize(),
-		success : function(){
-			$("#wftask_update_div").hide();
-			wftask_reload();
-		}
-	});
-};
 
 function myInit(args) {
 	$("#wftask_update_div").hide();

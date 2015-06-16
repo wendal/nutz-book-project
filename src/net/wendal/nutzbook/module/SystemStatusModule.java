@@ -18,11 +18,13 @@ import org.nutz.mvc.annotation.Ok;
 @IocBean
 @At("/sys/stat")
 public class SystemStatusModule extends BaseModule {
+	
+//	private static final Log log = Logs.get();
 
 	@Inject CacheManager cacheManager;
 	
 	@At
-	@Ok("json")
+	@Ok("json:full")
 	public Object cache() {
 		List<NutMap> list = new ArrayList<NutMap>();
 		for (String cacheName : cacheManager.getCacheNames()) {
@@ -37,6 +39,8 @@ public class SystemStatusModule extends BaseModule {
 			for (Method method : sg.getClass().getMethods()) {
 				if (method.getParameterTypes().length != 0)
 					continue;
+				if (method.getName().equals("toString") || method.getName().equals("hashCode") || method.getName().equals("getClass"))
+					continue;
 				try {
 					Object z = method.invoke(sg);
 					if (z == null)
@@ -46,10 +50,14 @@ public class SystemStatusModule extends BaseModule {
 						for (Method m2 : sg.getClass().getMethods()) {
 							if (m2.getParameterTypes().length != 0)
 								continue;
+							if (m2.getName().equals("toString") || m2.getName().equals("hashCode") || m2.getName().equals("getClass"))
+								continue;
 							p.put(m2.getName(), method.invoke(z));
 						}
 						z = p;
 					}
+					if (String.valueOf(z).equals("NaN")) // fix in nutz 1.b.53
+						continue;
 					re.put(method.getName(), z);
 				} catch (Exception e) {
 				}
