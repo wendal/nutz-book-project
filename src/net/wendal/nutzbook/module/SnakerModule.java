@@ -25,9 +25,13 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.adaptor.JsonAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
+import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
 import org.snaker.engine.SnakerEngine;
@@ -62,7 +66,7 @@ public class SnakerModule extends BaseModule {
 		org.snaker.engine.entity.Process p = snakerEngine.process().getProcessById(pid);
 		String json = SnakerHelper.getModelJson(p.getModel());
 		json = Json.toJson(Json.fromJson(json));
-		log.debug("model json=\n" + json);
+		//log.debug("model json=\n" + json);
 		return json;
 	}
 
@@ -235,5 +239,62 @@ public class SnakerModule extends BaseModule {
 	@At
 	public Object roles() {
 		return dao.query(Role.class, null);
+	}
+	
+	//------------------------------------------
+	// 任务流转
+	
+	@RequiresUser
+	@At("/task/?")
+	@Ok("json")
+	@GET
+	public Object task(String taskId) {
+		Task task = snakerEngine.query().getTask(taskId);
+		if (task == null) {
+			return HttpStatusView.HTTP_404;
+		}
+		return ajaxOk(task);
+	}
+	
+	@AdaptBy(type=JsonAdaptor.class)
+	@RequiresUser
+	@At("/task/?")
+	@Ok("json")
+	@POST
+	public Object taskComplete(String taskId, @Param("..")NutMap map, @Attr("me")int userId) {
+		Task task = snakerEngine.query().getTask(taskId);
+		if (task == null) {
+			return HttpStatusView.HTTP_404;
+		}
+		// TODO 不管3721,先成功流转起来再说
+		snakerEngine.executeTask(taskId, dao.fetch(User.class, userId).getName());
+		return ajaxOk(null);
+	}
+	
+	@RequiresRoles("admin")
+	@Ok("json:{actived:'id|name'}")
+	@At("/task/?/reassign")
+	public Object taskReassign(String taskId, @Param("to")String to) {
+		Task task = snakerEngine.query().getTask(taskId);
+		if (task == null) {
+			return HttpStatusView.HTTP_404;
+		}
+		String[] actors = task.getActorIds();
+		List<String> list = new ArrayList<String>();
+		for (String actor : actors) {
+			if (!actor.equals(to)) {
+				list.add(actor);
+			}
+		}
+		// 因为原有actors列表必然不为空
+		if (list.isEmpty()) { // 证明无需新增或删除
+			return ajaxOk(null);
+		}
+		// 完全不重叠,所以,就需要先插入目标actor,然后再清楚
+		if (list.size() == actors.length) {
+			snakerEngine.task().addTaskActor(taskId, to);
+		}
+		snakerEngine.task().removeTaskActor(taskId, list.toArray(new String[list.size()]));
+		return ajaxOk(null);
 	}
 }

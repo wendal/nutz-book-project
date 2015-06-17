@@ -54,7 +54,7 @@ function wftask_reload(){
 			if (re && re.ok) {
 				var data = re.data;
 				//console.log(data);
-				$("#wftask_count").html("共" + data.pager.recordCount + "个流程实例, 总计" + data.pager.pageCount + "页");
+				$("#wftask_count").html("共" + data.pager.recordCount + "个流程任务, 总计" + data.pager.pageCount + "页");
 				var list_html = "";
 				var orders = data.orders;
 				var ps = data.ps
@@ -107,6 +107,7 @@ function wftask_reload(){
 					
 					tmp += "<td>";
 					tmp	+= " <button onclick='wftask_view(\"" + task.id + "\");' class='btn btn-default'>详情</button> ";
+					tmp	+= " <button onclick='wftask_just_done(\"" + task.id + "\");' class='btn btn-default'>直接同意</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;
@@ -120,5 +121,17 @@ function wftask_reload(){
 function myInit(args) {
 	$("#wftask_update_div").hide();
 	wftask_reload();
+};
+function wftask_just_done(wf_id) {
+	$.ajax({
+		type : "POST",
+		url : home_base + "/admin/process/task/" + wf_id,
+		data : "{}",
+		dataType : "json",
+		success : function (re) {
+			alert("成功");
+			wftask_reload();
+		}
+	});
 };
 </script>

@@ -90,10 +90,12 @@ function wforder_reload(){
 							for ( var actor in _task.actorIds) {
 								tmp += _task.actorIds[actor] + ",";
 							}
+							tmp = tmp.substring(0, tmp.length - 1);
 						} else {
 							tmp += "未分配";
 						}
 						tmp += ")";
+						tmp += "<button onclick=\"wforder_reassign(\'"+ _task.id +"\')\">强制转派任务</button>"
 					}
 					tmp += "</td>";
 					
@@ -124,6 +126,16 @@ function wforder_terminate(wforder_id) {
 		});
 	}
 };
+function wforder_reassign(wftask_id) {
+	var s = prompt("请输入新的assginee");
+	if (s && s != "") {
+		$.ajax({
+			url : home_base + "/admin/process/task/" + wftask_id + "/reassign",
+			data : {"to":s},
+			success : wforder_reload
+		});
+	}
+}
 
 function myInit(args) {
 	wforder_reload();

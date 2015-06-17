@@ -19,7 +19,8 @@ var ioc = {
 	            validationQuery : {java:"$conf.get('db.validationQuery')"},
 	            maxActive : {java:"$conf.get('db.maxActive')"},
 	            filters : "mergeStat",
-	            connectionProperties : "druid.stat.slowSqlMillis=2000"
+	            connectionProperties : "druid.stat.slowSqlMillis=2000",
+	            maxWait : 1000
 	        }
 	    },
 		dao : {
