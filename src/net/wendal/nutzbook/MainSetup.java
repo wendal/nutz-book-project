@@ -6,6 +6,7 @@ import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
+import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
@@ -54,6 +55,7 @@ public class MainSetup implements Setup {
 		// 塞点对象进去
 		ServiceContext.put("NutzbookAccessStrategy", ioc.get(NutzbookAccessStrategy.class));
 		ServiceContext.put("NutDao", dao);
+		ServiceContext.put("nutz-email", ioc.get(SnakerEmailInterceptor.class));
 		log.info("snakerflow init complete == " + snakerEngine);
 	}
 	

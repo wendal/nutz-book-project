@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.snakerflow.SnakerHelper;
 
@@ -219,5 +220,20 @@ public class SnakerModule extends BaseModule {
 	@Ok("json")
 	public void terminateOrder(String orderId) {
 		snakerEngine.order().terminate(orderId, SnakerEngine.ADMIN);
+	}
+	
+	// 流程编辑器相关的方法
+	@RequiresRoles("admin")
+	@Ok("json:{actived:'id|name'}")
+	@At
+	public Object users() {
+		return dao.query(User.class, null);
+	}
+	
+	@RequiresRoles("admin")
+	@Ok("json:{actived:'id|name'}")
+	@At
+	public Object roles() {
+		return dao.query(Role.class, null);
 	}
 }
