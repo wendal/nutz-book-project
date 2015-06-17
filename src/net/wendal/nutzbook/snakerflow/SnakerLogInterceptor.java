@@ -16,16 +16,16 @@ public class SnakerLogInterceptor implements SnakerInterceptor {
 	public void intercept(Execution execution) {
 		if(log.isInfoEnabled()) {
 			for(Task task : execution.getTasks()) {
-				StringBuffer buffer = new StringBuffer(100);
-				buffer.append("创建任务[标识=").append(task.getId());
-				buffer.append(",名称=").append(task.getDisplayName());
-				buffer.append(",创建时间=").append(task.getCreateTime());
-				buffer.append(",参与者={");
+				StringBuilder sb = new StringBuilder(100);
+				sb.append("创建任务[标识=").append(task.getId());
+				sb.append(",名称=").append(task.getDisplayName());
+				sb.append(",创建时间=").append(task.getCreateTime());
+				sb.append(",参与者={");
 				if(task.getActorIds() != null) {
-					buffer.append(Strings.join(";", task.getActorIds()));
+					sb.append(Strings.join(";", task.getActorIds()));
 				}
-				buffer.append("}]");
-				log.info(buffer.toString());
+				sb.append("}]");
+				log.info(sb);
 			}
 		}
 	}
