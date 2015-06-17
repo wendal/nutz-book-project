@@ -13,6 +13,7 @@ import org.nutz.ioc.ObjectLoadException;
 import org.nutz.ioc.meta.IocObject;
 import org.nutz.ioc.meta.IocValue;
 import org.nutz.json.Json;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Streams;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -76,6 +77,8 @@ public class SnakerIocLoader implements IocLoader {
     	ctx.put(NutzTransactionInterceptor.class.getName(), NutzTransactionInterceptor.class);
     	// 开始构建sanker的配置对象
     	Configuration cnf = new Configuration(ctx);
+    	// fix : 事务拦截器直接放SimpleContext会不生效
+    	Mirror.me(cnf).setValue(cnf, "interceptor", ctx.find(NutzTransactionInterceptor.class));
         cnf.initAccessDBObject(ds);
         SnakerEngine engine = cnf.buildSnakerEngine();
         // 如果用户声明了流程描述文件的路径,加载之
