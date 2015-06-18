@@ -5,6 +5,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
 import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
 
@@ -29,6 +30,9 @@ public class MainSetup implements Setup {
 		Ioc ioc = conf.getIoc();
 		Dao dao = ioc.get(Dao.class);
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
+		
+		// 初始化SysLog
+		ioc.get(SysLogService.class);
 		
 		// 初始化默认根用户
 		User admin = dao.fetch(User.class, "admin");
@@ -57,6 +61,7 @@ public class MainSetup implements Setup {
 		ServiceContext.put("NutDao", dao);
 		ServiceContext.put("nutz-email", ioc.get(SnakerEmailInterceptor.class));
 		log.info("snakerflow init complete == " + snakerEngine);
+		
 	}
 	
 	public void destroy(NutConfig conf) {

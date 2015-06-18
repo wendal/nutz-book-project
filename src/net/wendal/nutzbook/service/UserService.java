@@ -2,6 +2,7 @@ package net.wendal.nutzbook.service;
 
 import java.util.Date;
 
+import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
 
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -10,8 +11,10 @@ import org.nutz.lang.random.R;
 import org.nutz.service.IdNameEntityService;
 
 @IocBean(fields="dao")
+@SLog(tag="用户管理", msg="")
 public class UserService extends IdNameEntityService<User> {
 
+	@SLog(tag="新增用户", msg="用户名[${args[0]}]")
 	public User add(String name, String password) {
 		User user = new User();
 		user.setName(name.trim());

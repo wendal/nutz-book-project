@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.module;
 
+import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
@@ -26,6 +27,7 @@ import org.nutz.mvc.annotation.Param;
 @At("/user") // 整个模块的路径前缀
 @Ok("json:{locked:'password|salt',ignoreNull:true}") // 忽略password和salt属性,忽略空属性的json输出
 @Fail("http:500") // 抛出异常的话,就走500页面
+@SLog(tag="用户管理", msg="")
 public class UserModule extends BaseModule {
 	
 	@Inject protected UserService userService;
@@ -64,6 +66,7 @@ public class UserModule extends BaseModule {
 	@RequiresPermissions("user:delete")
 	@At
 	@Aop(TransAop.READ_COMMITTED)
+	@SLog(tag="删除用户", msg="用户id[${args[0]}]")
 	public Object delete(@Param("id")int id, @Attr("me")int me) {
 		if (me == id) {
 			return new NutMap().setv("ok", false).setv("msg", "不能删除当前用户!!");

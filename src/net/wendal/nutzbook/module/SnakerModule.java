@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.snakerflow.SnakerHelper;
@@ -43,6 +44,7 @@ import org.snaker.engine.helper.StreamHelper;
 
 @IocBean
 @At("/admin/process")
+@SLog(tag="流程", msg="")
 public class SnakerModule extends BaseModule {
 	
 	private static final Log log = Logs.get();
@@ -75,6 +77,7 @@ public class SnakerModule extends BaseModule {
 	 */
 	@At("/xml/?")
 	@Ok("raw:xml")
+	@SLog(tag="下载定义.XML", msg="流程定义id=${args[0]}")
 	public Object processXml(String pid, HttpServletResponse resp) throws UnsupportedEncodingException {
 		if (Strings.isBlank(pid))
 			return HttpStatusView.HTTP_404;
@@ -123,11 +126,13 @@ public class SnakerModule extends BaseModule {
 	}
 	
 	@At
+	@SLog(tag="禁用流程", msg="定义[${args[0]}]")
 	public void delete(@Param("id")String id) {
 		snakerEngine.process().undeploy(id);
 	}
 	
 	@At
+	@SLog(tag="恢复流程", msg="定义[${args[0]}]")
 	public void resume(@Param("id")String id) {
 		dao.update("wf_process", Chain.make("state", 1), Cnd.where("id", "=", id));
 	}
@@ -222,6 +227,7 @@ public class SnakerModule extends BaseModule {
 	@RequiresRoles("admin")
 	@At("/order/?/terminate")
 	@Ok("json")
+	@SLog(tag="终止流程实例", msg="实例[${args[0]}]")
 	public void terminateOrder(String orderId) {
 		snakerEngine.order().terminate(orderId, SnakerEngine.ADMIN);
 	}
@@ -274,6 +280,7 @@ public class SnakerModule extends BaseModule {
 	@RequiresRoles("admin")
 	@Ok("json:{actived:'id|name'}")
 	@At("/task/?/reassign")
+	@SLog(tag="任务转派", msg="任务[${args[0]}],转派给[${args[1]}]")
 	public Object taskReassign(String taskId, @Param("to")String to) {
 		Task task = snakerEngine.query().getTask(taskId);
 		if (task == null) {

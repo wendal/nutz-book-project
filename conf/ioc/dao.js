@@ -20,7 +20,6 @@ var ioc = {
 	            maxActive : {java:"$conf.get('db.maxActive')"},
 	            filters : "mergeStat",
 	            connectionProperties : "druid.stat.slowSqlMillis=2000",
-	            maxWait : 1000
 	        }
 	    },
 		dao : {
