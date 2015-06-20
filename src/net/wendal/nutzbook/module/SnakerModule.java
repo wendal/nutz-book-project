@@ -304,4 +304,15 @@ public class SnakerModule extends BaseModule {
 		snakerEngine.task().removeTaskActor(taskId, list.toArray(new String[list.size()]));
 		return ajaxOk(null);
 	}
+	
+	@At("/image/?")
+	@Ok("raw")
+	public Object image(String processId) {
+		org.snaker.engine.entity.Process p = snakerEngine.process().getProcessById(processId);
+		if (p == null) {
+			return null;
+		}
+		
+		return SnakerHelper.image(p.getDisplayName(), p.getModel(), 1280, 720);
+	}
 }

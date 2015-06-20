@@ -127,6 +127,7 @@ public class UserModule extends BaseModule {
 	@At
 	@Fail("jsp:jsp.500")
 	@RequiresUser
+	@Aop(TransAop.READ_COMMITTED)
 	public void error() {
 		throw new RuntimeException();
 	}
