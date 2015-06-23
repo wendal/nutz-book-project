@@ -20,7 +20,7 @@
 		</script>
 		<script src="${ctx}/styles/js/raphael-min.js" type="text/javascript"></script>
 		<script src="${ctx}/styles/js/jquery-1.8.3.js" type="text/javascript"></script>
-		<script src="${ctx}/styles/js/jquery-ui-1.8.4.custom/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="${ctx}/styles/js/jquery-ui-1.9.2.custom/js/jquery-ui-1.9.2.custom.js" type="text/javascript"></script>
 		<script src="${ctx}/styles/js/snaker/dialog.js" type="text/javascript"></script>
 		<script src="${ctx}/styles/js/snaker/snaker.designer.js" type="text/javascript"></script>
 		<script src="${ctx}/styles/js/snaker/snaker.model.js" type="text/javascript"></script>
