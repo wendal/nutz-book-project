@@ -12,7 +12,6 @@ import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
-import org.nutz.repo.Base64;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -44,10 +43,6 @@ public class QrcodeModule extends BaseModule {
 			h = 256;
 		else if (h > 1024)
 			h = 1024;
-		// 接受Base64编码,例如内容是中文
-		byte[] tmp = Base64.decode(data.getBytes());
-		if (tmp != null)
-			data = new String(tmp);
 		try {
 			Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
 			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
