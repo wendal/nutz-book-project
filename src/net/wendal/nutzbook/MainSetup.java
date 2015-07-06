@@ -3,7 +3,6 @@ package net.wendal.nutzbook;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.service.AuthorityService;
-import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
@@ -15,6 +14,7 @@ import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.snaker.engine.SnakerEngine;
@@ -48,7 +48,7 @@ public class MainSetup implements Setup {
 		as.initFormPackage("net.wendal.nutzbook");
 		as.checkBasicRoles(admin);
 		
-		ioc.get(TopicService.class);
+		//ioc.get(TopicService.class);
 		
 		// 检查一下Ehcache CacheManager 是否正常.
 		CacheManager cacheManager = ioc.get(CacheManager.class);
@@ -62,6 +62,7 @@ public class MainSetup implements Setup {
 		ServiceContext.put("nutz-email", ioc.get(SnakerEmailInterceptor.class));
 		log.info("snakerflow init complete == " + snakerEngine);
 		
+		Mvcs.disableFastClassInvoker = false;
 	}
 	
 	public void destroy(NutConfig conf) {

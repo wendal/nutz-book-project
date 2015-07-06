@@ -1,6 +1,0 @@
-<sitemesh>
-<!-- 貌似没啥用,禁用算了 -->
-<!-- 
-  <mapping path="/ask/*" decorator="/ask/decorator.jsp"/>
--->
-</sitemesh>
