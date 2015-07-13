@@ -4,36 +4,39 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 
 import net.wendal.nutzbook.bean.User;
 
+import org.apache.shiro.SecurityUtils;
 import org.nutz.lang.Lang;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-
+import org.nutz.mvc.Mvcs;
 
 public class Toolkit {
 
 	public static final Log log = Logs.get();
-	
+
 	public static String captcha_attr = "nutz_captcha";
 
 	public static boolean checkCaptcha(String expected, String actual) {
-		if (expected == null || actual == null || actual.length() == 0 || actual.length() > 24)
+		if (expected == null || actual == null || actual.length() == 0
+				|| actual.length() > 24)
 			return false;
 		return actual.equalsIgnoreCase(expected);
 	}
-	
+
 	public static String passwordEncode(String password, String slat) {
 		String str = slat + password + slat + password.substring(4);
 		return Lang.digest("SHA-512", str);
 	}
-	
+
 	private static final String Iv = "\0\0\0\0\0\0\0\0";
 	private static final String Transformation = "DESede/CBC/PKCS5Padding";
-	
+
 	public static String _3DES_encode(byte[] key, byte[] data) {
 		SecretKey deskey = new SecretKeySpec(key, "DESede");
 		IvParameterSpec iv = new IvParameterSpec(Iv.getBytes());
@@ -48,7 +51,7 @@ public class Toolkit {
 		}
 		return null;
 	}
-	
+
 	public static String _3DES_decode(byte[] key, byte[] data) {
 		SecretKey deskey = new SecretKeySpec(key, "DESede");
 		IvParameterSpec iv = new IvParameterSpec(Iv.getBytes());
@@ -62,7 +65,7 @@ public class Toolkit {
 		}
 		return null;
 	}
-	
+
 	public static NutMap kv2map(String kv) {
 		NutMap re = new NutMap();
 		if (kv == null || kv.length() == 0 || !kv.contains("="))
@@ -76,7 +79,7 @@ public class Toolkit {
 		}
 		return re;
 	}
-	
+
 	public static String randomPasswd(User usr) {
 		String passwd = R.sg(10).next();
 		String slat = R.sg(48).next();
@@ -84,13 +87,46 @@ public class Toolkit {
 		usr.setPassword(passwordEncode(passwd, slat));
 		return passwd;
 	}
-	
+
 	public static byte[] hexstr2bytearray(String str) {
 		byte[] re = new byte[str.length() / 2];
 		for (int i = 0; i < re.length; i++) {
-			int r = Integer.parseInt(str.substring(i*2, i*2+2), 16);
-			re[i] = (byte)r;
+			int r = Integer.parseInt(str.substring(i * 2, i * 2 + 2), 16);
+			re[i] = (byte) r;
 		}
 		return re;
+	}
+
+	public static int uid() {
+		int uid = 0;
+		Object u = SecurityUtils.getSubject().getPrincipal();
+		if (u != null) {
+			if (u instanceof User) {
+				uid = ((User) u).getId();
+			} else if (u instanceof Number) {
+				uid = ((Number) u).intValue();
+			}
+		}
+		return uid;
+	}
+
+	public static String ip() {
+		HttpServletRequest request = Mvcs.getReq();
+		if (request == null) {
+			return "";
+		}
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		if (ip == null)
+			ip = "";
+		return ip;
 	}
 }

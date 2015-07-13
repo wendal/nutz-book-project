@@ -2,13 +2,12 @@ package net.wendal.nutzbook.bean;
 
 import java.util.Date;
 
-import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
-@Table("t_syslog")
+@Table("t_syslog_${ym}")
 public class SysLog {
 
 	@Id
@@ -26,6 +25,9 @@ public class SysLog {
 	
 	@Column("u_id")
 	private int uid;
+	
+	@Column("ip")
+	private String ip;
 	
 	@Column
 	@ColDefine(width=8192)
@@ -90,31 +92,12 @@ public class SysLog {
 		this.createTime = createTime;
 	}
 	
-	public static SysLog c(String t, String tag, String msg) {
-		return c(t, tag, "", 0, msg);
-	}
-	
 	public static SysLog c(String t, String tag, String source, int uid, String msg) {
 		SysLog sysLog = new SysLog();
 		sysLog.setCreateTime(new Date());
-		if (t == null) {
-			t = "";
+		if (t == null || tag == null || source == null || msg == null) {
+			throw new RuntimeException("t/tag/source/msg can't null");
 		}
-		if (tag == null) {
-			tag = "";
-		}
-		if (source == null) {
-			source = "";
-		}
-		if (uid < 1) {
-			Integer tmp = (Integer) SecurityUtils.getSubject().getPrincipal();
-			if (tmp != null)
-				uid = tmp;
-		}
-		if (msg == null) {
-			msg = "";
-		}
-		
 		sysLog.t = t;
 		sysLog.tag = tag;
 		sysLog.source = source;
@@ -122,5 +105,13 @@ public class SysLog {
 		sysLog.msg = msg;
 		
 		return sysLog;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 }
