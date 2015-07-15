@@ -79,7 +79,6 @@ public class SysLogAopInterceptor implements MethodInterceptor {
 			_msg = msg.getOrginalString();
 		}
 		SysLog sysLog = SysLog.c(t, tag, source, Toolkit.uid(), _msg);
-		sysLog.setIp(Toolkit.ip());
 		if (async)
 			sysLogService.async(sysLog);
 		else
