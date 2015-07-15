@@ -4,8 +4,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.util.Toolkit;
@@ -16,7 +14,6 @@ import org.nutz.el.El;
 import org.nutz.lang.Lang;
 import org.nutz.lang.segment.CharSegment;
 import org.nutz.lang.util.Context;
-import org.nutz.mvc.Mvcs;
 
 public class SysLogAopInterceptor implements MethodInterceptor {
 	
