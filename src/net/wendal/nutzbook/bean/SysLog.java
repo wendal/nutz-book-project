@@ -97,8 +97,16 @@ public class SysLog {
 	public static SysLog c(String t, String tag, String source, int uid, String msg) {
 		SysLog sysLog = new SysLog();
 		sysLog.setCreateTime(new Date());
-		if (t == null || tag == null || source == null || msg == null) {
+		if (t == null || tag == null || msg == null) {
 			throw new RuntimeException("t/tag/source/msg can't null");
+		}
+		if (source == null) {
+			StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
+			if (tmp.length > 2) {
+				source = tmp[2].getClassName() + "#" + tmp[2].getMethodName();
+			} else {
+				source = "main";
+			}
 		}
 		sysLog.t = t;
 		sysLog.tag = tag;

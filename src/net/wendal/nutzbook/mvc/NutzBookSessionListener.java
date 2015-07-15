@@ -23,7 +23,7 @@ public class NutzBookSessionListener implements HttpSessionListener {
 		if (sysLogService == null) {
 			sysLogService = Mvcs.ctx().getDefaultIoc().get(SysLogService.class);
 		}
-		SysLog syslog = SysLog.c("method", "用户退出", "net.wendal.nutzbook.mvc.NutzBookSessionListener#sessionDestroyed", uid, "用户登出");
+		SysLog syslog = SysLog.c("method", "用户退出", null, uid, "用户登出");
 		sysLogService.async(syslog);
 	}
 
