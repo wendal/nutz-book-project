@@ -7,6 +7,9 @@
 	<listener>
 		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
+	<listener>
+		<listener-class>net.wendal.nutzbook.mvc.NutzBookSessionListener</listener-class>
+	</listener>
 	<filter>
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>

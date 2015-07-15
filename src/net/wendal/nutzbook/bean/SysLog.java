@@ -2,6 +2,8 @@ package net.wendal.nutzbook.bean;
 
 import java.util.Date;
 
+import net.wendal.nutzbook.util.Toolkit;
+
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
@@ -103,6 +105,7 @@ public class SysLog {
 		sysLog.source = source;
 		sysLog.uid = uid;
 		sysLog.msg = msg;
+		sysLog.ip = Toolkit.ip();
 		
 		return sysLog;
 	}
