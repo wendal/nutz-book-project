@@ -9,11 +9,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.shiro.realm.OAuthAuthenticationToken;
+import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
 import org.brickred.socialauth.AuthProvider;
@@ -22,6 +26,7 @@ import org.brickred.socialauth.SocialAuthConfig;
 import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
+import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
@@ -44,6 +49,9 @@ public class OauthModule extends BaseModule {
 	
 	@Inject
 	protected UserService userService;
+	
+	@Inject
+	protected SysLogService sysLogService;
 
 	@At("/?")
 	public void auth(String provider, HttpSession session,
@@ -108,7 +116,7 @@ public class OauthModule extends BaseModule {
 				}
 				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId());
 				dao.insert(oAuthUser);
-				doShiroLogin(session, user);
+				doShiroLogin(session, user, _providerId);
 				return null;
 			}
 			
@@ -121,19 +129,19 @@ public class OauthModule extends BaseModule {
 			log.debugf("关联用户不存在?!! ==> pid=%s, vid=%s",p.getProviderId(), p.getValidatedId());
 			return new HttpStatusView(500);
 		}
-		doShiroLogin(session, user);
+		doShiroLogin(session, user, _providerId);
 		return null;
 	}
 	
 	// 进行Shiro登录
-	protected void doShiroLogin(HttpSession session, User user) {
+	protected void doShiroLogin(HttpSession session, User user, String _providerId) {
 		SecurityUtils.getSubject().login(new OAuthAuthenticationToken(user.getId()));
-		session.setAttribute("me", user.getId());
+		session.setAttribute(NutShiro.SessionKey, user.getId());
+		sysLogService.async(SysLog.c("method", "用户登陆", null, Toolkit.uid(), "用户通过"+_providerId+" Oauth登陆"));
 	}
 	
 	@At
 	public void link() {
-		
 	}
 
 	private SocialAuthConfig config;

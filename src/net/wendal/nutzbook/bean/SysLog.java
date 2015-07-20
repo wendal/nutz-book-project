@@ -98,7 +98,7 @@ public class SysLog {
 		SysLog sysLog = new SysLog();
 		sysLog.setCreateTime(new Date());
 		if (t == null || tag == null || msg == null) {
-			throw new RuntimeException("t/tag/source/msg can't null");
+			throw new RuntimeException("t/tag/msg can't null");
 		}
 		if (source == null) {
 			StackTraceElement[] tmp = Thread.currentThread().getStackTrace();
