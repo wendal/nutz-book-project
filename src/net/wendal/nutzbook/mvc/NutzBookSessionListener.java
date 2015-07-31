@@ -17,7 +17,15 @@ public class NutzBookSessionListener implements HttpSessionListener {
 	}
 
 	public void sessionDestroyed(HttpSessionEvent event) {
-		int uid = Toolkit.uid();
+		int uid;
+		try {
+			uid = Toolkit.uid();
+		} catch (Exception e) {
+			Integer i = (Integer) event.getSession().getAttribute("me");
+			if (i == null)
+				return;
+			uid = i;
+		}
 		if (uid < 1)
 			return;
 		if (sysLogService == null) {
