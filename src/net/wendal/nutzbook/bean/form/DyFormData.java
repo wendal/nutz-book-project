@@ -1,10 +1,12 @@
 package net.wendal.nutzbook.bean.form;
 
+import java.io.Serializable;
+
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_dyform_data")
-public class DyFormData {
+public class DyFormData implements Serializable {
 
 	@Id
 	private long id;

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.bean.form;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.nutz.dao.entity.annotation.ColDefine;
@@ -8,7 +9,7 @@ import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_dy_form_field")
-public class DyFormField {
+public class DyFormField implements Serializable {
 	@Id
 	private long id;
 	@Column

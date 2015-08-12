@@ -7,6 +7,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
 import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
@@ -97,6 +98,8 @@ public class MainSetup implements Setup {
 		RedisService redis = ioc.get(RedisService.class);
 		redis.set("hi", "wendal");
 		log.debug("redis say again : "  + redis.get("hi"));
+		
+		ioc.get(SocketioService.class);
 	}
 	
 	public void destroy(NutConfig conf) {

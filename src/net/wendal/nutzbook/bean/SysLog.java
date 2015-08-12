@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import net.wendal.nutzbook.util.Toolkit;
@@ -10,7 +11,7 @@ import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_syslog_${ym}")
-public class SysLog {
+public class SysLog implements Serializable {
 
 	@Id
 	private long id;

@@ -1,6 +1,8 @@
 package net.wendal.nutzbook.bean.form;
 
-public class DyFormFieldOption {
+import java.io.Serializable;
+
+public class DyFormFieldOption implements Serializable {
 	
 	private String value;
 	private String type;
