@@ -99,7 +99,12 @@ public class Toolkit {
 
 	public static int uid() {
 		int uid = 0;
-		Object u = SecurityUtils.getSubject().getPrincipal();
+		Object u;
+		try {
+			u = SecurityUtils.getSubject().getPrincipal();
+		} catch (Throwable e) {
+			return -1;
+		}
 		if (u != null) {
 			if (u instanceof User) {
 				uid = ((User) u).getId();
