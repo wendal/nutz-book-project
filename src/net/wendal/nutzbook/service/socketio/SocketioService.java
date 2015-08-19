@@ -1,8 +1,5 @@
 package net.wendal.nutzbook.service.socketio;
 
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-
 import java.io.Closeable;
 
 import org.nutz.ioc.Ioc;
@@ -20,7 +17,7 @@ import com.corundumstudio.socketio.annotation.OnDisconnect;
 @IocBean(create="init", depose="close")
 public class SocketioService implements Closeable {
 
-	private static final Log log = Logs.get();
+	protected static final Log log = Logs.get();
 	
 	protected SocketIOServer srv;
 	
@@ -59,11 +56,7 @@ public class SocketioService implements Closeable {
 	    // 建议聊天
 	    srv.addNamespace("/chat").addListeners(ioc.get(SimpleChatService.class));
 	    
-	    srv.startAsync().addListener(new GenericFutureListener<Future<? super Void>>() {
-			public void operationComplete(Future<? super Void> re) throws Exception {
-				
-			}
-		});
+	    srv.start();
 	}
 	
 	public void close() {
