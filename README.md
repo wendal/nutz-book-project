@@ -41,3 +41,8 @@ http://115.28.27.32:8090/nutzbook/
 默认已添加mysql/oracle/pgsql驱动, 其他数据库请自行添加驱动
 
 oracle用户留意一下  db.validationQuery=select 1 from dual
+
+# 测试邮件的账号密码
+
+由于有人恶意发email, 书中的邮箱密码已修改
+请配置为自己的邮箱信息
