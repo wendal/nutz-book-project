@@ -30,7 +30,7 @@ public class SimpleChatService {
         
 
     	NutMap re = new NutMap().setv("username", client.get("username")).setv("numUsers", client.getNamespace().getAllClients().size());
-    	client.getNamespace().getRoomOperations(client.get("room")).sendEvent("user joined", re);
+    	client.getNamespace().getRoomOperations((String)client.get("room")).sendEvent("user joined", re);
     }
     
     @OnEvent("new message")
@@ -41,19 +41,19 @@ public class SimpleChatService {
     		return;
     	
     	NutMap re = new NutMap().setv("username", client.get("username")).setv("message", data);
-    	client.getNamespace().getRoomOperations(client.get("room")).sendEvent("new message", re);
+    	client.getNamespace().getRoomOperations((String)client.get("room")).sendEvent("new message", re);
     }
     
     @OnEvent("typing")
     public void onTyping(SocketIOClient client, Object data, AckRequest ackRequest) {
     	NutMap re = new NutMap().setv("username", client.get("username"));
-    	client.getNamespace().getRoomOperations(client.get("room")).sendEvent("typing", re);
+    	client.getNamespace().getRoomOperations((String)client.get("room")).sendEvent("typing", re);
     }
     
     @OnEvent("stop typing")
     public void onStopTyping(SocketIOClient client, Object data, AckRequest ackRequest) {
     	NutMap re = new NutMap().setv("username", client.get("username"));
-    	client.getNamespace().getRoomOperations(client.get("room")).sendEvent("stop typing", re);
+    	client.getNamespace().getRoomOperations((String)client.get("room")).sendEvent("stop typing", re);
     }
     
     @OnDisconnect
@@ -63,7 +63,7 @@ public class SimpleChatService {
     	SocketIONamespace nm = client.getNamespace();
     	if (nm == null)
     		return;
-    	String room = client.get("room");
+    	String room = (String)client.get("room");
     	if (room == null)
     		return;
     	BroadcastOperations bo = nm.getRoomOperations(room);

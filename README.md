@@ -46,3 +46,11 @@ oracle用户留意一下  db.validationQuery=select 1 from dual
 
 由于有人恶意发email, 书中的邮箱密码已修改
 请配置为自己的邮箱信息
+
+# Mavan用户
+
+运行,需要先启动一个redis哦
+
+```
+mvn jetty:run
+```

@@ -16,3 +16,4 @@ hs_err_pid*
 WebContent/WEB-INF/classes
 WebContent/META-INF/
 *.zip
+/target/

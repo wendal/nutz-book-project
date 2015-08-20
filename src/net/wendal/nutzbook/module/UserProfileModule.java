@@ -140,7 +140,7 @@ public class UserProfileModule extends BaseModule {
 	public Object readAvatar(@Attr(scope=Scope.SESSION, value="me")int userId, HttpServletRequest req) throws SQLException {
 		UserProfile profile = Daos.ext(dao, FieldFilter.create(UserProfile.class, "^avatar$")).fetch(UserProfile.class, userId);
 		if (profile == null || profile.getAvatar() == null) {
-			return new File(req.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
+			return new File(Mvcs.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
 		}
 		return profile.getAvatar();
 	}
@@ -150,8 +150,7 @@ public class UserProfileModule extends BaseModule {
 	@RequiresUser
 	@At("/active/mail")
 	@POST
-	public Object activeMail(@Attr(scope=Scope.SESSION, value="me")int userId,
-			HttpServletRequest req) {
+	public Object activeMail(@Attr(scope=Scope.SESSION, value="me")int userId, HttpServletRequest req) {
 		NutMap re = new NutMap();
 		UserProfile profile = get(userId);
 		if (Strings.isBlank(profile.getEmail())) {
