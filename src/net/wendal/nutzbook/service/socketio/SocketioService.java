@@ -50,10 +50,10 @@ public class SocketioService implements Closeable {
 	    config.setPort(port);
 	    // TODO 实现一个Nutz版本的JsonSupport
 //	    config.setJsonSupport(jsonSupport);
-
+	    
 	    SocketIOServer srv = new SocketIOServer(config);
 	    
-	    // 建议聊天
+	    // 简单聊天
 	    srv.addNamespace("/chat").addListeners(ioc.get(SimpleChatService.class));
 	    
 	    srv.start();
