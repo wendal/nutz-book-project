@@ -21,6 +21,8 @@ http://nutzbook.wendal.net/jars/
 * Ehcache及DaoCache集成
 * snakerflow工作流集成(未全部完成)
 * 自定义表单(未全部完成)
+* redis 集成
+* sockerio 集成
 
 ## 在线演示地址
 
@@ -45,17 +47,26 @@ oracle用户留意一下  db.validationQuery=select 1 from dual
 # 测试邮件的账号密码
 
 由于有人恶意发email, 书中的邮箱密码已修改
-请配置为自己的邮箱信息
+请在conf/custom/email.properties配置自己的邮箱信息
 
 # Mavan用户
 
-运行,需要先启动一个redis哦
+运行,需要先启动一个mysql和redis哦
 
 ```
 mvn jetty:run
 ```
 
-# docker容器启动
+# 用docker镜像启动
+
+通过docker-compose启动(推荐)
+
+```
+cd docker
+docker-compose up
+```
+
+单独启动, 需要自行解决mysql/redis的启动哦
 
 ```
 docker run -it --rm  -e NUTZBOOK_db.url="jdbc:mysql://192.168.1.111:3306/nutzbook" \
