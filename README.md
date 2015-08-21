@@ -54,3 +54,10 @@ oracle用户留意一下  db.validationQuery=select 1 from dual
 ```
 mvn jetty:run
 ```
+
+# docker容器启动
+
+```
+docker run -it --rm  -e NUTZBOOK_db.url="jdbc:mysql://192.168.1.111:3306/nutzbook" -e NUTZBOOK_redis.host=192.168.1.111 -v /dev/urandom:/dev
+/random wendal/nutzbook:latest
+```

@@ -15,7 +15,8 @@ RUN cd $CATALINA_HOME \
 	&& tar -xvf tomcat.tar.gz --strip-components=1 \
 	&& cd $CATALINA_HOME \
 	&& rm bin/*.bat \
-	&& rm tomcat.tar.gz* && rm -fr /usr/local/tomcat/webapps/ROOT
+	&& rm tomcat.tar.gz* && rm -fr /usr/local/tomcat/webapps/ROOT \
+	&& rm -fr /usr/local/tomcat/webapps/docs /usr/local/tomcat/webapps/host-manager /usr/local/tomcat/webapps/manager /usr/local/tomcat/webapps/examples
 
 
 ENV MAVEN_HOME /usr/share/maven
@@ -35,7 +36,6 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && rm -fr /tmp2 usr/share/maven /usr/bin/mvn ~/.m2
 	
 WORKDIR $CATALINA_HOME
-RUN rm -fr /usr/local/tomcat/webapps/docs /usr/local/tomcat/webapps/host-manager /usr/local/tomcat/webapps/manager /usr/local/tomcat/webapps/examples
 
 EXPOSE 8080
 EXPOSE 81
