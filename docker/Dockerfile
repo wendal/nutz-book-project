@@ -1,4 +1,4 @@
-FROM java:8-jdk
+FROM nimmis/java:oracle-8-jdk
 
 MAINTAINER wendal "wendal1985@gmail.com"
 
