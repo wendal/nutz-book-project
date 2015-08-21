@@ -1,0 +1,24 @@
+
+
+db:
+  image: mariadb
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: nutzbook
+  volumes:
+    - /var/lib/mysql
+redis:
+  image: redis
+web:
+  image: wendal/nutzbook
+  links:
+    - db
+    - redis
+  environment:
+    NUTZBOOK_db.url     : jdbc:mysql://db/nutzbook
+    NUTZBOOK_redis.host : redis
+  ports:
+    - "8080:8080"
+    - "81:81"
+  volumes:
+    - "/dev/urandom:/dev/random"

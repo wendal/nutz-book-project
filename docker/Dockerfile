@@ -41,3 +41,6 @@ EXPOSE 8080
 EXPOSE 81
 COPY docker-entrypoint.py /entrypoint.py
 CMD ["python", "/entrypoint.py"]
+ENV LANG C.UTF-8
+ENV TZ "Asia/Shanghai"
+
