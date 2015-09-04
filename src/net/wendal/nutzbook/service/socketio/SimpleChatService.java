@@ -37,8 +37,29 @@ public class SimpleChatService {
     public void onNewMessage(SocketIOClient client, Object data, AckRequest ackRequest) {
     	if (data == null)
     		return;
-    	if (Strings.isBlank(data.toString()))
+    	String val = data.toString().trim();
+    	if (Strings.isBlank(val))
     		return;
+    	if (val.startsWith("#")) {
+    		if (val.length() == 1)
+    			return;
+    		val = val.substring(1);
+    		String[] tmp = val.split(" ", 2);
+    		if (tmp.length != 2) {
+    			return;
+    		}
+    		String uid = tmp[0].trim();
+    		String msg = tmp[1].trim();
+    		if (uid.isEmpty() || msg.isEmpty())
+    			return;
+    		for (SocketIOClient c2 : client.getNamespace().getAllClients()) {
+				if (uid.equals(c2.get("username"))) {
+					NutMap re = new NutMap().setv("username", client.get("username")).setv("message", "私聊:"+msg);
+					c2.sendEvent("new message", re);
+					return;
+				}
+			}
+    	}
     	
     	NutMap re = new NutMap().setv("username", client.get("username")).setv("message", data);
     	client.getNamespace().getRoomOperations((String)client.get("room")).sendEvent("new message", re);
