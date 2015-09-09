@@ -22,11 +22,11 @@ import org.nutz.mvc.view.AbstractPathView;
  * 
  */
 public class BeetlViewMaker2 implements ViewMaker {
-	
+
 	private static final Log log = Logs.get();
 
 	public static GroupTemplate groupTemplate;
-	
+
 	public BeetlViewMaker2() throws IOException {
 		log.debug("beetl init ...");
 		groupTemplate = new GroupTemplate(); // 通过配置文件设置ResourceLoader,而非硬编码
@@ -40,7 +40,7 @@ public class BeetlViewMaker2 implements ViewMaker {
 		if (groupTemplate != null)
 			groupTemplate.close();
 	}
-	
+
 	protected String type = "beetl";
 
 	public View make(Ioc ioc, String type, String value) {
@@ -53,18 +53,16 @@ public class BeetlViewMaker2 implements ViewMaker {
 						child = Mvcs.getActionContext().getPath();
 					}
 					/*
-					// 如果找不到模板, beetl会使用内置的Error模板进行渲染
-					// 渲染前会调用getOutputStream()或getWriter,导致总是Http 200 OK, ErrorHandler无法改变这个行为
-					String key = child;
-					int ajaxIdIndex = key.lastIndexOf("#");
-					if (ajaxIdIndex != -1) {
-						key = key.substring(0, ajaxIdIndex);
-					}
-					if (!groupTemplate.getResourceLoader().exist(key)) {
-						BeetlException be = new BeetlException(BeetlException.TEMPLATE_LOAD_ERROR);
-						be.resourceId = child;
-						throw be;
-					}*/
+					 * // 如果找不到模板, beetl会使用内置的Error模板进行渲染 //
+					 * 渲染前会调用getOutputStream()或getWriter,导致总是Http 200 OK,
+					 * ErrorHandler无法改变这个行为 String key = child; int ajaxIdIndex
+					 * = key.lastIndexOf("#"); if (ajaxIdIndex != -1) { key =
+					 * key.substring(0, ajaxIdIndex); } if
+					 * (!groupTemplate.getResourceLoader().exist(key)) {
+					 * BeetlException be = new
+					 * BeetlException(BeetlException.TEMPLATE_LOAD_ERROR);
+					 * be.resourceId = child; throw be; }
+					 */
 					WebRender render = new WebRender(groupTemplate);
 					render.render(child, req, resp);
 				}

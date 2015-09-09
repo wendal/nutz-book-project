@@ -20,24 +20,25 @@ import org.nutz.mvc.Mvcs;
 
 /**
  * 使用ServletContext.getResourceAsStream 加载模板
+ * 
  * @author wendal
  *
  */
-public class WebBaseResourceLoader implements ResourceLoader {
-	
+public class ServletContextResourceLoader implements ResourceLoader {
+
 	private static final Log log = Logs.get();
-	
+
 	protected String root;
-	
+
 	protected Charset charset;
-	
+
 	protected ServletContext servletContext;
-	
+
 	protected boolean autoCheck = true;
 
 	public Resource getResource(final String key) {
 		return new Resource(key, this) {
-			
+
 			public Reader openReader() {
 				String path = _path(key);
 				InputStream ins = servletContext.getResourceAsStream(path);
@@ -54,7 +55,7 @@ public class WebBaseResourceLoader implements ResourceLoader {
 				}
 				return new InputStreamReader(ins, charset);
 			}
-			
+
 			public boolean isModified() {
 				return autoCheck;
 			}
@@ -68,15 +69,13 @@ public class WebBaseResourceLoader implements ResourceLoader {
 	public boolean exist(String key) {
 		try {
 			String path = _path(key);
-			if (servletContext.getResource(path) != null
-					|| servletContext.getResource(path + ".html") != null
-					|| servletContext.getResource(path + ".beetl") != null)
+			if (servletContext.getResource(path) != null || servletContext.getResource(path + ".html") != null || servletContext.getResource(path + ".beetl") != null)
 				return true;
 		} catch (MalformedURLException e) {
 		}
 		return false;
 	}
-	
+
 	protected String _path(String key) {
 		return root + key;
 	}
@@ -93,7 +92,7 @@ public class WebBaseResourceLoader implements ResourceLoader {
 				setRoot("/");
 			}
 		}
-		
+
 		if (this.charset == null) {
 			if (resourceMap.get("charset") != null) {
 				setCharset(resourceMap.get("charset"));
@@ -104,7 +103,7 @@ public class WebBaseResourceLoader implements ResourceLoader {
 		if ("false".equals(resourceMap.get("autoCheck")) || "no".equals(resourceMap.get("autoCheck"))) {
 			setAutoCheck(false);
 		}
-		
+
 		if (servletContext == null)
 			servletContext = Mvcs.getServletContext();
 	}
@@ -122,23 +121,23 @@ public class WebBaseResourceLoader implements ResourceLoader {
 			root += "/";
 		this.root = root;
 	}
-	
+
 	public String getRoot() {
 		return root;
 	}
-	
+
 	public void setCharset(String charset) {
 		this.charset = Charset.forName(charset);
 	}
-	
+
 	public String getCharset() {
 		return charset == null ? null : charset.toString();
 	}
-	
+
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
-	
+
 	public void setAutoCheck(boolean autoCheck) {
 		this.autoCheck = autoCheck;
 	}

@@ -9,13 +9,14 @@ import org.nutz.log.Logs;
 
 /**
  * 通过日志框架来输出日志
+ * 
  * @author wendal
  *
  */
 public class LogErrorHandler extends ConsoleErrorHandler {
-	
+
 	private static final Log log = Logs.get();
-	
+
 	public void processExcption(BeetlException ex, Writer writer) {
 		log.info(ex.getMessage(), ex);
 		super.processExcption(ex, writer);
