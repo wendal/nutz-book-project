@@ -17,6 +17,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
+import org.nutz.ioc.IocException;
 import org.nutz.lang.Mirror;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -86,18 +87,22 @@ public class MainSetup implements Setup {
 			}
 		});
 		
-		// redis测试
-		JedisPool jedisPool = ioc.get(JedisPool.class);
-		try (Jedis jedis = jedisPool.getResource()) {
-			String re = jedis.set("_nutzbook_test_key", "http://nutzbook.wendal.net");
-			log.debug("redis say : " + re);
-			re = jedis.get("_nutzbook_test_key");
-			log.debug("redis say : " + re);
-		} finally {}
-		
-		RedisService redis = ioc.get(RedisService.class);
-		redis.set("hi", "wendal");
-		log.debug("redis say again : "  + redis.get("hi"));
+		try {
+			// redis测试
+			JedisPool jedisPool = ioc.get(JedisPool.class);
+			try (Jedis jedis = jedisPool.getResource()) {
+				String re = jedis.set("_nutzbook_test_key", "http://nutzbook.wendal.net");
+				log.debug("redis say : " + re);
+				re = jedis.get("_nutzbook_test_key");
+				log.debug("redis say : " + re);
+			} finally {}
+			
+			RedisService redis = ioc.get(RedisService.class);
+			redis.set("hi", "wendal");
+			log.debug("redis say again : "  + redis.get("hi"));
+		} catch (Throwable e) {
+			log.warn("redis connection fail? it is ok, just for demo now");
+		}
 		
 		ioc.get(SocketioService.class);
 	}
