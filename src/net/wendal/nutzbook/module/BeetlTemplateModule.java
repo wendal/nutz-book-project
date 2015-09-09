@@ -9,11 +9,11 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 
 @IocBean
-@At("/jetx")
-public class JetTemplateModule extends BaseModule {
+@At("/beetl")
+public class BeetlTemplateModule extends BaseModule {
 
 	@At
-	@Ok("jetx:hello.jetx")
+	@Ok("beetl:hello.html")
 	public Object hello() {
 		QueryResult qr = new QueryResult();
 		Pager pager = dao.createPager(1, 20);

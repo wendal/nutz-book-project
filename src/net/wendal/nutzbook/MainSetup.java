@@ -113,6 +113,7 @@ public class MainSetup implements Setup {
 			Mirror.me(Class.forName("com.mysql.jdbc.AbandonedConnectionCleanupThread")).invoke(null, "shutdown");
 		} catch (Throwable e) {
 		}
+		// 解决quartz有时候无法停止的问题
 		try {
 			conf.getIoc().get(Scheduler.class).shutdown(true);
 		} catch (Exception e) {

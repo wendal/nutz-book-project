@@ -13,6 +13,8 @@ import org.nutz.dao.entity.annotation.Table;
 @Table("t_syslog_${ym}")
 public class SysLog implements Serializable {
 
+	private static final long serialVersionUID = 4048681972879639280L;
+
 	@Id
 	private long id;
 	
