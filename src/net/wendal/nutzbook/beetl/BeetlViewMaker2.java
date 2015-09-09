@@ -11,6 +11,7 @@ import org.beetl.ext.web.WebRender;
 import org.nutz.ioc.Ioc;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.ViewMaker;
 import org.nutz.mvc.view.AbstractPathView;
@@ -30,9 +31,15 @@ public class BeetlViewMaker2 implements ViewMaker {
 	public BeetlViewMaker2() throws IOException {
 		log.debug("beetl init ...");
 		Configuration cfg = Configuration.defaultConfiguration();
-		WebAppResourceLoader2 resourceLoader = new WebAppResourceLoader2();
-		groupTemplate = new GroupTemplate(resourceLoader, cfg);
-		log.debug("beetl init complete: root=" + resourceLoader.getRoot());
+		cfg.setErrorHandlerClass(BeetlFuckErrorHandler.class.getName());
+		if (cfg.getResourceLoader() == null) {
+			WebAppResourceLoader2 resourceLoader = new WebAppResourceLoader2();
+			groupTemplate = new GroupTemplate(resourceLoader, cfg);
+			log.debugf("beetl init complete: root=%s", resourceLoader.getRoot());
+		} else {
+			groupTemplate = new GroupTemplate(cfg);
+			log.debug("beetl init complete");
+		}
 	}
 
 	public static void depose() {
@@ -47,6 +54,9 @@ public class BeetlViewMaker2 implements ViewMaker {
 			return new AbstractPathView(value) {
 				public void render(HttpServletRequest req, HttpServletResponse resp, Object obj) throws Throwable {
 					String child = evalPath(req, obj);
+					if (child == null) {
+						child = Mvcs.getActionContext().getPath();
+					}
 					WebRender render = new WebRender(groupTemplate);
 					render.render(child, req, resp);
 				}

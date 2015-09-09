@@ -19,7 +19,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 
 /**
- * 
+ * 使用ServletContext.getResourceAsStream 加载模板
  * @author wendal
  *
  */
@@ -39,7 +39,13 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 		return new Resource(key, this) {
 			
 			public Reader openReader() {
-				InputStream ins = servletContext.getResourceAsStream(_path(key));
+				String path = _path(key);
+				InputStream ins = servletContext.getResourceAsStream(path);
+				if (ins == null) {
+					ins = servletContext.getResourceAsStream(path + ".html");
+					if (ins == null)
+						ins = servletContext.getResourceAsStream(path + ".beetl");
+				}
 				if (ins == null) {
 					log.infof("NOT EXIST KEY=%s PATH=%s", key, _path(key));
 					BeetlException be = new BeetlException(BeetlException.TEMPLATE_LOAD_ERROR);
@@ -61,7 +67,14 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 
 	public boolean exist(String key) {
 		try {
-			return servletContext.getResource(_path(key)) != null;
+			String path = _path(key);
+			if (servletContext.getResource(path) != null)
+				return true;
+			if (servletContext.getResource(path + ".html") != null)
+				return true;
+			if (servletContext.getResource(path + ".beetl") != null)
+				return true;
+			return false;
 		} catch (MalformedURLException e) {
 			return false;
 		}
@@ -91,8 +104,10 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 				setCharset("UTF-8");
 			}
 		}
-		if ("false".equals(resourceMap.get("devMode")))
-			devMode = false;
+		if ("false".equals(resourceMap.get("devMode"))) {
+			log.debug("devMode set as false");
+			setDevMode(false);
+		}
 		
 		if (servletContext == null)
 			servletContext = Mvcs.getServletContext();
