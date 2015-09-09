@@ -32,6 +32,8 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 	protected Charset charset;
 	
 	protected ServletContext servletContext;
+	
+	protected boolean devMode = true;
 
 	public Resource getResource(final String key) {
 		return new Resource(key, this) {
@@ -48,13 +50,13 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 			}
 			
 			public boolean isModified() {
-				return false;
+				return devMode;
 			}
 		};
 	}
 
-	public boolean isModified(Resource key) {
-		return false;
+	public boolean isModified(Resource re) {
+		return re.isModified();
 	}
 
 	public boolean exist(String key) {
@@ -89,6 +91,8 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 				setCharset("UTF-8");
 			}
 		}
+		if ("false".equals(resourceMap.get("devMode")))
+			devMode = false;
 		
 		if (servletContext == null)
 			servletContext = Mvcs.getServletContext();
@@ -122,5 +126,9 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 	
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
+	}
+	
+	public void setDevMode(boolean devMode) {
+		this.devMode = devMode;
 	}
 }
