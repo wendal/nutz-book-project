@@ -23,7 +23,7 @@ import org.nutz.mvc.Mvcs;
  * @author wendal
  *
  */
-public class WebAppResourceLoader2 implements ResourceLoader {
+public class WebBaseResourceLoader implements ResourceLoader {
 	
 	private static final Log log = Logs.get();
 	
@@ -33,7 +33,7 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 	
 	protected ServletContext servletContext;
 	
-	protected boolean devMode = true;
+	protected boolean autoCheck = true;
 
 	public Resource getResource(final String key) {
 		return new Resource(key, this) {
@@ -47,7 +47,7 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 						ins = servletContext.getResourceAsStream(path + ".beetl");
 				}
 				if (ins == null) {
-					log.infof("NOT EXIST KEY=%s PATH=%s", key, _path(key));
+					log.infof("NOT EXIST KEY=%s PATH=%s", key, path);
 					BeetlException be = new BeetlException(BeetlException.TEMPLATE_LOAD_ERROR);
 					be.resourceId = this.id;
 					throw be;
@@ -56,28 +56,25 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 			}
 			
 			public boolean isModified() {
-				return devMode;
+				return autoCheck;
 			}
 		};
 	}
 
 	public boolean isModified(Resource re) {
-		return re.isModified();
+		return autoCheck;
 	}
 
 	public boolean exist(String key) {
 		try {
 			String path = _path(key);
-			if (servletContext.getResource(path) != null)
+			if (servletContext.getResource(path) != null
+					|| servletContext.getResource(path + ".html") != null
+					|| servletContext.getResource(path + ".beetl") != null)
 				return true;
-			if (servletContext.getResource(path + ".html") != null)
-				return true;
-			if (servletContext.getResource(path + ".beetl") != null)
-				return true;
-			return false;
 		} catch (MalformedURLException e) {
-			return false;
 		}
+		return false;
 	}
 	
 	protected String _path(String key) {
@@ -104,9 +101,8 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 				setCharset("UTF-8");
 			}
 		}
-		if ("false".equals(resourceMap.get("devMode"))) {
-			log.debug("devMode set as false");
-			setDevMode(false);
+		if ("false".equals(resourceMap.get("autoCheck")) || "no".equals(resourceMap.get("autoCheck"))) {
+			setAutoCheck(false);
 		}
 		
 		if (servletContext == null)
@@ -120,7 +116,7 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 	public void setRoot(String root) {
 		if (root == null)
 			root = "/";
-		else if (!root.startsWith("/"))
+		if (!root.startsWith("/"))
 			root = "/" + root;
 		if (!root.endsWith("/"))
 			root += "/";
@@ -143,7 +139,7 @@ public class WebAppResourceLoader2 implements ResourceLoader {
 		this.servletContext = servletContext;
 	}
 	
-	public void setDevMode(boolean devMode) {
-		this.devMode = devMode;
+	public void setAutoCheck(boolean autoCheck) {
+		this.autoCheck = autoCheck;
 	}
 }

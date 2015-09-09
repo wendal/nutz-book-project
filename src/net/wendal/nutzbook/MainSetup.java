@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
@@ -118,6 +119,7 @@ public class MainSetup implements Setup {
 			conf.getIoc().get(Scheduler.class).shutdown(true);
 		} catch (Exception e) {
 		}
+		BeetlViewMaker2.depose();
 	}
 
 }

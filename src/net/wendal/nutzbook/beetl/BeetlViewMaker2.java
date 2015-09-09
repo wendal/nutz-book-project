@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.ext.web.WebRender;
 import org.nutz.ioc.Ioc;
@@ -30,18 +29,13 @@ public class BeetlViewMaker2 implements ViewMaker {
 	
 	public BeetlViewMaker2() throws IOException {
 		log.debug("beetl init ...");
-		Configuration cfg = Configuration.defaultConfiguration();
-		cfg.setErrorHandlerClass(BeetlFuckErrorHandler.class.getName());
-		if (cfg.getResourceLoader() == null) {
-			WebAppResourceLoader2 resourceLoader = new WebAppResourceLoader2();
-			groupTemplate = new GroupTemplate(resourceLoader, cfg);
-			log.debugf("beetl init complete: root=%s", resourceLoader.getRoot());
-		} else {
-			groupTemplate = new GroupTemplate(cfg);
-			log.debug("beetl init complete");
-		}
+		groupTemplate = new GroupTemplate(); // 通过配置文件设置ResourceLoader,而非硬编码
+		log.debug("beetl init complete");
 	}
 
+	/**
+	 * 需要用户在@SetupBy指定的Setup类中的depose方法主动调用
+	 */
 	public static void depose() {
 		if (groupTemplate != null)
 			groupTemplate.close();
@@ -55,8 +49,22 @@ public class BeetlViewMaker2 implements ViewMaker {
 				public void render(HttpServletRequest req, HttpServletResponse resp, Object obj) throws Throwable {
 					String child = evalPath(req, obj);
 					if (child == null) {
+						// 当路径为空,选用请求路径作为模板路径
 						child = Mvcs.getActionContext().getPath();
 					}
+					/*
+					// 如果找不到模板, beetl会使用内置的Error模板进行渲染
+					// 渲染前会调用getOutputStream()或getWriter,导致总是Http 200 OK, ErrorHandler无法改变这个行为
+					String key = child;
+					int ajaxIdIndex = key.lastIndexOf("#");
+					if (ajaxIdIndex != -1) {
+						key = key.substring(0, ajaxIdIndex);
+					}
+					if (!groupTemplate.getResourceLoader().exist(key)) {
+						BeetlException be = new BeetlException(BeetlException.TEMPLATE_LOAD_ERROR);
+						be.resourceId = child;
+						throw be;
+					}*/
 					WebRender render = new WebRender(groupTemplate);
 					render.render(child, req, resp);
 				}
