@@ -17,13 +17,13 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
-import org.nutz.ioc.IocException;
 import org.nutz.lang.Mirror;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.quartz.Scheduler;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.core.ServiceContext;
 
@@ -112,6 +112,10 @@ public class MainSetup implements Setup {
 		try {
 			Mirror.me(Class.forName("com.mysql.jdbc.AbandonedConnectionCleanupThread")).invoke(null, "shutdown");
 		} catch (Throwable e) {
+		}
+		try {
+			conf.getIoc().get(Scheduler.class).shutdown(true);
+		} catch (Exception e) {
 		}
 	}
 

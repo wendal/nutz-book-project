@@ -1,6 +1,7 @@
 package net.wendal.nutzbook;
 
 import jetbrick.template.web.nutz.JetTemplateViewMaker;
+import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 
 import org.nutz.mvc.annotation.ChainBy;
 import org.nutz.mvc.annotation.Fail;
@@ -24,6 +25,6 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @Ok("json:full")
 @Fail("jsp:jsp.500")
 @Localization(value="msg/", defaultLocalizationKey="zh-CN")
-@Views({JetTemplateViewMaker.class})
+@Views({JetTemplateViewMaker.class, BeetlViewMaker2.class})
 public class MainModule {
 }
