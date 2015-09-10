@@ -5,6 +5,7 @@ import java.io.Closeable;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
@@ -64,6 +65,7 @@ public class SocketioService implements Closeable {
 		if (srv != null)
 			srv.stop();
 		log.info("shutting down socketio done");
+		Lang.quiteSleep(1000); // 需要等1秒, netty才能清理完全
 	}
 	
 }

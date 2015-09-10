@@ -30,17 +30,6 @@ public class BeetlTemplateModule extends BaseModule {
 	}
 	
 	@At
-	@Ok("beetl:hello2")
-	public Object hello2() {
-		QueryResult qr = new QueryResult();
-		Pager pager = dao.createPager(1, 20);
-		pager.setRecordCount(dao.count(UserProfile.class));
-		qr.setPager(pager);
-		qr.setList(dao.query(UserProfile.class, null, pager));
-		return qr;
-	}
-	
-	@At
 	@Ok("beetl:notExist")
 	public void error() {
 	}

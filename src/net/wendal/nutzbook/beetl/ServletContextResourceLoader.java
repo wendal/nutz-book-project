@@ -106,6 +106,7 @@ public class ServletContextResourceLoader implements ResourceLoader {
 
 		if (servletContext == null)
 			servletContext = Mvcs.getServletContext();
+		
 	}
 
 	public String getResourceId(Resource resource, String id) {
