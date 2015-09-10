@@ -31,6 +31,7 @@ public class BeetlTemplateModule extends BaseModule {
 	
 	@At
 	@Ok("beetl:notExist")
+	@Fail("http:404")
 	public void error() {
 	}
 }
