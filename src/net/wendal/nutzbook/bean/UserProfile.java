@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Table;
+import org.nutz.json.JsonField;
 
 @Table("t_user_profile")
 public class UserProfile extends BasePojo implements Serializable {
@@ -26,6 +28,7 @@ public class UserProfile extends BasePojo implements Serializable {
 	protected boolean emailChecked;
 	/**头像的byte数据*/
 	@Column
+	@JsonField(ignore=true)
 	protected byte[] avatar;
 	/**性别*/
 	@Column
@@ -35,6 +38,13 @@ public class UserProfile extends BasePojo implements Serializable {
 	protected String description;
 	@Column("loc")
 	protected String location;
+	
+	@JsonField(ignore=true)
+	@One(target=User.class, field="userId")
+	protected User user;
+	// 非数据库字段
+	protected String loginname;
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -82,5 +92,20 @@ public class UserProfile extends BasePojo implements Serializable {
 	}
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+		if (user != null) {
+			this.loginname = user.getName();
+		}
+	}
+	public String getLoginname() {
+		return loginname;
+	}
+	public void setLoginname(String loginname) {
+		this.loginname = loginname;
 	}
 }

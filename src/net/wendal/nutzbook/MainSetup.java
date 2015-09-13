@@ -17,6 +17,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Mirror;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -36,10 +37,11 @@ public class MainSetup implements Setup {
 	
 	private static final Log log = Logs.get();
 	
-	public void init(NutConfig conf) {
-		Ioc ioc = conf.getIoc();
+	public void init(NutConfig nc) {
+		Ioc ioc = nc.getIoc();
 		Dao dao = ioc.get(Dao.class);
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
+		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
 		
 		// 初始化SysLog
 		ioc.get(SysLogService.class);
@@ -87,6 +89,7 @@ public class MainSetup implements Setup {
 			}
 		});
 		
+		if (conf.getBoolean("redis.enable", false)) {
 		try {
 			// redis测试
 			JedisPool jedisPool = ioc.get(JedisPool.class);
@@ -103,8 +106,10 @@ public class MainSetup implements Setup {
 		} catch (Throwable e) {
 			log.warn("redis connection fail? it is ok, just for demo now");
 		}
+		}
 		
-		ioc.get(SocketioService.class);
+		if (conf.getBoolean("socketio.enable", false))
+			ioc.get(SocketioService.class);
 	}
 	
 	public void destroy(NutConfig conf) {

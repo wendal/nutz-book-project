@@ -16,19 +16,27 @@ import org.nutz.log.Logs;
 public class LogErrorHandler extends ConsoleErrorHandler {
 
 	private static final Log log = Logs.get();
+	protected ThreadLocal<StringBuilder> sb = new ThreadLocal<StringBuilder>(){
+		protected StringBuilder initialValue() {
+			return new StringBuilder();
+		}
+	};
 
 	public void processExcption(BeetlException ex, Writer writer) {
-		log.info(ex.getMessage(), ex);
-		super.processExcption(ex, writer);
-		throw ex;
+		try {
+			super.processExcption(ex, writer);
+			log.debug(sb.get());
+		} finally {
+			sb.set(null);
+		}
 	}
 
 	protected void println(Writer w, String msg) {
-		log.info(msg);
+		sb.get().append(msg).append('\n');
 	}
 
 	protected void print(Writer w, String msg) {
-		log.info(msg);
+		sb.get().append(msg);
 	}
 
 	protected void printThrowable(Writer w, Throwable t) {

@@ -1,0 +1,73 @@
+
+<div class='cell'>
+
+  <a class="user_avatar pull-left" href="${ctxPath}/yvr/u/${topic.author.loginname}">
+    <img src="${ctxPath}/yvr/u/${topic.author.loginname}/avatar"
+         title="${topic.author.loginname}"
+            />
+  </a>
+  <span class="reply_count pull-left">
+    <span class="count_of_replies" title="回复数">
+      ${topic.reply}
+    </span>
+    <span class="count_seperator">/</span>
+    <span class="count_of_visits" title='点击数'>
+      ${topic.visit}
+    </span>
+  </span>
+
+  <% if (null != topic.lastComment!) {%>
+  <a class='last_time pull-right' href="${ctxPath}/yvr/t/${topic.id}#${topic.lastComment.id}">
+    <img class="user_small_avatar" src="${ctxPath}/yvr/u/${topic.lastComment.author.loginname}/avatar">
+    <span class="last_active_time">${topic.lastComment.createAt}</span>
+  </a>
+  <% } %>
+  <% if (null == topic.lastComment!) {%>
+    <span class='last_time pull-right'>
+      <span class="last_active_time">${topic.createAt}</span>
+    </span>
+  <% } %>
+
+  <div class="topic_title_wrapper">
+		<%
+		layout("_top_good.btl",{"topic":topic}){};
+		%>
+    <a class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title}'>
+      ${topic.title}
+    </a>
+  </div>
+</div>
+
+</div>
+<!-- 帖子列表结束-->
+<div class='pagination' current_page='${obj.current_page}'>
+  <ul>
+    <% if ( obj.current_page == 1) { %>
+    <li class='disabled'><a>«</a></li>
+    <% } else { %>
+    <li><a href="${request.requestURI}">«</a></li>
+    <% } %>
+
+    <% if ( obj.page_start > 1) { %>
+    <li><a>...</a></li>
+    <% } %>
+
+    <% for(var i = obj.page_start; i <= obj.page_end; i++) { %>
+    <% if (i == obj.current_page) { %>
+    <li class='disabled'><a>${i}</a></li>
+    <% } else { %>
+    <li><a href='${ctxPath}/yvr/list/${obj.type.name}?pageNumber=${i}'>${i}</a></li>
+    <% } %>
+    <% } %>
+
+    <% if (obj.page_end < obj.pages ) { %>
+    <li><a>...</a></li>
+    <% } %>
+
+    <% if (obj.current_page == obj.pages) { %>
+    <li class='disabled'><a>»</a></li>
+    <% } else { %>
+    <li><a href='${ctxPath}/yvr/list/${obj.type.name}?pageNumber=${obj.pages}'>»</a></li>
+    <% } %>
+  </ul>
+</div>

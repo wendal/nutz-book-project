@@ -1,0 +1,32 @@
+
+<%
+layout("layout.btl",{}){
+%>
+
+<% layout("sidebar.btl",{}){};%>
+
+<div id="content">
+  <div class="panel">
+    <div class="header">
+      <% for (topic_type in obj.types) {%>
+		<a href="${ctxPath}/yvr/list/${topic_type}" class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}</a>
+	  <% } %>
+    </div>
+    <% if (obj.list.~size > 0) { %>
+    <div class="inner no-padding">
+      	<%
+		for(topic in obj.list){
+			layout("list.btl", {"obj":obj, "topic":topic}){};
+		}
+		%>
+    </div>
+    <% } else { %>
+    <div class="inner">
+      <p>无话题</p>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+
+<%}%>

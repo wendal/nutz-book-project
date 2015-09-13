@@ -26,7 +26,7 @@ http://nutzbook.wendal.net/jars/
 
 ## 在线演示地址
 
-http://115.28.27.32:8090/nutzbook/
+http://u.nutz.cn
 
 若不可访问,请报issue
 

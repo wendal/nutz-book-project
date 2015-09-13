@@ -1,5 +1,7 @@
 package net.wendal.nutzbook.util;
 
+import java.util.Date;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -133,5 +135,24 @@ public class Toolkit {
 		if (ip == null)
 			ip = "";
 		return ip;
+	}
+	
+	public static String createAt(Date date) {
+		long now = System.currentTimeMillis() / 1000;
+		long t = date.getTime() / 1000;
+		long diff = now - t;
+		if (diff < 5) {
+			return "刚刚";
+		}
+		if (diff < 60) {
+			return diff+"秒前";
+		}
+		if (diff < 60*60) {
+			return (diff/60)+"分钟前";
+		}
+		if (diff < 60*60*60) {
+			return (diff/60/60)+"小时" + (diff/60%60) + "分钟前";
+		}
+		return (diff/24/60/60)+"天前";
 	}
 }

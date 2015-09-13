@@ -1,0 +1,92 @@
+<%
+layout("layout.btl",{title:'添加新帖子'}){
+%>
+<div id='content'>
+  <div class='panel'>
+    <div class='header'>
+      <ol class='breadcrumb'>
+        <li><a href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+        <li class='active'>发布话题</li>
+      </ol>
+    </div>
+    <div class='inner post'>
+        <form id='create_topic_form' action='#' method='post'>
+          <fieldset>
+            <span class="tab-selector">选择版块：</span>
+            <select name="tab" id="tab-value">
+              <option value="">请选择</option>
+              <% for (ttype in obj.types) {%>
+              <option value="${ttype}" >${ttype.display}</option>
+              <% } %>
+            </select>
+            <span id="topic_create_warn"></span>
+            <textarea autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上" ></textarea>
+
+            <div class='markdown_editor in_editor'>
+              <div class='markdown_in_editor'>
+                <textarea class='editor' name='content' rows='20' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
+
+                <div class='editor_buttons'>
+                  <input id="topic_submit" type="submit" class='span-primary submit_btn' data-loading-text="提交中" value="提交">
+                </div>
+              </div>
+
+            </div>
+
+            <input type='hidden' id='tags' name='topic_tags' value=''>
+            <input type='hidden' name='_csrf' value='${obj._csrf}'>
+          </fieldset>
+        </form>
+    </div>
+  </div>
+</div>
+<script>
+var ctxPath = "${ctxPath}";
+</script>
+<script src="${ctxPath}/rs/libs/jquery-2.1.0.js"></script>
+<script src="${ctxPath}/rs/libs/bootstrap/js/bootstrap.js"></script>
+<script src="${ctxPath}/rs/libs/markdownit.js"></script>
+<script src="${ctxPath}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
+<script src="${ctxPath}/rs/libs/editor/editor.js"></script>
+<script src="${ctxPath}/rs/libs/editor/ext.js"></script>
+<script>
+  (function () {
+    var editor = new Editor();
+    editor.render($('.editor')[0]);
+    // 版块选择的检查，必须选择
+    $('#create_topic_form').on('submit', function (e) {
+      var tabValue = $('#tab-value').val();
+      if (!tabValue) {
+        alert('必须选择一个版块！');
+        $('.submit_btn').button('reset');
+        $('.tab-selector').css('color', 'red');
+        return false;
+      }
+      $.ajax({
+    		url : "${ctxPath}/yvr/add",
+    		data : $("#create_topic_form").serialize(),
+    		dataType : "json",
+    		method : "POST",
+    		success : function(re) {
+    			if (console)
+    				console.log(re);
+    			if (re.ok) {
+    				window.location.href="${ctxPath}/yvr/t/" + re.data;
+    			} else {
+    				$('#topic_create_warn').html("<strong>" + re.msg + "</strong>");
+    			}
+    		}
+    	});
+    	return false;
+    });
+    // END 版块选择的检查，必须选择
+    $('#tab-value').on('change', function () {
+      var $this = $(this);
+      var value = $this.val();
+      var warnMsg = '';
+      warnMsg = '<strong>提问时，请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点，以便您更接收到高质量回复。</strong>'
+      $('#topic_create_warn').html(warnMsg);
+    });
+  })();
+</script>
+<%} %>

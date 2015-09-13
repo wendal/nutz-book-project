@@ -1,0 +1,82 @@
+<div id='sidebar'>
+
+  <div class='panel'>
+    <% if (null != current_user!) { %>
+    <div class='header'>
+      <span class='col_fade'>个人信息</span>
+    </div>
+    <div class='inner'>
+      <%  %>
+    </div>
+    <% } else { %>
+    <div class='inner'>
+      <p>Nutz社区</p>
+
+      <div>
+        您可以
+        <a href='${ctxPath}/yvr/signin'>登录</a>
+        或
+        <a href='${ctxPath}/yvr/signup'>注册</a>
+        , 也可以
+        <a href="${ctxPath}/yvr/u/auth/github">
+          <span class="span-info">
+            通过 GitHub 登录
+          </span>
+        </a>
+      </div>
+    </div>
+    <% } %>
+  </div>
+
+  <% if (null != current_user!) { %>
+  <div class="panel">
+    <div class='inner'>
+      <a href='${ctxPath}/yvr/topic/add' id='create_topic_btn'>
+        <span class='span-success'>发布话题</span>
+      </a>
+    </div>
+  </div>
+  <% } %>
+
+  <% if ( null != obj.no_reply_topics!) { %>
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>无人回复的话题</span>
+    </div>
+    <div class='inner'>
+      <% if (no_reply_topics.length > 0) { %>
+      <ul class="unstyled">
+        <% layout('small.btl', { collection: obj.no_reply_topics, as: 'topic' }){}; %>
+      </ul>
+      <% } else { %>
+      <p>无</p>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>友情社区</span>
+    </div>
+    <div class='inner'>
+      <ol class="friendship-community">
+        <li>
+          <a href="https://nutzam.com" target="_blank">Nutz官网
+          </a>
+        </li>
+        <div class="sep10"></div>
+        <li>
+          <a href="http://github.com/nutzam/nutz" target="_blank">Nutz@github
+          </a>
+        </li>
+        <div class="sep10"></div>
+        <li>
+          <a href="http://nutzbook.wendal.net" target="_blank">Nutzbook
+          </a>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+</div>
