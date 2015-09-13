@@ -35,6 +35,7 @@ var ioc = {
 				cacheProvider : {refer:"cacheProvider"},
 				cachedTableNames : ["t_user_profile",
 				                    //"t_user", "t_role", "t_permission", "t_role_permission"
+				                    "t_user", "t_topic", "t_topic_reply", "t_topic_up", "t_topic_reply_up"
 				                    ]
 			}
 		},

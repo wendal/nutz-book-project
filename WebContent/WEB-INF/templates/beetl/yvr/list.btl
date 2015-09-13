@@ -1,4 +1,5 @@
 
+<%for(topic in topics){%>
 <div class='cell'>
 
   <a class="user_avatar pull-left" href="${ctxPath}/yvr/u/${topic.author.loginname}">
@@ -38,8 +39,9 @@
   </div>
 </div>
 
-</div>
+<%}%>
 <!-- 帖子列表结束-->
+
 <div class='pagination' current_page='${obj.current_page}'>
   <ul>
     <% if ( obj.current_page == 1) { %>

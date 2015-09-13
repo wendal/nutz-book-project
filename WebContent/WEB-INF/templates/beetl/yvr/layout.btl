@@ -10,7 +10,8 @@
 
   <link title="RSS" type="application/rss+xml" rel="alternate" href="${ctxPath}/yvr/rss"/>
 
-  <link rel="icon" href="${ctxPath}/yvr/f.ico" type="image/x-icon"/>
+  <link rel="icon" href="${ctxPath}/rs/logo.png" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" href="${ctxPath}/rs/logo/logo.css"/>
 
   <!-- style -->
 <link rel="stylesheet" type="text/css" href="${ctxPath}/rs/libs/bootstrap/css/bootstrap.css"></link>
@@ -64,7 +65,13 @@
   <div class='navbar-inner'>
     <div class='container'>
       <a class='brand' href='${ctxPath}/yvr/'>
-        <img src="${ctxPath}/rs/images/logo_32.png" />
+        <div class="nutz-logo-bar">
+    		<div class="nutz-logo">
+        		<img src="${ctxPath}/rs/logo/logo.png" alt=""/>
+        		<div class="logo-tail"></div>
+    		</div>
+    		<div class="nutz-txt">Nutz</div>
+		</div>
       </a>
 
       <form id='search_form' class='navbar-search' action="${ctxPath}/yvr/search">
