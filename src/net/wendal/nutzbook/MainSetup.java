@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.beetl.BeetlEhcache;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
@@ -114,6 +115,7 @@ public class MainSetup implements Setup {
 	}
 	
 	public void destroy(NutConfig conf) {
+		BeetlEhcache.cache = null;
 		// 非mysql数据库,或多webapp共享mysql驱动的话,以下语句删掉
 		try {
 			Mirror.me(Class.forName("com.mysql.jdbc.AbandonedConnectionCleanupThread")).invoke(null, "shutdown");

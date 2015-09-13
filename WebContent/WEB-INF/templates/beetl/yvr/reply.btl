@@ -1,17 +1,19 @@
+
 <div class='cell reply_area reply_item
-  <% if ( reply.ups.~size > 3) {%> reply_highlight <%}%>
+  <% if ( reply.ups.~size > 3) {%> reply_highlight <%}%>'
   id="reply${indexInCollection+1}" reply_id="${reply.id}" reply_to_id="">
   <a class="anchor" id="${reply.id}"></a>
 
   <div class='author_content'>
     <a href="${ctxPath}/yvr/u/${reply.author.loginname!}" class="user_avatar">
-      <img src="${ctxPath}/yvr/u/${reply.author.loginname}/avatar" title="${reply.author.loginname!}"/></a>
+      <img src="${ctxPath}/yvr/u/${reply.author.loginname}/avatar" title="${reply.author.loginname!}"/>
+    </a>
 
     <div class='user_info'>
-      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.loginname!}
-      </a>
+      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.loginname!}</a>
       <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
     </div>
+    <!-- user_action -->
     <div class='user_action'>
       <span>
       	<% if (null != current_user!) { %>
@@ -30,10 +32,11 @@
       </span>
     </div>
   </div>
+  <!-- reply_content -->
   <div class='reply_content from-${null == reply.author.loginname! ? 'admin' : reply.author.loginname}'>
     <div class="markdown-text">
     ${markdown(reply.content)}
-	</div>
+    </div>
   </div>
   <div class='clearfix'>
     <div class='reply2_area'>

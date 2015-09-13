@@ -66,16 +66,14 @@ public class YvrModule extends BaseModule {
 	@GET
 	@At
 	@Ok("beetl:yvr/add.btl")
-	public Object add(HttpServletRequest req) {
+	public Object add(HttpSession session) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
-		HttpSession session = req.getSession(false);
 		
-		if (session != null) {
-			String csrf = Lang.md5(R.UU16());
-			session.setAttribute("_csrf", csrf);
-			re.put("_csrf", csrf);
-		}
+		String csrf = Lang.md5(R.UU16());
+		session.setAttribute("_csrf", csrf);
+		re.put("_csrf", csrf);
+		
 		return re;
 	}
 
@@ -165,7 +163,7 @@ public class YvrModule extends BaseModule {
 	@GET
 	@At("/t/?")
 	@Ok("beetl:yvr/topic.btl")
-	public Object topic(int id, HttpServletRequest req) {
+	public Object topic(int id, HttpSession session) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
@@ -185,12 +183,9 @@ public class YvrModule extends BaseModule {
 		re.put("no_reply_topics", Collections.EMPTY_LIST);
 		re.put("topic", topic);
 		
-		HttpSession session = req.getSession(false);
-		if (session != null) {
-			String csrf = Lang.md5(R.UU16());
-			session.setAttribute("_csrf", csrf);
-			re.put("_csrf", csrf);
-		}
+		String csrf = Lang.md5(R.UU16());
+		session.setAttribute("_csrf", csrf);
+		re.put("_csrf", csrf);
 		
 		return re;
 	}
