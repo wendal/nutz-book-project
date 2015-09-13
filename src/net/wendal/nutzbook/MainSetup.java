@@ -110,6 +110,7 @@ public class MainSetup implements Setup {
 		
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
+		
 	}
 	
 	public void destroy(NutConfig conf) {

@@ -1,5 +1,7 @@
 package org.beetl.ext.nutz;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 
 import org.beetl.core.ConsoleErrorHandler;
@@ -24,6 +26,7 @@ public class LogErrorHandler extends ConsoleErrorHandler {
 
 	public void processExcption(BeetlException ex, Writer writer) {
 		try {
+			sb.get().append(ex.getMessage()).append("\n");
 			super.processExcption(ex, writer);
 			log.debug(sb.get());
 		} finally {
@@ -40,6 +43,9 @@ public class LogErrorHandler extends ConsoleErrorHandler {
 	}
 
 	protected void printThrowable(Writer w, Throwable t) {
-		// 不进行打印, processExcption已经打印过了
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		sb.get().append(sw.getBuffer()).append("\n");
 	}
 }
