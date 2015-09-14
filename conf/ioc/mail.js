@@ -11,7 +11,8 @@ var ioc={
 			smtpPort : {java:"$conf.get('mail.SmtpPort')"},
 			authenticator : {refer:"emailAuthenticator"},
 			SSLOnConnect : {java:"$conf.get('mail.SSLOnConnect')"},
-			from : {java:"$conf.get('mail.From')"}
+			from : {java:"$conf.get('mail.From')"},
+			charset : {java:"$conf.get('mail.charset', 'UTF-8')"}
 		}
 	}	
 };

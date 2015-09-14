@@ -188,7 +188,6 @@ public class YvrModule extends BaseModule {
 			reply.setUps(jedis().zrange("t:like:"+reply.getId(), 0, System.currentTimeMillis()));
 		}
 		NutMap re = new NutMap();
-		//re.put("no_reply_topics", new HashMap<String, String>());
 		re.put("topic", topic);
 		
 		String csrf = Lang.md5(R.UU16());
@@ -307,7 +306,7 @@ public class YvrModule extends BaseModule {
 			String url = req.getRequestURL() + "/" + token;
 			String html = "<div>如果无法点击,请拷贝一下链接到浏览器中打开<p/>注册链接 %s</div>";
 			html = String.format(html, url, url);
-			if (emailService.send(email, "Nutz社区注册邮件", html));
+			if (emailService.send(email, "Nutz社区注册邮件", html))
 				return ajaxOk("请查收邮件,点击邮件中的链接即可完成注册");
 		} catch (Exception e) {
 		}

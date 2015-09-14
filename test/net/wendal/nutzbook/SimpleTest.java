@@ -1,5 +1,6 @@
 package net.wendal.nutzbook;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import net.wendal.nutzbook.bean.UserProfile;
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nutz.lang.Lang;
 import org.nutz.lang.util.NutMap;
 
 public class SimpleTest {
@@ -26,7 +28,10 @@ public class SimpleTest {
 		UserProfile profile = new UserProfile();
 		profile.setUserId(1);
 		
-		String uid = BeetlKit.render("${profile.userId}", new NutMap().setv("profile", profile));
-		Assert.assertEquals("1", uid);
+		NutMap obj = new NutMap();
+		obj.setv("list", Collections.EMPTY_LIST);
+		obj.setv("profile", profile);
+		String uid = BeetlKit.render("${obj.list.~size}${obj.profile.userId}", new NutMap().setv("obj", obj));
+		Assert.assertEquals("01", uid);
 	}
 }
