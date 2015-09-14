@@ -135,7 +135,7 @@
   		<span class="input-group-addon" id="basic-addon1">邮箱</span>
   		<input name="email" type="email" class="form-control" placeholder="用于发送验证邮件" aria-describedby="basic-addon1">
 	</div>
-	<button type="button" onclick="do_signup();">注册</button>
+	<button type="button" onclick="do_signup();" class="btn btn-primary">注册</button>
 	</form>
 </div>
 </form>
@@ -156,7 +156,7 @@
   		<input name="captcha" type="text" class="form-control" placeholder="不区分大小写" aria-describedby="basic-addon1">
 	</div>
 	<img id="captcha_img" onclick="next_captcha();return false;"/>
-	<button type="button" onclick="do_signin();">登陆</button>
+	<button type="button" onclick="do_signin();" class="btn btn-primary">登陆</button>
 	</form>
 </div>
 </form>
