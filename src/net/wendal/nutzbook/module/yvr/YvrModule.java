@@ -18,6 +18,7 @@ import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
+import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
@@ -49,6 +50,8 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.trans.Atom;
+import org.nutz.trans.Trans;
 
 @IocBean(create="init")
 @At("/yvr")
@@ -58,6 +61,9 @@ public class YvrModule extends BaseModule {
 	private static final Log log = Logs.get();
 	
 	protected byte[] emailKEY = R.sg(24).next().getBytes();
+	
+	@Inject
+	protected UserService userService;
 	
 	@Inject("java:$conf.get(\"topic.image.dir\")")
 	protected String imageDir;
@@ -266,13 +272,42 @@ public class YvrModule extends BaseModule {
 	 */
 	@GET
 	@At("/signup/?")
-	@Ok("beetl:signup.btl")
-	public void signup(String token) {
-		
+	@Ok("raw")
+	public Object signup(String token) {
+		try {
+			token = Toolkit._3DES_decode(emailKEY, Toolkit.hexstr2bytearray(token));
+		} catch (Exception e) {
+			return "非法token,请重新注册";
+		}
+		final String[] tmps = token.split(",");
+		long time = Long.parseLong(tmps[0]);
+		if ((System.currentTimeMillis()/1000) - time > 24*60*60) {
+			return "该链接已经过期";
+		}
+		// 再次检查用户名
+		if (0 != dao.count(User.class, Cnd.where("name", "=", tmps[1]))) {
+			return "用户名已被占用";
+		}
+		if (0 != dao.count(UserProfile.class, Cnd.where("email", "=", tmps[2]))) {
+			return "Email地址已被占用";
+		}
+		Trans.exec(new Atom(){
+			public void run() {
+				User user = userService.add(tmps[1], tmps[3]);
+				UserProfile profile = new UserProfile();
+				profile.setEmail(tmps[2]);
+				profile.setEmailChecked(true);
+				profile.setNickname(tmps[1]);
+				profile.setUser(user);
+				profile.setUserId(user.getId());
+				dao.fastInsert(profile);
+			}
+		});
+		return "注册成功,可以登陆了";
 	}
 
 	protected static Pattern P_USERNAME = Pattern.compile("[a-z][a-z0-9]{4,10}");
-	protected static Pattern P_PASSWORD = Pattern.compile("[a-z][a-z0-9]{4,10}");
+	protected static Pattern P_PASSWORD = Pattern.compile("(?=^.{8,16}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
 	
 	@POST
 	@At
@@ -291,6 +326,9 @@ public class YvrModule extends BaseModule {
 		if (count != 0) {
 			return ajaxFail("用户名已经存在");
 		}
+		if (email.contains(",")||password.contains(",")) {
+			return ajaxFail("不允许使用英文逗号");
+		}
 		try {
 			new Email(email);
 		} catch (Exception e) {
@@ -301,7 +339,7 @@ public class YvrModule extends BaseModule {
 			return ajaxFail("Email已经存在");
 		}
 		try {
-			String token = String.format("%s,%s,%s", username, email, System.currentTimeMillis());
+			String token = String.format("%s,%s,%s,%s", System.currentTimeMillis()/1000, username, email, password);
 			token = Toolkit._3DES_encode(emailKEY, token.getBytes());
 			String url = req.getRequestURL() + "/" + token;
 			String html = "<div>如果无法点击,请拷贝一下链接到浏览器中打开<p/>注册链接 %s</div>";
@@ -335,6 +373,9 @@ public class YvrModule extends BaseModule {
 	@Ok(">>:/yvr")
 	public void logout() {
 		SecurityUtils.getSubject().logout();
+		HttpSession session = Mvcs.getHttpSession(false);
+		if (session != null)
+			session.invalidate();
 	}
 	
 	public void init() {

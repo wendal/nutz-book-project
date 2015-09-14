@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <%DIRECTIVE DYNAMIC;%>
   <!-- meta -->
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -123,16 +124,16 @@
 <div id="signup_div" style="display: none">
 	<form id='signup_form'>
 	<div class="input-group">
-  		<span class="input-group-addon" id="basic-addon1">^_^</span>
-  		<input name="username" type="text" class="form-control" placeholder="用户名" aria-describedby="basic-addon1">
+  		<span class="input-group-addon" id="basic-addon1">用户名</span>
+  		<input name="username" type="text" class="form-control" placeholder="仅小写英文字母和数字,4到10位" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
-  		<span class="input-group-addon" id="basic-addon1">^_^</span>
-  		<input name="password" type="text" class="form-control" placeholder="密码" aria-describedby="basic-addon1">
+  		<span class="input-group-addon" id="basic-addon1">密 码</span>
+  		<input name="password" type="password" class="form-control" placeholder="仅英文字母和数字,4到10位" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
-  		<span class="input-group-addon" id="basic-addon1">^_^</span>
-  		<input name="email" type="text" class="form-control" placeholder="邮箱(验证邮件会发送过去)" aria-describedby="basic-addon1">
+  		<span class="input-group-addon" id="basic-addon1">邮箱</span>
+  		<input name="email" type="email" class="form-control" placeholder="用于发送验证邮件" aria-describedby="basic-addon1">
 	</div>
 	<button type="button" onclick="do_signup();">注册</button>
 	</form>
@@ -143,16 +144,16 @@
 <div id="signin_div" style="display: none">
 	<form id='signin_form'>
 	<div class="input-group">
-  		<span class="input-group-addon" id="basic-addon1">^_^</span>
-  		<input name="username" type="text" class="form-control" placeholder="用户名" aria-describedby="basic-addon1">
+  		<span class="input-group-addon" id="basic-addon1">用户名</span>
+  		<input name="username" type="text" class="form-control" placeholder="仅小写英文字母和数字,5到10位" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
-  		<span class="input-group-addon" id="basic-addon1">^_^</span>
-  		<input name="password" type="text" class="form-control" placeholder="密码" aria-describedby="basic-addon1">
+  		<span class="input-group-addon" id="basic-addon1">密 码</span>
+  		<input name="password" type="password" class="form-control" placeholder="最少8位,包含大小写和特殊字符" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
-  		<span class="input-group-addon" id="basic-addon1">^_^</span>
-  		<input name="captcha" type="text" class="form-control" placeholder="验证码(不区分大小写)" aria-describedby="basic-addon1">
+  		<span class="input-group-addon" id="basic-addon1">验证码</span>
+  		<input name="captcha" type="text" class="form-control" placeholder="不区分大小写" aria-describedby="basic-addon1">
 	</div>
 	<img id="captcha_img" onclick="next_captcha();return false;"/>
 	<button type="button" onclick="do_signin();">登陆</button>
@@ -170,13 +171,13 @@ function cs_qrcode() {
 };
 function f_signup() {
 	setTimeout(function() {
-    	layer.open({"title":"一步注册", shadeClose : true, "type":1, content : $("#signup_div"), area : ['256px', '256px']});
+    	layer.open({"title":"一步注册", shadeClose : true, "type":1, content : $("#signup_div"), area : ['300px', '300px']});
 	}, 300);
 };
 function f_signin() {
 next_captcha();
 setTimeout(function() {
-		layer.open({"title":"一步注册", shadeClose : true, "type":1, content : $("#signin_div"), area : ['256px', '256px']});
+		layer.open({"title":"登陆", shadeClose : true, "type":1, content : $("#signin_div"), area : ['300px', '300x']});
 	}, 300);
 };
 
