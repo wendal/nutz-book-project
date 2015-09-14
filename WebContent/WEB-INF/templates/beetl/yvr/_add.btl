@@ -15,7 +15,6 @@ layout("_layout.btl",{title:'添加新帖子'}){
           <fieldset>
             <span class="tab-selector">选择版块：</span>
             <select name="tab" id="tab-value">
-              <option value="">请选择</option>
               <% for (ttype in obj.types) {%>
               <option value="${ttype}" >${ttype.display}</option>
               <% } %>
@@ -54,15 +53,7 @@ var ctxPath = "${ctxPath}";
   (function () {
     var editor = new Editor();
     editor.render($('.editor')[0]);
-    // 版块选择的检查，必须选择
     $('#create_topic_form').on('submit', function (e) {
-      var tabValue = $('#tab-value').val();
-      if (!tabValue) {
-        alert('必须选择一个版块！');
-        $('.submit_btn').button('reset');
-        $('.tab-selector').css('color', 'red');
-        return false;
-      }
       $.ajax({
     		url : "${ctxPath}/yvr/add",
     		data : $("#create_topic_form").serialize(),

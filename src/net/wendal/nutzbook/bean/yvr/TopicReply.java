@@ -9,8 +9,10 @@ import net.wendal.nutzbook.util.Toolkit;
 
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.EL;
+import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
+import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_topic_reply")
@@ -18,11 +20,12 @@ public class TopicReply extends BasePojo {
 
 	private static final long serialVersionUID = 5165667887317040294L;
 
-	@Id
-	protected long id;
+	@Name
+	@Prev(els=@EL("$me.uuid()"))
+	protected String id;
 	
 	@Column
-	protected long topicId;
+	protected String topicId;
 	
 	@Column("u_id")
 	protected int userId;
@@ -37,19 +40,19 @@ public class TopicReply extends BasePojo {
 	@SuppressWarnings("unchecked")
 	protected Set<String> ups = Collections.EMPTY_SET;
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public long getTopicId() {
+	public String getTopicId() {
 		return topicId;
 	}
 
-	public void setTopicId(long topicId) {
+	public void setTopicId(String topicId) {
 		this.topicId = topicId;
 	}
 

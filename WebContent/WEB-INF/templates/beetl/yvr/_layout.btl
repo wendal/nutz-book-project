@@ -90,7 +90,7 @@
         
         <% if ( null != obj.current_user!) { %>
         <li>
-          <a href='${ctxPath}/yvr/logout' data-method="post" rel="nofollow">退出</a>
+          <a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow">退出</a>
         </li>
         <% } else { %>
         <li><a href='#' onclick="f_signup();">注册</a></li>
@@ -183,7 +183,7 @@ setTimeout(function() {
 
 function do_signup() {
 	$.ajax({
-		url : "${ctxPath}/yvr/signup",
+		url : "${ctxPath}/yvr/u/signup",
 		method : "POST",
 		data : $("#signup_form").serialize(),
 		dataType : "json",

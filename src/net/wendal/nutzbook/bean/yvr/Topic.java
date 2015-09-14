@@ -8,10 +8,11 @@ import net.wendal.nutzbook.util.Toolkit;
 
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.EL;
 import org.nutz.dao.entity.annotation.Many;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
+import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_topic")
@@ -19,10 +20,11 @@ public class Topic extends BasePojo {
 
 	private static final long serialVersionUID = -8090885594965549361L;
 
-	@Id
-	protected long id;
-	
 	@Name
+	@Prev(els=@EL("$me.uuid()"))
+	protected String id;
+	
+	@Column
 	protected String title;
 	
 	@Column("tp")
@@ -62,11 +64,11 @@ public class Topic extends BasePojo {
 	@One(target=UserProfile.class, field="userId")
 	protected UserProfile author;
 	
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

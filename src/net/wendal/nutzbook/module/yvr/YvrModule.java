@@ -5,13 +5,11 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -19,9 +17,7 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.util.Toolkit;
 
-import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -30,12 +26,10 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
-import org.nutz.lang.meta.Email;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
@@ -50,8 +44,6 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.HttpStatusView;
-import org.nutz.trans.Atom;
-import org.nutz.trans.Trans;
 
 @IocBean(create="init")
 @At("/yvr")
@@ -59,8 +51,6 @@ import org.nutz.trans.Trans;
 public class YvrModule extends BaseModule {
 	
 	private static final Log log = Logs.get();
-	
-	protected byte[] emailKEY = R.sg(24).next().getBytes();
 	
 	@Inject
 	protected UserService userService;
@@ -75,7 +65,7 @@ public class YvrModule extends BaseModule {
 	@GET
 	@At
 	@Ok("beetl:yvr/_add.btl")
-	public Object add(HttpSession session) {
+	public Object add(HttpSession session, @Attr(scope=Scope.SESSION, value="me")int userId) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
 		
@@ -83,6 +73,7 @@ public class YvrModule extends BaseModule {
 		session.setAttribute("_csrf", csrf);
 		re.put("_csrf", csrf);
 		
+		re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
 
@@ -130,9 +121,9 @@ public class YvrModule extends BaseModule {
 			if (pager.getPageSize() > 50)
 				pager.setPageSize(50);
 		}
-		Cnd cnd = Cnd.NEW();
-		if (type != null)
-			cnd.and("type", "=", type);
+		if (type == null)
+			type = TopicType.ask;
+		Cnd cnd = Cnd.where("type", "=", type);
 		List<Topic> list = dao.query(Topic.class, cnd, pager);
 		for (Topic topic : list) {
 			if (topic.getUserId() == 0)
@@ -175,7 +166,7 @@ public class YvrModule extends BaseModule {
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.btl")
 	@Aop("redis")
-	public Object topic(int id, HttpSession session, @Attr(scope=Scope.SESSION, value="me")int userId) {
+	public Object topic(String id, HttpSession session, @Attr(scope=Scope.SESSION, value="me")int userId) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
@@ -245,7 +236,7 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type=CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")
-	public Object addReply(int topicId, @Param("..")TopicReply reply,
+	public Object addReply(String topicId, @Param("..")TopicReply reply,
 			@Attr(scope=Scope.SESSION, value="me")int userId) {
 		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
 			return ajaxFail("内容不能为空");
@@ -260,123 +251,16 @@ public class YvrModule extends BaseModule {
 		return ajaxOk(null);
 	}
 	
-	@Ok("raw:jpg")
-	@At("/u/?/avatar")
-	public File userAvatar(){
-		return new File(Mvcs.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
-	}
-	
-	/**
-	 * 邮件回调的入口
-	 * @param token 包含用户名和邮箱地址的加密内容
-	 */
-	@GET
-	@At("/signup/?")
-	@Ok("raw")
-	public Object signup(String token) {
-		try {
-			token = Toolkit._3DES_decode(emailKEY, Toolkit.hexstr2bytearray(token));
-		} catch (Exception e) {
-			return "非法token,请重新注册";
-		}
-		final String[] tmps = token.split(",");
-		long time = Long.parseLong(tmps[0]);
-		if ((System.currentTimeMillis()/1000) - time > 24*60*60) {
-			return "该链接已经过期";
-		}
-		// 再次检查用户名
-		if (0 != dao.count(User.class, Cnd.where("name", "=", tmps[1]))) {
-			return "用户名已被占用";
-		}
-		if (0 != dao.count(UserProfile.class, Cnd.where("email", "=", tmps[2]))) {
-			return "Email地址已被占用";
-		}
-		Trans.exec(new Atom(){
-			public void run() {
-				User user = userService.add(tmps[1], tmps[3]);
-				UserProfile profile = new UserProfile();
-				profile.setEmail(tmps[2]);
-				profile.setEmailChecked(true);
-				profile.setNickname(tmps[1]);
-				profile.setUser(user);
-				profile.setUserId(user.getId());
-				dao.fastInsert(profile);
-			}
-		});
-		return "注册成功,可以登陆了";
-	}
-
-	protected static Pattern P_USERNAME = Pattern.compile("[a-z][a-z0-9]{4,10}");
-	protected static Pattern P_PASSWORD = Pattern.compile("(?=^.{8,16}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
-	
-	@POST
-	@At
-	@Ok("json")
-	public Object signup(@Param("email")String email, 
-						@Param("username")String username,
-						@Param("password")String password,
-			HttpServletRequest req) {
-		if (Strings.isBlank(password) || !P_PASSWORD.matcher(password).find()) {
-			return ajaxFail("密码强度不够!!");
-		}
-		if (Strings.isBlank(username) || !P_USERNAME.matcher(username.toLowerCase()).find()) {
-			return ajaxFail("用户名不合法");
-		}
-		int count = dao.count(User.class, Cnd.where("name", "=", username));
-		if (count != 0) {
-			return ajaxFail("用户名已经存在");
-		}
-		if (email.contains(",")||password.contains(",")) {
-			return ajaxFail("不允许使用英文逗号");
-		}
-		try {
-			new Email(email);
-		} catch (Exception e) {
-			return ajaxFail("Email地址不合法");
-		}
-		count = dao.count(UserProfile.class, Cnd.where("email", "=", email));
-		if (count != 0) {
-			return ajaxFail("Email已经存在");
-		}
-		try {
-			String token = String.format("%s,%s,%s,%s", System.currentTimeMillis()/1000, username, email, password);
-			token = Toolkit._3DES_encode(emailKEY, token.getBytes());
-			String url = req.getRequestURL() + "/" + token;
-			String html = "<div>如果无法点击,请拷贝一下链接到浏览器中打开<p/>注册链接 %s</div>";
-			html = String.format(html, url, url);
-			if (emailService.send(email, "Nutz社区注册邮件", html))
-				return ajaxOk("请查收邮件,点击邮件中的链接即可完成注册");
-		} catch (Exception e) {
-		}
-		return ajaxOk("发送邮件失败");
-	}
-	
-	@At("/u/oauth/github")
-	@Ok("->:/oauth/github")
-	public void oauth(String type, HttpServletRequest req, HttpSession session){
-		String url = req.getHeader("Rerefer");
-		if (url == null)
-			url = "/yvr/list";
-		session.setAttribute("oauth.return.url", url);
-	}
 	
 	@At("/t/?/reply/?/up")
 	@Ok("json")
 	@Aop("redis")
-	public void replyUp(String _, int replyId, @Attr(scope=Scope.SESSION, value="me")int userId){
+	public void replyUp(String _, String replyId, @Attr(scope=Scope.SESSION, value="me")int userId){
 		if (userId < 1)
 			return;
 		jedis().zadd("t:like:"+replyId, System.currentTimeMillis(), userId+"");
 	}
 	
-	@At
-	@Ok(">>:/yvr")
-	public void logout() {
-		SecurityUtils.getSubject().logout();
-		HttpSession session = Mvcs.getHttpSession(false);
-		if (session != null)
-			session.invalidate();
-	}
 	
 	public void init() {
 		log.debug("Image Dir = " + imageDir);

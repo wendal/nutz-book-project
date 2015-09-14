@@ -8,6 +8,7 @@ import org.nutz.dao.entity.annotation.EL;
 import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
+import org.nutz.lang.random.R;
 
 /**
  * 共享字段,免得每个Pojo类都加创建时间和生成时间
@@ -47,5 +48,9 @@ public abstract class BasePojo implements Serializable {
 	
 	public Date now() {
 		return new Date();
+	}
+	
+	public String uuid() {
+		return R.UU32().toLowerCase();
 	}
 }
