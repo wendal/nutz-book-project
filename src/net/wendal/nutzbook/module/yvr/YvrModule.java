@@ -4,7 +4,6 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -189,13 +188,13 @@ public class YvrModule extends BaseModule {
 			reply.setUps(jedis().zrange("t:like:"+reply.getId(), 0, System.currentTimeMillis()));
 		}
 		NutMap re = new NutMap();
-		re.put("no_reply_topics", Collections.EMPTY_LIST);
+		//re.put("no_reply_topics", new HashMap<String, String>());
 		re.put("topic", topic);
 		
 		String csrf = Lang.md5(R.UU16());
 		session.setAttribute("_csrf", csrf);
 		re.put("_csrf", csrf);
-		//re.put("current_user", fetch_userprofile(userId));
+		re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
 	
