@@ -17,6 +17,8 @@ import org.nutz.dao.entity.annotation.Table;
 @Table("t_topic")
 public class Topic extends BasePojo {
 
+	private static final long serialVersionUID = -8090885594965549361L;
+
 	@Id
 	protected long id;
 	
@@ -46,11 +48,11 @@ public class Topic extends BasePojo {
 	@Column("c_lock")
 	protected boolean lock;
 	
-	@Column("vt")
-	protected long visit;
+	// 浏览总数
+	protected long visitCount;
 	
-	// 回复的总数
-	protected long reply;
+	// 回复总数
+	protected long replyCount;
 	
 	protected TopicReply lastComment;
 	
@@ -60,9 +62,6 @@ public class Topic extends BasePojo {
 	@One(target=UserProfile.class, field="userId")
 	protected UserProfile author;
 	
-	@Many(target=TopicUp.class, field="topicId")
-	protected List<TopicUp> ups;
-
 	public long getId() {
 		return id;
 	}
@@ -119,14 +118,6 @@ public class Topic extends BasePojo {
 		this.top = top;
 	}
 
-	public long getVisit() {
-		return visit;
-	}
-
-	public void setVisit(long visit) {
-		this.visit = visit;
-	}
-
 	public List<TopicReply> getReplies() {
 		return replies;
 	}
@@ -141,14 +132,6 @@ public class Topic extends BasePojo {
 	
 	public void setAuthor(UserProfile author) {
 		this.author = author;
-	}
-
-	public long getReply() {
-		return reply;
-	}
-
-	public void setReply(long reply) {
-		this.reply = reply;
 	}
 
 	public TopicReply getLastComment() {
@@ -181,5 +164,21 @@ public class Topic extends BasePojo {
 
 	public void setLock(boolean lock) {
 		this.lock = lock;
+	}
+
+	public long getVisitCount() {
+		return visitCount;
+	}
+
+	public void setVisitCount(long visitCount) {
+		this.visitCount = visitCount;
+	}
+
+	public long getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(long replyCount) {
+		this.replyCount = replyCount;
 	}
 }

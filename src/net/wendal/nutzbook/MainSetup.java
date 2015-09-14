@@ -4,7 +4,6 @@ import java.sql.Connection;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.beetl.BeetlEhcache;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
@@ -91,7 +90,6 @@ public class MainSetup implements Setup {
 		});
 		
 		if (conf.getBoolean("redis.enable", false)) {
-		try {
 			// redis测试
 			JedisPool jedisPool = ioc.get(JedisPool.class);
 			try (Jedis jedis = jedisPool.getResource()) {
@@ -104,10 +102,8 @@ public class MainSetup implements Setup {
 			RedisService redis = ioc.get(RedisService.class);
 			redis.set("hi", "wendal");
 			log.debug("redis say again : "  + redis.get("hi"));
-		} catch (Throwable e) {
-			log.warn("redis connection fail? it is ok, just for demo now");
 		}
-		}
+		
 		
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
@@ -115,7 +111,6 @@ public class MainSetup implements Setup {
 	}
 	
 	public void destroy(NutConfig conf) {
-		BeetlEhcache.cache = null;
 		// 非mysql数据库,或多webapp共享mysql驱动的话,以下语句删掉
 		try {
 			Mirror.me(Class.forName("com.mysql.jdbc.AbandonedConnectionCleanupThread")).invoke(null, "shutdown");

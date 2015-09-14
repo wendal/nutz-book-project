@@ -16,17 +16,20 @@
     <!-- user_action -->
     <div class='user_action'>
       <span>
-      	<% if (null != current_user!) { %>
+      	<% if (null != obj.current_user!) {
+      	%>
         <i class="fa up_btn
-        ${is_uped(current_user, reply) ? 'fa-thumbs-up uped' : 'fa-thumbs-o-up' }
-         title="喜欢"></i>
+        
+        ${ array.contain(reply.ups, ""+ obj.current_user.userId) ? 'fa-thumbs-up uped' : 'fa-thumbs-o-up' }
+
+        " title="喜欢"></i>
         <span class="up-count">
         	${reply.ups.~size > 0 ? reply.ups.~size : '' }
         </span>
         <% } %>
       </span>
       <span>
-        <% if (null != current_user!){ %>
+        <% if (null != obj.current_user!){ %>
           <i class="fa fa-reply reply2_btn" title="回复"></i>
         <% } %>
       </span>

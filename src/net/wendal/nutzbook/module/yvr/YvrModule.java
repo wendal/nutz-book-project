@@ -1,5 +1,7 @@
 package net.wendal.nutzbook.module.yvr;
 
+import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
@@ -18,9 +21,10 @@ import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.util.Toolkit;
 
-import org.nutz.dao.Chain;
+import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
@@ -65,7 +69,7 @@ public class YvrModule extends BaseModule {
 	
 	@GET
 	@At
-	@Ok("beetl:yvr/add.btl")
+	@Ok("beetl:yvr/_add.btl")
 	public Object add(HttpSession session) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
@@ -85,7 +89,7 @@ public class YvrModule extends BaseModule {
 					@Attr(scope=Scope.SESSION, value="me")int userId,
 					HttpServletRequest req) {
 		if (userId < 1) {
-			//return ajaxFail("请先登录");
+			return ajaxFail("请先登录");
 		}
 		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 1024 || topic.getTitle().length() < 10) {
 			return ajaxFail("标题不合法");
@@ -103,16 +107,16 @@ public class YvrModule extends BaseModule {
 		topic.setTop(false);
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
-		topic.setVisit(0);
 		dao.insert(topic);
-		
 		return ajaxOk(topic.getId());
 	}
 	
 	@At({"/list/?", "/list"})
 	@GET
 	@Ok("beetl:/yvr/index.btl")
-	public Object list(TopicType type, @Param("..")Pager pager) {
+	@Aop("redis")
+	public Object list(TopicType type, @Param("..")Pager pager,
+			@Attr(scope=Scope.SESSION, value="me")int userId) {
 		if (pager == null)
 			pager = dao.createPager(1, 20);
 		else {
@@ -130,8 +134,8 @@ public class YvrModule extends BaseModule {
 				topic.setUserId(1);
 			dao.fetchLinks(topic, null);
 			dao.fetchLinks(topic.getAuthor(), null);
-			topic.setReply(dao.count(TopicReply.class, Cnd.where("topicId", "=", topic.getId())));
-			if (topic.getReply() > 0) {
+			topic.setReplyCount(dao.count(TopicReply.class, Cnd.where("topicId", "=", topic.getId())));
+			if (topic.getReplyCount() > 0) {
 				TopicReply reply = dao.fetch(TopicReply.class, Cnd.where("topicId", "=", topic.getId()).desc("createTime"));
 				if (reply.getUserId() == 0)
 					reply.setUserId(1);
@@ -139,8 +143,10 @@ public class YvrModule extends BaseModule {
 				dao.fetchLinks(reply.getAuthor(), null);
 				topic.setLastComment(reply);
 			}
+			Double visited = jedis().zscore("t:visit", ""+topic.getId());
+			topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		}
-		pager.setRecordCount(dao.count(Topic.class, cnd.desc("top")));
+		pager.setRecordCount(dao.count(Topic.class, cnd));
 		NutMap re = new NutMap();
 		re.put("list", list);
 		re.put("pager", pager);
@@ -156,18 +162,21 @@ public class YvrModule extends BaseModule {
 		re.put("page_end", page_end);
 		re.put("current_page", pager.getPageNumber());
 		re.put("pages", pager.getPageCount());
-		
+		re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
 	
 	@GET
 	@At("/t/?")
-	@Ok("beetl:yvr/topic.btl")
-	public Object topic(int id, HttpSession session) {
+	@Ok("beetl:yvr/_topic.btl")
+	@Aop("redis")
+	public Object topic(int id, HttpSession session, @Attr(scope=Scope.SESSION, value="me")int userId) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
+		Double visited = jedis().zincrby("t:visit", 1, ""+id);
+		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
 		dao.fetchLinks(topic, null);
@@ -177,8 +186,8 @@ public class YvrModule extends BaseModule {
 				reply.setUserId(1);
 			dao.fetchLinks(reply, null);
 			dao.fetchLinks(reply.getAuthor(), null);
+			reply.setUps(jedis().zrange("t:like:"+reply.getId(), 0, System.currentTimeMillis()));
 		}
-		dao.update(Topic.class, Chain.makeSpecial("visit", "+1"), Cnd.where("id", "=", id));
 		NutMap re = new NutMap();
 		re.put("no_reply_topics", Collections.EMPTY_LIST);
 		re.put("topic", topic);
@@ -186,7 +195,7 @@ public class YvrModule extends BaseModule {
 		String csrf = Lang.md5(R.UU16());
 		session.setAttribute("_csrf", csrf);
 		re.put("_csrf", csrf);
-		
+		//re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
 	
@@ -197,9 +206,12 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type=CsrfActionFilter.class))
 	public Object upload(@Param("file")TempFile tmp,
 			HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp,
+			@Attr(scope=Scope.SESSION, value="me")int userId) throws IOException {
 		resp.setContentType("application/json");
 		NutMap jsonrpc = new NutMap();
+		if (userId < 1)
+			return jsonrpc.setv("msg", "请先登陆!");
 		if (tmp == null || tmp.getFile().length() == 0) {
 			return jsonrpc.setv("msg", "空文件");
 		}
@@ -260,18 +272,24 @@ public class YvrModule extends BaseModule {
 	public void signup(String token) {
 		
 	}
-	
+
 	protected static Pattern P_USERNAME = Pattern.compile("[a-z][a-z0-9]{4,10}");
+	protected static Pattern P_PASSWORD = Pattern.compile("[a-z][a-z0-9]{4,10}");
 	
 	@POST
 	@At
 	@Ok("json")
-	public Object signup(@Param("email")String email, @Param("name")String name,
+	public Object signup(@Param("email")String email, 
+						@Param("username")String username,
+						@Param("password")String password,
 			HttpServletRequest req) {
-		if (Strings.isBlank(name) || !P_USERNAME.matcher(name.toLowerCase()).find()) {
+		if (Strings.isBlank(password) || !P_PASSWORD.matcher(password).find()) {
+			return ajaxFail("密码强度不够!!");
+		}
+		if (Strings.isBlank(username) || !P_USERNAME.matcher(username.toLowerCase()).find()) {
 			return ajaxFail("用户名不合法");
 		}
-		int count = dao.count(User.class, Cnd.where("name", "=", name));
+		int count = dao.count(User.class, Cnd.where("name", "=", username));
 		if (count != 0) {
 			return ajaxFail("用户名已经存在");
 		}
@@ -280,21 +298,57 @@ public class YvrModule extends BaseModule {
 		} catch (Exception e) {
 			return ajaxFail("Email地址不合法");
 		}
+		count = dao.count(UserProfile.class, Cnd.where("email", "=", email));
+		if (count != 0) {
+			return ajaxFail("Email已经存在");
+		}
 		try {
-			String token = String.format("%s,%s,%s", name, email, System.currentTimeMillis());
+			String token = String.format("%s,%s,%s", username, email, System.currentTimeMillis());
 			token = Toolkit._3DES_encode(emailKEY, token.getBytes());
 			String url = req.getRequestURL() + "/" + token;
 			String html = "<div>如果无法点击,请拷贝一下链接到浏览器中打开<p/>注册链接 %s</div>";
 			html = String.format(html, url, url);
-			emailService.send(email, "Nutz社区注册邮件", html);
-			return ajaxOk("请查收邮件");
+			if (emailService.send(email, "Nutz社区注册邮件", html));
+				return ajaxOk("请查收邮件,点击邮件中的链接即可完成注册");
 		} catch (Exception e) {
-			return ajaxOk("发送邮件失败");
 		}
+		return ajaxOk("发送邮件失败");
+	}
+	
+	@At("/u/oauth/github")
+	@Ok("->:/oauth/github")
+	public void oauth(String type, HttpServletRequest req, HttpSession session){
+		String url = req.getHeader("Rerefer");
+		if (url == null)
+			url = "/yvr/list";
+		session.setAttribute("oauth.return.url", url);
+	}
+	
+	@At("/t/?/reply/?/up")
+	@Ok("json")
+	@Aop("redis")
+	public void replyUp(String _, int replyId, @Attr(scope=Scope.SESSION, value="me")int userId){
+		if (userId < 1)
+			return;
+		jedis().zadd("t:like:"+replyId, System.currentTimeMillis(), userId+"");
+	}
+	
+	@At
+	@Ok(">>:/yvr")
+	public void logout() {
+		SecurityUtils.getSubject().logout();
 	}
 	
 	public void init() {
 		log.debug("Image Dir = " + imageDir);
 		Files.createDirIfNoExists(new File(imageDir));
+	}
+	
+	public UserProfile fetch_userprofile(int userId) {
+		UserProfile profile = dao.fetch(UserProfile.class, userId);
+		if (profile == null)
+			return null;
+		dao.fetchLinks(profile, null);
+		return profile;
 	}
 }

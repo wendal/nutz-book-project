@@ -33,9 +33,10 @@ var ioc = {
 			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
 			fields : {
 				cacheProvider : {refer:"cacheProvider"},
-				cachedTableNames : ["t_user_profile",
+				cachedTableNames : [
+				                    //"t_user_profile",
 				                    //"t_user", "t_role", "t_permission", "t_role_permission"
-				                    "t_user", "t_topic", "t_topic_reply", "t_topic_up", "t_topic_reply_up"
+				                    //"t_user", "t_topic", "t_topic_reply", "t_topic_up", "t_topic_reply_up"
 				                    ]
 			}
 		},

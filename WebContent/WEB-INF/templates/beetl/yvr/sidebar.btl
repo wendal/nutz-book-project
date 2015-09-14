@@ -18,7 +18,7 @@
         或
         <a href='${ctxPath}/yvr/signup'>注册</a>
         , 也可以
-        <a href="${ctxPath}/yvr/u/auth/github">
+        <a href="${ctxPath}/yvr/u/oauth/github">
           <span class="span-info">
             通过 GitHub 登录
           </span>

@@ -18,17 +18,18 @@ import org.nutz.log.Logs;
 public class LogErrorHandler extends ConsoleErrorHandler {
 
 	private static final Log log = Logs.get();
-	protected ThreadLocal<StringBuilder> sb = new ThreadLocal<StringBuilder>(){
-		protected StringBuilder initialValue() {
-			return new StringBuilder();
-		}
-	};
+	protected ThreadLocal<StringBuilder> sb = new ThreadLocal<StringBuilder>();
 
 	public void processExcption(BeetlException ex, Writer writer) {
+		StringBuilder _sb = new StringBuilder();
 		try {
-			sb.get().append(ex.getMessage()).append("\n");
+			sb.set(_sb);
+			if (ex != null) {
+				_sb.append(ex.getMessage()).append("\n");
+				ex.printStackTrace();
+			}
 			super.processExcption(ex, writer);
-			log.debug(sb.get());
+			log.debug(_sb);
 		} finally {
 			sb.set(null);
 		}

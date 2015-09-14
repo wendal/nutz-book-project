@@ -40,6 +40,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.JspView;
+import org.nutz.mvc.view.ServerRedirectView;
 
 @IocBean(create = "init")
 @At("/oauth")
@@ -117,6 +118,9 @@ public class OauthModule extends BaseModule {
 				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId());
 				dao.insert(oAuthUser);
 				doShiroLogin(session, user, _providerId);
+				String returnURL = (String) session.getAttribute("oauth.return.url");
+				if (returnURL != null)
+					return new ServerRedirectView(returnURL);
 				return null;
 			}
 			

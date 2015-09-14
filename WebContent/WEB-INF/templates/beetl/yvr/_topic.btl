@@ -1,5 +1,5 @@
 <%
-layout("layout.btl",{}){
+layout("_layout.btl",{}){
 %>
 <div id='sidebar'>
   <div class='panel'>
@@ -35,7 +35,7 @@ layout("layout.btl",{}){
     <div class='header topic_header'>
       <span class="topic_full_title">
         <%
-		layout("_top_good.btl",{topic:obj.topic}){};
+		layout("_top_good.btl",{"topic":obj.topic}){}
 		%>
 		${obj.topic.title}
       </span>
@@ -47,14 +47,14 @@ layout("layout.btl",{}){
           作者 <a href="${ctxPath}/yvr/u/${obj.topic.author.loginname}">${obj.topic.author.nickname!}</a>
         </span>
         <span>
-          ${obj.topic.visit} 次浏览
+          ${obj.topic.visitCount} 次浏览
         </span>
           <span>
             最后一次编辑是 ${obj.topic.updateAt}
           </span>
           <span> 来自 ${obj.topic.type.display}</span>
       </div>
-      <% if (null != current_user!) { %>
+      <% if (null != obj.current_user!) { %>
       <div id="manage_topic">
       </div>
       <% } %>
@@ -76,7 +76,7 @@ layout("layout.btl",{}){
     <%
     var _i = 0;
     for (reply in obj.topic.replies) {
-    	layout("reply.btl", {"reply":reply, "indexInCollection":_i}){};
+    	layout("_reply.btl", {"reply":reply, "indexInCollection":_i}){};
     	_i = _i + 1;
     }
     %>

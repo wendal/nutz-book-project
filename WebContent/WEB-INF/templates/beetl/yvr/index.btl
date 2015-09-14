@@ -1,6 +1,6 @@
 
 <%
-layout("layout.btl",{}){
+layout("_layout.btl",{}){
 %>
 
 <% layout("sidebar.btl",{}){};%>

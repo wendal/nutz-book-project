@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.bean.yvr;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
 import net.wendal.nutzbook.bean.BasePojo;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -9,12 +10,13 @@ import net.wendal.nutzbook.util.Toolkit;
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
-import org.nutz.dao.entity.annotation.Many;
 import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_topic_reply")
 public class TopicReply extends BasePojo {
+
+	private static final long serialVersionUID = 5165667887317040294L;
 
 	@Id
 	protected long id;
@@ -32,8 +34,8 @@ public class TopicReply extends BasePojo {
 	@One(target=UserProfile.class, field="userId")
 	protected UserProfile author;
 	
-	@Many(target=TopicReplyUp.class, field="replyId")
-	protected List<TopicReplyUp> ups;
+	@SuppressWarnings("unchecked")
+	protected Set<String> ups = Collections.EMPTY_SET;
 
 	public long getId() {
 		return id;
@@ -83,11 +85,11 @@ public class TopicReply extends BasePojo {
 		this.author = author;
 	}
 
-	public List<TopicReplyUp> getUps() {
+	public Set<String> getUps() {
 		return ups;
 	}
 
-	public void setUps(List<TopicReplyUp> ups) {
+	public void setUps(Set<String> ups) {
 		this.ups = ups;
 	}
 }
