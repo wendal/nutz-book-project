@@ -41,7 +41,7 @@
                         '<div class="control-group">',
                             '<label class="control-label">标题</label>',
                             '<div class="controls">',
-                                '<input type="text" name="title" placeholder="Title">',
+                                '<input type="text" name="title" placeholder="Title" value="标题">',
                             '</div>',
                         '</div>',
                         '<div class="control-group">',

@@ -61,6 +61,7 @@ var ctxPath = "${ctxPath}";
     		dataType : "json",
     		method : "POST",
     		success : function(re) {
+    			$('.submit_btn').button('reset');
     			if (console)
     				console.log(re);
     			if (re.ok) {
@@ -72,14 +73,11 @@ var ctxPath = "${ctxPath}";
     	});
     	return false;
     });
-    // END 版块选择的检查，必须选择
-    $('#tab-value').on('change', function () {
-      var $this = $(this);
-      var value = $this.val();
+    
       var warnMsg = '';
       warnMsg = '<strong>提问时，请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点，以便您更接收到高质量回复。</strong>'
       $('#topic_create_warn').html(warnMsg);
-    });
+      
   })();
 </script>
 <%} %>

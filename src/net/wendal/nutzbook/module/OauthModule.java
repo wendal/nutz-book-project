@@ -105,7 +105,7 @@ public class OauthModule extends BaseModule {
 						profile.setUserId(user.getId());
 						profile.setNickname(p.getDisplayName());
 						profile.setLocation(p.getLocation());
-						if (p.getEmail() != null) {
+						if (p.getEmail() != null && !"null".equals(p.getEmail())) {
 							profile.setEmail(p.getEmail());
 							profile.setEmailChecked(true);
 						}
