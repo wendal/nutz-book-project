@@ -87,6 +87,7 @@
         </li>
         <% } %>
         <li><a href='http://nutzbook.wendal.net' target="_blank">新手入门</a></li>
+        <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
         
         <% if ( null != obj.current_user!) { %>
         <li><a href='${ctxPath}/yvr/add' rel="nofollow">发新贴</a></li>
