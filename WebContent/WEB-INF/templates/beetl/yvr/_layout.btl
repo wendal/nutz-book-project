@@ -89,9 +89,8 @@
         <li><a href='http://nutzbook.wendal.net' target="_blank">新手入门</a></li>
         
         <% if ( null != obj.current_user!) { %>
-        <li>
-          <a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow">退出</a>
-        </li>
+        <li><a href='${ctxPath}/yvr/add' rel="nofollow">发新贴</a></li>
+        <li><a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow">退出</a></li>
         <% } else { %>
         <li><a href='#' onclick="f_signup();">注册</a></li>
         <li><a href='#' onclick="f_signin();">登录</a></li>

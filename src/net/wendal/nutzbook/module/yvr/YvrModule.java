@@ -4,7 +4,9 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,8 +46,6 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.HttpStatusView;
-
-import redis.clients.jedis.Jedis;
 
 @IocBean(create="init")
 @At("/yvr")
@@ -111,7 +111,7 @@ public class YvrModule extends BaseModule {
 		if (TopicType.ask.equals(topic.getType())) {
 			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
 		}
-		jedis().zadd("t:update:"+topic.getTags(), System.currentTimeMillis(), topic.getId());
+		jedis().zadd("t:update:"+topic.getType(), System.currentTimeMillis(), topic.getId());
 		return ajaxOk(topic.getId());
 	}
 	
@@ -127,31 +127,46 @@ public class YvrModule extends BaseModule {
 		else {
 			if (pager.getPageNumber() < 1)
 				pager.setPageNumber(1);
-			if (pager.getPageSize() > 50)
-				pager.setPageSize(50);
+			if (pager.getPageSize() > 20 || pager.getPageSize() < 1)
+				pager.setPageSize(20);
 		}
 		if (type == null)
 			type = TopicType.ask;
-		Cnd cnd = Cnd.where("type", "=", type);
-		List<Topic> list = dao.query(Topic.class, cnd, pager);
+		long now = System.currentTimeMillis();
+		String zkey = "t:update:"+type;
+		Long count = jedis().zcount(zkey, 0, now);
+		List<Topic> list = new ArrayList<Topic>();
+		if (count != null && count.intValue() != 0) {
+			pager.setRecordCount(count.intValue());
+			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0,  pager.getOffset(), pager.getPageSize());
+			for (String id : ids) {
+				Topic topic = dao.fetch(Topic.class, id);
+				if (topic == null)
+					continue;
+				list.add(topic);
+			}
+		}
 		for (Topic topic : list) {
 			if (topic.getUserId() == 0)
 				topic.setUserId(1);
 			dao.fetchLinks(topic, null);
 			dao.fetchLinks(topic.getAuthor(), null);
-			topic.setReplyCount(dao.count(TopicReply.class, Cnd.where("topicId", "=", topic.getId())));
+			Double reply_count = jedis().zscore("t:reply:count", topic.getId());
+			topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
 			if (topic.getReplyCount() > 0) {
-				TopicReply reply = dao.fetch(TopicReply.class, Cnd.where("topicId", "=", topic.getId()).desc("createTime"));
-				if (reply.getUserId() == 0)
-					reply.setUserId(1);
-				dao.fetchLinks(reply, "author");
-				dao.fetchLinks(reply.getAuthor(), null);
-				topic.setLastComment(reply);
+				String replyId = jedis().hget("t:reply:last", topic.getId());
+				TopicReply reply = dao.fetch(TopicReply.class, replyId);
+				if (reply != null) {
+					if (reply.getUserId() == 0)
+						reply.setUserId(1);
+					dao.fetchLinks(reply, "author");
+					dao.fetchLinks(reply.getAuthor(), null);
+					topic.setLastComment(reply);
+				}
 			}
 			Double visited = jedis().zscore("t:visit", ""+topic.getId());
 			topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		}
-		pager.setRecordCount(dao.count(Topic.class, cnd));
 		NutMap re = new NutMap();
 		re.put("list", list);
 		re.put("pager", pager);
@@ -267,6 +282,8 @@ public class YvrModule extends BaseModule {
 		if (re != null && re.intValue() != 1) {
 			jedis().zrem("t:noreply", topicId);
 		}
+		jedis().hset("t:reply:last", topicId, reply.getId());
+		jedis().zincrby("t:reply:count", 1, topicId);
 		return ajaxOk(null);
 	}
 	
