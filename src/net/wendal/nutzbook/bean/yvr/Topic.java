@@ -25,6 +25,7 @@ public class Topic extends BasePojo {
 	protected String id;
 	
 	@Column
+	@ColDefine(width=512)
 	protected String title;
 	
 	@Column("tp")

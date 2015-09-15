@@ -291,10 +291,21 @@ public class YvrModule extends BaseModule {
 	@At("/t/?/reply/?/up")
 	@Ok("json")
 	@Aop("redis")
-	public void replyUp(String _, String replyId, @Attr(scope=Scope.SESSION, value="me")int userId){
+	public Object replyUp(String _, String replyId, @Attr(scope=Scope.SESSION, value="me")int userId){
 		if (userId < 1)
-			return;
-		jedis().zadd("t:like:"+replyId, System.currentTimeMillis(), userId+"");
+			return ajaxFail("你还没登录呢");
+		if (1 != dao.count(TopicReply.class, Cnd.where("id", "=", replyId))) {
+			return ajaxFail("没这条评论");
+		}
+		String key = "t:like:"+replyId;
+		Double t = jedis().zscore(key, ""+userId);
+		if (t != null) {
+			jedis().zrem(key, userId+"");
+			return ajaxOk("down");
+		} else {
+			jedis().zadd(key, System.currentTimeMillis(), userId+"");
+			return ajaxOk("up");
+		}
 	}
 	
 	

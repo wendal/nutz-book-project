@@ -39,14 +39,14 @@ layout("_layout.btl",{}){
         <%
 		layout("_top_good.btl",{"topic":obj.topic}){}
 		%>
-		${obj.topic.title}
+		${obj.topic.title, escape}
       </span>
       <div class="changes">
         <span>
           发布于 ${obj.topic.createAt}
         </span>
         <span>
-          作者 <a href="${ctxPath}/yvr/u/${obj.topic.author.loginname}">${obj.topic.author.nickname!}</a>
+          作者 <a href="${ctxPath}/yvr/u/${obj.topic.author.loginname}">${obj.topic.author.nickname!, escape}</a>
         </span>
         <span>
           ${obj.topic.visitCount} 次浏览
@@ -376,23 +376,24 @@ var ctxPath = "${ctxPath}";
     var $this = $(this);
     var replyId = $this.closest('.reply_area').attr('reply_id');
     $.ajax({
-      url: '/reply/' + replyId + '/up',
+      url: '${ctxPath}/yvr/t/${obj.topic.id}/reply/' + replyId + '/up',
       method: 'POST',
+      dataType : "json"
     }).done(function (data) {
-      if (data.success) {
+      if (data.ok) {
         $this.removeClass('invisible');
         var currentCount = Number($this.next('.up-count').text().trim()) || 0;
-        if (data.action === 'up') {
+        if (data.data === 'up') {
           $this.next('.up-count').text(currentCount + 1);
           $this.addClass('uped');
         } else {
-          if (data.action === 'down') {
+          if (data.data === 'down') {
             $this.next('.up-count').text(currentCount - 1);
             $this.removeClass('uped');
           }
         }
       } else {
-        alert(data.message);
+        layer.alert(data.msg);
       }
     }).fail(function (xhr) {
       if (xhr.status === 403) {
