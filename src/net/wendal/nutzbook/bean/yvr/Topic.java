@@ -32,11 +32,11 @@ public class Topic extends BasePojo {
 	protected TopicType type;
 	
 	@Column("cnt")
-	@ColDefine(width=5000)
+	@ColDefine(width=20000)
 	protected String content;
 	
 	@Column
-	@ColDefine(width=8192)
+	@ColDefine(width=128)
 	protected List<String> tags;
 	
 	@Column("u_id")

@@ -57,7 +57,7 @@ public class YvrModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
-	@Inject("java:$conf.get(\"topic.image.dir\")")
+	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
 	
 	@At({"/", "/index"})

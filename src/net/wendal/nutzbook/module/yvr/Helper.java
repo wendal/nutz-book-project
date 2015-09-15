@@ -54,10 +54,4 @@ public class Helper {
 	public static String _fail(String str) {
 		return String.format("{\"ok\":false,\"msg\":\"%s\"}", str);
 	}
-	
-	public static void main(String[] args) {
-		for (int i = 0; i < 65; i++) {
-			System.out.println(""+i+"="+id2String(i) + "=" + string2Id(id2String(i)));
-		}
-	}
 }
