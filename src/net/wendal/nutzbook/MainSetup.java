@@ -107,7 +107,7 @@ public class MainSetup implements Setup {
 		
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
-		
+		Mvcs.disableFastClassInvoker = true;
 	}
 	
 	public void destroy(NutConfig conf) {
