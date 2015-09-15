@@ -13,20 +13,25 @@ http://nutzbook.wendal.net/jars/
 
 ## 当前已经实现或正在实现的功能
 
-* 基本的增删改查
-* Dao关联关系
-* 邮件发送
-* Quartz计划任务
+* 基本的增删改查,MVC各种用法及文件上传
+* Dao关联关系(One/Many/ManyMany)
+* 邮件发送及基于3DES的无数据库验证机制
+* Quartz计划任务集成
 * Shiro集成及权限管理
 * Ehcache及DaoCache集成
 * snakerflow工作流集成(未全部完成)
 * 自定义表单(未全部完成)
-* redis 集成
-* sockerio 集成
+* redis 集成(配置及拦截器应用)
+* sockerio 集成及demo聊天工具
+* jetbrick模板集成
+* beetl模板集成及应用
+* 二维码生成及跨屏登陆
+* 声明式系统日志
+* 基于socialauth的Oauth登陆(客户端,非服务器端实现)
 
 ## 在线演示地址
 
-http://nutz.cn/user/login
+https://nutz.cn/user/login
 
 若不可访问,请报issue
 
