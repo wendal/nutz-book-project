@@ -26,11 +26,11 @@ http://nutzbook.wendal.net/jars/
 
 ## 在线演示地址
 
-http://u.nutz.cn
+http://nutz.cn/user/login
 
 若不可访问,请报issue
 
-演示机配置: 树莓派, 广州长宽
+演示机配置: 阿里云, 1G RAM
 
 ## war包下载使用说明
 
