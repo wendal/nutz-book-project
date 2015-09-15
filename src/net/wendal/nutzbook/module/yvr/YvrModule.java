@@ -45,6 +45,8 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.HttpStatusView;
 
+import redis.clients.jedis.Jedis;
+
 @IocBean(create="init")
 @At("/yvr")
 @Fail("void")
@@ -81,6 +83,7 @@ public class YvrModule extends BaseModule {
 	@At
 	@Ok("json")
 	@Filters(@By(type=CsrfActionFilter.class))
+	@Aop("redis")
 	public NutMap add(@Param("..")Topic topic,
 					@Attr(scope=Scope.SESSION, value="me")int userId,
 					HttpServletRequest req) {
@@ -88,7 +91,7 @@ public class YvrModule extends BaseModule {
 			return ajaxFail("请先登录");
 		}
 		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 1024 || topic.getTitle().length() < 10) {
-			return ajaxFail("标题不合法");
+			return ajaxFail("标题长度不合法");
 		}
 		if (Strings.isBlank(topic.getContent()) || topic.getContent().length() > 20000) {
 			return ajaxFail("内容不合法");
@@ -104,6 +107,11 @@ public class YvrModule extends BaseModule {
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		dao.insert(topic);
+		// 如果是ask类型,把帖子加入到 "未回复"列表
+		if (TopicType.ask.equals(topic.getType())) {
+			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
+		}
+		jedis().zadd("t:update:"+topic.getTags(), System.currentTimeMillis(), topic.getId());
 		return ajaxOk(topic.getId());
 	}
 	
@@ -113,6 +121,7 @@ public class YvrModule extends BaseModule {
 	@Aop("redis")
 	public Object list(TopicType type, @Param("..")Pager pager,
 			@Attr(scope=Scope.SESSION, value="me")int userId) {
+		// TODO 按最后回复时间+创建时间排序
 		if (pager == null)
 			pager = dao.createPager(1, 20);
 		else {
@@ -236,6 +245,7 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type=CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")
+	@Aop("redis")
 	public Object addReply(String topicId, @Param("..")TopicReply reply,
 			@Attr(scope=Scope.SESSION, value="me")int userId) {
 		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
@@ -245,9 +255,18 @@ public class YvrModule extends BaseModule {
 		if (cnt.length() < 2 || cnt.length() > 10000) {
 			return ajaxFail("内容太长或太短了");
 		}
+		Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
+		if (topic == null) {
+			return ajaxFail("主题不存在");
+		}
 		reply.setTopicId(topicId);
 		reply.setUserId(userId);
 		dao.insert(reply);
+		// 更新topic的时间戳, 然后根据返回值确定是否需要从t:noreply中删除该topic
+		Long re = jedis().zadd("t:update:"+topic.getType(), reply.getCreateTime().getTime(), topicId);
+		if (re != null && re.intValue() != 1) {
+			jedis().zrem("t:noreply", topicId);
+		}
 		return ajaxOk(null);
 	}
 	
