@@ -17,7 +17,7 @@ public class UserService extends IdNameEntityService<User> {
 	@SLog(tag="新增用户", msg="用户名[${args[0]}]")
 	public User add(String name, String password) {
 		User user = new User();
-		user.setName(name.trim());
+		user.setName(name.trim().toLowerCase());
 		user.setSalt(R.UU16());
 		user.setPassword(new Sha256Hash(password, user.getSalt()).toHex());
 		user.setCreateTime(new Date());
