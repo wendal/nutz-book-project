@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.util.Markdowns;
 
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
@@ -33,5 +34,12 @@ public class SimpleTest {
 		obj.setv("profile", profile);
 		String uid = BeetlKit.render("${obj.list.~size}${obj.profile.userId}", new NutMap().setv("obj", obj));
 		Assert.assertEquals("01", uid);
+	}
+	
+	@Test
+	public void markdown_code() {
+		String md = "```\npublic class MainModule{}<img ><pre></pre>\n```";
+		String re = Markdowns.toHtml(md);
+		System.out.println(re);
 	}
 }
