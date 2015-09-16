@@ -45,7 +45,7 @@ public class Markdowns {
             		boolean flag = true;
             		if (tmps.length == 2) {
             			if (tmps[0] != null && tmps[1] != null && codeNames.contains(tmps[0].trim())) {
-            				printer.print("<code class='lang-"+tmps[0].trim()+"'>\n");
+            				printer.print("<code class='language-"+tmps[0].trim()+"'>\n");
                 			printer.printEncoded(tmps[1]);
                 			printer.print("</code>\n");
                 			flag = false;
