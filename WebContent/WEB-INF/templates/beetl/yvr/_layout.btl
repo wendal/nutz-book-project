@@ -126,6 +126,11 @@
       <a class='dark' href='${ctxPath}/yvr/rss'>RSS</a>
       |
       <a class='dark' href='https://github.com/wendal/nutz-book-project'>源码地址</a>
+      | Power By 
+      <a class='dark' href='https://github.com/nutzam/nutz'>Nutz</a>
+      ,
+      <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
+      等优秀的开源库
     </div>
 
   </div>
