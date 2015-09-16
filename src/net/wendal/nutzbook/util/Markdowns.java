@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.util;
 
 import org.pegdown.Extensions;
+import org.pegdown.LinkRenderer;
 import org.pegdown.ParsingTimeoutException;
 import org.pegdown.PegDownProcessor;
 import org.pegdown.ToHtmlSerializer;
@@ -13,7 +14,7 @@ public class Markdowns {
 		PegDownProcessor processor = new PegDownProcessor(Extensions.SUPPRESS_INLINE_HTML | Extensions.AUTOLINKS | Extensions.HARDWRAPS);
 		try {
             RootNode astRoot = processor.parseMarkdown(cnt.toCharArray());
-            return new ToHtmlSerializer(null){
+            return new ToHtmlSerializer(new LinkRenderer()){
             	public void visit(CodeNode node) {
             		printer.print("<pre class='prettyprint'>\n");
             		super.visit(node);
