@@ -95,6 +95,7 @@ public class YvrSeoModule extends BaseModule {
 		String tmpdir = conf.get("topic_seo.tmp_dir", "/tmp");
 		Files.createDirIfNoExists(tmpdir);
 		final WebSitemapGenerator gen = new WebSitemapGenerator(urlbase, new File(tmpdir));
+		gen.addUrl(urlbase + "/yvr/list");
 		dao.each(Topic.class, Cnd.orderBy().desc("createTime"), dao.createPager(1, 1000), new Each<Topic>() {
 			public void invoke(int index, Topic topic, int length)  {
 				try {
