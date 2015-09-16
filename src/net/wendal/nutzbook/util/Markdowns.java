@@ -52,7 +52,7 @@ public class Markdowns {
             			}
             		}
             		if (flag){
-            			printer.print("<code>\n");
+            			printer.print("<code>");
             			printer.printEncoded(str);
             			printer.print("</code>\n");
             		}
