@@ -90,7 +90,7 @@ public class YvrModule extends BaseModule {
 		if (userId < 1) {
 			return ajaxFail("请先登录");
 		}
-		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 1024 || topic.getTitle().length() < 10) {
+		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 100 || topic.getTitle().length() < 5) {
 			return ajaxFail("标题长度不合法");
 		}
 		if (Strings.isBlank(topic.getContent()) || topic.getContent().length() > 20000) {
@@ -121,7 +121,6 @@ public class YvrModule extends BaseModule {
 	@Aop("redis")
 	public Object list(TopicType type, @Param("..")Pager pager,
 			@Attr(scope=Scope.SESSION, value="me")int userId) {
-		// TODO 按最后回复时间+创建时间排序
 		if (pager == null)
 			pager = dao.createPager(1, 20);
 		else {
@@ -149,7 +148,7 @@ public class YvrModule extends BaseModule {
 		for (Topic topic : list) {
 			if (topic.getUserId() == 0)
 				topic.setUserId(1);
-			dao.fetchLinks(topic, null);
+			dao.fetchLinks(topic, "author");
 			dao.fetchLinks(topic.getAuthor(), null);
 			Double reply_count = jedis().zscore("t:reply:count", topic.getId());
 			topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
@@ -199,8 +198,9 @@ public class YvrModule extends BaseModule {
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
-		dao.fetchLinks(topic, null);
+		dao.fetchLinks(topic, "author");
 		dao.fetchLinks(topic.getAuthor(), null);
+		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
 		for (TopicReply reply : topic.getReplies()) {
 			if (reply.getUserId() == 0)
 				reply.setUserId(1);

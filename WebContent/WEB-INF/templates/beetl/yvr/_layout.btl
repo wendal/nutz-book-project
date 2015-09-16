@@ -220,6 +220,12 @@ function do_signin() {
 			} else {
 				layer.alert(re.msg);
 			}
+		},
+		error : function(jqXHR, exception) {
+			if (jqXHR.status == 404) {
+				// 如果已经登陆过,就会404,蛋疼的shiro
+				window.location.reload();
+			}
 		}
 	});
 	return false;
