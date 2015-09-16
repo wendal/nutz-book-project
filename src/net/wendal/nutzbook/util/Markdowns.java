@@ -30,8 +30,10 @@ public class Markdowns {
         } catch(ParsingTimeoutException e) {
             return null;
         } finally {
-        	if (log.isDebugEnabled())
-        		log.debugf("cnt[len=%d] %s",cnt.length(), sw);
+        	if (log.isDebugEnabled()) {
+        		sw.stop();
+        		log.debugf("cnt[len=%d] time=%sms",cnt.length(), sw.getDuration());
+        	}
         }
 	}
 }
