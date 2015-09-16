@@ -44,7 +44,6 @@ layout("_layout.btl",{title:'添加新帖子'}){
 <script>
 var ctxPath = "${ctxPath}";
 </script>
-<script src="${ctxPath}/rs/libs/jquery-2.1.0.js"></script>
 <script src="${ctxPath}/rs/libs/bootstrap/js/bootstrap.js"></script>
 <script src="${ctxPath}/rs/libs/markdownit.js"></script>
 <script src="${ctxPath}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
