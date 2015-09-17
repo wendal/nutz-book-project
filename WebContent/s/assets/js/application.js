@@ -30,13 +30,13 @@ function footer() {
     .append($('<li class="footer-links">Coded and designed by <a target="_blank" href="https://github.com/nutzam?tab=members">Nutz Production Committee</a> &copy; 2012</li>'))
     .append($('<li></li>').append($firstUlFooterLinks))
     .append($('<li></li>').append($secondUlFooterLinks))
-    .append($('<li class="footer-links" style="display: none" id="site-qrcode"><img src="https://chart.googleapis.com/chart?chs=72x72&amp;cht=qr&amp;choe=UTF-8&amp;chl=http%3A%2F%2Fwww.nutz.cn%2F"></li>'))
-    .append($('<li class="footer-links"><a href="javascript:void(0);" id="site-qrcode-str">显示本网站QR Code</a></li>'))
+    //.append($('<li class="footer-links" style="display: none" id="site-qrcode"><img src="https://chart.googleapis.com/chart?chs=72x72&amp;cht=qr&amp;choe=UTF-8&amp;chl=http%3A%2F%2Fwww.nutz.cn%2F"></li>'))
+    //.append($('<li class="footer-links"><a href="javascript:void(0);" id="site-qrcode-str">显示本网站QR Code</a></li>'))
     .append($('<li class="footer-links"><a title="查看备案信息" target="_blank" href="http://www.miibeian.gov.cn">苏ICP备 10226088号-17</a></li>'));
 
   $('<div class="container"></div>').append($unstyledUl).appendTo($('.footer'));
 
-  qrcodeToggle("site", "显示本站QR Code", "隐藏本站QR Code");
+  //qrcodeToggle("site", "显示本站QR Code", "隐藏本站QR Code");
 }
 
 function qrcodeToggle(id, showStr, hideStr) {
