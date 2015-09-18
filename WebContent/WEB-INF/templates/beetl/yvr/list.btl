@@ -58,7 +58,7 @@
     <% if (i == obj.current_page) { %>
     <li class='disabled'><a>${i}</a></li>
     <% } else { %>
-    <li><a href='${ctxPath}/yvr/list/${obj.type.name}?pageNumber=${i}'>${i}</a></li>
+    <li><a href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${i}'>${i}</a></li>
     <% } %>
     <% } %>
 
@@ -69,7 +69,7 @@
     <% if (obj.current_page == obj.pages) { %>
     <li class='disabled'><a>»</a></li>
     <% } else { %>
-    <li><a href='${ctxPath}/yvr/list/${obj.type.name}?pageNumber=${obj.pages}'>»</a></li>
+    <li><a href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${obj.pages}'>»</a></li>
     <% } %>
   </ul>
 </div>
