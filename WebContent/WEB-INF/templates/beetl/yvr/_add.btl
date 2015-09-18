@@ -15,7 +15,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
         <form id='create_topic_form' action='#' method='post'>
           <fieldset>
             <span class="tab-selector">选择版块：</span>
-            <select name="tab" id="tab-value">
+            <select name="type" id="tab-value">
               <% for (ttype in obj.types) {%>
               <option value="${ttype}" >${ttype.display}</option>
               <% } %>
