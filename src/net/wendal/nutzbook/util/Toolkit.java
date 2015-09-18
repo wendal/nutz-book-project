@@ -150,8 +150,8 @@ public class Toolkit {
 		if (diff < 60*60) {
 			return (diff/60)+"分钟前";
 		}
-		if (diff < 60*60*60) {
-			return (diff/60/60)+"小时" + (diff/60%60) + "分钟前";
+		if (diff < 24*60*60) {
+			return (diff/60/60)+"小时";
 		}
 		return (diff/24/60/60)+"天前";
 	}
