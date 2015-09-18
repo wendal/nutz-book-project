@@ -160,11 +160,11 @@
 	<form id='signin_form'>
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">用户名</span>
-  		<input name="username" type="text" class="form-control" placeholder="仅小写英文字母和数字,5到10位" aria-describedby="basic-addon1">
+  		<input name="username" type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">密 码</span>
-  		<input name="password" type="password" class="form-control" placeholder="最少8位,包含大小写和特殊字符" aria-describedby="basic-addon1">
+  		<input name="password" type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">验证码</span>

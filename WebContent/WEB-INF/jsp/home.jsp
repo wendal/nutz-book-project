@@ -72,6 +72,11 @@
                 type: 'url',
                 url: '/authority.jsp'
             }, {
+                label: '帖子管理',
+                icon: 'md-event',
+                type: 'url',
+                url: '/topics.jsp'
+            }, {
                 label: '系统配置',
                 icon: 'md-insert-chart',
                 type: 'url',
