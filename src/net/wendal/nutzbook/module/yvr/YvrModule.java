@@ -115,6 +115,10 @@ public class YvrModule extends BaseModule {
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		dao.insert(topic);
+		try {
+			topicSearchService.add(topic);
+		} catch (Exception e) {
+		}
 		// 如果是ask类型,把帖子加入到 "未回复"列表
 		if (TopicType.ask.equals(topic.getType())) {
 			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
