@@ -19,6 +19,7 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
@@ -45,6 +46,7 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
+import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
 
 @IocBean(create="init")
@@ -60,9 +62,15 @@ public class YvrModule extends BaseModule {
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
 	
+	@Inject("java:$conf.getInt('topic.pageSize', 15)")
+	protected int pageSize;
+	
 	@At({"/", "/index"})
 	@Ok(">>:/yvr/list")
 	public void index() {}
+	
+	@Inject
+	protected TopicSearchService topicSearchService;
 	
 	@GET
 	@At
@@ -122,12 +130,12 @@ public class YvrModule extends BaseModule {
 	public Object list(TopicType type, @Param("..")Pager pager,
 			@Attr(scope=Scope.SESSION, value="me")int userId) {
 		if (pager == null)
-			pager = dao.createPager(1, 20);
+			pager = dao.createPager(1, pageSize);
 		else {
 			if (pager.getPageNumber() < 1)
 				pager.setPageNumber(1);
-			if (pager.getPageSize() > 20 || pager.getPageSize() < 1)
-				pager.setPageSize(20);
+			if (pager.getPageSize() > pageSize || pager.getPageSize() < 1)
+				pager.setPageSize(pageSize);
 		}
 		if (type == null)
 			type = TopicType.ask;
@@ -145,6 +153,10 @@ public class YvrModule extends BaseModule {
 				list.add(topic);
 			}
 		}
+		return _process_query_list(pager, list, userId, type);
+	}
+	
+	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType type) {
 		for (Topic topic : list) {
 			if (topic.getUserId() == 0)
 				topic.setUserId(1);
@@ -308,6 +320,31 @@ public class YvrModule extends BaseModule {
 		}
 	}
 	
+	@GET
+	@At
+	@Ok("beetl:/yvr/index.btl")
+	@Aop("redis")
+	public Object search(@Param("q")String keys,
+			@Attr(scope=Scope.SESSION, value="me")int userId) throws Exception {
+		if (Strings.isBlank(keys))
+			return new ForwardView("/yvr/list");
+		List<String> ids = topicSearchService.search(keys);
+		List<Topic> list = new ArrayList<Topic>();
+		for (String id : ids) {
+			Topic topic = dao.fetch(Topic.class, id);
+			if (topic == null)
+				continue;
+			list.add(topic);
+		}
+		Pager pager = dao.createPager(1, 30);
+		pager.setRecordCount(list.size());
+		return _process_query_list(pager, list, userId, TopicType.ask);
+	}
+	
+	@At("/search/rebuild")
+	public void rebuild() throws IOException {
+		topicSearchService.rebuild();
+	}
 	
 	public void init() {
 		log.debug("Image Dir = " + imageDir);

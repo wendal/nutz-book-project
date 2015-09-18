@@ -10,10 +10,9 @@ import net.wendal.nutzbook.util.Markdowns;
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nutz.lang.Lang;
 import org.nutz.lang.util.NutMap;
 
-public class SimpleTest {
+public class SimpleTest extends Assert {
 
 	@Test
 	public void test_string_array() {
@@ -42,4 +41,11 @@ public class SimpleTest {
 		String re = Markdowns.toHtml(md);
 		System.out.println(re);
 	}
+	
+//	@Test
+//	public void test_beetl_objectutl_for_enum () {
+//		MethodInvoker invoker = ObjectUtil.getInvokder(TopicType.class, "name");
+//		assertNotNull(invoker);
+//		TopicType.ask.name();
+//	}
 }
