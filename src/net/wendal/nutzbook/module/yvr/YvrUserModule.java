@@ -41,6 +41,12 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
+	@At("/?")
+	@Ok("raw")
+	public String userHome() {
+		return "<h1>暂未实现</h1>";
+	}
+	
 
 	@Ok("raw:jpg")
 	@At("/?/avatar")
