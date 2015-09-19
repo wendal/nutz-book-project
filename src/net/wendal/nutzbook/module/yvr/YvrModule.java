@@ -5,7 +5,9 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -161,11 +163,11 @@ public class YvrModule extends BaseModule {
 	}
 	
 	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType type) {
+		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		for (Topic topic : list) {
 			if (topic.getUserId() == 0)
 				topic.setUserId(1);
-			dao.fetchLinks(topic, "author");
-			dao.fetchLinks(topic.getAuthor(), null);
+			topic.setAuthor(_cacheFetch(authors, topic.getUserId()));
 			Double reply_count = jedis().zscore("t:reply:count", topic.getId());
 			topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
 			if (topic.getReplyCount() > 0) {
@@ -174,8 +176,7 @@ public class YvrModule extends BaseModule {
 				if (reply != null) {
 					if (reply.getUserId() == 0)
 						reply.setUserId(1);
-					dao.fetchLinks(reply, "author");
-					dao.fetchLinks(reply.getAuthor(), null);
+					reply.setAuthor(_cacheFetch(authors, reply.getUserId()));
 					topic.setLastComment(reply);
 				}
 			}
@@ -199,6 +200,18 @@ public class YvrModule extends BaseModule {
 		re.put("pages", pager.getPageCount());
 		re.put("current_user", fetch_userprofile(userId));
 		return re;
+	}
+	
+	protected UserProfile _cacheFetch(Map<Integer, UserProfile> authors, int userId) {
+		UserProfile author = authors.get(userId);
+		if (author == null) {
+			author = dao.fetch(UserProfile.class, userId);
+			if (author != null) {
+				dao.fetchLinks(author, null);
+			}
+			authors.put(userId, author);
+		}
+		return author;
 	}
 	
 	@GET

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.bean.yvr;
 
+import java.io.DataOutputStream;
 import java.util.List;
 
 import net.wendal.nutzbook.bean.BasePojo;
@@ -52,10 +53,10 @@ public class Topic extends BasePojo {
 	protected boolean lock;
 	
 	// 浏览总数
-	protected long visitCount;
+	protected transient long visitCount;
 	
 	// 回复总数
-	protected long replyCount;
+	protected transient long replyCount;
 	
 	protected TopicReply lastComment;
 	
@@ -184,4 +185,37 @@ public class Topic extends BasePojo {
 	public void setReplyCount(long replyCount) {
 		this.replyCount = replyCount;
 	}
+	
+	//--SerializationBuilder
+	private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+	    java.io.DataOutputStream dos = new java.io.DataOutputStream(out);
+	    dos.writeUTF(id);
+	    dos.writeUTF(title);
+	    dos.writeUTF(type == null ? null : type.name());
+	    dos.writeUTF(content);
+	    dos.writeInt(userId);
+	    dos.writeBoolean(top);
+	    dos.writeBoolean(good);
+	    dos.writeBoolean(lock);
+	    dos.writeLong(createTime == null ? 0 : createTime.getTime());
+	    dos.writeLong(updateTime == null ? 0 : updateTime.getTime());
+
+	}
+	private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException{
+	    java.io.DataInputStream dis = new java.io.DataInputStream(in);
+	    String _tmp = null;
+	    id = dis.readUTF();
+	    title = dis.readUTF();
+	    _tmp = dis.readUTF(); if (_tmp != null) type=net.wendal.nutzbook.bean.yvr.TopicType.valueOf(_tmp);
+	    content = dis.readUTF();
+	    userId = dis.readInt();
+	    top = dis.readBoolean();
+	    good = dis.readBoolean();
+	    lock = dis.readBoolean();
+	    createTime = new java.util.Date(dis.readLong());
+	    updateTime = new java.util.Date(dis.readLong());
+
+	}
+	private void readObjectNoData() throws java.io.ObjectStreamException{}
+	//SerializationBuilder--
 }
