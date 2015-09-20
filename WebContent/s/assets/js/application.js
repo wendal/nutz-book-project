@@ -19,7 +19,8 @@ function footer() {
 
   var $secondUlFooterLinks = $('<ul class="footer-links"></ul>');
   $secondUlFooterLinks
-    .append($('<li><a target="_blank" href="http://nutzam.com">Nutz 官网地址</a></li>'))
+  .append($('<li><a target="_blank" href="http://nutz.cn/yvr/list">返回论坛</a></li>'))
+  .append($('<li><a target="_blank" href="http://nutzam.com">Nutz 官网地址</a></li>'))
     .append($('<li><a target="_blank" href="https://github.com/nutzam/nutz">Nutz Github</a></li>'))
     .append($('<li><a target="_blank" href="http://code.google.com/p/nutz">Nutz GoogleCode 首页</a></li>'))
     .append($('<li><a target="_blank" href="https://github.com/wendal/shortit">本站源码地址</a></li>'))
