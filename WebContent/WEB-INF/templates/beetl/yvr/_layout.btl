@@ -76,7 +76,7 @@
 <div class='navbar'>
   <div class='navbar-inner'>
     <div class='container'>
-      <a class='brand' href='${ctxPath}/yvr/'>
+      <a class='brand' href='${ctxPath}/yvr/list'>
         <div class="nutz-logo-bar">
     		<div class="nutz-logo">
         		<img src="${ctxPath}/rs/logo/logo.png" alt=""/>
