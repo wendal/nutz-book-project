@@ -5,13 +5,13 @@
     <!-- <diskStore path="java.io.tmpdir/shiro-ehcache"/> -->
     <diskStore path="java.io.tmpdir/nutzbook"/>
     <defaultCache
-            maxElementsInMemory="10000"
+            maxElementsInMemory="1000"
             eternal="false"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
-            statistics="true"
+            statistics="false"
             />
 </ehcache>

@@ -16,7 +16,7 @@
         请先注册或登录,还可以
         <a href="${ctxPath}/yvr/u/oauth/github">
           <span class="span-info">
-            通过 GitHub 登录
+            推荐通过 GitHub 一键登录
           </span>
         </a>
       </div>
@@ -67,6 +67,10 @@
         <div class="sep10"></div>
         <li>
           <a href="http://nutzbook.wendal.net" target="_blank">Nutzbook</a>
+        </li>
+        <div class="sep10"></div>
+        <li>
+          <a href="http://ibeetl.com/" target="_blank">Beetl模板</a>
         </li>
       </ol>
     </div>

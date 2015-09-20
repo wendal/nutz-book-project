@@ -66,7 +66,7 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.3.2.v20150730</version>
+				<version>9.3.3.v20150827</version>
 				<configuration>
 					<webAppSourceDirectory>WebContent</webAppSourceDirectory>
 					<war>${project.build.directory}/${project.artifactId}.war</war>
@@ -104,7 +104,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.b.53-SNAPSHOT</version>
+			<version>1.b.53</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -125,7 +125,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-daocache</artifactId>
-			<version>1.b.52.r1</version>
+			<version>1.b.52.r4</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
