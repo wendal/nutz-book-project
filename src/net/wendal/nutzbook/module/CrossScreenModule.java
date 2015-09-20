@@ -16,6 +16,7 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
@@ -43,7 +44,7 @@ public class CrossScreenModule {
 	@At("/qr")
 	@Ok("raw:png")
 	public Object crossScreen(@Param("url")String url, 
-							  @Attr("me")Integer uid, 
+							  @Attr(value="me", scope=Scope.SESSION)Integer uid, 
 							  HttpServletRequest req,
 							  @Param("w")int w, @Param("h")int h) {
 		if (Strings.isBlank(url)) {

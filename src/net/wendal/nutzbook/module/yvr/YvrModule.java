@@ -292,6 +292,8 @@ public class YvrModule extends BaseModule {
 	@Aop("redis")
 	public Object addReply(String topicId, @Param("..")TopicReply reply,
 			@Attr(scope=Scope.SESSION, value="me")int userId) {
+		if (userId < 1)
+			return ajaxFail("请先登录");
 		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
 			return ajaxFail("内容不能为空");
 		}
