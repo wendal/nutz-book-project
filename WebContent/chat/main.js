@@ -24,7 +24,7 @@ $(function() {
   var $currentInput = $usernameInput.focus();
 
   //var socket = io();
-  var socket = io.connect('http://'+window.location.hostname+ ':81/chat', {
+  var socket = io.connect('//'+window.location.hostname+ ':81/chat', {
       'reconnection delay' : 2000,
       'force new connection' : true
     });

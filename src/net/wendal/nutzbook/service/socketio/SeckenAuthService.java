@@ -12,6 +12,7 @@ import org.nutz.log.Logs;
 
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
 
 @IocBean
@@ -37,5 +38,10 @@ public class SeckenAuthService {
 			re.put("msg", "获取洋葱授权二维码识别");
 		}
 		client.sendEvent("new_auth_qr", re);
+	}
+	
+	@OnConnect
+	public void welcome(SocketIOClient client) {
+		client.sendEvent("login", "");
 	}
 }
