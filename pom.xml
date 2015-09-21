@@ -297,5 +297,10 @@
 			<artifactId>lucene-queryparser</artifactId>
 			<version>4.9.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-plugins-secken</artifactId>
+			<version>1.b.52.r2</version>
+		</dependency>
 	</dependencies>
 </project>

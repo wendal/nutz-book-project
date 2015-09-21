@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.service.socketio;
 
 import java.io.Closeable;
+import java.util.UUID;
 
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -57,6 +58,9 @@ public class SocketioService implements Closeable {
 	    // 简单聊天
 	    srv.addNamespace("/chat").addListeners(ioc.get(SimpleChatService.class));
 	    
+	    // 洋葱验证
+	    srv.addNamespace("/secken").addListeners(ioc.get(SeckenAuthService.class));
+	    
 	    srv.start();
 	}
 	
@@ -67,5 +71,8 @@ public class SocketioService implements Closeable {
 		log.info("shutting down socketio done");
 		Lang.quiteSleep(1000); // 需要等1秒, netty才能清理完全
 	}
-	
+
+	public SocketIOClient getClient(UUID clientId) {
+		return srv.getClient(clientId);
+	}
 }

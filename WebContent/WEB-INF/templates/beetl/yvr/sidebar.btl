@@ -23,6 +23,36 @@
     </div>
     <% } %>
   </div>
+  
+  <% if (null == obj.current_user!) { %>
+  <div class="panel">
+    <div class='inner'>
+      <a href='#' id='secken_btn' onclick='secken_auth();'>
+        <span class='span-success'>洋葱登陆</span>
+      </a>
+    </div>
+  </div>
+<script>
+  function secken_auth() {
+	setTimeout(function() {
+		var socket = io.connect('http://'+window.location.hostname+ ':81/secken', {
+      		'reconnection delay' : 2000,
+      		'force new connection' : true
+    	});
+    	socket.on("new_auth_qr", function(data){
+    		if (data.ok) {
+    			var tmp = "<img src='" data.url + "'>";
+    			layer.open({"title":"请使用洋葱APP扫描二维码", shadeClose : true, "type":1, content:tmp, area : ['256px', '291px']}); // 256+35 = 291
+    		}
+    	});
+    	socket.on("login_callback", function(data){
+    		window.location.href= "https://nutz.cn/cs/pass?token=" + data.token;
+    	});
+    	socket.emit("get_auth_qr", {});
+	}, 300);
+};
+</script>
+  <% } %>
 
   <% if (null != obj.current_user!) { %>
   <div class="panel">
