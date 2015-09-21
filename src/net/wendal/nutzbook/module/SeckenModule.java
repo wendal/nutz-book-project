@@ -29,7 +29,7 @@ import org.nutz.mvc.annotation.Param;
 
 import com.corundumstudio.socketio.SocketIOClient;
 
-@At
+@At("/secken")
 @IocBean
 public class SeckenModule extends BaseModule {
 	
