@@ -54,7 +54,7 @@ layout("_layout.btl",{}){
           <span>
             最后一次编辑是 ${obj.topic.updateAt}
           </span>
-          <span> 来自 ${obj.topic.type.display}</span>
+          <span> 来自 <a href="${ctxPath}/yvr/list/${obj.topic.type}">${obj.topic.type.display}</a></span>
       </div>
       <% if (null != obj.current_user!) { %>
       <div id="manage_topic">

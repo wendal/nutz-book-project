@@ -1,11 +1,17 @@
 package net.wendal.nutzbook.module.yvr;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.module.BaseModule;
@@ -14,6 +20,8 @@ import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.Cnd;
+import org.nutz.http.Http;
+import org.nutz.http.Response;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -31,12 +39,14 @@ import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
 @At("/yvr/u")
-@IocBean
+@IocBean(create="init")
 public class YvrUserModule extends BaseModule {
 
 	private static final Log log = Logs.get();
 	
 	protected byte[] emailKEY = R.sg(24).next().getBytes();
+	
+	protected Cache avatarCache;
 	
 	@Inject
 	protected UserService userService;
@@ -50,7 +60,40 @@ public class YvrUserModule extends BaseModule {
 
 	@Ok("raw:jpg")
 	@At("/?/avatar")
-	public File userAvatar(){
+	public Object userAvatar(String username){
+		Element ele = avatarCache.get(username);
+		if (ele == null) {
+			User user = dao.fetch(User.class, username);
+			if (user != null) {
+				dao.fetchLinks(user, "profile");
+				if (user.getProfile() != null && user.getProfile().getAvatar() != null && user.getProfile().getAvatar().length > 0) {
+					byte[] buf = user.getProfile().getAvatar();
+					avatarCache.put(new Element(username, buf));
+					return buf;
+				}
+				OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
+				if (ouser != null && ouser.getAvatar_url() != null) {
+					try {
+						Response resp = Http.get(ouser.getAvatar_url(), 5000);
+						if (resp != null && resp.isOK()) {
+							InputStream ins = resp.getStream();
+							ByteArrayOutputStream out = new ByteArrayOutputStream();
+							byte[] buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
+							int len = 0;
+							while (-1 != (len = ins.read(buf)))
+								out.write(buf, 0, len);
+							buf = out.toByteArray();
+							avatarCache.put(new Element(username, buf));
+							return buf;
+						}
+					} catch (IOException e) {
+						log.debug("load github avatar fail");
+					}
+				};
+			}
+		} else {
+			return ele.getObjectValue();
+		}
 		return new File(Mvcs.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
 	}
 	
@@ -156,5 +199,13 @@ public class YvrUserModule extends BaseModule {
 		HttpSession session = Mvcs.getHttpSession(false);
 		if (session != null)
 			session.invalidate();
+	}
+	
+	public void init() {
+		avatarCache = cacheManager.getCache("yvr_avatar");
+		if (avatarCache == null) {
+			cacheManager.addCache("yvr_avatar");
+			avatarCache = cacheManager.getCache("yvr_avatar");
+		}
 	}
 }

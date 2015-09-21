@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.bean;
 
+import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.PK;
 import org.nutz.dao.entity.annotation.Table;
@@ -30,14 +31,19 @@ public class OAuthUser extends BasePojo {
 	@Column("u_id")
 	private int userId;
 	
+	@Column("a_url")
+	@ColDefine(width=8192)
+	private String avatar_url;
+	
 	public OAuthUser() {
 	}
 
-	public OAuthUser(String providerId, String validatedId, int userId) {
+	public OAuthUser(String providerId, String validatedId, int userId, String avatar_url) {
 		super();
 		this.providerId = providerId;
 		this.validatedId = validatedId;
 		this.userId = userId;
+		this.avatar_url = avatar_url;
 	}
 
 
@@ -65,6 +71,14 @@ public class OAuthUser extends BasePojo {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	public String getAvatar_url() {
+		return avatar_url;
+	}
+
+	public void setAvatar_url(String avatar_url) {
+		this.avatar_url = avatar_url;
 	}
 	
 }

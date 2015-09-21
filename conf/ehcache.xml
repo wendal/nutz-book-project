@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
-    monitoring="autodetect" dynamicConfig="true" name="nutzbook">
-    <!-- <diskStore path="java.io.tmpdir/shiro-ehcache"/> -->
-    <diskStore path="java.io.tmpdir/nutzbook"/>
-    <defaultCache
-            maxElementsInMemory="1000"
-            eternal="false"
-            timeToIdleSeconds="3600"
-            timeToLiveSeconds="3600"
-            overflowToDisk="false"
-            diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="120"
-            statistics="false"
-            />
+	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
+	monitoring="autodetect" dynamicConfig="true" name="nutzbook">
+	<!-- <diskStore path="java.io.tmpdir/shiro-ehcache"/> -->
+	<diskStore path="java.io.tmpdir/nutzbook" />
+	<defaultCache maxElementsInMemory="1000" eternal="false"
+		timeToIdleSeconds="3600" timeToLiveSeconds="3600" overflowToDisk="false"
+		diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
+		statistics="false" />
+	<cache name="yvr_avatar" maxEntriesLocalHeap="100"
+		maxEntriesLocalDisk="100000" overflowToDisk="true" diskPersistent="true"
+		diskSpoolBufferSizeMB="20" timeToIdleSeconds="3600" timeToLiveSeconds="3600"
+		memoryStoreEvictionPolicy="LFU">
+	</cache>
 </ehcache>

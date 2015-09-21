@@ -17,7 +17,6 @@ import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.shiro.realm.OAuthAuthenticationToken;
-import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
 import org.brickred.socialauth.AuthProvider;
@@ -26,11 +25,13 @@ import org.brickred.socialauth.SocialAuthConfig;
 import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
+import org.nutz.dao.util.Daos;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
+import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.stream.NullInputStream;
 import org.nutz.log.Log;
@@ -114,8 +115,9 @@ public class OauthModule extends BaseModule {
 						
 						dao.insert(profile);
 					}
+					user = dao.fetch(User.class, p.getDisplayName());
 				}
-				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId());
+				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId(), p.getProfileImageURL());
 				dao.insert(oAuthUser);
 				doShiroLogin(session, user, _providerId);
 				String returnURL = (String) session.getAttribute("oauth.return.url");
@@ -127,9 +129,14 @@ public class OauthModule extends BaseModule {
 			// TODO 跳到关联引导页
 			session.setAttribute("oauth.profile", p);
 			return new JspView("jsp.oauth.link");
+		} else {
+			if (oAuthUser.getAvatar_url() == null && !Strings.isBlank(p.getProfileImageURL())) {
+				oAuthUser.setAvatar_url(p.getProfileImageURL());
+				dao.update(oAuthUser, "avatar_url");
+			}
 		}
 		User user = dao.fetch(User.class, oAuthUser.getUserId());
-		if (user == null) {
+		if (user == null || user.getId() < 2) { // 不允许admin通过oauth登陆
 			log.debugf("关联用户不存在?!! ==> pid=%s, vid=%s",p.getProviderId(), p.getValidatedId());
 			return new HttpStatusView(500);
 		}
@@ -141,7 +148,7 @@ public class OauthModule extends BaseModule {
 	protected void doShiroLogin(HttpSession session, User user, String _providerId) {
 		SecurityUtils.getSubject().login(new OAuthAuthenticationToken(user.getId()));
 		session.setAttribute(NutShiro.SessionKey, user.getId());
-		sysLogService.async(SysLog.c("method", "用户登陆", null, Toolkit.uid(), "用户通过"+_providerId+" Oauth登陆"));
+		sysLogService.async(SysLog.c("method", "用户登陆", null, user.getId(), "用户通过"+_providerId+" Oauth登陆"));
 	}
 	
 	@At
@@ -160,5 +167,6 @@ public class OauthModule extends BaseModule {
 		else
 			config.load(new FileInputStream(devConfig));
 		this.config = config;
+		Daos.migration(dao, OAuthUser.class, true, false);
 	}
 }
