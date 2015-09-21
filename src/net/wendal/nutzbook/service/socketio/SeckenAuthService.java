@@ -29,7 +29,7 @@ public class SeckenAuthService {
 		NutMap re = new NutMap();
 		try {
 			// TODO 可配置
-			SeckenResp resp = secken.getAuth(1, "https://nutz.cn/secken/callback?c="+R.UU32(client.getSessionId())).check();
+			SeckenResp resp = secken.getAuth(1, "https://nutz.cn/secken/callback/"+R.UU32(client.getSessionId())).check();
 			String url = resp.qrcode_url();
 			re.put("ok", true);
 			re.put("url", url);
