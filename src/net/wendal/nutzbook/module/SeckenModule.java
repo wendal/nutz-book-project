@@ -52,7 +52,7 @@ public class SeckenModule extends BaseModule {
 			return "";
 		}
 		secken.checkSign(sr);
-		SocketIOClient client = socketioService.getClient(c);
+		SocketIOClient client = socketioService.getClient("/secken", c);
 		if (client == null) {
 			log.debug("no such client -->" + clientId);
 			return "";

@@ -72,7 +72,7 @@ public class SocketioService implements Closeable {
 		Lang.quiteSleep(1000); // 需要等1秒, netty才能清理完全
 	}
 
-	public SocketIOClient getClient(UUID clientId) {
-		return srv.getClient(clientId);
+	public SocketIOClient getClient(String namespace, UUID clientId) {
+		return srv.getNamespace(namespace).getClient(clientId);
 	}
 }
