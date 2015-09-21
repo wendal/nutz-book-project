@@ -41,26 +41,26 @@ public class SeckenModule extends BaseModule {
 	
 	@Inject UserService userService;
 	
-	@Ok("json")
+	@Ok("raw:json")
 	@Fail("void")
 	@At("/callback/?")
-	public void callback(String clientId, @Param("..")Map<String, Object> params) {
+	public String callback(String clientId, @Param("..")Map<String, Object> params) {
 		UUID c = R.fromUU32(clientId);
 		SeckenResp sr = new SeckenResp(params);
 		if (!sr.ok()) {
 			log.debug("secken resp not ok -->" + sr);
-			return;
+			return "";
 		}
 		secken.checkSign(sr);
 		SocketIOClient client = socketioService.getClient(c);
 		if (client == null) {
 			log.debug("no such client -->" + clientId);
-			return;
+			return "";
 		}
 		String secken_uid = sr.uid();
 		if (secken_uid == null) {
 			log.debug("secken resp without uid");
-			return;
+			return "";
 		}
 		
 		OAuthUser ouser = dao.fetchx(OAuthUser.class, "secken", secken_uid);
@@ -88,6 +88,7 @@ public class SeckenModule extends BaseModule {
 		String token = Toolkit._3DES_encode(CrossScreen.csKEY, json.getBytes());
 		
 		client.sendEvent("login_callback", new NutMap().setv("token", token));
+		return "{\"status\":\"ok\"}";
 	}
 	
 }
