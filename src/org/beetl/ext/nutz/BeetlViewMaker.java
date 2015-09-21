@@ -79,6 +79,7 @@ public class BeetlViewMaker implements ViewMaker {
         groupTemplate = new GroupTemplate(cfg);
         render = new WebRender(groupTemplate);
         log.debug("beetl init complete");
+        
     }
 
     public void depose() {
