@@ -40,12 +40,16 @@ var socket = io.connect('//'+window.location.hostname+ ':81/secken', {
 });
 socket.on("new_auth_qr", function(data){
         if (data.ok) {
-                var tmp = "<img src='" + data.url + "'>";
-                layer.open({"title":"请使用洋葱APP扫描二维码", shadeClose : true, "type":1, content:tmp, area : ['256px', '291px']}); // 256+35 = 291
+        		setTimeout(function() {
+                	var tmp = "<img src='" + data.url + "'>";
+                	layer.open({"title":"请使用洋葱APP扫描二维码", shadeClose : true, "type":1, content:tmp, area : ['256px', '291px']}); // 256+35 = 291
+        		}, 300);
         }
 });
 socket.on("login_callback", function(data){
-        window.location.href= "https://nutz.cn/cs/pass?token=" + data.token;
+		if (console)
+			console.log(data);
+        window.location = "https://nutz.cn/cs/pass?token=" + data.token;
 });
 function secken_auth() {
     socket.emit("get_auth_qr", {});
