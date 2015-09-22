@@ -113,7 +113,7 @@ public class TopicSearchService {
 		luceneIndex.writer.commit();
 	}
 
-	public List<String> search(String keyword) throws IOException, ParseException {
+	public List<LuceneSearchResult> search(String keyword) throws IOException, ParseException {
 		IndexReader reader = luceneIndex.reader();
 		try {
 			IndexSearcher searcher = new IndexSearcher(reader);
@@ -127,11 +127,13 @@ public class TopicSearchService {
 			FastVectorHighlighter fvh = new FastVectorHighlighter(true, true, fragListBuilder, fragmentsBuilder);
 			FieldQuery fq = fvh.getFieldQuery(query);
 			System.out.println("命中--》" + results.totalHits);
+			List<LuceneSearchResult> searchResults = new ArrayList<LuceneSearchResult>();
 			for (ScoreDoc sd : results.scoreDocs) {
 				// 当查询不到高亮信息时，返回内容为Null
 				String highContent = fvh.getBestFragment(fq, reader, sd.doc, "content", 100);
 				System.out.println("highContent-->" + highContent);
 				String highTitle = fvh.getBestFragment(fq, reader, sd.doc, "title", 100);
+				String id = searcher.doc(sd.doc).get("id");
 				if (highTitle == null) {
 					Document doc = searcher.doc(sd.doc);
 					/**
@@ -139,12 +141,9 @@ public class TopicSearchService {
 					 */
 					highTitle = doc.get("title");
 				}
+				searchResults.add(new LuceneSearchResult(id, highTitle));
 			}
-			List<String> ids = new ArrayList<String>();
-			for (ScoreDoc doc : results.scoreDocs) {
-				ids.add(searcher.doc(doc.doc).get("id"));
-			}
-			return ids;
+			return searchResults;
 		} finally {
 			reader.close();
 		}
