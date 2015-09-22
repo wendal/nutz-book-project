@@ -244,6 +244,9 @@ function next_captcha() {
 	$("#captcha_img").attr("src", "${ctxPath}/captcha/next?w=120&h=48&_=" + new Date().getTime());
 }
 </script>
+<% if (null != conf["topic_seo.cnzz"]) {%>
+<script src="//s95.cnzz.com/z_stat.php?id=${conf["topic_seo.cnzz"]}&web_id=${conf["topic_seo.cnzz"]}" language="JavaScript"></script>
+<% } %>
 <% if (null != conf["topic_seo.tongji"]) { %>
 <script>
 var _hmt = _hmt || [];
