@@ -38,6 +38,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.JspView;
@@ -84,6 +85,7 @@ public class OauthModule extends BaseModule {
 	 */
 	@At("/?/callback")
 	@Ok(">>:/yvr/list/ask")
+	@Fail(">>::/yvr/list")
 	public Object callback(String _providerId, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		SocialAuthManager manager = (SocialAuthManager) session.getAttribute("openid_manager");
 		if (manager == null)
