@@ -21,6 +21,7 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 import org.nutz.dao.Cnd;
@@ -51,40 +52,41 @@ import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
 
-@IocBean(create="init")
+@IocBean(create = "init")
 @At("/yvr")
 @Fail("void")
 public class YvrModule extends BaseModule {
-	
+
 	private static final Log log = Logs.get();
-	
+
 	@Inject
 	protected UserService userService;
-	
+
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
-	
+
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
-	
-	@At({"/", "/index"})
+
+	@At({ "/", "/index" })
 	@Ok(">>:/yvr/list")
-	public void index() {}
-	
+	public void index() {
+	}
+
 	@Inject
 	protected TopicSearchService topicSearchService;
-	
+
 	@GET
 	@At
 	@Ok("beetl:yvr/_add.btl")
-	public Object add(HttpSession session, @Attr(scope=Scope.SESSION, value="me")int userId) {
+	public Object add(HttpSession session, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
-		
+
 		String csrf = Lang.md5(R.UU16());
 		session.setAttribute("_csrf", csrf);
 		re.put("_csrf", csrf);
-		
+
 		re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
@@ -92,10 +94,9 @@ public class YvrModule extends BaseModule {
 	@POST
 	@At
 	@Ok("json")
-	@Filters(@By(type=CsrfActionFilter.class))
+	@Filters(@By(type = CsrfActionFilter.class))
 	@Aop("redis")
-	public NutMap add(@Param("..")Topic topic,
-					@Attr(scope=Scope.SESSION, value="me")int userId) {
+	public NutMap add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId) {
 		if (userId < 1) {
 			return ajaxFail("请先登录");
 		}
@@ -111,6 +112,7 @@ public class YvrModule extends BaseModule {
 		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
 			return ajaxFail("相同标题已经发过了");
 		}
+		topic.setTitle(Strings.escapeHtml(topic.getTitle().trim()));
 		topic.setUserId(userId);
 		topic.setTop(false);
 		if (topic.getType() == null)
@@ -124,16 +126,15 @@ public class YvrModule extends BaseModule {
 		if (TopicType.ask.equals(topic.getType())) {
 			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
 		}
-		jedis().zadd("t:update:"+topic.getType(), System.currentTimeMillis(), topic.getId());
+		jedis().zadd("t:update:" + topic.getType(), System.currentTimeMillis(), topic.getId());
 		return ajaxOk(topic.getId());
 	}
-	
-	@At({"/list/?", "/list"})
+
+	@At({ "/list/?", "/list" })
 	@GET
 	@Ok("beetl:/yvr/index.btl")
 	@Aop("redis")
-	public Object list(TopicType type, @Param("..")Pager pager,
-			@Attr(scope=Scope.SESSION, value="me")int userId) {
+	public Object list(TopicType type, @Param("..") Pager pager, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		if (pager == null)
 			pager = dao.createPager(1, pageSize);
 		else {
@@ -145,12 +146,12 @@ public class YvrModule extends BaseModule {
 		if (type == null)
 			type = TopicType.ask;
 		long now = System.currentTimeMillis();
-		String zkey = "t:update:"+type;
+		String zkey = "t:update:" + type;
 		Long count = jedis().zcount(zkey, 0, now);
 		List<Topic> list = new ArrayList<Topic>();
 		if (count != null && count.intValue() != 0) {
 			pager.setRecordCount(count.intValue());
-			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0,  pager.getOffset(), pager.getPageSize());
+			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0, pager.getOffset(), pager.getPageSize());
 			for (String id : ids) {
 				Topic topic = dao.fetch(Topic.class, id);
 				if (topic == null)
@@ -160,7 +161,7 @@ public class YvrModule extends BaseModule {
 		}
 		return _process_query_list(pager, list, userId, type);
 	}
-	
+
 	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType type) {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		for (Topic topic : list) {
@@ -179,7 +180,7 @@ public class YvrModule extends BaseModule {
 					topic.setLastComment(reply);
 				}
 			}
-			Double visited = jedis().zscore("t:visit", ""+topic.getId());
+			Double visited = jedis().zscore("t:visit", "" + topic.getId());
 			topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		}
 		NutMap re = new NutMap();
@@ -188,8 +189,8 @@ public class YvrModule extends BaseModule {
 		re.put("type", type);
 		re.put("types", TopicType.values());
 		/**
-		 	var page_start = current_page - 2 > 0 ? current_page - 2 : 1;
-    		var page_end = page_start + 4 >= pages ? pages : page_start + 4;
+		 * var page_start = current_page - 2 > 0 ? current_page - 2 : 1; var
+		 * page_end = page_start + 4 >= pages ? pages : page_start + 4;
 		 */
 		int page_start = pager.getPageNumber() - 2 > 0 ? pager.getPageNumber() - 2 : 1;
 		int page_end = page_start + 4 >= pager.getPageCount() ? pager.getPageCount() : page_start + 4;
@@ -200,7 +201,7 @@ public class YvrModule extends BaseModule {
 		re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
-	
+
 	protected UserProfile _cacheFetch(Map<Integer, UserProfile> authors, int userId) {
 		UserProfile author = authors.get(userId);
 		if (author == null) {
@@ -212,17 +213,17 @@ public class YvrModule extends BaseModule {
 		}
 		return author;
 	}
-	
+
 	@GET
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.btl")
 	@Aop("redis")
-	public Object topic(String id, HttpSession session, @Attr(scope=Scope.SESSION, value="me")int userId) {
+	public Object topic(String id, HttpSession session, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		Double visited = jedis().zincrby("t:visit", 1, ""+id);
+		Double visited = jedis().zincrby("t:visit", 1, "" + id);
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
@@ -234,27 +235,24 @@ public class YvrModule extends BaseModule {
 				reply.setUserId(1);
 			dao.fetchLinks(reply, null);
 			dao.fetchLinks(reply.getAuthor(), null);
-			reply.setUps(jedis().zrange("t:like:"+reply.getId(), 0, System.currentTimeMillis()));
+			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
 		}
 		NutMap re = new NutMap();
 		re.put("topic", topic);
-		
+
 		String csrf = Lang.md5(R.UU16());
 		session.setAttribute("_csrf", csrf);
 		re.put("_csrf", csrf);
 		re.put("current_user", fetch_userprofile(userId));
 		return re;
 	}
-	
-	@AdaptBy(type=UploadAdaptor.class, args={"${app.root}/WEB-INF/tmp2"})
+
+	@AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp2" })
 	@POST
 	@At
 	@Ok("json")
-	@Filters(@By(type=CsrfActionFilter.class))
-	public Object upload(@Param("file")TempFile tmp,
-			HttpServletRequest req,
-			HttpServletResponse resp,
-			@Attr(scope=Scope.SESSION, value="me")int userId) throws IOException {
+	@Filters(@By(type = CsrfActionFilter.class))
+	public Object upload(@Param("file") TempFile tmp, HttpServletRequest req, HttpServletResponse resp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException {
 		resp.setContentType("application/json");
 		NutMap jsonrpc = new NutMap();
 		if (userId < 1)
@@ -262,7 +260,7 @@ public class YvrModule extends BaseModule {
 		if (tmp == null || tmp.getFile().length() == 0) {
 			return jsonrpc.setv("msg", "空文件");
 		}
-		if (tmp.getFile().length() > 2*1024*1024) {
+		if (tmp.getFile().length() > 2 * 1024 * 1024) {
 			return jsonrpc.setv("msg", "文件太大了");
 		}
 		String id = R.UU32();
@@ -274,23 +272,22 @@ public class YvrModule extends BaseModule {
 		jsonrpc.setv("success", true);
 		return jsonrpc;
 	}
-	
+
 	@Ok("raw:jpg")
 	@At("/upload/?/?")
 	@Fail("http:404")
 	public Object image(String p, String p2) throws IOException {
-		if ((p+p2).contains("."))
+		if ((p + p2).contains("."))
 			return HttpStatusView.HTTP_404;
 		File f = new File(imageDir, p + "/" + p2);
 		return f;
 	}
 
-	@Filters(@By(type=CsrfActionFilter.class))
+	@Filters(@By(type = CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")
 	@Aop("redis")
-	public Object addReply(String topicId, @Param("..")TopicReply reply,
-			@Attr(scope=Scope.SESSION, value="me")int userId) {
+	public Object addReply(String topicId, @Param("..") TopicReply reply, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		if (userId < 1)
 			return ajaxFail("请先登录");
 		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
@@ -308,7 +305,7 @@ public class YvrModule extends BaseModule {
 		reply.setUserId(userId);
 		dao.insert(reply);
 		// 更新topic的时间戳, 然后根据返回值确定是否需要从t:noreply中删除该topic
-		Long re = jedis().zadd("t:update:"+topic.getType(), reply.getCreateTime().getTime(), topicId);
+		Long re = jedis().zadd("t:update:" + topic.getType(), reply.getCreateTime().getTime(), topicId);
 		if (re != null && re.intValue() != 1) {
 			jedis().zrem("t:noreply", topicId);
 		}
@@ -316,59 +313,58 @@ public class YvrModule extends BaseModule {
 		jedis().zincrby("t:reply:count", 1, topicId);
 		return ajaxOk(null);
 	}
-	
-	
+
 	@At("/t/?/reply/?/up")
 	@Ok("json")
 	@Aop("redis")
-	public Object replyUp(String _, String replyId, @Attr(scope=Scope.SESSION, value="me")int userId){
+	public Object replyUp(String _, String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		if (userId < 1)
 			return ajaxFail("你还没登录呢");
 		if (1 != dao.count(TopicReply.class, Cnd.where("id", "=", replyId))) {
 			return ajaxFail("没这条评论");
 		}
-		String key = "t:like:"+replyId;
-		Double t = jedis().zscore(key, ""+userId);
+		String key = "t:like:" + replyId;
+		Double t = jedis().zscore(key, "" + userId);
 		if (t != null) {
-			jedis().zrem(key, userId+"");
+			jedis().zrem(key, userId + "");
 			return ajaxOk("down");
 		} else {
-			jedis().zadd(key, System.currentTimeMillis(), userId+"");
+			jedis().zadd(key, System.currentTimeMillis(), userId + "");
 			return ajaxOk("up");
 		}
 	}
-	
+
 	@GET
 	@At
 	@Ok("beetl:/yvr/index.btl")
 	@Aop("redis")
-	public Object search(@Param("q")String keys,
-			@Attr(scope=Scope.SESSION, value="me")int userId) throws Exception {
+	public Object search(@Param("q") String keys, @Attr(scope = Scope.SESSION, value = "me") int userId) throws Exception {
 		if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
-		List<String> ids = topicSearchService.search(keys);
+		List<LuceneSearchResult> results = topicSearchService.search(keys);
 		List<Topic> list = new ArrayList<Topic>();
-		for (String id : ids) {
-			Topic topic = dao.fetch(Topic.class, id);
+		for (LuceneSearchResult result : results) {
+			Topic topic = dao.fetch(Topic.class, result.getId());
 			if (topic == null)
 				continue;
+			topic.setTitle(result.getResult());
 			list.add(topic);
 		}
 		Pager pager = dao.createPager(1, 30);
 		pager.setRecordCount(list.size());
 		return _process_query_list(pager, list, userId, TopicType.ask);
 	}
-	
+
 	@At("/search/rebuild")
 	public void rebuild() throws IOException {
 		topicSearchService.rebuild();
 	}
-	
+
 	public void init() {
 		log.debug("Image Dir = " + imageDir);
 		Files.createDirIfNoExists(new File(imageDir));
 	}
-	
+
 	public UserProfile fetch_userprofile(int userId) {
 		UserProfile profile = dao.fetch(UserProfile.class, userId);
 		if (profile == null)

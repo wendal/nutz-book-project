@@ -68,6 +68,7 @@
   <% } else { %>
   <title>Nutz社区</title>
   <% } %>
+  <meta name="Keywords" content="Nutz,Nutz是什么,Nutz下载,Nutz论坛,Nutz汉化,,Java,跨平台,Web框架,J2EE框架"/>  <meta name="Description" content="首先，它是开源的，商用也是完全免费的。详尽的文档，众多线上项目 不吹嘘概念,代码严谨可靠，近千个testcase,坚如磐石。您使用的nutz.jar,也是各位提交者在各种生产环境上使用的 nutz.jar ^_^ 一个 jar 包就包含了 Mvc,Ioc,Dao,Aop，不强制依赖第三方 jar。小巧的Lang工具箱和EL表达式引擎,满足各种小需求。内置Json序列..."/>
   <meta content="_csrf" name="csrf-param">
   <meta content="${obj._csrf!}" name="csrf-token">
 </head>
