@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
@@ -53,6 +54,15 @@ public class MainSetup implements Setup {
 		if (admin == null) {
 			UserService us = ioc.get(UserService.class);
 			admin = us.add("admin", "123456");
+		}
+		User guest = dao.fetch(User.class, "guest");
+		if (guest == null) {
+			UserService us = ioc.get(UserService.class);
+			guest = us.add("guest", "123456");
+			UserProfile profile = new UserProfile();
+			profile.setUserId(guest.getId());
+			profile.setNickname("游客");
+			dao.insert(profile);
 		}
 		
 		// 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动

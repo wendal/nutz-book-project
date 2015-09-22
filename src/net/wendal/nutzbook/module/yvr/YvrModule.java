@@ -95,8 +95,7 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type=CsrfActionFilter.class))
 	@Aop("redis")
 	public NutMap add(@Param("..")Topic topic,
-					@Attr(scope=Scope.SESSION, value="me")int userId,
-					HttpServletRequest req) {
+					@Attr(scope=Scope.SESSION, value="me")int userId) {
 		if (userId < 1) {
 			return ajaxFail("请先登录");
 		}

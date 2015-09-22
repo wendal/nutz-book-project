@@ -13,15 +13,21 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 
+import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.View;
 import org.nutz.mvc.adaptor.VoidAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
@@ -46,6 +52,12 @@ public class YvrShortModule extends BaseModule {
 	
 	@Inject("java:$conf.get('shortit.root')")
 	protected String root;
+	
+	@Inject
+	protected YvrModule yvrModule;
+	
+	@Inject 
+	protected Dao dao;
 
 	@At("/c/?")
 	public Object code(String code) {
@@ -75,7 +87,25 @@ public class YvrShortModule extends BaseModule {
 			return Helper._fail("err.data_emtry");
 		if (fileSize > 1024 * 1024 * 10)
 			return Helper._fail("err.file_too_big");
-		return Helper._ok(write(req.getInputStream(), "txt:"));
+		String re = Helper._ok(write(req.getInputStream(), "txt:"));
+		String title = req.getParameter("title");
+		if (!Strings.isBlank(title) && title.trim().length() < 100) {
+			String code = (String) Json.fromJsonAsMap(Object.class, re).get("code");
+			Topic topic = new Topic();
+			topic.setTitle(title.trim());
+			topic.setContent(String.format("[%s]\n短点链接: https://nutz.cn/s/c/%s", code, code));
+			topic.setType(TopicType.shortit);
+			try {
+				NutMap resp = yvrModule.add(topic, dao.fetch(User.class, "guest").getId());
+				if (resp.getBoolean("ok")) {
+					String topicId = resp.getString("data");
+					return Json.toJson(new NutMap().setv("ok", true).setv("url", "https://nutz.cn/yvr/t/" + topicId));
+				}
+			} catch (Exception e) {
+			}
+		}
+		
+		return re;
 	}
 
 	@At("/api/create/file")

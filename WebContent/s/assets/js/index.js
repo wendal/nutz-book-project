@@ -4,7 +4,7 @@ $(function() {
     var data = $("#data").val();
     if (!data)
       return;
-    var url = 'api/create/txt';
+    var url = 'api/create/txt?title=' + $("#title").val();
     if (data.split(/\n/).length == 1) {
       var reg = /(https?|ftp):\/\/[^\/?:]+(:[0-9]{1,5})?(\/?|(\/[^\/]+)*(\?[^\s"']+)?)/;
       if (reg.test(data)) {
@@ -16,6 +16,9 @@ $(function() {
       $("#result").html("");
       $("#progress").html("");
       if (j.ok) {
+    	  if (j.url) {
+    		  window.location = j.url;
+    	  }
         var url = location.protocol + "//" + location.host + location.pathname + 'c/' + j.code;
         $("#result").append($("<div class='alert alert-success'><p>短地址: </p></div>").append($('<a target="_blank">' + url + '</a>').attr("href", url)));
         $("#data").val("");
