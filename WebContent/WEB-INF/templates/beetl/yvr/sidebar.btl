@@ -81,7 +81,11 @@ function secken_auth() {
     <div class='inner'>
       <% if (obj.no_reply_topics.~size > 0) { %>
       <ul class="unstyled">
-        <% layout('small.btl', { collection: obj.no_reply_topics, as: 'topic' }){}; %>
+      	<%
+      	for(topic in obj.no_reply_topics) {
+      		layout('small.btl', { "topic" : topic }){};
+      	}
+      	%>
       </ul>
       <% } else { %>
       <p>无</p>
@@ -126,6 +130,8 @@ function secken_auth() {
         <li>
           <a href="${ctxPath}/chat/" target="_blank">websocket群聊</a>,基于socketio
         </li>
+        <div class="sep10"></div>
+        <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
         <div class="sep10"></div>
       </ol>
     </div>

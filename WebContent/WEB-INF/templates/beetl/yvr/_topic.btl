@@ -34,6 +34,12 @@ layout("_layout.btl",{}){
 
 <div id='content'>
   <div class='panel'>
+    <div class='header'>
+      <ol class='breadcrumb'>
+        <li><a href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+        <li class='active'><a href='${ctxPath}/yvr/list/${obj.topic.type}'>${obj.topic.type.display}</a></li>
+      </ol>
+    </div>
     <div class='header topic_header'>
       <span class="topic_full_title">
         <%
@@ -319,6 +325,7 @@ var ctxPath = "${ctxPath}";
   });
 </script>
 
+<%}%>
 <script type="text/javascript">
   (function(){
     var timer = null; //对话框延时定时器
@@ -422,6 +429,5 @@ var ctxPath = "${ctxPath}";
   });
   // END 点赞
 </script>
-<%}%>
 
 <%} %>

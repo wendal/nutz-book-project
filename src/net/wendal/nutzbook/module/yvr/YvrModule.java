@@ -183,6 +183,17 @@ public class YvrModule extends BaseModule {
 			Double visited = jedis().zscore("t:visit", "" + topic.getId());
 			topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		}
+		
+		// 查一下未回复的帖子, 最近的5条的就好了
+		Set<String> no_replies_ids = jedis().zrangeByScore("t:noreply", 0, Long.MAX_VALUE, 0, 5);
+		List<Topic> no_replies = new ArrayList<Topic>();
+		for (String topicId : no_replies_ids) {
+			Topic tmp = dao.fetch(Topic.class, topicId);
+			if (tmp != null) {
+				no_replies.add(tmp);
+			}
+		}
+		
 		NutMap re = new NutMap();
 		re.put("list", list);
 		re.put("pager", pager);
@@ -199,6 +210,10 @@ public class YvrModule extends BaseModule {
 		re.put("current_page", pager.getPageNumber());
 		re.put("pages", pager.getPageCount());
 		re.put("current_user", fetch_userprofile(userId));
+		
+		// 添加未回复的列表
+		if (!no_replies.isEmpty())
+			re.put("no_reply_topics", no_replies);
 		return re;
 	}
 
