@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.module.yvr;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.io.InputStream;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sf.ehcache.Cache;
@@ -24,6 +26,7 @@ import org.nutz.http.Http;
 import org.nutz.http.Response;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.meta.Email;
 import org.nutz.lang.random.R;
@@ -35,6 +38,7 @@ import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
@@ -45,6 +49,8 @@ public class YvrUserModule extends BaseModule {
 	private static final Log log = Logs.get();
 	
 	protected byte[] emailKEY = R.sg(24).next().getBytes();
+	
+	protected static HttpStatusView HTTP_304 = new HttpStatusView(304);
 	
 	protected Cache avatarCache;
 	
@@ -60,7 +66,8 @@ public class YvrUserModule extends BaseModule {
 
 	@Ok("raw:jpg")
 	@At("/?/avatar")
-	public Object userAvatar(String username){
+	public Object userAvatar(String username, HttpServletRequest req, HttpServletResponse _resp){
+		Object re = null;
 		Element ele = avatarCache.get(username);
 		if (ele == null) {
 			User user = dao.fetch(User.class, username);
@@ -69,32 +76,48 @@ public class YvrUserModule extends BaseModule {
 				if (user.getProfile() != null && user.getProfile().getAvatar() != null && user.getProfile().getAvatar().length > 0) {
 					byte[] buf = user.getProfile().getAvatar();
 					avatarCache.put(new Element(username, buf));
-					return buf;
-				}
-				OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
-				if (ouser != null && ouser.getAvatar_url() != null) {
-					try {
-						Response resp = Http.get(ouser.getAvatar_url(), 5000);
-						if (resp != null && resp.isOK()) {
-							InputStream ins = resp.getStream();
-							ByteArrayOutputStream out = new ByteArrayOutputStream();
-							byte[] buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
-							int len = 0;
-							while (-1 != (len = ins.read(buf)))
-								out.write(buf, 0, len);
-							buf = out.toByteArray();
-							avatarCache.put(new Element(username, buf));
-							return buf;
+					re = buf;
+				} 
+				else {
+					OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
+					if (ouser != null && ouser.getAvatar_url() != null) {
+						try {
+							Response resp = Http.get(ouser.getAvatar_url(), 5000);
+							if (resp != null && resp.isOK()) {
+								InputStream ins = resp.getStream();
+								ByteArrayOutputStream out = new ByteArrayOutputStream();
+								byte[] buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
+								int len = 0;
+								while (-1 != (len = ins.read(buf)))
+									out.write(buf, 0, len);
+								buf = out.toByteArray();
+								avatarCache.put(new Element(username, buf));
+								re = buf;
+							}
+						} catch (IOException e) {
+							log.debug("load github avatar fail");
 						}
-					} catch (IOException e) {
-						log.debug("load github avatar fail");
 					}
-				};
+				}
 			}
 		} else {
-			return ele.getObjectValue();
+			re = ele.getObjectValue();
 		}
-		return new File(Mvcs.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
+		if (re == null) {
+			re = new File(req.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
+		}
+		String etag = null;
+		if (re instanceof File) {
+			etag = "F"+((File)re).lastModified();
+		} else {
+			etag = Lang.md5(new ByteArrayInputStream((byte[])re));
+		}
+		if (etag.equals(req.getHeader("If-None-Match"))) {
+			return HTTP_304;
+		}
+		_resp.setHeader("ETag", etag);
+		_resp.setHeader("Cache-Control", "max-age=10");
+		return re;
 	}
 	
 	/**
