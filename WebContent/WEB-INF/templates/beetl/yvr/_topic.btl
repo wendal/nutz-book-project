@@ -51,10 +51,24 @@ layout("_layout.btl",{}){
         <span>
           ${obj.topic.visitCount} 次浏览
         </span>
-          <span>
-            最后一次编辑是 ${obj.topic.updateAt}
-          </span>
-          <span> 来自 <a href="${ctxPath}/yvr/list/${obj.topic.type}">${obj.topic.type.display}</a></span>
+        <!-- 有点丑,先禁用了 -->
+          <% if ( 1 != 1) {%>
+        <span>
+        <!-- JiaThis Button BEGIN -->
+		<div class="jiathis_style">
+			<a class="jiathis_button_qzone"></a>
+			<a class="jiathis_button_tsina"></a>
+			<a class="jiathis_button_tqq"></a>
+			<a class="jiathis_button_weixin"></a>
+			<a class="jiathis_button_renren"></a>
+			<a href="http://www.jiathis.com/share?uid=${conf["topic_seo.jiathis"]}" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+			<a class="jiathis_counter_style"></a>
+		</div>
+		<script type="text/javascript">var jiathis_config = {data_track_clickback:'true'};</script>
+		<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=${conf["topic_seo.jiathis"]}" charset="utf-8"></script>
+		<!-- JiaThis Button END -->
+		</span>
+          <% } %>
       </div>
       <% if (null != obj.current_user!) { %>
       <div id="manage_topic">
