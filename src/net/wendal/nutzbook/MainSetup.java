@@ -1,6 +1,7 @@
 package net.wendal.nutzbook;
 
 import java.sql.Connection;
+import java.util.Map;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
@@ -37,6 +38,7 @@ public class MainSetup implements Setup {
 	
 	private static final Log log = Logs.get();
 	
+	@SuppressWarnings("unchecked")
 	public void init(NutConfig nc) {
 		Ioc ioc = nc.getIoc();
 		Dao dao = ioc.get(Dao.class);
@@ -107,6 +109,13 @@ public class MainSetup implements Setup {
 		
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
+		
+		// 这里只是很无聊的演示一下将一个map声明在ioc里面
+		// 这不是一个"好"的idea
+		Map<String, Object> map = ioc.get(Map.class, "mapit");
+		System.out.println(map.size());
+		System.out.println(map.keySet());
+		System.out.println(map);
 	}
 	
 	public void destroy(NutConfig conf) {

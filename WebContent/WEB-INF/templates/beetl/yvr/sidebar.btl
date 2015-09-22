@@ -108,5 +108,21 @@ function secken_auth() {
       </ol>
     </div>
   </div>
+  
+  
+
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>小功能区</span>
+    </div>
+    <div class='inner'>
+      <ol class="friendship-community">
+        <li>
+          <a href="${ctxPath}/chat/" target="_blank">websocket群聊</a>,基于socketio
+        </li>
+        <div class="sep10"></div>
+      </ol>
+    </div>
+  </div>
 
 </div>
