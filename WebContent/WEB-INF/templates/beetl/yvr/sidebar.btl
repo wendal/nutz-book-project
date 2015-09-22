@@ -26,9 +26,15 @@
   
   <% if (null == obj.current_user!) { %>
   <div class="panel">
+    <div class='header'>
+      <span class='col_fade'>其他登陆方式</span>
+    </div>
     <div class='inner'>
       <a href='#' id='secken_btn' onclick='secken_auth();'>
         <span class='span-success'>洋葱登陆</span>
+      </a>
+      <a href='${ctxPath}/oauth/qq' id='qq_btn'>
+      	<img src="${ctxPath}/rs/images/qq_connect.png"/>
       </a>
     </div>
   </div>

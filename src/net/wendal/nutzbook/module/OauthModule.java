@@ -126,6 +126,26 @@ public class OauthModule extends BaseModule {
 				if (returnURL != null)
 					return new ServerRedirectView(returnURL);
 				return null;
+			} else if ("qq".equals(provider.getProviderId())) {
+				String username = "qq_"+p.getValidatedId();
+				User user = dao.fetch(User.class, username);
+				if (user == null) {
+					user = userService.add(username, R.UU32());
+				}
+				UserProfile profile = dao.fetch(UserProfile.class, user.getId());
+				if (profile == null) {
+					profile = new UserProfile();
+					profile.setUserId(user.getId());
+					profile.setNickname(username);
+					dao.insert(profile);
+				}
+				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId(), p.getProfileImageURL());
+				dao.insert(oAuthUser);
+				doShiroLogin(session, user, _providerId);
+				String returnURL = (String) session.getAttribute("oauth.return.url");
+				if (returnURL != null)
+					return new ServerRedirectView(returnURL);
+				return null;
 			}
 			
 			// TODO 跳到关联引导页
