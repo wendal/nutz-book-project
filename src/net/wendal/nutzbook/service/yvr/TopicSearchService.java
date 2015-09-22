@@ -19,6 +19,13 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.vectorhighlight.BaseFragmentsBuilder;
+import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
+import org.apache.lucene.search.vectorhighlight.FieldQuery;
+import org.apache.lucene.search.vectorhighlight.FragListBuilder;
+import org.apache.lucene.search.vectorhighlight.FragmentsBuilder;
+import org.apache.lucene.search.vectorhighlight.ScoreOrderFragmentsBuilder;
+import org.apache.lucene.search.vectorhighlight.SimpleFragListBuilder;
 import org.apache.lucene.util.Version;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -35,20 +42,19 @@ public class TopicSearchService {
 
 	@Inject
 	protected Dao dao;
-	
-	
+
 	private static Log log = Logs.get();
 
 	@Inject("java:$conf.get('topic.lucene.dir')")
 	private String indexDir;
 
 	protected LuceneIndex luceneIndex;
-	
+
 	public void add(Topic topic) {
 		if (topic == null)
 			return; // 虽然不太可能,还是预防一下吧
 		// 暂时不索引评论
-		//dao.fetchLinks(topic, "replies");
+		// dao.fetchLinks(topic, "replies");
 		Document document;
 		document = new Document();
 		Field field;
@@ -94,7 +100,7 @@ public class TopicSearchService {
 		}
 	}
 
-	//@RequiresPermissions("topic:index:rebuild")
+	// @RequiresPermissions("topic:index:rebuild")
 	public void rebuild() throws IOException {
 		Sql sql = Sqls.queryString("select id from t_topic");
 		dao.execute(sql);
@@ -106,16 +112,34 @@ public class TopicSearchService {
 		}
 		luceneIndex.writer.commit();
 	}
-	
+
 	public List<String> search(String keyword) throws IOException, ParseException {
 		IndexReader reader = luceneIndex.reader();
 		try {
 			IndexSearcher searcher = new IndexSearcher(reader);
 			Analyzer analyzer = new IKAnalyzer();
-			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, new String[]{"title", "content"}, analyzer);
+			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, new String[] { "title", "content" }, analyzer);
 			// 将关键字包装成Query对象
 			Query query = parser.parse(keyword);
 			TopDocs results = searcher.search(query, 30);
+			FragListBuilder fragListBuilder = new SimpleFragListBuilder();
+			FragmentsBuilder fragmentsBuilder = new ScoreOrderFragmentsBuilder(BaseFragmentsBuilder.COLORED_PRE_TAGS, BaseFragmentsBuilder.COLORED_POST_TAGS);
+			FastVectorHighlighter fvh = new FastVectorHighlighter(true, true, fragListBuilder, fragmentsBuilder);
+			FieldQuery fq = fvh.getFieldQuery(query);
+			System.out.println("命中--》" + results.totalHits);
+			for (ScoreDoc sd : results.scoreDocs) {
+				// 当查询不到高亮信息时，返回内容为Null
+				String highContent = fvh.getBestFragment(fq, reader, sd.doc, "content", 100);
+				System.out.println("highContent-->" + highContent);
+				String highTitle = fvh.getBestFragment(fq, reader, sd.doc, "title", 100);
+				if (highTitle == null) {
+					Document doc = searcher.doc(sd.doc);
+					/**
+					 * 如果高亮内容为null，那么表示标题没有需要高亮的内容，那么赋值为原有标题
+					 */
+					highTitle = doc.get("title");
+				}
+			}
 			List<String> ids = new ArrayList<String>();
 			for (ScoreDoc doc : results.scoreDocs) {
 				ids.add(searcher.doc(doc.doc).get("id"));
