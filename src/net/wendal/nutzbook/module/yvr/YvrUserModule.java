@@ -163,7 +163,7 @@ public class YvrUserModule extends BaseModule {
 		return "注册成功,可以登陆了";
 	}
 
-	protected static Pattern P_USERNAME = Pattern.compile("[a-z][a-z0-9]{4,10}");
+	protected static Pattern P_USERNAME = Pattern.compile("^[a-z][a-z0-9]{4,10}$");
 	protected static Pattern P_PASSWORD = Pattern.compile("(?=^.{8,16}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
 	
 	@POST
