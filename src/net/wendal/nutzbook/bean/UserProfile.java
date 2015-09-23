@@ -2,6 +2,8 @@ package net.wendal.nutzbook.bean;
 
 import java.io.Serializable;
 
+import net.wendal.nutzbook.util.Toolkit;
+
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.One;
@@ -107,5 +109,13 @@ public class UserProfile extends BasePojo implements Serializable {
 	}
 	public void setLoginname(String loginname) {
 		this.loginname = loginname;
+	}
+	
+	public String getCreateAt() {
+		return Toolkit.createAt(createTime);
+	}
+	
+	public String getUpdateAt() {
+		return Toolkit.createAt(updateTime);
 	}
 }

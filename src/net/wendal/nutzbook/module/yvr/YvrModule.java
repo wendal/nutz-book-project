@@ -25,7 +25,10 @@ import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Dao;
+import org.nutz.dao.FieldFilter;
 import org.nutz.dao.pager.Pager;
+import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -67,6 +70,9 @@ public class YvrModule extends BaseModule {
 
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
+	
+	// 用于查询Topic和TopicReply时不查询content属性
+	protected Dao daoNoContent;
 
 	@At({ "/", "/index" })
 	@Ok(">>:/yvr/list")
@@ -153,7 +159,7 @@ public class YvrModule extends BaseModule {
 			pager.setRecordCount(count.intValue());
 			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0, pager.getOffset(), pager.getPageSize());
 			for (String id : ids) {
-				Topic topic = dao.fetch(Topic.class, id);
+				Topic topic = daoNoContent.fetch(Topic.class, id);
 				if (topic == null)
 					continue;
 				list.add(topic);
@@ -172,7 +178,7 @@ public class YvrModule extends BaseModule {
 			topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
 			if (topic.getReplyCount() > 0) {
 				String replyId = jedis().hget("t:reply:last", topic.getId());
-				TopicReply reply = dao.fetch(TopicReply.class, replyId);
+				TopicReply reply = daoNoContent.fetch(TopicReply.class, replyId);
 				if (reply != null) {
 					if (reply.getUserId() == 0)
 						reply.setUserId(1);
@@ -188,7 +194,7 @@ public class YvrModule extends BaseModule {
 		Set<String> no_replies_ids = jedis().zrangeByScore("t:noreply", 0, Long.MAX_VALUE, 0, 5);
 		List<Topic> no_replies = new ArrayList<Topic>();
 		for (String topicId : no_replies_ids) {
-			Topic tmp = dao.fetch(Topic.class, topicId);
+			Topic tmp = daoNoContent.fetch(Topic.class, topicId);
 			if (tmp != null) {
 				no_replies.add(tmp);
 			}
@@ -378,6 +384,7 @@ public class YvrModule extends BaseModule {
 	public void init() {
 		log.debug("Image Dir = " + imageDir);
 		Files.createDirIfNoExists(new File(imageDir));
+		daoNoContent = Daos.ext(dao, FieldFilter.locked(Topic.class, "content").set(TopicReply.class, null, "content", false));
 	}
 
 	public UserProfile fetch_userprofile(int userId) {

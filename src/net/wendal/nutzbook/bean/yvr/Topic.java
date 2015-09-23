@@ -190,9 +190,9 @@ public class Topic extends BasePojo {
 	private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
 	    java.io.DataOutputStream dos = new java.io.DataOutputStream(out);
 	    dos.writeUTF(id);
-	    dos.writeUTF(title);
-	    dos.writeUTF(type == null ? null : type.name());
-	    dos.writeUTF(content);
+	    dos.writeUTF(title == null ? "" : title);
+	    dos.writeUTF(type == null ? "ask" : type.name());
+	    dos.writeUTF(content == null ? "" : content);
 	    dos.writeInt(userId);
 	    dos.writeBoolean(top);
 	    dos.writeBoolean(good);

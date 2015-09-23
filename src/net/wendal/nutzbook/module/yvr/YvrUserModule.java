@@ -30,6 +30,7 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.meta.Email;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
@@ -58,9 +59,20 @@ public class YvrUserModule extends BaseModule {
 	protected UserService userService;
 	
 	@At("/?")
-	@Ok("raw")
-	public String userHome() {
-		return "<h1>暂未实现</h1>";
+	@Ok("beetl:yvr/user/user_index.btl")
+	public Object userHome(String userName) {
+		User user = dao.fetch(User.class, userName);
+		if (user == null)
+			return HttpStatusView.HTTP_404;
+		UserProfile profile = dao.fetch(UserProfile.class, user.getId());
+		if (profile == null)
+			return HttpStatusView.HTTP_404;
+		NutMap re = new NutMap();
+		profile.setLoginname(userName);
+		if (Strings.isBlank(profile.getDescription()))
+			profile.setDescription(null);
+		re.put("c_user", profile);
+		return re;
 	}
 	
 

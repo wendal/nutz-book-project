@@ -246,7 +246,7 @@ function next_captcha() {
 }
 </script>
 <% if (null != conf["topic_seo.cnzz"]) {%>
-<script src="//s95.cnzz.com/z_stat.php?id=${conf["topic_seo.cnzz"]}&web_id=${conf["topic_seo.cnzz"]}" language="JavaScript"></script>
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_${conf["topic_seo.cnzz"]}'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D${conf["topic_seo.cnzz"]}' type='text/javascript'%3E%3C/script%3E"));</script>
 <% } %>
 <% if (null != conf["topic_seo.tongji"]) { %>
 <script>

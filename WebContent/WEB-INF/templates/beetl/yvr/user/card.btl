@@ -1,0 +1,24 @@
+<div class='user_card'>
+  <div>
+    <a class='user_avatar' href="${ctxPath}/yvr/u/${user.loginname}">
+      <img src="${ctxPath}/yvr/u/${user.loginname}/avatar" title="${user.loginname}"/>
+    </a>
+    <span class='user_name'><a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.loginname}</a></span>
+
+    <div class='board clearfix'>
+      <div class='floor'>
+        <span class='big'>积分: 无 </span>
+      </div>
+    </div>
+    <div class="space clearfix"></div>
+    <span class="signature">
+        “
+        <% if ( null != user.description!) {%>
+            ${user.description, escape}
+        <%} else {%>
+            这家伙很懒，什么个性签名都没有留下。
+        <%}%>
+        ”
+    </span>
+  </div>
+</div>

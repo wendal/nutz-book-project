@@ -1,12 +1,12 @@
 <div id='sidebar'>
 
   <div class='panel'>
-    <% if (null != obj.current_user!) { %>
+    <% if (null != c_user!) { %>
     <div class='header'>
       <span class='col_fade'>个人信息</span>
     </div>
     <div class='inner'>
-      <%  %>
+      <% layout("user/card.btl", {"user":c_user}){}; %>
     </div>
     <% } else { %>
     <div class='inner'>

@@ -1,0 +1,20 @@
+
+<% layout("../_layout.btl", {}){%>
+<% layout("../sidebar.btl",{"c_user":obj.c_user}){};%>
+<div id='content'>
+  <div class='panel'>
+    <div class='header'>
+      <ul class='breadcrumb'>
+        <li><a href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+      </ul>
+    </div>
+    <div class='inner userinfo'>
+      <div class='user_big_avatar'>
+        <img src="${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="${obj.c_user.loginname}"/>
+      </div>
+      <a class='dark'> ${obj.c_user.loginname}</a>
+      <p class='col_fade'>注册时间 ${obj.c_user.createAt}</p>
+    </div>
+  </div>
+</div>
+<%}%>
