@@ -130,6 +130,9 @@ public class YvrUserModule extends BaseModule {
 	public Object signup(String token) {
 		try {
 			token = Toolkit._3DES_decode(emailKEY, Toolkit.hexstr2bytearray(token));
+			if (token == null) {
+				return "非法token,请重新注册";
+			}
 		} catch (Exception e) {
 			return "非法token,请重新注册";
 		}
