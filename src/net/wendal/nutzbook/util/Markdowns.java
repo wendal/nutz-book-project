@@ -1,18 +1,22 @@
 package net.wendal.nutzbook.util;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.nutz.lang.Stopwatch;
-import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.parboiled.common.StringUtils;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.ParsingTimeoutException;
 import org.pegdown.PegDownProcessor;
+import org.pegdown.Printer;
 import org.pegdown.ToHtmlSerializer;
-import org.pegdown.ast.CodeNode;
+import org.pegdown.VerbatimSerializer;
 import org.pegdown.ast.RootNode;
+import org.pegdown.ast.VerbatimNode;
 
 public class Markdowns {
 
@@ -30,35 +34,39 @@ public class Markdowns {
 		}
 	}
 	
+	static  VerbatimSerializer PrettyPrint = new PrettyPrintVerbatimSerializer();
+	
+	static class PrettyPrintVerbatimSerializer implements VerbatimSerializer {
+	    public void serialize(final VerbatimNode node, final Printer printer) {
+	        printer.println().print("<pre class='prettyprint'><code");
+	        if (!StringUtils.isEmpty(node.getType())) {
+	            printAttribute(printer, "class", "language-"+node.getType());
+	        }
+	        printer.print(">");
+	        String text = node.getText();
+	        // print HTML breaks for all initial newlines
+	        while (text.charAt(0) == '\n') {
+	            printer.print("<br/>");
+	            text = text.substring(1);
+	        }
+	        printer.printEncoded(text);
+	        printer.print("</code></pre>");
+
+	    }
+
+	    private void printAttribute(final Printer printer, final String name, final String value) {
+	        printer.print(' ').print(name).print('=').print('"').print(value).print('"');
+	    }
+	}
+	
 	public static String toHtml(String cnt) {
 		Stopwatch sw = Stopwatch.begin();
-		PegDownProcessor processor = new PegDownProcessor(Extensions.SUPPRESS_INLINE_HTML | Extensions.AUTOLINKS | Extensions.HARDWRAPS, 5000);
+		PegDownProcessor processor = new PegDownProcessor(Extensions.SUPPRESS_INLINE_HTML | Extensions.AUTOLINKS | Extensions.HARDWRAPS | Extensions.FENCED_CODE_BLOCKS, 5000);
 		try {
+			Map<String, VerbatimSerializer> plugins = new HashMap<String, VerbatimSerializer>();
+			plugins.put(VerbatimSerializer.DEFAULT, PrettyPrint);
             RootNode astRoot = processor.parseMarkdown(cnt.toCharArray());
-            return new ToHtmlSerializer(new LinkRenderer()){
-            	public void visit(CodeNode node) {
-            		String str = node.getText();
-            		if (Strings.isBlank(str))
-            			return;
-            		printer.print("<pre class='prettyprint'>\n");
-            		String[] tmps = str.split("\n", 2);
-            		boolean flag = true;
-            		if (tmps.length == 2) {
-            			if (tmps[0] != null && tmps[1] != null && codeNames.contains(tmps[0].trim())) {
-            				printer.print("<code class='language-"+tmps[0].trim()+"'>\n");
-                			printer.printEncoded(tmps[1]);
-                			printer.print("</code>\n");
-                			flag = false;
-            			}
-            		}
-            		if (flag){
-            			printer.print("<code>");
-            			printer.printEncoded(str);
-            			printer.print("</code>\n");
-            		}
-            		printer.print("\n</pre>\n");
-            	}
-            }.toHtml(astRoot);
+            return new ToHtmlSerializer(new LinkRenderer(), plugins).toHtml(astRoot);
         } catch(ParsingTimeoutException e) {
             return null;
         } finally {
