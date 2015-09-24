@@ -41,6 +41,9 @@ public class YvrApiModule extends BaseModule {
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
 	
+	@Inject("java:$conf.get('topic_seo.urlbase')")
+	protected String urlbase;
+	
 	@Inject
 	protected YvrService yvrService;
 
@@ -55,6 +58,8 @@ public class YvrApiModule extends BaseModule {
 			limit = pageSize;
 		Pager pager = dao.createPager(page, limit);
 		if (type == null)
+			type = "ask";
+		else if ("all".equals(type))
 			type = "ask";
 		HashMap<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
@@ -95,7 +100,7 @@ public class YvrApiModule extends BaseModule {
 		}
 		
 		tp.put("replies", replies);
-		return tp;
+		return new NutMap().setv("data", tp);
 	}
 	
 	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
@@ -120,7 +125,7 @@ public class YvrApiModule extends BaseModule {
 	public NutMap _author(UserProfile profile) {
 		NutMap author = new NutMap();
 		author.setv("loginname", profile.getLoginname());
-		author.setv("avatar_url", Mvcs.getServletContext().getContextPath() + "/yvr/u/" + profile.getLoginname() + "/avatar");
+		author.setv("avatar_url", urlbase + "/yvr/u/" + profile.getLoginname() + "/avatar");
 		return author;
 	}
 	
