@@ -35,6 +35,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
@@ -231,12 +232,10 @@ public class YvrUserModule extends BaseModule {
 	}
 
 	@At
-	@Ok(">>:/yvr")
+	@Ok(">>:/yvr/list")
+	@Fail(">>:/yvr/list")
 	public void logout() {
 		SecurityUtils.getSubject().logout();
-		HttpSession session = Mvcs.getHttpSession(false);
-		if (session != null)
-			session.invalidate();
 	}
 	
 	public void init() {

@@ -1,5 +1,8 @@
 package net.wendal.nutzbook;
 
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Log4JLoggerFactory;
+
 import java.sql.Connection;
 import java.util.Map;
 
@@ -41,6 +44,9 @@ public class MainSetup implements Setup {
 	
 	@SuppressWarnings("unchecked")
 	public void init(NutConfig nc) {
+		// netty的东西
+		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
+		
 		Ioc ioc = nc.getIoc();
 		Dao dao = ioc.get(Dao.class);
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);

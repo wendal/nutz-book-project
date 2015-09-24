@@ -1,6 +1,5 @@
 package net.wendal.nutzbook.bean.yvr;
 
-import java.io.DataOutputStream;
 import java.util.List;
 
 import net.wendal.nutzbook.bean.BasePojo;
