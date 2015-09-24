@@ -72,4 +72,8 @@
 		<error-code>500</error-code>
 		<location>/WEB-INF/jsp/500.jsp</location>
 	</error-page>
+	<session-config>
+		<!-- 一个多月 -->
+		<session-timeout>3000000</session-timeout>
+	</session-config>
 </web-app>

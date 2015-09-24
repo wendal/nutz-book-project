@@ -19,6 +19,7 @@ import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.shiro.realm.OAuthAuthenticationToken;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.SocialAuthConfig;
@@ -121,7 +122,7 @@ public class OauthModule extends BaseModule {
 				}
 				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId(), p.getProfileImageURL());
 				dao.insert(oAuthUser);
-				doShiroLogin(session, user, _providerId);
+				doShiroLogin(user, _providerId);
 				String returnURL = (String) session.getAttribute("oauth.return.url");
 				if (returnURL != null)
 					return new ServerRedirectView(returnURL);
@@ -141,7 +142,7 @@ public class OauthModule extends BaseModule {
 				}
 				oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId(), p.getProfileImageURL());
 				dao.insert(oAuthUser);
-				doShiroLogin(session, user, _providerId);
+				doShiroLogin(user, _providerId);
 				String returnURL = (String) session.getAttribute("oauth.return.url");
 				if (returnURL != null)
 					return new ServerRedirectView(returnURL);
@@ -149,7 +150,7 @@ public class OauthModule extends BaseModule {
 			}
 			
 			// TODO 跳到关联引导页
-			session.setAttribute("oauth.profile", p);
+			//session.setAttribute("oauth.profile", p);
 			return new JspView("jsp.oauth.link");
 		} else {
 			if (oAuthUser.getAvatar_url() == null && !Strings.isBlank(p.getProfileImageURL())) {
@@ -162,14 +163,15 @@ public class OauthModule extends BaseModule {
 			log.debugf("关联用户不存在?!! ==> pid=%s, vid=%s",p.getProviderId(), p.getValidatedId());
 			return new HttpStatusView(500);
 		}
-		doShiroLogin(session, user, _providerId);
+		doShiroLogin(user, _providerId);
 		return null;
 	}
 	
 	// 进行Shiro登录
-	protected void doShiroLogin(HttpSession session, User user, String _providerId) {
-		SecurityUtils.getSubject().login(new OAuthAuthenticationToken(user.getId()));
-		session.setAttribute(NutShiro.SessionKey, user.getId());
+	protected void doShiroLogin(User user, String _providerId) {
+		Subject subject = SecurityUtils.getSubject();
+		subject.login(new OAuthAuthenticationToken(user.getId()));
+		subject.getSession().setAttribute(NutShiro.SessionKey, user.getId());
 		sysLogService.async(SysLog.c("method", "用户登陆", null, user.getId(), "用户通过"+_providerId+" Oauth登陆"));
 	}
 	
