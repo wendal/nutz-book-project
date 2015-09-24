@@ -3,6 +3,7 @@ package net.wendal.nutzbook.module;
 import java.util.List;
 
 import net.sf.ehcache.CacheManager;
+import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.EmailService;
 
 import org.nutz.dao.Condition;
@@ -37,5 +38,13 @@ public abstract class BaseModule {
 	
 	protected NutMap ajaxFail(String msg) {
 		return new NutMap().setv("ok", false).setv("msg", msg);
+	}
+	
+	public UserProfile fetch_userprofile(int userId) {
+		UserProfile profile = dao.fetch(UserProfile.class, userId);
+		if (profile == null)
+			return null;
+		dao.fetchLinks(profile, null);
+		return profile;
 	}
 }

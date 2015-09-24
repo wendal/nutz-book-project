@@ -386,12 +386,4 @@ public class YvrModule extends BaseModule {
 		Files.createDirIfNoExists(new File(imageDir));
 		daoNoContent = Daos.ext(dao, FieldFilter.locked(Topic.class, "content").set(TopicReply.class, null, "content", false));
 	}
-
-	public UserProfile fetch_userprofile(int userId) {
-		UserProfile profile = dao.fetch(UserProfile.class, userId);
-		if (profile == null)
-			return null;
-		dao.fetchLinks(profile, null);
-		return profile;
-	}
 }

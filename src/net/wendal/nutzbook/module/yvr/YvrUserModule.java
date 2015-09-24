@@ -33,8 +33,9 @@ import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
@@ -61,7 +62,7 @@ public class YvrUserModule extends BaseModule {
 	
 	@At("/?")
 	@Ok("beetl:yvr/user/user_index.btl")
-	public Object userHome(String userName) {
+	public Object userHome(String userName, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		User user = dao.fetch(User.class, userName);
 		if (user == null)
 			return HttpStatusView.HTTP_404;
@@ -73,6 +74,9 @@ public class YvrUserModule extends BaseModule {
 		if (Strings.isBlank(profile.getDescription()))
 			profile.setDescription(null);
 		re.put("c_user", profile);
+		if (userId > 0) {
+			re.put("current_user", fetch_userprofile(userId));
+		}
 		return re;
 	}
 	
