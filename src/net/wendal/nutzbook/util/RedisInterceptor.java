@@ -16,6 +16,10 @@ public class RedisInterceptor implements MethodInterceptor {
 	static ThreadLocal<Jedis> TL = new ThreadLocal<Jedis>();
 	
 	public void filter(InterceptorChain chain) throws Throwable {
+		if (TL.get() != null) {
+			chain.doChain();
+			return;
+		}
 		try (Jedis jedis = jedisPool.getResource()) {
 			TL.set(jedis);
 			chain.doChain();

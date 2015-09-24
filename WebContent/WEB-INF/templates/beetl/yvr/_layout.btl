@@ -23,7 +23,7 @@
 <link rel="stylesheet" type="text/css" href="${ctxPath}/rs/stylesheets/jquery.atwho.css"></link>
 <link rel="stylesheet" type="text/css" href="${ctxPath}/rs/layer2/layer/skin/layer.css"></link>
 <style>
-    @font-face {
+@font-face {
 	font-family: 'icomoon';
 	src:url('${ctxPath}/rs/libs/editor/fonts/icomoon.eot');
 	src:url('${ctxPath}/rs/libs/editor/fonts/icomoon.eot?#iefix') format('embedded-opentype'),
@@ -131,23 +131,24 @@
       <a class='dark' href='https://github.com/nutzam/nutz'>Nutz</a>
       ,
       <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
-      等优秀的开源库.
+      等优秀的开源库. | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
-      <li class="footer-links"><a title="查看备案信息" target="_blank" href="http://www.miibeian.gov.cn">苏ICP备 10226088号-17</a></li>
+      |
+      <a title="查看备案信息" target="_blank" href="http://www.miibeian.gov.cn">苏ICP备 10226088号-17</a>
     </div>
 
   </div>
 </div>
 <div id="sidebar-mask"></div>
 <div id="signup_div" style="display: none">
-	<form id='signup_form'>
+	<form id='signup_form' style="padding: 30px 30px 30px 30px">
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">用户名</span>
   		<input name="username" type="text" class="form-control" placeholder="仅小写英文字母和数字,4到10位" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">密 码</span>
-  		<input name="password" type="password" class="form-control" placeholder="必须包含大小写字母,数字,特殊符号" aria-describedby="basic-addon1">
+  		<input name="password" type="password" class="form-control" placeholder="包含大小写字母,数字,特殊符号" aria-describedby="basic-addon1">
 	</div>
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">邮箱</span>
@@ -161,7 +162,7 @@
 </div>
 
 <div id="signin_div" style="display: none">
-	<form id='signin_form'>
+	<form id='signin_form' style="padding: 30px 30px 30px 30px">
 	<div class="input-group">
   		<span class="input-group-addon" id="basic-addon1">用户名</span>
   		<input name="username" type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
@@ -174,7 +175,9 @@
   		<span class="input-group-addon" id="basic-addon1">验证码</span>
   		<input name="captcha" type="text" class="form-control" placeholder="不区分大小写" aria-describedby="basic-addon1">
 	</div>
-	<img id="captcha_img" onclick="next_captcha();return false;"/>
+	<div class="input-group">
+		<img id="captcha_img" onclick="next_captcha();return false;"/>
+	</div>
 	<button type="button" onclick="do_signin();" class="btn btn-primary">登陆</button>
 	<a href="${ctxPath}/yvr/u/oauth/github">推荐通过github登陆</a>
 	</form>
@@ -191,13 +194,13 @@ function cs_qrcode() {
 };
 function f_signup() {
 	setTimeout(function() {
-    	layer.open({"title":"一步注册", shadeClose : true, "type":1, content : $("#signup_div"), area : ['500px', '500px']});
+    	layer.open({"title":"一步注册", shadeClose : true, "type":1, content : $("#signup_div"), area : ['300px', '370px']});
 	}, 300);
 };
 function f_signin() {
 next_captcha();
 setTimeout(function() {
-		layer.open({"title":"登陆", shadeClose : true, "type":1, content : $("#signin_div"), area : ['500px', '500x']});
+		layer.open({"title":"登陆", shadeClose : true, "type":1, content : $("#signin_div"), area : ['300px', '370px']});
 	}, 300);
 };
 
@@ -246,7 +249,9 @@ function next_captcha() {
 }
 </script>
 <% if (null != conf["topic_seo.cnzz"]) {%>
+<div style="display: none;">
 <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_${conf["topic_seo.cnzz"]}'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D${conf["topic_seo.cnzz"]}' type='text/javascript'%3E%3C/script%3E"));</script>
+</div>
 <% } %>
 <% if (null != conf["topic_seo.tongji"]) { %>
 <script>

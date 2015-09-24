@@ -42,6 +42,8 @@
 <%}%>
 <!-- 帖子列表结束-->
 
+<% if ( null != obj.current_page! ) { %>
+
 <div class='pagination' current_page='${obj.current_page}'>
   <ul>
     <% if ( obj.current_page == 1) { %>
@@ -73,3 +75,5 @@
     <% } %>
   </ul>
 </div>
+
+<%}%>

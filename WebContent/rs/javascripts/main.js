@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var $backtotop = $('#backtotop');
+  /*var $backtotop = $('#backtotop');
   var top = $(window).height() - $backtotop.height() - 200;
 
   function moveBacktotop() {
@@ -20,7 +20,7 @@ $(document).ready(function () {
   });
 
   moveBacktotop();
-  $(window).resize(moveBacktotop);
+  $(window).resize(moveBacktotop);*/
 
   $('.topic_content a,.reply_content a').attr('target', '_blank');
 

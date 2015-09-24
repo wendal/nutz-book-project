@@ -16,5 +16,42 @@
       <p class='col_fade'>注册时间 ${obj.c_user.createAt}</p>
     </div>
   </div>
+  
+  <%if (null != obj.access_token!) {%>
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>客户端二维码</span>
+    </div>
+    <div class='inner'>
+      <span id="access-token-qrcode"></span>
+      <script type="text/javascript">
+  	  // qrcode generate
+  	  var accessToken = "${obj.access_token}";
+     new QRCode(document.getElementById("access-token-qrcode"), {
+     	text: accessToken,
+    	width: 200,
+    	height: 200,
+  	});
+  	// END qrcode generate
+	</script>
+    </div>
+  </div>
+  <%}%>
+  
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>最近创建的话题</span>
+    </div>
+    <% if ( null != obj.recent_topics ) { %>
+    <% layout("../list.btl", {"topics":obj.recent_topics}){}; %>
+    <div class='cell more'>
+      <a class='dark' href="#">查看更多»</a>
+    </div>
+    <% } else { %>
+    <div class='inner'>
+      <p>无话题</p>
+    </div>
+    <% } %>
+  </div>
 </div>
 <%}%>

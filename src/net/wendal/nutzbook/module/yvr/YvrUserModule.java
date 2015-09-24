@@ -1,10 +1,15 @@
 package net.wendal.nutzbook.module.yvr;
 
+import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,14 +21,17 @@ import net.sf.ehcache.Element;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.http.Http;
 import org.nutz.http.Response;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
@@ -60,6 +68,9 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
+	@Inject
+	protected YvrService yvrService;
+	
 	@At("/?")
 	@Ok("beetl:yvr/user/user_index.btl")
 	public Object userHome(String userName, @Attr(scope = Scope.SESSION, value = "me") int userId) {
@@ -73,11 +84,34 @@ public class YvrUserModule extends BaseModule {
 		profile.setLoginname(userName);
 		if (Strings.isBlank(profile.getDescription()))
 			profile.setDescription(null);
+		List<Topic> recent_topics = yvrService.daoNoContent().query(Topic.class, Cnd.where("userId", "=", user.getId()).desc("createTime"), dao.createPager(1, 10));
 		re.put("c_user", profile);
 		if (userId > 0) {
-			re.put("current_user", fetch_userprofile(userId));
+			UserProfile me = fetch_userprofile(userId);
+			re.put("current_user", me);
+			// 显示accessToken二维码
+			if (me.getUserId() == user.getId()) {
+				re.put("access_token", accessToken(me.getUserId()));
+			}
+		}
+		if (!recent_topics.isEmpty()) {
+			Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
+			for (Topic topic : recent_topics) {
+				yvrService.fillTopic(topic, authors);
+			}
+			re.put("recent_topics", recent_topics);
 		}
 		return re;
+	}
+	
+	@Aop("redis")
+	protected String accessToken(int uid) {
+		String at = jedis().hget("u:accesstoken", ""+uid);
+		if (at == null) {
+			at = R.UU32();
+			jedis().hset("u:u:accesstoken", ""+uid, at);
+		}
+		return at;
 	}
 	
 

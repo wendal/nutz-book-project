@@ -23,12 +23,10 @@ import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
+import net.wendal.nutzbook.service.yvr.YvrService;
 
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Dao;
-import org.nutz.dao.FieldFilter;
 import org.nutz.dao.pager.Pager;
-import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -71,8 +69,8 @@ public class YvrModule extends BaseModule {
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
 	
-	// 用于查询Topic和TopicReply时不查询content属性
-	protected Dao daoNoContent;
+	@Inject
+	protected YvrService yvrService;
 
 	@At({ "/", "/index" })
 	@Ok(">>:/yvr/list")
@@ -159,7 +157,7 @@ public class YvrModule extends BaseModule {
 			pager.setRecordCount(count.intValue());
 			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0, pager.getOffset(), pager.getPageSize());
 			for (String id : ids) {
-				Topic topic = daoNoContent.fetch(Topic.class, id);
+				Topic topic = yvrService.daoNoContent().fetch(Topic.class, id);
 				if (topic == null)
 					continue;
 				list.add(topic);
@@ -171,30 +169,14 @@ public class YvrModule extends BaseModule {
 	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType type) {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		for (Topic topic : list) {
-			if (topic.getUserId() == 0)
-				topic.setUserId(1);
-			topic.setAuthor(_cacheFetch(authors, topic.getUserId()));
-			Double reply_count = jedis().zscore("t:reply:count", topic.getId());
-			topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
-			if (topic.getReplyCount() > 0) {
-				String replyId = jedis().hget("t:reply:last", topic.getId());
-				TopicReply reply = daoNoContent.fetch(TopicReply.class, replyId);
-				if (reply != null) {
-					if (reply.getUserId() == 0)
-						reply.setUserId(1);
-					reply.setAuthor(_cacheFetch(authors, reply.getUserId()));
-					topic.setLastComment(reply);
-				}
-			}
-			Double visited = jedis().zscore("t:visit", "" + topic.getId());
-			topic.setVisitCount((visited == null) ? 0 : visited.intValue());
+			yvrService.fillTopic(topic, authors);
 		}
 		
 		// 查一下未回复的帖子, 最近的5条的就好了
 		Set<String> no_replies_ids = jedis().zrangeByScore("t:noreply", 0, Long.MAX_VALUE, 0, 5);
 		List<Topic> no_replies = new ArrayList<Topic>();
 		for (String topicId : no_replies_ids) {
-			Topic tmp = daoNoContent.fetch(Topic.class, topicId);
+			Topic tmp = yvrService.daoNoContent().fetch(Topic.class, topicId);
 			if (tmp != null) {
 				no_replies.add(tmp);
 			}
@@ -221,18 +203,6 @@ public class YvrModule extends BaseModule {
 		if (!no_replies.isEmpty())
 			re.put("no_reply_topics", no_replies);
 		return re;
-	}
-
-	protected UserProfile _cacheFetch(Map<Integer, UserProfile> authors, int userId) {
-		UserProfile author = authors.get(userId);
-		if (author == null) {
-			author = dao.fetch(UserProfile.class, userId);
-			if (author != null) {
-				dao.fetchLinks(author, null);
-			}
-			authors.put(userId, author);
-		}
-		return author;
 	}
 
 	@GET
@@ -384,6 +354,5 @@ public class YvrModule extends BaseModule {
 	public void init() {
 		log.debug("Image Dir = " + imageDir);
 		Files.createDirIfNoExists(new File(imageDir));
-		daoNoContent = Daos.ext(dao, FieldFilter.locked(Topic.class, "content").set(TopicReply.class, null, "content", false));
 	}
 }
