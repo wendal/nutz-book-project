@@ -4,6 +4,7 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -42,12 +44,17 @@ public class YvrApiModule extends BaseModule {
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
 	
-	@Inject("java:$conf.get('topic_seo.urlbase')")
-	protected String urlbase;
-	
 	@Inject
 	protected YvrService yvrService;
 
+	/**
+	 * 分页获取帖子列表
+	 * @param page 页数,默认为1
+	 * @param type 参数名叫tab,默认是ask,如果传all,也会变成ask
+	 * @param limit 每页数量
+	 * @param mdrender 是否渲染md
+	 * @return
+	 */
 	@GET
 	@At
 	@Aop("redis")
@@ -104,6 +111,53 @@ public class YvrApiModule extends BaseModule {
 		return _map("data", tp);
 	}
 	
+	@POST
+	@At("/accesstoken")
+	@Aop("redis")
+	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
+		if (Strings.isBlank(accesstoken) || accesstoken.length() > 128)
+			return HTTP_403;
+		String uname = jedis().hget("u:accesstoken2", accesstoken.toLowerCase());
+		if (uname == null)
+			return HTTP_403;
+		return _map("success", true, "loginname", uname);
+	}
+	
+	//
+	
+	@At("/user/?")
+	@GET
+	public Object user(String loginname) {
+		User user = dao.fetch(User.class, loginname);
+		if (user == null)
+			return HTTP_404;
+		
+		return _map("data", _map("loginname", loginname, "score", 0, 
+				"avatar_url", _avatar_url(loginname), 
+				"recent_topics", Collections.EMPTY_LIST,
+				"create_at", _time(user.getCreateTime())));
+	}
+	
+	// --------------------
+	// 辅助方法
+	
+	public String _avatar_url(String loginname) {
+		return urlbase + "/yvr/u/" + loginname + "/avatar";
+	}
+	
+	public NutMap _author(UserProfile profile) {
+		NutMap author = new NutMap();
+		author.setv("loginname", profile.getLoginname());
+		author.setv("avatar_url", _avatar_url(profile.getLoginname()));
+		return author;
+	}
+	
+	public String _time(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return sdf.format(date);
+	}
+
 	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
 		yvrService.fillTopic(topic, authors);
 		NutMap tp = new NutMap();
@@ -122,33 +176,4 @@ public class YvrApiModule extends BaseModule {
 		tp.put("author", _author(topic.getAuthor()));
 		return tp;
 	}
-	
-	@POST
-	@At("/accesstoken")
-	@Aop("redis")
-	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
-		if (Strings.isBlank(accesstoken) || accesstoken.length() > 128)
-			return HTTP_403;
-		String uname = jedis().hget("u:accesstoken2", accesstoken.toLowerCase());
-		if (uname == null)
-			return HTTP_403;
-		return _map("success", true, "loginname", uname);
-	}
-	
-	// --------------------
-	// 辅助方法
-	
-	public NutMap _author(UserProfile profile) {
-		NutMap author = new NutMap();
-		author.setv("loginname", profile.getLoginname());
-		author.setv("avatar_url", urlbase + "/yvr/u/" + profile.getLoginname() + "/avatar");
-		return author;
-	}
-	
-	public String _time(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-		return sdf.format(date);
-	}
-	
 }
