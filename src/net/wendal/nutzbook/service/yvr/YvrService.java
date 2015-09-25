@@ -14,6 +14,7 @@ import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.random.R;
 
 @IocBean(create="init")
 public class YvrService {
@@ -54,6 +55,18 @@ public class YvrService {
 			authors.put(userId, author);
 		}
 		return author;
+	}
+	
+	@Aop("redis")
+	public String accessToken(String loginname) {
+		String at = jedis().hget("u:accesstoken", loginname);
+		if (at == null) {
+			// 双向绑定
+			at = R.UU32();
+			jedis().hset("u:accesstoken", loginname, at);
+			jedis().hset("u:accesstoken2", at, loginname);
+		}
+		return at;
 	}
 	
 	public Dao daoNoContent() {

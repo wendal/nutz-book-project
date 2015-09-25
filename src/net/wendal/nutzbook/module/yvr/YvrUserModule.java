@@ -1,7 +1,5 @@
 package net.wendal.nutzbook.module.yvr;
 
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,7 +29,6 @@ import org.apache.shiro.SecurityUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.http.Http;
 import org.nutz.http.Response;
-import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
@@ -91,7 +88,7 @@ public class YvrUserModule extends BaseModule {
 			re.put("current_user", me);
 			// 显示accessToken二维码
 			if (me.getUserId() == user.getId()) {
-				re.put("access_token", accessToken(me.getUserId()));
+				re.put("access_token", yvrService.accessToken(me.getLoginname()));
 			}
 		}
 		if (!recent_topics.isEmpty()) {
@@ -104,15 +101,6 @@ public class YvrUserModule extends BaseModule {
 		return re;
 	}
 	
-	@Aop("redis")
-	protected String accessToken(int uid) {
-		String at = jedis().hget("u:accesstoken", ""+uid);
-		if (at == null) {
-			at = R.UU32();
-			jedis().hset("u:u:accesstoken", ""+uid, at);
-		}
-		return at;
-	}
 	
 
 	@Ok("raw:jpg")

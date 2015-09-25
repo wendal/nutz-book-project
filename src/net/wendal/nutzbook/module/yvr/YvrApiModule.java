@@ -23,11 +23,13 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
 
@@ -69,7 +71,7 @@ public class YvrApiModule extends BaseModule {
 				continue;
 			list.add(_topic(topic, authors, mdrender));
 		}
-		return new NutMap().setv("data", list);
+		return _map("data", list);
 	}
 	
 	@Aop("redis")
@@ -99,7 +101,7 @@ public class YvrApiModule extends BaseModule {
 		}
 		
 		tp.put("replies", replies);
-		return new NutMap().setv("data", tp);
+		return _map("data", tp);
 	}
 	
 	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
@@ -120,6 +122,21 @@ public class YvrApiModule extends BaseModule {
 		tp.put("author", _author(topic.getAuthor()));
 		return tp;
 	}
+	
+	@POST
+	@At("/accesstoken")
+	@Aop("redis")
+	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
+		if (Strings.isBlank(accesstoken) || accesstoken.length() > 128)
+			return HTTP_403;
+		String uname = jedis().hget("u:accesstoken2", accesstoken.toLowerCase());
+		if (uname == null)
+			return HTTP_403;
+		return _map("success", true, "loginname", uname);
+	}
+	
+	// --------------------
+	// 辅助方法
 	
 	public NutMap _author(UserProfile profile) {
 		NutMap author = new NutMap();

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.module;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.sf.ehcache.CacheManager;
@@ -13,6 +14,8 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.View;
+import org.nutz.mvc.view.HttpStatusView;
 
 public abstract class BaseModule {
 	
@@ -56,5 +59,27 @@ public abstract class BaseModule {
 		if (urlbase == null)
 			urlbase = "";
 		urlbase += Mvcs.getServletContext().getContextPath();
+	}
+	
+	// --------------------------
+	// 常用HTTP状态
+	public static final View HTTP_403 = new HttpStatusView(403);
+	public static final View HTTP_404 = HttpStatusView.HTTP_404;
+	public static final View HTTP_500 = HttpStatusView.HTTP_500;
+	public static final View HTTP_502 = HttpStatusView.HTTP_502;
+	public static final View HTTP_200 = new HttpStatusView(200);
+	
+	// 生成json响应的辅助方法
+	public static NutMap _map(Object...args) {
+		NutMap re = new NutMap();
+		for (int i = 0; i < args.length; i+=2) {
+			re.put(args[i].toString(), args[i+1]);
+		}
+		return re;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> _list(T ... args) {
+		return Arrays.asList(args);
 	}
 }
