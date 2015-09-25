@@ -73,7 +73,7 @@
 		<location>/WEB-INF/jsp/500.jsp</location>
 	</error-page>
 	<session-config>
-		<!-- 一个多月 -->
-		<session-timeout>3000000</session-timeout>
+		<!-- 一年 -->
+		<session-timeout>946080000</session-timeout>
 	</session-config>
 </web-app>

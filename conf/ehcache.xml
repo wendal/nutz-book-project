@@ -6,7 +6,7 @@
 	<diskStore path="/data/yvr_cache/" />
 	
 	<cache name="shiro-activeSessionCache"
-       maxElementsInMemory="10000"
+       maxElementsInMemory="1000"
        overflowToDisk="true"
        eternal="true"
        timeToLiveSeconds="0"
