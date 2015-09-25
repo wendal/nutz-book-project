@@ -12,6 +12,7 @@ import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Mvcs;
 
 public abstract class BaseModule {
 	
@@ -21,6 +22,9 @@ public abstract class BaseModule {
 	@Inject protected EmailService emailService;
 	
 	@Inject protected CacheManager cacheManager;
+	
+	@Inject("java:$conf.get('topic_seo.urlbase')")
+	protected String urlbase;
 	
 	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {
@@ -46,5 +50,11 @@ public abstract class BaseModule {
 			return null;
 		dao.fetchLinks(profile, null);
 		return profile;
+	}
+	
+	public void init() throws Exception {
+		if (urlbase == null)
+			urlbase = "";
+		urlbase += Mvcs.getServletContext().getContextPath();
 	}
 }

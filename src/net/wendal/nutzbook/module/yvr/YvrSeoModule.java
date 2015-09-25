@@ -38,7 +38,7 @@ import com.rometools.rome.io.SyndFeedOutput;
  * @author wendal
  *
  */
-@IocBean
+@IocBean(create="init")
 @At("/yvr")
 @Fail("http:500")
 public class YvrSeoModule extends BaseModule {
@@ -73,7 +73,7 @@ public class YvrSeoModule extends BaseModule {
             entry.setPublishedDate(topic.getCreateTime());
             description = new SyndContentImpl();
             description.setType("text/html");
-            description.setValue(Markdowns.toHtml(topic.getContent()));
+            description.setValue(Markdowns.toHtml(topic.getContent(), urlbase));
             entry.setDescription(description);
             entry.setAuthor(topic.getAuthor().getLoginname());
             entries.add(entry);
@@ -91,7 +91,6 @@ public class YvrSeoModule extends BaseModule {
 	@At
 	@Ok("raw:xml")
 	public File sitemap() throws MalformedURLException, ParseException{
-		final String urlbase = conf.get("topic_seo.urlbase", "https://nutz.cn");
 		String tmpdir = conf.get("topic_seo.tmp_dir", "/tmp");
 		Files.createDirIfNoExists(tmpdir);
 		final WebSitemapGenerator gen = new WebSitemapGenerator(urlbase, new File(tmpdir));

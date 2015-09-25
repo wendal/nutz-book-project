@@ -38,7 +38,7 @@ public class SimpleTest extends Assert {
 	@Test
 	public void markdown_code() {
 		String md = "```\npublic class MainModule{}<img ><pre></pre>\n```";
-		String re = Markdowns.toHtml(md);
+		String re = Markdowns.toHtml(md, null);
 		System.out.println(re);
 	}
 	
@@ -47,5 +47,19 @@ public class SimpleTest extends Assert {
 //		MethodInvoker invoker = ObjectUtil.getInvokder(TopicType.class, "name");
 //		assertNotNull(invoker);
 //		TopicType.ask.name();
+//	}
+	
+//	@Test
+//	public void test_github_code() throws IOException {
+//		InputStream ins = getClass().getClassLoader().getResourceAsStream("net/wendal/nutzbook/md/github_code.md");
+//		Reader r = new InputStreamReader(ins);
+//		String re = Markdowns.toHtml(Streams.read(r).toString());
+//		System.out.println(re);
+//	}
+//	
+//	@Test
+//	public void test_url() {
+//		String url=new String(Base64.decode("aHR0cDovL3Bob3RvLnNjb2wuY29tLmNuL3Nqc2MvMjAxNTA5LzU0MDE2NzI3Lmh0bWwg"));
+//        System.out.println("Decoder url: ["+ url + "]");
 //	}
 }

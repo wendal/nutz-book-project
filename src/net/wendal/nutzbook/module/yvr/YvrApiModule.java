@@ -24,7 +24,6 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
@@ -32,7 +31,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
 
-@IocBean
+@IocBean(create="init")
 @At("/yvr/api/v1")
 @Ok("json")
 @Fail("http:500")
@@ -93,7 +92,7 @@ public class YvrApiModule extends BaseModule {
 			re.put("id", reply.getId());
 			re.put("author", _author(reply.getAuthor()));
 			
-			re.put("content", "false".equals(mdrender) ? reply.getContent() : Markdowns.toHtml(reply.getContent()));
+			re.put("content", "false".equals(mdrender) ? reply.getContent() : Markdowns.toHtml(reply.getContent(), urlbase));
 			re.put("ups", new ArrayList<String>(reply.getUps()));
 			re.put("create_at", _time(reply.getCreateTime()));
 			replies.add(re);
@@ -109,7 +108,7 @@ public class YvrApiModule extends BaseModule {
 		tp.put("id", topic.getId());
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
 		tp.put("tab", topic.getType().toString());
-		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent()));
+		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
 		tp.put("title", topic.getTitle());
 		if (topic.getLastComment() != null)
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));
@@ -134,4 +133,5 @@ public class YvrApiModule extends BaseModule {
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(date);
 	}
+	
 }
