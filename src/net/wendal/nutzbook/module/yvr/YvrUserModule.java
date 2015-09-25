@@ -88,7 +88,7 @@ public class YvrUserModule extends BaseModule {
 			re.put("current_user", me);
 			// 显示accessToken二维码
 			if (me.getUserId() == user.getId()) {
-				re.put("access_token", yvrService.accessToken(me.getLoginname()));
+				re.put("access_token", yvrService.accessToken(me));
 			}
 		}
 		if (!recent_topics.isEmpty()) {

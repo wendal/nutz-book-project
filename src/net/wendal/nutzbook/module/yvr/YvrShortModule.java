@@ -13,10 +13,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.yvr.YvrService;
 
 import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
@@ -53,11 +55,11 @@ public class YvrShortModule extends BaseModule {
 	@Inject("java:$conf.get('shortit.root')")
 	protected String root;
 	
-	@Inject
-	protected YvrModule yvrModule;
-	
 	@Inject 
 	protected Dao dao;
+	
+	@Inject
+	protected YvrService yvrService;
 
 	@At("/c/?")
 	public Object code(String code) {
@@ -96,9 +98,9 @@ public class YvrShortModule extends BaseModule {
 			topic.setContent(String.format("[%s]\n短点链接: https://nutz.cn/s/c/%s", code, code));
 			topic.setType(TopicType.shortit);
 			try {
-				NutMap resp = yvrModule.add(topic, dao.fetch(User.class, "guest").getId());
-				if (resp.getBoolean("ok")) {
-					String topicId = resp.getString("data");
+				CResult resp = yvrService.add(topic, dao.fetch(User.class, "guest").getId());
+				if (resp.isOk()) {
+					String topicId = resp.as(String.class);
 					return Json.toJson(new NutMap().setv("ok", true).setv("url", "https://nutz.cn/yvr/t/" + topicId));
 				}
 			} catch (Exception e) {

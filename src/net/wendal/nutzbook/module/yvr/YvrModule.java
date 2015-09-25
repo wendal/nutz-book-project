@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -99,39 +100,8 @@ public class YvrModule extends BaseModule {
 	@At
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
-	@Aop("redis")
-	public NutMap add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId) {
-		if (userId < 1) {
-			return ajaxFail("请先登录");
-		}
-		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 100 || topic.getTitle().length() < 5) {
-			return ajaxFail("标题长度不合法");
-		}
-		if (Strings.isBlank(topic.getContent()) || topic.getContent().length() > 20000) {
-			return ajaxFail("内容不合法");
-		}
-		if (topic.getTags() != null && topic.getTags().size() > 10) {
-			return ajaxFail("最多只能有10个tag");
-		}
-		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
-			return ajaxFail("相同标题已经发过了");
-		}
-		topic.setTitle(Strings.escapeHtml(topic.getTitle().trim()));
-		topic.setUserId(userId);
-		topic.setTop(false);
-		if (topic.getType() == null)
-			topic.setType(TopicType.ask);
-		dao.insert(topic);
-		try {
-			topicSearchService.add(topic);
-		} catch (Exception e) {
-		}
-		// 如果是ask类型,把帖子加入到 "未回复"列表
-		if (TopicType.ask.equals(topic.getType())) {
-			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
-		}
-		jedis().zadd("t:update:" + topic.getType(), System.currentTimeMillis(), topic.getId());
-		return ajaxOk(topic.getId());
+	public CResult add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId) {
+		return yvrService.add(topic, userId);
 	}
 
 	@At({ "/list/?", "/list" })
@@ -277,52 +247,14 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type = CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")
-	@Aop("redis")
 	public Object addReply(String topicId, @Param("..") TopicReply reply, @Attr(scope = Scope.SESSION, value = "me") int userId) {
-		if (userId < 1)
-			return ajaxFail("请先登录");
-		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
-			return ajaxFail("内容不能为空");
-		}
-		String cnt = reply.getContent().trim();
-		if (cnt.length() < 2 || cnt.length() > 10000) {
-			return ajaxFail("内容太长或太短了");
-		}
-		Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
-		if (topic == null) {
-			return ajaxFail("主题不存在");
-		}
-		reply.setTopicId(topicId);
-		reply.setUserId(userId);
-		dao.insert(reply);
-		// 更新topic的时间戳, 然后根据返回值确定是否需要从t:noreply中删除该topic
-		Long re = jedis().zadd("t:update:" + topic.getType(), reply.getCreateTime().getTime(), topicId);
-		if (re != null && re.intValue() != 1) {
-			jedis().zrem("t:noreply", topicId);
-		}
-		jedis().hset("t:reply:last", topicId, reply.getId());
-		jedis().zincrby("t:reply:count", 1, topicId);
-		return ajaxOk(null);
+		return yvrService.addReply(topicId, reply, userId);
 	}
 
 	@At("/t/?/reply/?/up")
 	@Ok("json")
-	@Aop("redis")
 	public Object replyUp(String _, String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
-		if (userId < 1)
-			return ajaxFail("你还没登录呢");
-		if (1 != dao.count(TopicReply.class, Cnd.where("id", "=", replyId))) {
-			return ajaxFail("没这条评论");
-		}
-		String key = "t:like:" + replyId;
-		Double t = jedis().zscore(key, "" + userId);
-		if (t != null) {
-			jedis().zrem(key, userId + "");
-			return ajaxOk("down");
-		} else {
-			jedis().zadd(key, System.currentTimeMillis(), userId + "");
-			return ajaxOk("up");
-		}
+		return yvrService.replyUp(replyId, userId);
 	}
 
 	@GET

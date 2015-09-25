@@ -12,11 +12,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.mvc.AccessTokenFilter;
 import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Markdowns;
 
@@ -27,8 +30,14 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Scope;
+import org.nutz.mvc.adaptor.JsonAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Attr;
+import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Fail;
+import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
@@ -111,7 +120,7 @@ public class YvrApiModule extends BaseModule {
 		return _map("data", tp);
 	}
 	
-	@POST
+	//@POST
 	@At("/accesstoken")
 	@Aop("redis")
 	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
@@ -136,6 +145,64 @@ public class YvrApiModule extends BaseModule {
 				"avatar_url", _avatar_url(loginname), 
 				"recent_topics", Collections.EMPTY_LIST,
 				"create_at", _time(user.getCreateTime())));
+	}
+	
+	@POST
+	@At("/topics")
+	@AdaptBy(type=JsonAdaptor.class)
+	@Filters(@By(type=AccessTokenFilter.class))
+	public Object add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId, @Param("tab")String tab) {
+		if (tab != null)
+			topic.setType(TopicType.valueOf(tab));
+		CResult re = yvrService.add(topic, userId);
+		if (re.isOk()) {
+			return _map("success", true, "topic_id", re.as(String.class));
+		} else {
+			return _map("success", false, "message", re.getMsg());
+		}
+	}
+	
+	@POST
+	@At("/topic/?/replies")
+	@AdaptBy(type=JsonAdaptor.class)
+	@Filters(@By(type=AccessTokenFilter.class))
+	public Object addReply(String topicId, @Param("..") TopicReply reply, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+		CResult re =  yvrService.addReply(topicId, reply, userId);
+		if (re.isOk()) {
+			return _map("success", true, "reply_id", re.as(String.class));
+		} else {
+			return _map("success", false, "message", re.getMsg());
+		}
+	}
+	
+	@POST
+	@At("/reply/?/ups")
+	@Filters(@By(type=AccessTokenFilter.class))
+	public Object replyUp(String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+		CResult re =  yvrService.replyUp(replyId, userId);
+		if (re.isOk()) {
+			return _map("success", true, "action", re.as(String.class));
+		} else {
+			return _map("success", false, "message", re.getMsg());
+		}
+	}
+	
+	@GET
+	@At("/message/count")
+	public Object msgCount() {
+		return _map("data", 0);
+	}
+
+	@GET
+	@At("/messages")
+	public Object getMessages() {
+		return _map("data", _map("has_read_messages", Collections.EMPTY_LIST, "hasnot_read_messages", Collections.EMPTY_LIST));
+	}
+	
+	@POST
+	@At("/message/mark_all")
+	public Object markAllMessage() {
+		return _map("success", true);
 	}
 	
 	// --------------------

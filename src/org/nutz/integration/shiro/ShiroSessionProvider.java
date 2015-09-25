@@ -11,6 +11,7 @@ public class ShiroSessionProvider implements SessionProvider {
 
 	public HttpServletRequest filter(HttpServletRequest req, HttpServletResponse resp, ServletContext servletContext) {
 		resp.addHeader("Access-Control-Allow-Origin", "*");
+		resp.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Key");
 		return new ShiroHttpServletRequest(req, servletContext, true);
 	}
 
