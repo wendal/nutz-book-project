@@ -10,8 +10,12 @@ import org.nutz.mvc.SessionProvider;
 public class ShiroSessionProvider implements SessionProvider {
 
 	public HttpServletRequest filter(HttpServletRequest req, HttpServletResponse resp, ServletContext servletContext) {
-		resp.addHeader("Access-Control-Allow-Origin", "*");
-		resp.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Key");
+		if (resp.getHeader("Access-Control-Allow-Origin") == null) {
+			resp.addHeader("Access-Control-Allow-Origin", "*");
+			resp.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Key");
+		}
+		if (req instanceof ShiroHttpServletRequest)
+			return req;
 		return new ShiroHttpServletRequest(req, servletContext, true);
 	}
 
