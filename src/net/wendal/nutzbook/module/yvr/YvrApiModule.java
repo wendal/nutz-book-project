@@ -129,7 +129,7 @@ public class YvrApiModule extends BaseModule {
 		String uname = jedis().hget("u:accesstoken2", accesstoken.toLowerCase());
 		if (uname == null)
 			return HTTP_403;
-		return _map("success", true, "loginname", uname);
+		return _map("success", true, "loginname", uname, "id", jedis().hget("u:accesstoken3", accesstoken.toLowerCase()));
 	}
 	
 	//
