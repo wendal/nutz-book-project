@@ -307,5 +307,10 @@
 			<artifactId>nutz-plugins-secken</artifactId>
 			<version>1.b.52.r2</version>
 		</dependency>
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jpush-client</artifactId>
+			<version>3.2.7</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -1,7 +1,9 @@
 package org.nutz.plugins.zbus;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Strings;
-import org.nutz.log.Logs;
 import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.resource.Scans;
 
 public class MsgBus {
@@ -30,12 +32,11 @@ public class MsgBus {
 		});
 	}
 	
-	protected Object _call(Object event) throws Exception {
-		for (MsgEventHandler handler : handlers) {
-			if (handler.isSupport(event)) {
-				return handler.call(this, event);
-			}
-		}
+	@SuppressWarnings("unchecked")
+	protected <T> Object _call(Object event) throws Exception {
+		MsgEventHandler<T> handler = (MsgEventHandler<T>) handlers.get(event.getClass().getName());
+		if (handler != null)
+			return handler.call(this, (T)event);
 		log.info("no handler obj class=" + event.getClass());
 		return null;
 	}
@@ -44,12 +45,19 @@ public class MsgBus {
 		if (threadCount < 1)
 			threadCount = 16;
 		if (handlers == null) {
-			handlers = new ArrayList<MsgEventHandler>();
+			handlers = new HashMap<String, MsgEventHandler<?>>();
 		}
 		if (!Strings.isBlank(pkg)) {
 			for (Class<?> klass: Scans.me().scanPackage(pkg)) {
-				if (MsgEventHandler.class.isAssignableFrom(klass)) {
-					handlers.add((MsgEventHandler) ioc.get(klass));
+				for (Type t : klass.getGenericInterfaces()) {
+					if (t instanceof ParameterizedType) {
+						ParameterizedType pt = (ParameterizedType)t;
+						if (pt.getTypeName().startsWith(MsgEventHandler.class.getName())) {
+							String name = ((ParameterizedType)t).getActualTypeArguments()[0].getTypeName();
+							log.debugf("add event handler [%s -- %s]", name, klass);
+							handlers.put(name, (MsgEventHandler<?>) ioc.get(klass));
+						}
+					}
 				}
 			}
 		}
@@ -69,7 +77,7 @@ public class MsgBus {
 
 	protected ExecutorService es;
 	
-	protected List<MsgEventHandler> handlers;
+	protected Map<String, MsgEventHandler<?>> handlers;
 	
 	protected int threadCount;
 	

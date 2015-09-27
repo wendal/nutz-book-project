@@ -20,7 +20,7 @@ import org.nutz.plugins.zbus.MsgBus;
 import org.nutz.plugins.zbus.MsgEventHandler;
 
 @IocBean(create="init", depose="close")
-public class SysLogService implements Runnable, MsgEventHandler {
+public class SysLogService implements Runnable, MsgEventHandler<SysLog> {
 	
 	private static final Log log = Logs.get();
 	
@@ -96,12 +96,8 @@ public class SysLogService implements Runnable, MsgEventHandler {
 		}
 	}
 
-	public boolean isSupport(Object event) {
-		return event instanceof SysLog;
-	}
-
-	public Object call(MsgBus bus, Object event) throws Exception {
-		this.sync((SysLog) event);
+	public Object call(MsgBus bus, SysLog sysLog) throws Exception {
+		this.sync(sysLog);
 		return null;
 	}
 }

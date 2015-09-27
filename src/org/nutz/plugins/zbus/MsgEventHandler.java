@@ -1,8 +1,6 @@
 package org.nutz.plugins.zbus;
 
-public interface MsgEventHandler {
-
-	boolean isSupport(Object event);
+public interface MsgEventHandler<T> {
 	
-	Object call(MsgBus bus, Object event) throws Exception;
+	Object call(MsgBus bus, T event) throws Exception;
 }

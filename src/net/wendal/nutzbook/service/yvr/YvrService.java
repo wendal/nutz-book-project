@@ -4,9 +4,11 @@ import static net.wendal.nutzbook.bean.CResult._fail;
 import static net.wendal.nutzbook.bean.CResult._ok;
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -21,6 +23,14 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
+import org.nutz.plugins.zbus.MsgBus;
+
+import cn.jpush.api.push.model.Platform;
+import cn.jpush.api.push.model.PushPayload;
+import cn.jpush.api.push.model.audience.Audience;
+import cn.jpush.api.push.model.notification.AndroidNotification;
+import cn.jpush.api.push.model.notification.IosNotification;
+import cn.jpush.api.push.model.notification.Notification;
 
 @IocBean(create="init")
 public class YvrService {
@@ -33,6 +43,9 @@ public class YvrService {
 	
 	@Inject
 	protected TopicSearchService topicSearchService;
+	
+	@Inject
+	protected MsgBus bus;
 	
 	@Aop("redis")
 	public void fillTopic(Topic topic, Map<Integer, UserProfile> authors) {
@@ -149,6 +162,17 @@ public class YvrService {
 		}
 		jedis().hset("t:reply:last", topicId, reply.getId());
 		jedis().zincrby("t:reply:count", 1, topicId);
+		
+		// 通知原本的作者
+		if (topic.getUserId() != userId) {
+			String alert = dao.fetch(User.class, userId).getName()+"回复了您的帖子";
+			Map<String, String> extras = new HashMap<String, String>();
+			extras.put("topic_id", topicId);
+			AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
+			IosNotification ios = IosNotification.newBuilder().setAlert(alert).addExtras(extras).build();
+			Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
+			pushUser(topic.getUserId(), notif);
+		}
 		return _ok(reply.getId());
 	}
 	
@@ -170,6 +194,12 @@ public class YvrService {
 		}
 	}
 	
+	protected void pushUser(int userId, Notification notif) {
+		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
+		builder.setAudience(Audience.alias("u_"+ userId));
+		builder.setNotification(notif);
+		bus.event(builder.build());
+	}
 	
 	public Dao daoNoContent() {
 		return daoNoContent;

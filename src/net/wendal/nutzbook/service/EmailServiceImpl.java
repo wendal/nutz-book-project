@@ -11,7 +11,7 @@ import org.nutz.plugins.zbus.MsgBus;
 import org.nutz.plugins.zbus.MsgEventHandler;
 
 @IocBean(name="emailService")
-public class EmailServiceImpl implements EmailService, MsgEventHandler {
+public class EmailServiceImpl implements EmailService, MsgEventHandler<Email> {
 
 	private static final Log log = Logs.get();
 	
@@ -37,8 +37,8 @@ public class EmailServiceImpl implements EmailService, MsgEventHandler {
 		return event instanceof Email;
 	}
 
-	public Object call(MsgBus bus, Object event) throws Exception {
-		((Email)event).sendMimeMessage();
+	public Object call(MsgBus bus, Email email) throws Exception {
+		email.sendMimeMessage();
 		return null;
 	}
 }
