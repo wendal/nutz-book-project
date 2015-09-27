@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.util.Map;
 
 import net.sf.ehcache.CacheManager;
+import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.AuthorityService;
@@ -29,6 +30,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.nutz.plugins.zbus.MsgBus;
 import org.quartz.Scheduler;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.core.ServiceContext;
@@ -132,6 +134,10 @@ public class MainSetup implements Setup {
 		System.out.println(map.size());
 		System.out.println(map.keySet());
 		System.out.println(map);
+		
+		// 启动消息总线,测试性质
+		MsgBus bus = ioc.get(MsgBus.class, "bus");
+		bus.event(SysLog.c("method", "sys", null, 1, "系统启动完成"));
 	}
 	
 	public void destroy(NutConfig conf) {

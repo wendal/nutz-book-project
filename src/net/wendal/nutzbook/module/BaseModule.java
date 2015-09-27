@@ -16,6 +16,7 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.plugins.zbus.MsgBus;
 
 public abstract class BaseModule {
 	
@@ -28,6 +29,9 @@ public abstract class BaseModule {
 	
 	@Inject("java:$conf.get('topic_seo.urlbase')")
 	protected String urlbase;
+	
+	@Inject
+	protected MsgBus bus;
 	
 	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {

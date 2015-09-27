@@ -16,9 +16,11 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.plugins.zbus.MsgBus;
+import org.nutz.plugins.zbus.MsgEventHandler;
 
 @IocBean(create="init", depose="close")
-public class SysLogService implements Runnable {
+public class SysLogService implements Runnable, MsgEventHandler {
 	
 	private static final Log log = Logs.get();
 	
@@ -92,5 +94,14 @@ public class SysLogService implements Runnable {
 			es.shutdown();
 			es.awaitTermination(5, TimeUnit.SECONDS);
 		}
+	}
+
+	public boolean isSupport(Object event) {
+		return event instanceof SysLog;
+	}
+
+	public Object call(MsgBus bus, Object event) throws Exception {
+		this.sync((SysLog) event);
+		return null;
 	}
 }
