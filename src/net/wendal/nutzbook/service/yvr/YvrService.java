@@ -5,7 +5,12 @@ import static net.wendal.nutzbook.bean.CResult._ok;
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
@@ -138,17 +143,17 @@ public class YvrService {
 	}
 
 	@Aop("redis")
-	public CResult addReply(String topicId, TopicReply reply, int userId) {
+	public CResult addReply(final String topicId, final TopicReply reply, final int userId) {
 		if (userId < 1)
 			return _fail("请先登录");
 		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
 			return _fail("内容不能为空");
 		}
-		String cnt = reply.getContent().trim();
+		final String cnt = reply.getContent().trim();
 		if (cnt.length() < 2 || cnt.length() > 10000) {
 			return _fail("内容太长或太短了");
 		}
-		Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
+		final Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
 		if (topic == null) {
 			return _fail("主题不存在");
 		}
@@ -163,16 +168,30 @@ public class YvrService {
 		jedis().hset("t:reply:last", topicId, reply.getId());
 		jedis().zincrby("t:reply:count", 1, topicId);
 		
-		// 通知原本的作者
-		if (topic.getUserId() != userId) {
-			String alert = dao.fetch(User.class, userId).getName()+"回复了您的帖子";
-			Map<String, String> extras = new HashMap<String, String>();
-			extras.put("topic_id", topicId);
-			AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
-			IosNotification ios = IosNotification.newBuilder().setAlert(alert).addExtras(extras).build();
-			Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
-			pushUser(topic.getUserId(), notif);
-		}
+		bus.add(new Callable<Object>() {
+			public Object call() throws Exception {
+				String replyAuthorName = dao.fetch(User.class, userId).getName();
+				// 通知原本的作者
+				if (topic.getUserId() != userId) {
+					String alert = replyAuthorName+"回复了您的帖子";
+					pushUser(topic.getUserId(), alert, topicId);
+				}
+				
+				Set<String> ats = findAt(cnt, 5);
+				for (String at : ats) {
+					User user = dao.fetch(User.class, at);
+					if (user == null)
+						continue;
+					if (topic.getUserId() == user.getId())
+						continue; // 前面已经发过了
+					if (userId == user.getId())
+						continue; // 自己@自己, 忽略
+					String alert = replyAuthorName + "在帖子回复中@了你";
+					pushUser(topic.getUserId(), alert, topicId);
+				}
+				return null;
+			}
+		});
 		return _ok(reply.getId());
 	}
 	
@@ -194,7 +213,12 @@ public class YvrService {
 		}
 	}
 	
-	protected void pushUser(int userId, Notification notif) {
+	protected void pushUser(int userId, String alert, String topic_id) {
+		Map<String, String> extras = new HashMap<String, String>();
+		extras.put("topic_id", topic_id);
+		AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
+		IosNotification ios = IosNotification.newBuilder().setAlert(alert).addExtras(extras).build();
+		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
@@ -207,5 +231,27 @@ public class YvrService {
 	
 	public void init() {
 		daoNoContent = Daos.ext(dao, FieldFilter.locked(Topic.class, "content").set(TopicReply.class, null, "content", false));
+	}
+	
+	static Pattern atPattern = Pattern.compile("@([a-zA-Z0-9\\_]{4,20}\\s)");
+	
+	public static void main(String[] args) {
+		String cnt = "@wendal @zozoh 这样可以吗?@qq_addfdf";
+		System.out.println(findAt(cnt, 100));
+	}
+	
+	public static Set<String> findAt(String cnt, int limit) {
+		Set<String> ats = new HashSet<String>();
+		Matcher matcher = atPattern.matcher(cnt+" ");
+		int start = 0;
+		int end = 0;
+		while (end < cnt.length() && matcher.find(end)) {
+			start = matcher.start();
+			end = matcher.end();
+			ats.add(cnt.substring(start+1, end-1).trim().toLowerCase());
+			if (limit <= ats.size())
+				break;
+		}
+		return ats;
 	}
 }

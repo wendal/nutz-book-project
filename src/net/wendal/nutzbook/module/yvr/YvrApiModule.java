@@ -101,7 +101,7 @@ public class YvrApiModule extends BaseModule {
 		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender);
 		
 		List<NutMap> replies = new ArrayList<NutMap>();
-		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id))) {
+		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).desc("createTime"))) {
 			dao.fetchLinks(reply, null);
 			dao.fetchLinks(reply.getAuthor(), null);
 			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
