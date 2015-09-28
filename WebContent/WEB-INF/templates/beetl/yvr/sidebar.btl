@@ -108,10 +108,6 @@ function secken_auth() {
         </li>
         <div class="sep10"></div>
         <li>
-          <a href="http://github.com/nutzam/nutz" target="_blank">Nutz@github</a>
-        </li>
-        <div class="sep10"></div>
-        <li>
           <a href="http://nutzbook.wendal.net" target="_blank">Nutzbook</a>
         </li>
         <div class="sep10"></div>
@@ -121,9 +117,6 @@ function secken_auth() {
       </ol>
     </div>
   </div>
-  
-  
-
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>小功能区</span>
@@ -136,8 +129,21 @@ function secken_auth() {
         <div class="sep10"></div>
         <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
         <div class="sep10"></div>
+        <li>
+        <span>客户端(当前仅Android)</span>
+        <span id="client-qrcode"></span>
+      <script type="text/javascript">
+          // qrcode generate
+          var client_url = "http://any.nutz.cn/NutzCN-2.0.0.apk";
+      new QRCode(document.getElementById("client-qrcode"), {
+        text: client_url,
+        width: 200,
+        height: 200,
+          });
+        // END qrcode generate
+        </script>
+        </li>
       </ol>
     </div>
   </div>
-
 </div>

@@ -131,7 +131,9 @@
       <a class='dark' href='https://github.com/nutzam/nutz'>Nutz</a>
       ,
       <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
-      等优秀的开源库. | 
+      ,
+      <a class='dark' href='http://www.qiniu.com/'><img src="${ctxPath}/rs/images/qiniu-transparent.png"></img></a>
+      | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
       |
       <a title="查看备案信息" target="_blank" href="http://www.miibeian.gov.cn">苏ICP备 10226088号-17</a>

@@ -20,7 +20,7 @@
   <%if (null != obj.access_token!) {%>
   <div class='panel'>
     <div class='header'>
-      <span class='col_fade'>客户端二维码</span>
+      <span class='col_fade'>accesstoken二维码</span>
     </div>
     <div class='inner'>
       <span id="access-token-qrcode"></span>
