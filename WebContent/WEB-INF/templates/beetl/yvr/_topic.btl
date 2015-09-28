@@ -141,9 +141,9 @@ layout("_layout.btl",{}){
 <script>
 var ctxPath = "${ctxPath}";
 </script>
-<script src="${ctxPath}/rs/libs/editor/editor.js"></script>
-<script src="${ctxPath}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${ctxPath}/rs/libs/editor/ext.js"></script>
+<script src="${rsbase}/libs/editor/editor.js"></script>
+<script src="${rsbase}/libs/webuploader/webuploader.withoutimage.js"></script>
+<script src="${rsbase}/libs/editor/ext.js"></script>
 <script>
   $(document).ready(function () {
     // 获取所有回复者name

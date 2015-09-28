@@ -34,11 +34,11 @@
         <span class='span-success'>洋葱登陆</span>
       </a>
       <a href='${ctxPath}/oauth/qq' id='qq_btn'>
-      	<img src="${ctxPath}/rs/images/qq_connect.png"/>
+      	<img src="${rsbase}/images/qq_connect.png"/>
       </a>
     </div>
   </div>
-<script src="${ctxPath}/rs/js/socket.io-1.3.0.js"></script>
+<script src="${rsbase}/js/socket.io-1.3.0.js"></script>
 <script>
 var socket = 1;
 $(function(){

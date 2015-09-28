@@ -12,55 +12,55 @@
 
   <link title="RSS" type="application/rss+xml" rel="alternate" href="${ctxPath}/yvr/rss"/>
 
-  <link rel="icon" href="${ctxPath}/rs/logo.png" type="image/x-icon"/>
-  <link rel="stylesheet" type="text/css" href="${ctxPath}/rs/logo/logo.css"/>
+  <link rel="icon" href="${rsbase}/logo.png" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" href="${rsbase}/logo/logo.css"/>
 
   <!-- style -->
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/libs/bootstrap/css/bootstrap.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/stylesheets/common.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/stylesheets/style.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/stylesheets/responsive.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/stylesheets/jquery.atwho.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/layer2/layer/skin/layer.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/libs/bootstrap/css/bootstrap.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/stylesheets/common.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/stylesheets/style.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/stylesheets/responsive.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/stylesheets/jquery.atwho.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/layer2/layer/skin/layer.css"></link>
 <style>
 @font-face {
 	font-family: 'icomoon';
-	src:url('${ctxPath}/rs/libs/editor/fonts/icomoon.eot');
-	src:url('${ctxPath}/rs/libs/editor/fonts/icomoon.eot?#iefix') format('embedded-opentype'),
-		url('${ctxPath}/rs/libs/editor/fonts/icomoon.woff') format('woff'),
-		url('${ctxPath}/rs/libs/editor/fonts/icomoon.ttf') format('truetype'),
-		url('${ctxPath}/rs/libs/editor/fonts/icomoon.svg#icomoon') format('svg');
+	src:url('${rsbase}/libs/editor/fonts/icomoon.eot');
+	src:url('${rsbase}/libs/editor/fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('${rsbase}/libs/editor/fonts/icomoon.woff') format('woff'),
+		url('${rsbase}/libs/editor/fonts/icomoon.ttf') format('truetype'),
+		url('${rsbase}/libs/editor/fonts/icomoon.svg#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/libs/editor/editor.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/libs/webuploader/webuploader.css"></link>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/libs/code-prettify/prettify.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/libs/editor/editor.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/libs/webuploader/webuploader.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/libs/code-prettify/prettify.css"></link>
 <style>
 @font-face {
   font-family: 'FontAwesome';
-  src: url('${ctxPath}/rs/libs/font-awesome/fonts/fontawesome-webfont.eot?v=4.2.0');
-  src: url('${ctxPath}/rs/libs/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'), url('${ctxPath}/rs/libs/font-awesome/fonts/fontawesome-webfont.woff?v=4.2.0') format('woff'), url('${ctxPath}/rs/libs/font-awesome/fonts/fontawesome-webfont.ttf?v=4.2.0') format('truetype'), url('${ctxPath}/rs/libs/font-awesome/fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
+  src: url('${rsbase}/libs/font-awesome/fonts/fontawesome-webfont.eot?v=4.2.0');
+  src: url('${rsbase}/libs/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'), url('${rsbase}/libs/font-awesome/fonts/fontawesome-webfont.woff?v=4.2.0') format('woff'), url('${rsbase}/libs/font-awesome/fonts/fontawesome-webfont.ttf?v=4.2.0') format('truetype'), url('${rsbase}/libs/font-awesome/fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="${ctxPath}/rs/libs/font-awesome/css/font-awesome.css"></link>
+<link rel="stylesheet" type="text/css" href="${rsbase}/libs/font-awesome/css/font-awesome.css"></link>
 
   <!-- scripts -->
-<script src="${ctxPath}/rs/libs/jquery-2.1.4.min.js"></script>
-<script src="${ctxPath}/rs/libs/lodash.compat.js"></script>
-<script src="${ctxPath}/rs/libs/jquery-ujs.js"></script>
-<script src="${ctxPath}/rs/libs/bootstrap/js/bootstrap.js"></script>
-<script src="${ctxPath}/rs/libs/jquery.caret.js"></script>
-<script src="${ctxPath}/rs/libs/jquery.atwho.js"></script>
-<script src="${ctxPath}/rs/libs/markdownit.js"></script>
-<script src="${ctxPath}/rs/libs/code-prettify/prettify.js"></script>
-<script src="${ctxPath}/rs/libs/qrcode.js"></script>
-<script src="${ctxPath}/rs/javascripts/main.js"></script>
-<script src="${ctxPath}/rs/javascripts/responsive.js"></script>
-<script src="${ctxPath}/rs/layer2/layer/layer.js"></script>
+<script src="${rsbase}/libs/jquery-2.1.4.min.js"></script>
+<script src="${rsbase}/libs/lodash.compat.js"></script>
+<script src="${rsbase}/libs/jquery-ujs.js"></script>
+<script src="${rsbase}/libs/bootstrap/js/bootstrap.js"></script>
+<script src="${rsbase}/libs/jquery.caret.js"></script>
+<script src="${rsbase}/libs/jquery.atwho.js"></script>
+<script src="${rsbase}/libs/markdownit.js"></script>
+<script src="${rsbase}/libs/code-prettify/prettify.js"></script>
+<script src="${rsbase}/libs/qrcode.js"></script>
+<script src="${rsbase}/javascripts/main.js"></script>
+<script src="${rsbase}/javascripts/responsive.js"></script>
+<script src="${rsbase}/layer2/layer/layer.js"></script>
 
   <% if (null != obj.topic!) { %>
   <title>${obj.topic.title, escape} - Nutz社区</title>
@@ -81,7 +81,7 @@
       <a class='brand' href='${ctxPath}/yvr/list'>
         <div class="nutz-logo-bar">
     		<div class="nutz-logo">
-        		<img src="${ctxPath}/rs/logo/logo.png" alt=""/>
+        		<img src="${rsbase}/logo/logo.png" alt=""/>
         		<div class="logo-tail"></div>
     		</div>
     		<div class="nutz-txt">Nutz</div>
@@ -132,7 +132,7 @@
       ,
       <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
       ,
-      <a class='dark' href='http://www.qiniu.com/'><img src="${ctxPath}/rs/images/qiniu-transparent.png"></img></a>
+      <a class='dark' href='http://www.qiniu.com/'><img src="${rsbase}/images/qiniu-transparent.png"></img></a>
       | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
       |
