@@ -187,7 +187,7 @@ public class YvrService {
 					if (userId == user.getId())
 						continue; // 自己@自己, 忽略
 					String alert = replyAuthorName + "在帖子回复中@了你";
-					pushUser(topic.getUserId(), alert, topicId);
+					pushUser(user.getId(), alert, topicId);
 				}
 				return null;
 			}
