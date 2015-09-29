@@ -135,7 +135,7 @@ if (!socket) {
         <div class="sep10"></div>
         <li>
         <li>
-        <a href="http://any.nutz.cn/NutzCN-2.0.0.apk">客户端(当前仅Android)</a>
+        <a href="http://any.nutz.cn/NutzCN.apk">客户端(当前仅Android)</a>
         </li>
         </li>
       </ol>
