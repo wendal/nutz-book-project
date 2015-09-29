@@ -40,8 +40,9 @@
   </div>
 <script src="${rsbase}/js/socket.io-1.3.0.js"></script>
 <script>
-var socket = 1;
-$(function(){
+var socket = 0;
+function secken_auth() {
+if (!socket) {
 	socket = io.connect('//'+window.location.hostname+ ':81/secken', {
         'reconnection delay' : 2000,
         'force new connection' : true
@@ -59,8 +60,7 @@ $(function(){
 			console.log(data);
         window.location = "https://nutz.cn/cs/pass?token=" + data.token;
 	});
-});
-function secken_auth() {
+}
     socket.emit("get_auth_qr", {});
 };
 </script>
