@@ -9,7 +9,7 @@ layout("_layout.btl",{}){
   <div class="panel">
     <div class="header">
       <% for (topic_type in obj.types) {%>
-		<a href="${ctxPath}/yvr/list/${topic_type}" class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}</a>
+		<a data-pjax href="${ctxPath}/yvr/list/${topic_type}" class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}</a>
 	  <% } %>
     </div>
     <% if (obj.list.~size > 0) { %>

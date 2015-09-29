@@ -61,6 +61,7 @@
 <script src="${rsbase}/javascripts/main.js"></script>
 <script src="${rsbase}/javascripts/responsive.js"></script>
 <script src="${rsbase}/layer2/layer/layer.js"></script>
+<script src="${rsbase}/libs/jquery.pjax.js"></script>
 
   <% if (null != obj.topic!) { %>
   <title>${obj.topic.title, escape} - Nutz社区</title>
@@ -249,6 +250,12 @@ function do_signin() {
 function next_captcha() {
 	$("#captcha_img").attr("src", "${ctxPath}/captcha/next?w=120&h=48&_=" + new Date().getTime());
 }
+
+$(document).ready(function () {
+  if($.support.pjax) {
+    $(document).pjax('a[data-pjax]', '#content', {fragment: '#content',maxCacheLength:0,timeout: 8000});
+  }
+});
 </script>
 <% if (null != conf["topic_seo.cnzz"]) {%>
 <div style="display: none;">
