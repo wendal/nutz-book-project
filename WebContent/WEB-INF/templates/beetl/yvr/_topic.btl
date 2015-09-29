@@ -37,8 +37,8 @@ layout("_layout.btl",{}){
   <div class='panel'>
     <div class='header'>
       <ol class='breadcrumb'>
-        <li><a href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
-        <li class='active'><a href='${ctxPath}/yvr/list/${obj.topic.type}'>${obj.topic.type.display}</a></li>
+        <li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+        <li class='active'><a data-pjax href='${ctxPath}/yvr/list/${obj.topic.type}'>${obj.topic.type.display}</a></li>
       </ol>
     </div>
     <div class='header topic_header'>
@@ -53,7 +53,7 @@ layout("_layout.btl",{}){
           发布于 ${obj.topic.createAt}
         </span>
         <span>
-          作者 <a href="${ctxPath}/yvr/u/${obj.topic.author.loginname}">${obj.topic.author.nickname!, escape}</a>
+          作者 <a data-pjax href="${ctxPath}/yvr/u/${obj.topic.author.loginname}">${obj.topic.author.nickname!, escape}</a>
         </span>
         <span>
           ${obj.topic.visitCount} 次浏览

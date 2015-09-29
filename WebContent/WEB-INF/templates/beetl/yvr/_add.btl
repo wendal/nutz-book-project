@@ -7,7 +7,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
   <div class='panel'>
     <div class='header'>
       <ol class='breadcrumb'>
-        <li><a href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+        <li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
         <li class='active'>发布话题</li>
       </ol>
     </div>

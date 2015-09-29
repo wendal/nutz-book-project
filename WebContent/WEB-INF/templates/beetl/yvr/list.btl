@@ -2,7 +2,7 @@
 <%for(topic in topics){%>
 <div class='cell'>
 
-  <a class="user_avatar pull-left" href="${ctxPath}/yvr/u/${topic.author.loginname}">
+  <a data-pjax class="user_avatar pull-left" href="${ctxPath}/yvr/u/${topic.author.loginname}">
     <img src="${ctxPath}/yvr/u/${topic.author.loginname}/avatar"
          title="${topic.author.loginname}"
             />
@@ -18,7 +18,7 @@
   </span>
 
   <% if (null != topic.lastComment!) {%>
-  <a class='last_time pull-right' href="${ctxPath}/yvr/t/${topic.id}#${topic.lastComment.id}">
+  <a data-pjax class='last_time pull-right' href="${ctxPath}/yvr/t/${topic.id}#${topic.lastComment.id}">
     <img class="user_small_avatar" src="${ctxPath}/yvr/u/${topic.lastComment.author.loginname}/avatar">
     <span class="last_active_time">${topic.lastComment.createAt}</span>
   </a>
@@ -33,7 +33,7 @@
 		<%
 		layout("_top_good.btl",{"topic":topic}){};
 		%>
-    <a class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title, escape}'>
+    <a data-pjax class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title, escape}'>
       ${topic.title}
     </a>
   </div>
@@ -49,7 +49,7 @@
     <% if ( obj.current_page == 1) { %>
     <li class='disabled'><a>«</a></li>
     <% } else { %>
-    <li><a href="${request.requestURI}">«</a></li>
+    <li><a data-pjax href="${request.requestURI}">«</a></li>
     <% } %>
 
     <% if ( obj.page_start > 1) { %>
@@ -60,7 +60,7 @@
     <% if (i == obj.current_page) { %>
     <li class='disabled'><a>${i}</a></li>
     <% } else { %>
-    <li><a href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${i}'>${i}</a></li>
+    <li><a data-pjax href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${i}'>${i}</a></li>
     <% } %>
     <% } %>
 
@@ -71,7 +71,7 @@
     <% if (obj.current_page == obj.pages) { %>
     <li class='disabled'><a>»</a></li>
     <% } else { %>
-    <li><a href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${obj.pages}'>»</a></li>
+    <li><a data-pjax href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${obj.pages}'>»</a></li>
     <% } %>
   </ul>
 </div>

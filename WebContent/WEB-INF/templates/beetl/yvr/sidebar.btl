@@ -114,6 +114,10 @@ function secken_auth() {
         <li>
           <a href="http://ibeetl.com/" target="_blank">Beetl模板</a>
         </li>
+        <div class="sep10"></div>
+        <li>
+          <a href="http://www.chazhao.me/" target="_blank">查找网</a>
+        </li>
       </ol>
     </div>
   </div>
@@ -130,18 +134,9 @@ function secken_auth() {
         <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
         <div class="sep10"></div>
         <li>
-        <span>客户端(当前仅Android)</span>
-        <span id="client-qrcode"></span>
-      <script type="text/javascript">
-          // qrcode generate
-          var client_url = "http://any.nutz.cn/NutzCN-2.0.0.apk";
-      new QRCode(document.getElementById("client-qrcode"), {
-        text: client_url,
-        width: 200,
-        height: 200,
-          });
-        // END qrcode generate
-        </script>
+        <li>
+        <a href="http://any.nutz.cn/NutzCN-2.0.0.apk">客户端(当前仅Android)</a>
+        </li>
         </li>
       </ol>
     </div>
