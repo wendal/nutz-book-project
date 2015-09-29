@@ -44,6 +44,19 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
 
+/**
+ * 对外公开的HTTP API, 使用http://apidocjs.com/的进行注释生成
+ * @author wendal
+ */
+/**
+ * @apiDefine TOKEN_ERROR
+ * @apiError 403 The <code>accesstoken</code> is invaild
+ */
+/**
+ * @apiDefine TOKEN
+ * @apiParam {String} accesstoken 访问凭证
+ *
+ */
 @IocBean(create="init")
 @At("/yvr/api/v1")
 @Ok("json")
@@ -62,7 +75,30 @@ public class YvrApiModule extends BaseModule {
 	 * @param type 参数名叫tab,默认是ask,如果传all,也会变成ask
 	 * @param limit 每页数量
 	 * @param mdrender 是否渲染md
-	 * @return
+	 * 
+	 * @api {get} /yvr/api/v1/topics 获取帖子列表
+	 * @apiGroup Topic
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiParam {int} 		[page=1] 页数,默认为1
+	 * @apiParam {String} 	[tab=ask] 分类
+	 * @apiParam {int} 		[limit=10] 分页
+	 * @apiParam {boolean} 	[mdrender=true] 是否渲染Markdown
+	 * 
+	 * @apiSuccess {Object[]} data 帖子列表数据
+	 * @apiSuccess {String} data.id 	唯一标示符
+	 * @apiSuccess {String} data.title 	标题
+	 * @apiSuccess {String} data.tab 	类型
+	 * @apiSuccess {String} data.content 内容
+	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
+	 * @apiSuccess {boolean} data.top 	是否置顶
+	 * @apiSuccess {boolean} data.good 	是否为精华帖
+	 * @apiSuccess {int}	data.reply_count 总回复数量
+	 * @apiSuccess {int}	data.visit_count 总浏览数量
+	 * @apiSuccess {Object} data.author 作者信息
+	 * @apiSuccess {Object} data.author.id 作者id
+	 * @apiSuccess {Object} data.author.loginname 作者登陆名
+	 * 
 	 */
 	@GET
 	@At
@@ -90,6 +126,38 @@ public class YvrApiModule extends BaseModule {
 		return _map("data", list);
 	}
 	
+	/**
+	 * @api {get} /yvr/api/v1/topic/:id 获取帖子的详细数据
+	 * @apiGroup Topic
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiParam {String}	id 					帖子id
+	 * @apiParam {boolean} 	[mdrender=true] 	是否渲染Markdown
+	 * 
+	 * @apiSuccess {Object[]} data 				帖子数据
+	 * @apiSuccess {String} data.id 			唯一标示符
+	 * @apiSuccess {String} data.title 			标题
+	 * @apiSuccess {String} data.tab 			类型
+	 * @apiSuccess {String} data.content 		内容
+	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
+	 * @apiSuccess {boolean} data.top 			是否置顶
+	 * @apiSuccess {boolean} data.good 			是否为精华帖
+	 * @apiSuccess {int}	data.reply_count 	总回复数量
+	 * @apiSuccess {int}	data.visit_count 	总浏览数量
+	 * @apiSuccess {Object} data.author 		作者信息
+	 * @apiSuccess {Object} data.author.id 		作者id
+	 * @apiSuccess {Object} data.author.loginname 作者登陆名
+	 * @apiSuccess {Object[]} [data.replies] 	回复列表
+	 * @apiSuccess {String} data.replies.id		回复id
+	 * @apiSuccess {String} data.replies.author	回复的作者
+	 * @apiSuccess {String} data.replies.author.id 回复的作者的id
+	 * @apiSuccess {String} data.replies.author.loginname 回复的作者的登陆名称
+	 * @apiSuccess {String} data.replies.content 回复的内容
+	 * @apiSuccess {String} data.replies.ups	点赞数
+	 * @apiSuccess {String} data.replies.create_at 回复时间
+	 * 
+	 * @apiError 404 The <code>id</code> of the Topic was not found.
+	 */
 	@Aop("redis")
 	@GET
 	@At("/topic/?")
@@ -119,8 +187,19 @@ public class YvrApiModule extends BaseModule {
 		tp.put("replies", replies);
 		return _map("data", tp);
 	}
-	
-	//@POST
+
+	/**
+	 * @api {post} /yvr/api/v1/accesstoken 测试访问凭证
+	 * @apiGroup User
+	 * @apiVersion 1.0.0
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiSuccess {String} success=true 	成功
+	 * @apiSuccess {String} id 				用户id
+	 * @apiSuccess {String} loginname		用户登陆名
+	 * 
+	 */
 	@At("/accesstoken")
 	@Aop("redis")
 	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
@@ -132,8 +211,29 @@ public class YvrApiModule extends BaseModule {
 		return _map("success", true, "loginname", uname, "id", jedis().hget("u:accesstoken3", accesstoken.toLowerCase()));
 	}
 	
-	//
-	
+	/**
+	 * @api {get} /yvr/api/v1/user/:id 获取用户信息
+	 * 
+	 * @apiGroup User
+	 * @apiVersion 1.0.0
+	 * @apiParam {String} id 用户id
+	 * 
+	 * @apiSuccess {Object} data 用户数据
+	 * @apiSuccess {String} data.loginname 	用户登陆名称
+	 * @apiSuccess {String} data.score 		用户积分
+	 * @apiSuccess {String} data.avatar_url 头像地址
+	 * @apiSuccess {Object[]} [data.recent_topics] 	最近发表的帖子
+	 * @apiSuccess {String} data.recent_topics.id 	帖子id
+	 * @apiSuccess {String} data.recent_topics.title 帖子标题
+	 * @apiSuccess {Object[]} [data.recent_replies] 最近回复的帖子
+	 * @apiSuccess {String} data.recent_replies.id 	帖子id
+	 * @apiSuccess {String} data.recent_replies.title 帖子标题
+	 * 
+	 * @apiSuccess {String} data.create_at  注册时间
+	 * 
+	 * @apiError 404 The <code>id</code> of the User was not found.
+	 * 
+	 */
 	@At("/user/?")
 	@GET
 	public Object user(String loginname) {
@@ -147,6 +247,22 @@ public class YvrApiModule extends BaseModule {
 				"create_at", _time(user.getCreateTime())));
 	}
 	
+	/**
+	 * @api {post} /yvr/api/v1/topics 发表帖子, 以json格式提交数据
+	 * @apiGroup Topic
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiParam {String} title		标题
+	 * @apiParam {String} content 	内容
+	 * @apiParam {String} [tab=ask] 类型,默认为问答
+	 * 
+	 * @apiSuccess {boolean} success 是否成功
+	 * @apiSuccess {String} [topic_id] 成功返回帖子的Id
+	 * @apiSuccess {String} [message] 失败时返回原因
+	 */
 	@POST
 	@At("/topics")
 	@AdaptBy(type=JsonAdaptor.class)
@@ -162,6 +278,22 @@ public class YvrApiModule extends BaseModule {
 		}
 	}
 	
+	/**
+	 * @api {post} /yvr/api/v1/topic/:id/replies 发表回复, 以json格式提交数据
+	 * @apiGroup Topic
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiParam {String} id 		帖子id
+	 * @apiParam {String} content 	内容
+	 * @apiParam {String} [reply_id] 回复哪条内容
+	 * 
+	 * @apiSuccess {boolean} success 是否成功
+	 * @apiSuccess {String} [reply_id] 成功是返回回复的Id
+	 * @apiSuccess {String} [message] 失败时返回原因
+	 */
 	@POST
 	@At("/topic/?/replies")
 	@AdaptBy(type=JsonAdaptor.class)
@@ -175,6 +307,19 @@ public class YvrApiModule extends BaseModule {
 		}
 	}
 	
+	/**
+	 * @api {post} /yvr/api/v1/reply/:id/ups 点赞或取消点赞
+	 * @apiGroup Topic
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiParam {String} id 	回复的id
+	 * @apiSuccess {boolean} success 是否成功
+	 * @apiSuccess {String} [action] 点赞成功为up,取消点赞成功为down
+	 * @apiSuccess {String} [message] 失败时返回原因
+	 */
 	@POST
 	@At("/reply/?/ups")
 	@Filters(@By(type=AccessTokenFilter.class))
@@ -187,18 +332,60 @@ public class YvrApiModule extends BaseModule {
 		}
 	}
 	
+	/**
+	 * @api {get} /yvr/api/v1/message/count 获取用户的未读消息数量
+	 * @apiGroup User
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiSuccess {int} data 未读消息数量
+	 * 
+	 */
 	@GET
 	@At("/message/count")
 	public Object msgCount() {
 		return _map("data", 0);
 	}
-
+	
+	/**
+	 * @api {get} /yvr/api/v1/message/count 获取用户的消息
+	 * @apiGroup User
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiSuccess {Object} data 用户消息
+	 * @apiSuccess {Object[]} [data.has_read_messages] 已读消息列表,当前总是为空
+	 * @apiSuccess {String} data.has_read_messages.id 消息id
+	 * @apiSuccess {String} data.has_read_messages.type 消息类型
+	 * @apiSuccess {String} data.has_read_messages.content 消息内容
+	 * @apiSuccess {String} [data.has_read_messages.topic_id] 关联的帖子Id
+	 * @apiSuccess {Object[]} [data.hasnot_read_messages] 未读消息列表,当前总是为空
+	 * @apiSuccess {String} data.hasnot_read_messages.id 消息id
+	 * @apiSuccess {String} data.hasnot_read_messages.type 消息类型
+	 * @apiSuccess {String} data.hasnot_read_messages.content 消息内容
+	 * @apiSuccess {String} [data.hasnot_read_messages.topic_id] 关联的帖子Id
+	 * 
+	 */
 	@GET
 	@At("/messages")
 	public Object getMessages() {
 		return _map("data", _map("has_read_messages", Collections.EMPTY_LIST, "hasnot_read_messages", Collections.EMPTY_LIST));
 	}
 	
+	/**
+	 * @api {get} /yvr/api/v1/message/mark_all 标记所有消息为已读
+	 * @apiGroup User
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiSuccess {boolean} success 成功与否
+	 */
 	@POST
 	@At("/message/mark_all")
 	public Object markAllMessage() {

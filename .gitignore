@@ -18,3 +18,4 @@ WebContent/META-INF/
 *.zip
 /target/
 dump.rdb
+WebContent/apidocs/

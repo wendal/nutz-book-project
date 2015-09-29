@@ -1,0 +1,24 @@
+<%DIRECTIVE DYNAMIC;%>
+<%
+layout("../_layout.btl",{}){
+%>
+
+<% layout("../sidebar.btl",{"c_user":obj.current_user!}){};%>
+
+<div id="content">
+  <div class="panel">
+    <div class="header">
+      <ol class='breadcrumb'>
+        <li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+      </ol>
+    </div>
+    <div class="inner">
+    	<div class="markdown-text">
+        	${markdown(obj.cnt)}
+		</div>
+    </div>
+  </div>
+</div>
+
+
+<%}%>

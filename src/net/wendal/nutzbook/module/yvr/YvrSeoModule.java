@@ -2,6 +2,8 @@ package net.wendal.nutzbook.module.yvr;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Each;
 import org.nutz.lang.Files;
+import org.nutz.lang.Streams;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
@@ -46,6 +49,9 @@ public class YvrSeoModule extends BaseModule {
 	@Inject("refer:conf")
 	PropertiesProxy conf;
 
+	/**
+	 * 全文输出
+	 */
 	@At
 	@Ok("raw:xml")
 	public String rss() throws IOException, FeedException {
@@ -88,6 +94,9 @@ public class YvrSeoModule extends BaseModule {
         return output.outputString(feed, true);
 	}
 	
+	/**
+	 * 输出Sitemap
+	 */
 	@At
 	@Ok("raw:xml")
 	public File sitemap() throws MalformedURLException, ParseException{
@@ -112,5 +121,21 @@ public class YvrSeoModule extends BaseModule {
 		if (list.size() > 0)
 			return list.get(0);
 		return null;
+	}
+	
+	/**
+	 * 根据Markdown生成文档
+	 */
+	@At({"/links/?"})
+	@Ok("beetl:/yvr/website/links.btl")
+	public Object page(String type) throws IOException {
+		String path = "/doc/" + type + ".md";
+		InputStream ins = getClass().getClassLoader().getResourceAsStream(path);
+		if (ins == null)
+			return HTTP_404;
+		String cnt = Streams.readAndClose(new InputStreamReader(ins));
+		String[] tmp = cnt.split("\n", 2);
+		String title = tmp[0].trim().split(" ", 2)[1].trim();
+		return _map("title", title, "cnt", cnt);
 	}
 }
