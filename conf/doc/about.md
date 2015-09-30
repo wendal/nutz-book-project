@@ -14,7 +14,7 @@ iOS客户端尚未发布到APP Store
 
 源码地址 https://github.com/wendal/nutzcn-ionic
 
-同时开放[Http API](https://nutz.cn/yvr/links/api.html), 欢迎实现第三方客户端
+同时开放[Http API](https://nutz.cn/apidocs/), 欢迎实现第三方客户端
 
 ### 友情链接
 
