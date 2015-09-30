@@ -13,6 +13,11 @@
         <img src="${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="${obj.c_user.loginname}"/>
       </div>
       <a class='dark'> ${obj.c_user.loginname}</a>
+      <div class='user_profile'>
+        <ul class='unstyled'>
+          <span class='big'>${obj.c_user.score}</span> 积分
+        </ul>
+      </div>
       <p class='col_fade'>注册时间 ${obj.c_user.createAt}</p>
     </div>
   </div>

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
 
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -22,7 +23,13 @@ public class UserService extends IdNameEntityService<User> {
 		user.setPassword(new Sha256Hash(password, user.getSalt()).toHex());
 		user.setCreateTime(new Date());
 		user.setUpdateTime(new Date());
-		return dao().insert(user);
+		user = dao().insert(user);
+		UserProfile profile = new UserProfile();
+		profile.setUserId(user.getId());
+		profile.setLoginname(user.getName());
+		profile.setNickname(user.getName());
+		dao().insert(profile);
+		return user;
 	}
 	
 	public int fetch(String username, String password) {

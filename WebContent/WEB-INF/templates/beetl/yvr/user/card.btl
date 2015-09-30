@@ -7,7 +7,7 @@
 
     <div class='board clearfix'>
       <div class='floor'>
-        <span class='big'>积分: 无 </span>
+        <span class='big'>积分: ${user.score}</span>
       </div>
     </div>
     <div class="space clearfix"></div>

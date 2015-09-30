@@ -72,7 +72,6 @@ public class YvrSeoModule extends BaseModule {
 		List<Topic> list = dao.query(Topic.class, Cnd.orderBy().desc("createTime"), dao.createPager(1, 10));
 		for (Topic topic: list) {
 			dao.fetchLinks(topic, "author");
-			dao.fetchLinks(topic.getAuthor(), null);
 			entry = new SyndEntryImpl();
             entry.setTitle(topic.getTitle());
             entry.setLink(urlbase + "/yvr/t/" + topic.getId());

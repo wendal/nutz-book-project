@@ -189,13 +189,11 @@ public class YvrModule extends BaseModule {
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
 		dao.fetchLinks(topic, "author");
-		dao.fetchLinks(topic.getAuthor(), null);
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
 		for (TopicReply reply : topic.getReplies()) {
 			if (reply.getUserId() == 0)
 				reply.setUserId(1);
 			dao.fetchLinks(reply, null);
-			dao.fetchLinks(reply.getAuthor(), null);
 			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
 		}
 		NutMap re = new NutMap();

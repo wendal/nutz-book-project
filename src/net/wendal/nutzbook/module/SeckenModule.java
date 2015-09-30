@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.crossscreen.CrossScreen;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.socketio.SocketioService;
@@ -67,10 +66,6 @@ public class SeckenModule extends BaseModule {
 		if (ouser == null) {
 			String username = "secken_" + Lang.sha1(secken_uid).substring(0, 6);
 			User user = userService.add(username, secken_uid);
-			UserProfile profile = new UserProfile();
-			profile.setUserId(user.getId());
-			profile.setNickname(username);
-			dao.insert(profile);
 			ouser = new OAuthUser();
 			ouser.setProviderId("secken");
 			ouser.setValidatedId(secken_uid);

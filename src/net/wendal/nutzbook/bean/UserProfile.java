@@ -44,8 +44,13 @@ public class UserProfile extends BasePojo implements Serializable {
 	@JsonField(ignore=true)
 	@One(target=User.class, field="userId")
 	protected User user;
-	// 非数据库字段
+	
+	// 升级为数据库字段
+	@Column
 	protected String loginname;
+	
+	// 非数据库字段开始-----------------
+	protected int score;
 	
 	public int getUserId() {
 		return userId;
@@ -100,9 +105,6 @@ public class UserProfile extends BasePojo implements Serializable {
 	}
 	public void setUser(User user) {
 		this.user = user;
-		if (user != null) {
-			this.loginname = user.getName();
-		}
 	}
 	public String getLoginname() {
 		return loginname;
@@ -117,5 +119,11 @@ public class UserProfile extends BasePojo implements Serializable {
 	
 	public String getUpdateAt() {
 		return Toolkit.createAt(updateTime);
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
 	}
 }

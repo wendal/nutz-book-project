@@ -81,9 +81,6 @@ public class YvrService {
 		UserProfile author = authors.get(userId);
 		if (author == null) {
 			author = dao.fetch(UserProfile.class, userId);
-			if (author != null) {
-				dao.fetchLinks(author, null);
-			}
 			authors.put(userId, author);
 		}
 		return author;
@@ -143,6 +140,7 @@ public class YvrService {
 			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
 		}
 		jedis().zadd("t:update:" + topic.getType(), System.currentTimeMillis(), topic.getId());
+		jedis().zincrby("u:score", 100, ""+userId);
 		return _ok(topic.getId());
 	}
 
@@ -171,6 +169,7 @@ public class YvrService {
 		}
 		jedis().hset("t:reply:last", topicId, reply.getId());
 		jedis().zincrby("t:reply:count", 1, topicId);
+		jedis().zincrby("u:score", 10, ""+userId);
 		
 		bus.add(new Callable<Object>() {
 			public Object call() throws Exception {
@@ -261,6 +260,16 @@ public class YvrService {
 			}
 		}
 		return recent_replies;
+	}
+	
+	@Aop("redis")
+	public int getUserScore(int userId) {
+		Double score = jedis().zscore("u:score", ""+userId);
+		if (score == null) {
+			return 0;
+		} else {
+			return score.intValue();
+		}
 	}
 	
 	public Dao daoNoContent() {

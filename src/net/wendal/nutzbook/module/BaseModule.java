@@ -52,11 +52,7 @@ public abstract class BaseModule {
 	}
 	
 	public UserProfile fetch_userprofile(int userId) {
-		UserProfile profile = dao.fetch(UserProfile.class, userId);
-		if (profile == null)
-			return null;
-		dao.fetchLinks(profile, null);
-		return profile;
+		return dao.fetch(UserProfile.class, userId);
 	}
 	
 	public void init() throws Exception {

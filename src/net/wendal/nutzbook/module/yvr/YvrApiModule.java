@@ -171,7 +171,6 @@ public class YvrApiModule extends BaseModule {
 		List<NutMap> replies = new ArrayList<NutMap>();
 		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
 			dao.fetchLinks(reply, null);
-			dao.fetchLinks(reply.getAuthor(), null);
 			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
 			
 			NutMap re = new NutMap();
@@ -249,11 +248,12 @@ public class YvrApiModule extends BaseModule {
 		for (Topic topic : yvrService.getRecentReplyTopics(user.getId())) {
 			recent_replies.add(_topic(topic, authors, null));
 		}
-		return _map("data", _map("loginname", loginname, "score", 0, 
+		return _map("data", _map("loginname", loginname,
 				"avatar_url", _avatar_url(loginname), 
 				"recent_topics", recent_topics,
 				"recent_replies", recent_replies,
-				"create_at", _time(user.getCreateTime())));
+				"create_at", _time(user.getCreateTime())),
+				"score", yvrService.getUserScore(user.getId()));
 	}
 	
 	/**
@@ -436,7 +436,11 @@ public class YvrApiModule extends BaseModule {
 		tp.put("reply_count", topic.getReplyCount());
 		tp.put("visit_count", topic.getVisitCount());
 		tp.put("create_at", _time(topic.getCreateTime()));
-		tp.put("author", _author(topic.getAuthor()));
+		UserProfile profile = topic.getAuthor();
+		if (profile != null) {
+			profile.setScore(yvrService.getUserScore(topic.getUserId()));
+		}
+		tp.put("author", _author(profile));
 		return tp;
 	}
 }

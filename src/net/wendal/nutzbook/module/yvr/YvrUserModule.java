@@ -70,7 +70,7 @@ public class YvrUserModule extends BaseModule {
 		User user = dao.fetch(User.class, userName);
 		if (user == null)
 			return HttpStatusView.HTTP_404;
-		UserProfile profile = dao.fetch(UserProfile.class, user.getId());
+		UserProfile profile = fetch_userprofile(user.getId());
 		if (profile == null)
 			return HttpStatusView.HTTP_404;
 		NutMap re = new NutMap();
@@ -181,20 +181,19 @@ public class YvrUserModule extends BaseModule {
 		Trans.exec(new Atom(){
 			public void run() {
 				User user = userService.add(tmps[1], tmps[3]);
-				UserProfile profile = new UserProfile();
+				UserProfile profile = dao.fetch(UserProfile.class, user.getId());
 				profile.setEmail(tmps[2]);
 				profile.setEmailChecked(true);
 				profile.setNickname(tmps[1]);
 				profile.setUser(user);
 				profile.setUserId(user.getId());
-				dao.fastInsert(profile);
+				dao.update(profile);
 			}
 		});
 		return "注册成功,可以登陆了";
 	}
 
 	protected static Pattern P_USERNAME = Pattern.compile("^[a-z][a-z0-9]{4,10}$");
-	protected static Pattern P_PASSWORD = Pattern.compile("(?=^.{8,16}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
 	
 	@POST
 	@At
@@ -203,7 +202,7 @@ public class YvrUserModule extends BaseModule {
 						@Param("username")String username,
 						@Param("password")String password,
 			HttpServletRequest req) {
-		if (Strings.isBlank(password) || !P_PASSWORD.matcher(password).find()) {
+		if (Strings.isBlank(password) || password.length()<8) {
 			return ajaxFail("密码强度不够!!");
 		}
 		if (Strings.isBlank(username) || !P_USERNAME.matcher(username.toLowerCase()).find()) {

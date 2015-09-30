@@ -107,20 +107,16 @@ public class OauthModule extends BaseModule {
 			if (user == null) {
 				user = userService.add(username, R.UU32());
 				UserProfile profile = dao.fetch(UserProfile.class, user.getId());
-				if (profile == null) {
-					profile = new UserProfile();
-					profile.setUserId(user.getId());
-					profile.setNickname(username);
-					profile.setLocation(p.getLocation());
-					if (p.getEmail() != null && !"null".equals(p.getEmail())) {
-						profile.setEmail(p.getEmail());
-						profile.setEmailChecked(true);
-					}
-					profile.setCreateTime(new Date());
-					profile.setUpdateTime(profile.getCreateTime());
-						
-					dao.insert(profile);
+				profile.setUserId(user.getId());
+				profile.setNickname(username);
+				profile.setLocation(p.getLocation());
+				if (p.getEmail() != null && !"null".equals(p.getEmail())) {
+					profile.setEmail(p.getEmail());
+					profile.setEmailChecked(true);
 				}
+				profile.setCreateTime(new Date());
+				profile.setUpdateTime(profile.getCreateTime());
+				dao.update(profile);
 				user = dao.fetch(User.class, username);
 			}
 			oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId(), p.getProfileImageURL());

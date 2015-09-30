@@ -4,6 +4,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.ehcache.CacheManager;
@@ -18,8 +19,11 @@ import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
 import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
 
+import org.nutz.dao.Chain;
+import org.nutz.dao.Cnd;
 import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
+import org.nutz.dao.FieldFilter;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
@@ -52,6 +56,7 @@ public class MainSetup implements Setup {
 		Ioc ioc = nc.getIoc();
 		Dao dao = ioc.get(Dao.class);
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
+		Daos.migration(dao, UserProfile.class, true, false);
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
 		
 		// 初始化SysLog
@@ -67,10 +72,18 @@ public class MainSetup implements Setup {
 		if (guest == null) {
 			UserService us = ioc.get(UserService.class);
 			guest = us.add("guest", "123456");
-			UserProfile profile = new UserProfile();
-			profile.setUserId(guest.getId());
+			UserProfile profile = dao.fetch(UserProfile.class, guest.getId());
 			profile.setNickname("游客");
-			dao.insert(profile);
+			dao.update(profile, "nickname");
+		}
+		List<UserProfile> profiles = Daos.ext(dao, FieldFilter.create(UserProfile.class, "userId")).query(UserProfile.class, Cnd.where("loginname", "=", null));
+		for (UserProfile profile : profiles) {
+			User user = dao.fetch(User.class, profile.getUserId());
+			if (user == null)
+				dao.delete(UserProfile.class, profile.getUserId());
+			else {
+				dao.update(UserProfile.class, Chain.make("loginname", user.getName()), Cnd.where("userId", "=", user.getId()));
+			}
 		}
 		
 		// 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
