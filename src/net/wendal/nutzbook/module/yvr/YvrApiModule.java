@@ -208,7 +208,7 @@ public class YvrApiModule extends BaseModule {
 		String uname = jedis().hget("u:accesstoken2", accesstoken.toLowerCase());
 		if (uname == null)
 			return HTTP_403;
-		return _map("success", true, "loginname", uname, "id", jedis().hget("u:accesstoken3", accesstoken.toLowerCase()));
+		return _map("success", true, "loginname", uname, "id", jedis().hget("u:accesstoken3", accesstoken.toLowerCase()), "avatar_url", _avatar_url(uname));
 	}
 	
 	/**
@@ -240,15 +240,14 @@ public class YvrApiModule extends BaseModule {
 		User user = dao.fetch(User.class, loginname);
 		if (user == null)
 			return HTTP_404;
+		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<NutMap> recent_topics = new ArrayList<NutMap>();
 		for (Topic topic : yvrService.getRecentTopics(user.getId())) {
-			NutMap _re = new NutMap().setv("id", topic.getId()).setv("title", topic.getTitle());
-			recent_topics.add(_re);
+			recent_topics.add(_topic(topic, authors, null));
 		}
 		List<NutMap> recent_replies = new ArrayList<NutMap>();
 		for (Topic topic : yvrService.getRecentReplyTopics(user.getId())) {
-			NutMap _re = new NutMap().setv("id", topic.getId()).setv("title", topic.getTitle());
-			recent_replies.add(_re);
+			recent_replies.add(_topic(topic, authors, null));
 		}
 		return _map("data", _map("loginname", loginname, "score", 0, 
 				"avatar_url", _avatar_url(loginname), 
