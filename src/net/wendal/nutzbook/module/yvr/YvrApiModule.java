@@ -169,7 +169,7 @@ public class YvrApiModule extends BaseModule {
 		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender);
 		
 		List<NutMap> replies = new ArrayList<NutMap>();
-		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).desc("createTime"))) {
+		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
 			dao.fetchLinks(reply, null);
 			dao.fetchLinks(reply.getAuthor(), null);
 			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
@@ -240,10 +240,20 @@ public class YvrApiModule extends BaseModule {
 		User user = dao.fetch(User.class, loginname);
 		if (user == null)
 			return HTTP_404;
-		
+		List<NutMap> recent_topics = new ArrayList<NutMap>();
+		for (Topic topic : yvrService.getRecentTopics(user.getId())) {
+			NutMap _re = new NutMap().setv("id", topic.getId()).setv("title", topic.getTitle());
+			recent_topics.add(_re);
+		}
+		List<NutMap> recent_replies = new ArrayList<NutMap>();
+		for (Topic topic : yvrService.getRecentReplyTopics(user.getId())) {
+			NutMap _re = new NutMap().setv("id", topic.getId()).setv("title", topic.getTitle());
+			recent_replies.add(_re);
+		}
 		return _map("data", _map("loginname", loginname, "score", 0, 
 				"avatar_url", _avatar_url(loginname), 
-				"recent_topics", Collections.EMPTY_LIST,
+				"recent_topics", recent_topics,
+				"recent_replies", recent_replies,
 				"create_at", _time(user.getCreateTime())));
 	}
 	

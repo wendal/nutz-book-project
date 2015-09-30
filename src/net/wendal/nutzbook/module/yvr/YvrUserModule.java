@@ -5,9 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +16,6 @@ import net.sf.ehcache.Element;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.YvrService;
@@ -81,7 +77,7 @@ public class YvrUserModule extends BaseModule {
 		profile.setLoginname(userName);
 		if (Strings.isBlank(profile.getDescription()))
 			profile.setDescription(null);
-		List<Topic> recent_topics = yvrService.daoNoContent().query(Topic.class, Cnd.where("userId", "=", user.getId()).desc("createTime"), dao.createPager(1, 10));
+		
 		re.put("c_user", profile);
 		if (userId > 0) {
 			UserProfile me = fetch_userprofile(userId);
@@ -91,13 +87,8 @@ public class YvrUserModule extends BaseModule {
 				re.put("access_token", yvrService.accessToken(me));
 			}
 		}
-		if (!recent_topics.isEmpty()) {
-			Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
-			for (Topic topic : recent_topics) {
-				yvrService.fillTopic(topic, authors);
-			}
-			re.put("recent_topics", recent_topics);
-		}
+		re.put("recent_topics", yvrService.getRecentTopics(user.getId()));
+		re.put("recent_replies", yvrService.getRecentReplyTopics(user.getId()));
 		return re;
 	}
 	

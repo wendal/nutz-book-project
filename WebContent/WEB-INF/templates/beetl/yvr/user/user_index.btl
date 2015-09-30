@@ -53,5 +53,22 @@
     </div>
     <% } %>
   </div>
+  
+  
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>最近回复的话题</span>
+    </div>
+    <% if ( null != obj.recent_replies ) { %>
+    <% layout("../list.btl", {"topics":obj.recent_replies}){}; %>
+    <div class='cell more'>
+      <a class='dark' href="#">查看更多»</a>
+    </div>
+    <% } else { %>
+    <div class='inner'>
+      <p>无话题</p>
+    </div>
+    <% } %>
+  </div>
 </div>
 <%}%>

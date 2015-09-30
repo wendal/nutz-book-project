@@ -4,8 +4,10 @@ import static net.wendal.nutzbook.bean.CResult._fail;
 import static net.wendal.nutzbook.bean.CResult._ok;
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -22,6 +24,8 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.FieldFilter;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -223,6 +227,40 @@ public class YvrService {
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
 		bus.event(builder.build());
+	}
+	
+	public List<Topic> getRecentTopics(int userId) {
+		List<Topic> recent_topics = daoNoContent().query(Topic.class, Cnd.where("userId", "=", userId).desc("createTime"), dao.createPager(1, 5));
+
+		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
+		if (!recent_topics.isEmpty()) {
+			for (Topic topic : recent_topics) {
+				fillTopic(topic, authors);
+			}
+		}
+		return recent_topics;
+		
+	}
+	
+	public List<Topic> getRecentReplyTopics(int userId) {
+
+		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
+		Sql sql = Sqls.queryString("select DISTINCT topicId from t_topic_reply $cnd").setEntity(dao.getEntity(TopicReply.class)).setVar("cnd", Cnd.where("userId", "=", userId).desc("createTime"));
+		sql.setPager(dao.createPager(1, 5));
+		String[] replies_topic_ids = dao.execute(sql).getObject(String[].class);
+		List<Topic> recent_replies = new ArrayList<Topic>();
+		for (String topic_id : replies_topic_ids) {
+			Topic _topic = dao.fetch(Topic.class, topic_id);
+			if (_topic == null)
+				continue;
+			recent_replies.add(_topic);
+		}
+		if (!recent_replies.isEmpty()) {
+			for (Topic topic : recent_replies) {
+				fillTopic(topic, authors);
+			}
+		}
+		return recent_replies;
 	}
 	
 	public Dao daoNoContent() {
