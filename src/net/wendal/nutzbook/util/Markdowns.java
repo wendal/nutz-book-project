@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.nutz.lang.Stopwatch;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.parboiled.common.StringUtils;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
-import org.pegdown.ParsingTimeoutException;
 import org.pegdown.PegDownProcessor;
 import org.pegdown.Printer;
 import org.pegdown.ToHtmlSerializer;
@@ -63,6 +63,8 @@ public class Markdowns {
 	}
 	
 	public static String toHtml(String cnt, final String urlbase) {
+		if (Strings.isBlank(cnt) || cnt == null)
+			return "";
 		Stopwatch sw = Stopwatch.begin();
 		PegDownProcessor processor = new PegDownProcessor(Extensions.SUPPRESS_INLINE_HTML | Extensions.AUTOLINKS | Extensions.HARDWRAPS | Extensions.FENCED_CODE_BLOCKS, 5000);
 		try {
@@ -79,8 +81,8 @@ public class Markdowns {
                     return StringUtils.isEmpty(node.title) ? rendering : rendering.withAttribute("title", encode(node.title));
             	}
             }, plugins).toHtml(astRoot);
-        } catch(ParsingTimeoutException e) {
-            return null;
+        } catch(Exception e) {
+            return "";
         } finally {
         	if (log.isDebugEnabled()) {
         		sw.stop();
