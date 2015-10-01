@@ -68,7 +68,7 @@ public class SexyPicChecker implements Job {
 			
 			Topic topic = new Topic();
 			topic.setType(TopicType.nb);
-			topic.setTitle("[每日福利"+Times.sD(Times.now())+"]" + title);
+			topic.setTitle("[每日福利"+Times.sD(Times.now())+"-多图慎入]" + title);
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("采集于 " + url + "\n\n");
