@@ -81,7 +81,7 @@ public class SexyPicChecker implements Job {
 			
 			topic.setUserId(1);
 			topic.setContent(sb.toString());
-			
+			jedis().hset("t:sexy", id, title);
 			yvrService.add(topic, 1);
 		} catch (Exception e) {
 			e.printStackTrace();
