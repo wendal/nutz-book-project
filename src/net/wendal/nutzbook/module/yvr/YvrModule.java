@@ -180,7 +180,7 @@ public class YvrModule extends BaseModule {
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		Double visited = jedis().zincrby("t:visit", 1, "" + id);
+		Double visited = jedis().zincrby("t:visit", 1, id);
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);

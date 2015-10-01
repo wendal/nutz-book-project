@@ -73,7 +73,7 @@ public class YvrService {
 				topic.setLastComment(reply);
 			}
 		}
-		Double visited = jedis().zscore("t:visit", "" + topic.getId());
+		Double visited = jedis().zscore("t:visit", topic.getId());
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 	}
 	

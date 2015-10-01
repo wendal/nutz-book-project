@@ -183,6 +183,8 @@ public class YvrApiModule extends BaseModule {
 		}
 		
 		tp.put("replies", replies);
+		
+		jedis().zincrby("t:visit", 1, topic.getId());
 		return _map("data", tp);
 	}
 
