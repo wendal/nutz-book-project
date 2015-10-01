@@ -24,7 +24,6 @@ import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
-import net.wendal.nutzbook.service.yvr.YvrService;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
@@ -69,9 +68,6 @@ public class YvrModule extends BaseModule {
 
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
-	
-	@Inject
-	protected YvrService yvrService;
 
 	@At({ "/", "/index" })
 	@Ok(">>:/yvr/list")

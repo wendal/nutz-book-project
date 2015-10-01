@@ -22,7 +22,7 @@
 <link rel="stylesheet" type="text/css" href="${rsbase}/stylesheets/jquery.atwho.css"></link>
 <link rel="stylesheet" type="text/css" href="${rsbase}/layer2/layer/skin/layer.css"></link>
 <style>
-html { overflow: hidden; }
+html { overflow-y: scroll; }
 @font-face {
 	font-family: 'icomoon';
 	src:url('${rsbase}/libs/editor/fonts/icomoon.eot');

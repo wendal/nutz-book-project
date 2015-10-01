@@ -20,7 +20,6 @@ import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.AccessTokenFilter;
-import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Markdowns;
 
 import org.nutz.dao.Cnd;
@@ -65,9 +64,6 @@ public class YvrApiModule extends BaseModule {
 	
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
-	
-	@Inject
-	protected YvrService yvrService;
 
 	/**
 	 * 分页获取帖子列表
@@ -96,8 +92,8 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {int}	data.reply_count 总回复数量
 	 * @apiSuccess {int}	data.visit_count 总浏览数量
 	 * @apiSuccess {Object} data.author 作者信息
-	 * @apiSuccess {Object} data.author.id 作者id
-	 * @apiSuccess {Object} data.author.loginname 作者登陆名
+	 * @apiSuccess {String} data.author.id 作者id
+	 * @apiSuccess {String} data.author.loginname 作者登陆名
 	 * 
 	 */
 	@GET
@@ -145,8 +141,8 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {int}	data.reply_count 	总回复数量
 	 * @apiSuccess {int}	data.visit_count 	总浏览数量
 	 * @apiSuccess {Object} data.author 		作者信息
-	 * @apiSuccess {Object} data.author.id 		作者id
-	 * @apiSuccess {Object} data.author.loginname 作者登陆名
+	 * @apiSuccess {String} data.author.id 		作者id
+	 * @apiSuccess {String} data.author.loginname 作者登陆名
 	 * @apiSuccess {Object[]} [data.replies] 	回复列表
 	 * @apiSuccess {String} data.replies.id		回复id
 	 * @apiSuccess {String} data.replies.author	回复的作者
@@ -154,7 +150,10 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.replies.author.loginname 回复的作者的登陆名称
 	 * @apiSuccess {String} data.replies.content 回复的内容
 	 * @apiSuccess {String} data.replies.ups	点赞数
-	 * @apiSuccess {String} data.replies.create_at 回复时间
+	 * @apiSuccess {Object} data.replies.author 回帖作者信息
+	 * @apiSuccess {String} data.replies.create_at 回帖时间
+	 * @apiSuccess {String} data.replies.author.id 		作者id
+	 * @apiSuccess {String} data.replies.author.loginname 作者登陆名
 	 * 
 	 * @apiError 404 The <code>id</code> of the Topic was not found.
 	 */
@@ -252,8 +251,8 @@ public class YvrApiModule extends BaseModule {
 				"avatar_url", _avatar_url(loginname), 
 				"recent_topics", recent_topics,
 				"recent_replies", recent_replies,
-				"create_at", _time(user.getCreateTime())),
-				"score", yvrService.getUserScore(user.getId()));
+				"create_at", _time(user.getCreateTime()),
+				"score", yvrService.getUserScore(user.getId())));
 	}
 	
 	/**

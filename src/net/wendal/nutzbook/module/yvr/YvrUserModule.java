@@ -18,7 +18,6 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
@@ -61,9 +60,6 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
-	@Inject
-	protected YvrService yvrService;
-	
 	@At("/?")
 	@Ok("beetl:yvr/user/user_index.btl")
 	public Object userHome(String userName, @Attr(scope = Scope.SESSION, value = "me") int userId) {
@@ -81,6 +77,7 @@ public class YvrUserModule extends BaseModule {
 		re.put("c_user", profile);
 		if (userId > 0) {
 			UserProfile me = fetch_userprofile(userId);
+			me.setScore(yvrService.getUserScore(userId));
 			re.put("current_user", me);
 			// 显示accessToken二维码
 			if (me.getUserId() == user.getId()) {

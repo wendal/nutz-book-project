@@ -6,6 +6,7 @@ import java.util.List;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.EmailService;
+import net.wendal.nutzbook.service.yvr.YvrService;
 
 import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
@@ -33,6 +34,9 @@ public abstract class BaseModule {
 	@Inject
 	protected MsgBus bus;
 	
+	@Inject
+	protected YvrService yvrService;
+	
 	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {
 			pager.setPageNumber(1);
@@ -52,7 +56,10 @@ public abstract class BaseModule {
 	}
 	
 	public UserProfile fetch_userprofile(int userId) {
-		return dao.fetch(UserProfile.class, userId);
+		UserProfile profile = dao.fetch(UserProfile.class, userId);
+		if (profile != null)
+			profile.setScore(yvrService.getUserScore(profile.getUserId()));
+		return profile;
 	}
 	
 	public void init() throws Exception {

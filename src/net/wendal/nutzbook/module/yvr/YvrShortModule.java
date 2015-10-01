@@ -18,7 +18,6 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.yvr.YvrService;
 
 import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
@@ -57,9 +56,6 @@ public class YvrShortModule extends BaseModule {
 	
 	@Inject 
 	protected Dao dao;
-	
-	@Inject
-	protected YvrService yvrService;
 
 	@At("/c/?")
 	public Object code(String code) {
