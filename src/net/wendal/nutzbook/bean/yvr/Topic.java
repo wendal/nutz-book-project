@@ -215,6 +215,7 @@ public class Topic extends BasePojo {
 	    updateTime = new java.util.Date(dis.readLong());
 
 	}
+	@SuppressWarnings("unused")
 	private void readObjectNoData() throws java.io.ObjectStreamException{}
 	//SerializationBuilder--
 }

@@ -3,7 +3,7 @@ package net.wendal.nutzbook.bean.form;
 import java.io.Serializable;
 
 public class DyFormFieldOption implements Serializable {
-	
+	private static final long serialVersionUID = 6338016404696005641L;
 	private String value;
 	private String type;
 	private String checked;

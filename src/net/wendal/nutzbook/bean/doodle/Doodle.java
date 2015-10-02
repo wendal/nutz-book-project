@@ -16,6 +16,7 @@ import org.nutz.lang.random.R;
 
 @Table("t_doodle")
 public class Doodle extends BasePojo {
+	private static final long serialVersionUID = 7913169799862596329L;
 
 	@Name
 	@Prev(els=@EL("$me.uuid()"))

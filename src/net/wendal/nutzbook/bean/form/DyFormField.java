@@ -10,6 +10,7 @@ import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_dy_form_field")
 public class DyFormField implements Serializable {
+	private static final long serialVersionUID = 8400622408009033508L;
 	@Id
 	private long id;
 	@Column

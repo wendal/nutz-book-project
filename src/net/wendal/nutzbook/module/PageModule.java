@@ -18,19 +18,9 @@ public class PageModule {
 
 	@Inject Dao dao;
 	
-	@RequiresAuthentication
 	@At(value={"/", "/index"})
-	@Ok(">>:/home")
+	@Ok("->:/yvr/list")
 	public void index() {}
-	
-//	@RequiresAuthentication
-//	@At(value={"/admin/?", "/admin"})
-//	@Ok("jsp:jsp.page.${obj}")
-//	public String page(String page) {
-//		if (Strings.isBlank(page))
-//			page = "index";
-//		return page;
-//	}
 	
 	@RequiresAuthentication
 	@At("/home")

@@ -8,6 +8,7 @@ import org.nutz.dao.entity.annotation.Table;
 @Table("t_dyform_data")
 public class DyFormData implements Serializable {
 
+	private static final long serialVersionUID = -8880248535239747102L;
 	@Id
 	private long id;
 	private long formId;

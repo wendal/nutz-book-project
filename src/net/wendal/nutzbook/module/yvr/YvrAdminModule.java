@@ -2,8 +2,11 @@ package net.wendal.nutzbook.module.yvr;
 
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
@@ -14,9 +17,14 @@ import org.nutz.dao.FieldFilter;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.util.Daos;
+import org.nutz.http.Http;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
@@ -70,5 +78,64 @@ public class YvrAdminModule extends BaseModule{
 		pager.setRecordCount(count);
 		List<Topic> list = dao.query(Topic.class, cnd, pager);
 		return new QueryResult(list, pager);
+	}
+	
+	@RequiresPermissions("topic:expstatic")
+	@At("/expstatic")
+	@Aop("redis")
+	public void exportStatic() {
+		String root = "http://127.0.0.1:8080" + Mvcs.getServletContext().getContextPath();
+		String dst = "/tmp/yvr_static" + Mvcs.getServletContext().getContextPath();
+		
+		// 首页
+		visitAndWrite(root, "/", dst);
+		visitAndWrite(root, "/yvr/", dst);
+		visitAndWrite(root, "/yvr/list/", dst);
+		
+		// 输出列表页
+		for (TopicType tt : TopicType.values()) {
+			Long count = jedis().zcount("t:update:"+tt.name(), 0, System.currentTimeMillis());
+			visitAndWrite(root, "/yvr/list/"+tt.name()+"/", dst);
+			if (count != null && count.longValue() > 0) {
+				for (int i = 0; i < count.intValue(); i++) {
+					visitAndWrite(root, "/yvr/list/"+tt.name()+"/"+i+"/", dst);
+				}
+			}
+		}
+		// 输出帖子页
+		List<Topic> topics = Daos.ext(dao, FieldFilter.create(Topic.class, "id")).query(Topic.class, null);
+		for (Topic topic : topics) {
+			String id = topic.getId();
+			visitAndWrite(root, "/yvr/t/"+id+"/", dst);
+		}
+		
+		// 用户页及用户头像
+		for (User user : Daos.ext(dao, FieldFilter.create(User.class, "name")).query(User.class, null)) {
+			visitAndWrite(root, "/yvr/u/"+user.getName()+"/", dst);
+			visitAndWrite(root, "/yvr/u/"+user.getName()+"/avatar", dst);
+		}
+		
+		// SEO页
+		visitAndWrite(root, "/yvr/rss.xml", dst);
+		visitAndWrite(root, "/yvr/sitemap.xml", dst);
+		
+		// TODO 拷贝rs资源及upload的图片, 或者指向CDN地址?
+	}
+	
+	protected void visitAndWrite(String root, String path, String dst) {
+		dst += path;
+		if (path.endsWith("/")) {
+			dst += "index.html";
+		}
+		InputStream ins = null;
+		try {
+			ins = Http.get(root + path).getStream();
+			File f = Files.createFileIfNoExists(dst);
+			Files.write(f, ins);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			Streams.safeClose(ins);
+		}
 	}
 }

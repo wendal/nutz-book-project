@@ -70,7 +70,7 @@ public class YvrModule extends BaseModule {
 	protected int pageSize;
 
 	@At({ "/", "/index" })
-	@Ok(">>:/yvr/list")
+	@Ok("->:/yvr/list")
 	public void index() {
 	}
 
@@ -100,19 +100,12 @@ public class YvrModule extends BaseModule {
 		return yvrService.add(topic, userId);
 	}
 
-	@At({ "/list/?", "/list" })
+	@At({ "/list/?", "/list/?/?", "/list" })
 	@GET
 	@Ok("beetl:/yvr/index.btl")
 	@Aop("redis")
-	public Object list(TopicType type, @Param("..") Pager pager, @Attr(scope = Scope.SESSION, value = "me") int userId) {
-		if (pager == null)
-			pager = dao.createPager(1, pageSize);
-		else {
-			if (pager.getPageNumber() < 1)
-				pager.setPageNumber(1);
-			if (pager.getPageSize() > pageSize || pager.getPageSize() < 1)
-				pager.setPageSize(pageSize);
-		}
+	public Object list(TopicType type, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		if (type == null)
 			type = TopicType.ask;
 		long now = System.currentTimeMillis();
