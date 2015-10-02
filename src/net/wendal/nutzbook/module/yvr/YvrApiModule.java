@@ -270,7 +270,7 @@ public class YvrApiModule extends BaseModule {
 	 * @apiParam {String} [tab=ask] 类型,默认为问答
 	 * 
 	 * @apiSuccess {boolean} success 是否成功
-	 * @apiSuccess {String} [topic_id] 成功返回帖子的Id
+	 * @apiSuccess {String} [topic_id] 成功时返回帖子的Id
 	 * @apiSuccess {String} [message] 失败时返回原因
 	 */
 	@POST
@@ -301,7 +301,7 @@ public class YvrApiModule extends BaseModule {
 	 * @apiParam {String} [reply_id] 回复哪条内容
 	 * 
 	 * @apiSuccess {boolean} success 是否成功
-	 * @apiSuccess {String} [reply_id] 成功是返回回复的Id
+	 * @apiSuccess {String} [reply_id] 成功时返回回复的Id
 	 * @apiSuccess {String} [message] 失败时返回原因
 	 */
 	@POST
