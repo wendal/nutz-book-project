@@ -89,9 +89,13 @@ html { overflow-y: scroll; }
 		</div>
       </a>
 
-      <form id='search_form' class='navbar-search' action="${ctxPath}/yvr/search">
-        <input type='text' id='q' name='q' class='search-query span3' value=''/>
-      </form>
+	  <div itemscope itemtype="http://schema.org/WebSite">
+	    <meta itemprop="url" content="https://nutz.cn/"/>
+        <form id='search_form' class='navbar-search' action="${ctxPath}/yvr/search" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
+          <meta itemprop="target" content="https://nutz.cn${ctxPath}/yvr/search?q={q}"/>
+          <input type='text' id='q' name='q' class='search-query span3' value='' itemprop="query-input" required/>
+        </form>
+      </div>
       <ul class='nav pull-right'>
         <li><a href='${ctxPath}/yvr/'>首页</a></li>
         <% if (null != obj.current_user!){ %>
