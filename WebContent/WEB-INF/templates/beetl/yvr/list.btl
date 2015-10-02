@@ -3,9 +3,7 @@
 <div class='cell'>
 
   <a data-pjax class="user_avatar pull-left" href="${ctxPath}/yvr/u/${topic.author.loginname}">
-    <img src="${ctxPath}/yvr/u/${topic.author.loginname}/avatar"
-         title="${topic.author.loginname}"
-            />
+    <img src="${cdnbase}${ctxPath}/yvr/u/${topic.author.loginname}/avatar" title="${topic.author.loginname}" />
   </a>
   <span class="reply_count pull-left">
     <span class="count_of_replies" title="回复数">
@@ -60,7 +58,7 @@
     <% if (i == obj.current_page) { %>
     <li class='disabled'><a>${i}</a></li>
     <% } else { %>
-    <li><a data-pjax href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${i}'>${i}</a></li>
+    <li><a data-pjax href='${ctxPath}/yvr/list/${obj.type}/${i}'>${i}</a></li>
     <% } %>
     <% } %>
 
@@ -71,7 +69,7 @@
     <% if (obj.current_page == obj.pages) { %>
     <li class='disabled'><a>»</a></li>
     <% } else { %>
-    <li><a data-pjax href='${ctxPath}/yvr/list/${obj.type}?pageNumber=${obj.pages}'>»</a></li>
+    <li><a data-pjax href='${ctxPath}/yvr/list/${obj.type}/${obj.pages}'>»</a></li>
     <% } %>
   </ul>
 </div>

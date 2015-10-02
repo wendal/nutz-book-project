@@ -10,7 +10,7 @@
     </div>
     <div class='inner userinfo'>
       <div class='user_big_avatar'>
-        <img src="${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="${obj.c_user.loginname}"/>
+        <img src="${cdnbase}${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="${obj.c_user.loginname}"/>
       </div>
       <a class='dark'> ${obj.c_user.loginname}</a>
       <div class='user_profile'>

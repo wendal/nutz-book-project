@@ -29,17 +29,11 @@ public class BeetlViewMaker2 extends BeetlViewMaker {
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
 		share.put("conf", conf.toMap());
 
-		if (!conf.getBoolean("cdn.enable", false) || Strings.isBlank(conf.get("cdn.urlbase.rs"))) {
-			share.put("rsbase", Mvcs.getServletContext().getContextPath() + "/rs");
+		if (!conf.getBoolean("cdn.enable", false) || Strings.isBlank(conf.get("cdn.urlbase"))) {
+			share.put("cdnbase", "");
 		} else {
-			share.put("rsbase", conf.get("cdn.urlbase.rs"));
-		}
-
-		// 上传的图片路径, 尚未使用
-		if (!conf.getBoolean("cdn.enable", false) || Strings.isBlank(conf.get("cdn.urlbase.image_upload"))) {
-			share.put("imguploadbase", Mvcs.getServletContext().getContextPath() + "/upload");
-		} else {
-			share.put("imguploadbase", conf.get("cdn.urlbase.image_upload"));
+			share.put("cdnbase", conf.get("cdn.urlbase"));
+			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
 		}
 	}
 }

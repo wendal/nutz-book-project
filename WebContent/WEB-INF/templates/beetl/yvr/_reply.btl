@@ -6,7 +6,7 @@
 
   <div class='author_content'>
     <a href="${ctxPath}/yvr/u/${reply.author.loginname!}" class="user_avatar">
-      <img src="${ctxPath}/yvr/u/${reply.author.loginname}/avatar" title="${reply.author.loginname!}"/>
+      <img src="${cdnbase}${ctxPath}/yvr/u/${reply.author.loginname}/avatar" title="${reply.author.loginname!}"/>
     </a>
 
     <div class='user_info'>
