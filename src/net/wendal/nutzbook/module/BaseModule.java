@@ -7,6 +7,7 @@ import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.EmailService;
 import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.util.RedisKey;
 
 import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
@@ -19,7 +20,7 @@ import org.nutz.mvc.View;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.plugins.zbus.MsgBus;
 
-public abstract class BaseModule {
+public abstract class BaseModule implements RedisKey {
 	
 	/** 注入与属性同名的一个ioc对象 */
 	@Inject protected Dao dao;

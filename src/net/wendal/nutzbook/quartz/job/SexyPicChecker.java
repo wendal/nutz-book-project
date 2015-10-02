@@ -8,6 +8,7 @@ import java.net.URL;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.util.RedisKey;
 
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -31,7 +32,7 @@ import org.w3c.dom.NodeList;
  *
  */
 @IocBean
-public class SexyPicChecker implements Job {
+public class SexyPicChecker implements Job, RedisKey {
 	
 	@Inject
 	protected YvrService yvrService;
@@ -56,7 +57,7 @@ public class SexyPicChecker implements Job {
 	@Aop("redis")
 	public void checkURL(String url) {
 		String id = url.substring("http://sexy.faceks.com/post/".length());
-		String t = jedis().hget("t:sexy", id);
+		String t = jedis().hget(RKEY_TOPIC_SEXY, id);
 		if (t != null)
 			return;
 		try {
@@ -81,7 +82,7 @@ public class SexyPicChecker implements Job {
 			
 			topic.setUserId(1);
 			topic.setContent(sb.toString());
-			jedis().hset("t:sexy", id, title);
+			jedis().hset(RKEY_TOPIC_SEXY, id, title);
 			yvrService.add(topic, 1);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -112,7 +112,7 @@ public class YvrApiModule extends BaseModule {
 			type = "ask";
 		HashMap<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		Set<String> ids = jedis().zrevrangeByScore("t:update:" + type, System.currentTimeMillis(), 0, pager.getOffset(), pager.getPageSize());
+		Set<String> ids = jedis().zrevrangeByScore(RKEY_TOPIC_UPDATE + type, System.currentTimeMillis(), 0, pager.getOffset(), pager.getPageSize());
 		for (String id : ids) {
 			Topic topic = dao.fetch(Topic.class, id);
 			if (topic == null)
@@ -170,7 +170,7 @@ public class YvrApiModule extends BaseModule {
 		List<NutMap> replies = new ArrayList<NutMap>();
 		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
 			dao.fetchLinks(reply, null);
-			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
+			reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
 			
 			NutMap re = new NutMap();
 			re.put("id", reply.getId());
@@ -184,7 +184,7 @@ public class YvrApiModule extends BaseModule {
 		
 		tp.put("replies", replies);
 		
-		jedis().zincrby("t:visit", 1, topic.getId());
+		jedis().zincrby(RKEY_TOPIC_VISIT, 1, topic.getId());
 		return _map("data", tp);
 	}
 
@@ -205,10 +205,10 @@ public class YvrApiModule extends BaseModule {
 	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
 		if (Strings.isBlank(accesstoken) || accesstoken.length() > 128)
 			return HTTP_403;
-		String uname = jedis().hget("u:accesstoken2", accesstoken.toLowerCase());
+		String uname = jedis().hget(RKEY_USER_ACCESSTOKEN2, accesstoken.toLowerCase());
 		if (uname == null)
 			return HTTP_403;
-		return _map("success", true, "loginname", uname, "id", jedis().hget("u:accesstoken3", accesstoken.toLowerCase()), "avatar_url", _avatar_url(uname));
+		return _map("success", true, "loginname", uname, "id", jedis().hget(RKEY_USER_ACCESSTOKEN3, accesstoken.toLowerCase()), "avatar_url", _avatar_url(uname));
 	}
 	
 	/**

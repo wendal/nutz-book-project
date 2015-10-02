@@ -47,16 +47,16 @@ public class YvrAdminModule extends BaseModule{
 		
 		// 检查一下是不是修改了type
 		if (topic.getType() != null && old.getType() != null && !topic.getType().equals(old.getType())) {
-			Double old_d = jedis().zscore("t:update:"+old.getType(), topic.getId());
-			Double new_d = jedis().zscore("t:update:"+topic.getType(), topic.getId());
+			Double old_d = jedis().zscore(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
+			Double new_d = jedis().zscore(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId());
 			if (old_d != null) {
 				if (new_d == null) {
-					jedis().zadd("t:update:"+topic.getType(), old_d, topic.getId());
+					jedis().zadd(RKEY_TOPIC_UPDATE+topic.getType(), old_d, topic.getId());
 				}
-				jedis().zrem("t:update:"+old.getType(), topic.getId());
+				jedis().zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
 			} else {
 				if (new_d == null) {
-					jedis().zadd("t:update:"+topic.getType(), old.getUpdateTime().getTime(), topic.getId());
+					jedis().zadd(RKEY_TOPIC_UPDATE+topic.getType(), old.getUpdateTime().getTime(), topic.getId());
 				}
 			}
 		}
@@ -93,7 +93,7 @@ public class YvrAdminModule extends BaseModule{
 		
 		// 输出列表页
 		for (TopicType tt : TopicType.values()) {
-			Long count = jedis().zcount("t:update:"+tt.name(), 0, System.currentTimeMillis());
+			Long count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), 0, System.currentTimeMillis());
 			visitAndWrite(root, "/yvr/list/"+tt.name()+"/", dst);
 			if (count != null && count.longValue() > 0) {
 				for (int i = 0; i < count.intValue(); i++) {

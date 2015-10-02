@@ -109,7 +109,7 @@ public class YvrModule extends BaseModule {
 		if (type == null)
 			type = TopicType.ask;
 		long now = System.currentTimeMillis();
-		String zkey = "t:update:" + type;
+		String zkey = RKEY_TOPIC_UPDATE + type;
 		Long count = jedis().zcount(zkey, 0, now);
 		List<Topic> list = new ArrayList<Topic>();
 		if (count != null && count.intValue() != 0) {
@@ -132,7 +132,7 @@ public class YvrModule extends BaseModule {
 		}
 		
 		// 查一下未回复的帖子, 最近的5条的就好了
-		Set<String> no_replies_ids = jedis().zrangeByScore("t:noreply", 0, Long.MAX_VALUE, 0, 5);
+		Set<String> no_replies_ids = jedis().zrangeByScore(RKEY_TOPIC_NOREPLY, 0, Long.MAX_VALUE, 0, 5);
 		List<Topic> no_replies = new ArrayList<Topic>();
 		for (String topicId : no_replies_ids) {
 			Topic tmp = yvrService.daoNoContent().fetch(Topic.class, topicId);
@@ -173,7 +173,7 @@ public class YvrModule extends BaseModule {
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		Double visited = jedis().zincrby("t:visit", 1, id);
+		Double visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
@@ -183,7 +183,7 @@ public class YvrModule extends BaseModule {
 			if (reply.getUserId() == 0)
 				reply.setUserId(1);
 			dao.fetchLinks(reply, null);
-			reply.setUps(jedis().zrange("t:like:" + reply.getId(), 0, System.currentTimeMillis()));
+			reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
 		}
 		NutMap re = new NutMap();
 		re.put("topic", topic);

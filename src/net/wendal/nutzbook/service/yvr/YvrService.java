@@ -20,6 +20,7 @@ import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.util.RedisKey;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -42,7 +43,7 @@ import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 
 @IocBean(create="init")
-public class YvrService {
+public class YvrService implements RedisKey {
 
 	@Inject 
 	protected Dao dao;
@@ -61,10 +62,10 @@ public class YvrService {
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
 		topic.setAuthor(_cacheFetch(authors, topic.getUserId()));
-		Double reply_count = jedis().zscore("t:reply:count", topic.getId());
+		Double reply_count = jedis().zscore(RKEY_REPLY_COUNT, topic.getId());
 		topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
 		if (topic.getReplyCount() > 0) {
-			String replyId = jedis().hget("t:reply:last", topic.getId());
+			String replyId = jedis().hget(RKEY_REPLY_LAST, topic.getId());
 			TopicReply reply = daoNoContent.fetch(TopicReply.class, replyId);
 			if (reply != null) {
 				if (reply.getUserId() == 0)
@@ -73,7 +74,7 @@ public class YvrService {
 				topic.setLastComment(reply);
 			}
 		}
-		Double visited = jedis().zscore("t:visit", topic.getId());
+		Double visited = jedis().zscore(RKEY_TOPIC_VISIT, topic.getId());
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 	}
 	
@@ -89,20 +90,20 @@ public class YvrService {
 	@Aop("redis")
 	public String accessToken(UserProfile profile) {
 		String loginname = profile.getLoginname();
-		String at = jedis().hget("u:accesstoken", loginname);
+		String at = jedis().hget(RKEY_USER_ACCESSTOKEN, loginname);
 		if (at == null) {
 			// 双向绑定
 			at = R.UU32();
-			jedis().hset("u:accesstoken", loginname, at);
-			jedis().hset("u:accesstoken2", at, loginname);
-			jedis().hset("u:accesstoken3", at, ""+profile.getUserId());
+			jedis().hset(RKEY_USER_ACCESSTOKEN, loginname, at);
+			jedis().hset(RKEY_USER_ACCESSTOKEN2, at, loginname);
+			jedis().hset(RKEY_USER_ACCESSTOKEN3, at, ""+profile.getUserId());
 		}
 		return at;
 	}
 	
 	@Aop("redis")
 	public int getUserByAccessToken(String at) {
-		String uid_str = jedis().hget("u:accesstoken3", at);
+		String uid_str = jedis().hget(RKEY_USER_ACCESSTOKEN3, at);
 		if (uid_str == null)
 			return -1;
 		return Integer.parseInt(uid_str);
@@ -137,10 +138,10 @@ public class YvrService {
 		}
 		// 如果是ask类型,把帖子加入到 "未回复"列表
 		if (TopicType.ask.equals(topic.getType())) {
-			jedis().zadd("t:noreply", System.currentTimeMillis(), topic.getId());
+			jedis().zadd(RKEY_TOPIC_NOREPLY, System.currentTimeMillis(), topic.getId());
 		}
-		jedis().zadd("t:update:" + topic.getType(), System.currentTimeMillis(), topic.getId());
-		jedis().zincrby("u:score", 100, ""+userId);
+		jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), System.currentTimeMillis(), topic.getId());
+		jedis().zincrby(RKEY_USER_SCORE, 100, ""+userId);
 		return _ok(topic.getId());
 	}
 
@@ -163,13 +164,13 @@ public class YvrService {
 		reply.setUserId(userId);
 		dao.insert(reply);
 		// 更新topic的时间戳, 然后根据返回值确定是否需要从t:noreply中删除该topic
-		Long re = jedis().zadd("t:update:" + topic.getType(), reply.getCreateTime().getTime(), topicId);
+		Long re = jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);
 		if (re != null && re.intValue() != 1) {
-			jedis().zrem("t:noreply", topicId);
+			jedis().zrem(RKEY_TOPIC_NOREPLY, topicId);
 		}
-		jedis().hset("t:reply:last", topicId, reply.getId());
-		jedis().zincrby("t:reply:count", 1, topicId);
-		jedis().zincrby("u:score", 10, ""+userId);
+		jedis().hset(RKEY_REPLY_LAST, topicId, reply.getId());
+		jedis().zincrby(RKEY_REPLY_COUNT, 1, topicId);
+		jedis().zincrby(RKEY_USER_SCORE, 10, ""+userId);
 		
 		bus.add(new Callable<Object>() {
 			public Object call() throws Exception {
@@ -205,7 +206,7 @@ public class YvrService {
 		if (1 != dao.count(TopicReply.class, Cnd.where("id", "=", replyId))) {
 			return _fail("没这条评论");
 		}
-		String key = "t:like:" + replyId;
+		String key = RKEY_REPLY_LIKE + replyId;
 		Double t = jedis().zscore(key, "" + userId);
 		if (t != null) {
 			jedis().zrem(key, userId + "");
@@ -264,7 +265,7 @@ public class YvrService {
 	
 	@Aop("redis")
 	public int getUserScore(int userId) {
-		Double score = jedis().zscore("u:score", ""+userId);
+		Double score = jedis().zscore(RKEY_USER_SCORE, ""+userId);
 		if (score == null) {
 			return 0;
 		} else {
