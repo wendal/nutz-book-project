@@ -8,7 +8,7 @@ Nutz社区, 一个有爱的社区 ^_^
 
 ### 移动客户端
 
-Android官方客户端 下载地址 https://any.nutz.cn/NutzCN.apk 当前由[@wendal](https://wendal.net)维护
+Android官方客户端 下载地址 https://any.nutz.cn/NutzCN.apk 当前由[@wendal](http://wendal.net)维护
 
 iOS客户端尚未发布到APP Store
 
