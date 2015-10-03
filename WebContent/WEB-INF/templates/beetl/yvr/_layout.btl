@@ -8,11 +8,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="always">
   <meta property="qc:admins" content="345615513542636" />
+<link rel="dns-prefetch" href="//hm.baidu.com">
+<link rel="dns-prefetch" href="//s95.cnzz.com">
+<link rel="dns-prefetch" href="${cdnbase}">
 
   <link title="RSS" type="application/rss+xml" rel="alternate" href="${ctxPath}/yvr/rss.xml"/>
 
   <link rel="icon" href="${cdnbase}${base}/rs/logo.png" type="image/x-icon"/>
   <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/logo/logo.css"/>
+  
+  <head itemscope itemtype="http://schema.org/WebSite">
+  <title itemprop='name'>Nutz社区</title>
+  <link rel="canonical" href="https://nutz.cn/" itemprop="url">
 
   <!-- style -->
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/bootstrap/css/bootstrap.css"></link>
@@ -70,7 +77,22 @@ html { overflow-y: scroll; }
   <% } else { %>
   <title>Nutz社区</title>
   <% } %>
-  <meta name="Keywords" content="Nutz,Nutz是什么,Nutz下载,Nutz论坛"/>  <meta name="Description" content="首先，它是开源的，商用也是完全免费的。详尽的文档，众多线上项目 不吹嘘概念,代码严谨可靠，近千个testcase,坚如磐石。您使用的nutz.jar,也是各位提交者在各种生产环境上使用的 nutz.jar ^_^ 一个 jar 包就包含了 Mvc,Ioc,Dao,Aop，不强制依赖第三方 jar。小巧的Lang工具箱和EL表达式引擎,满足各种小需求。内置Json序列..."/>
+  <meta name="Keywords" content="Nutz,Nutz是什么,Nutz下载,Nutz社区"/>
+  <% if (null != obj.topic!) { %>
+  <meta name="Description" content="${submax(obj.topic.content, 50), escape}"/>
+  <% } else { %>
+  <meta name="Description" content="它是开源的，商用也是完全免费的。详尽的文档，众多线上项目 不吹嘘概念,代码严谨可靠，近千个testcase,坚如磐石。"/>
+  <% } %>
+  
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "Organization",
+      "url": "https://nutz.cn",
+      "logo": "https://nutz.cn/rs/logo/logo.png"
+    }
+</script>
+  
   <meta content="_csrf" name="csrf-param">
   <meta content="${obj._csrf!}" name="csrf-token">
 </head>

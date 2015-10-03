@@ -36,13 +36,21 @@ layout("_layout.btl",{}){
 <div id='content'>
   <div class='panel'>
     <div class='header'>
-      <ol class='breadcrumb'>
-        <li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
-        <li class='active'><a data-pjax href='${ctxPath}/yvr/list/${obj.topic.type}'>${obj.topic.type.display}</a></li>
+      <ol class='breadcrumb' vocab="http://schema.org/" typeof="BreadcrumbList">
+        <li property="itemListElement" typeof="ListItem">
+        	<a data-pjax href='${ctxPath}/yvr/list' property="item" typeof="WebPage"><span property="name">主页</span></a><span class='divider'>/</span>
+        </li>
+        <li class='active' property="itemListElement" typeof="ListItem" >
+        	<a data-pjax href='${ctxPath}/yvr/list/${obj.topic.type}' property="item" typeof="WebPage"><span property="name">${obj.topic.type.display}</span></a>
+        	<meta property="position" content="2">
+        </li>
       </ol>
     </div>
+    <div itemscope itemtype="http://schema.org/NewsArticle">
+    <meta itemprop="datePublished" content="${obj.topic.createTime, ISO_8601}"/>
+    <div style="display: none;"><img itemprop="image" src="${ctxPath}/rs/logo/logo.png" alt="NutzCN Logo"/></div>
     <div class='header topic_header'>
-      <span class="topic_full_title">
+      <span class="topic_full_title" itemprop="headline">
         <%
 		layout("_top_good.btl",{"topic":obj.topic}){}
 		%>
@@ -84,11 +92,12 @@ layout("_layout.btl",{}){
     </div>
     <div class='inner topic'>
 
-      <div class='topic_content'>
+      <div class='topic_content' itemprop="articleBody">
         <div class="markdown-text">
         ${markdown(obj.topic.content)}
 		</div>
       </div>
+    </div>
     </div>
   </div>
   <% if ( null != obj.topic.replies!) { %>

@@ -47,7 +47,7 @@
     <% if ( obj.current_page == 1) { %>
     <li class='disabled'><a>«</a></li>
     <% } else { %>
-    <li><a data-pjax href="${request.requestURI}">«</a></li>
+    <li><a data-pjax href="${ctxPath}/yvr/list/${obj.type}">«</a></li>
     <% } %>
 
     <% if ( obj.page_start > 1) { %>
