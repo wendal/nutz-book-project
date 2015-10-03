@@ -177,7 +177,7 @@ public class YvrModule extends BaseModule {
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
-		dao.fetchLinks(topic, "author");
+		topic.setAuthor(fetch_userprofile(topic.getUserId()));
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
 		for (TopicReply reply : topic.getReplies()) {
 			if (reply.getUserId() == 0)

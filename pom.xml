@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nutzbook</groupId>
 	<artifactId>nutzbook</artifactId>
-	<version>1.3.2</version>
 	<packaging>war</packaging>
 	<url>https://github.com/wendal/nutz-book-project</url>
 	<properties>
@@ -318,4 +317,5 @@
 			<version>1.8.3</version>
 		</dependency>
 	</dependencies>
+	<version>2.0.0</version>
 </project>

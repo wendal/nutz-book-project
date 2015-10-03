@@ -19,8 +19,6 @@ http://nutzbook.wendal.net/jars/
 * Quartz计划任务集成
 * Shiro集成及权限管理
 * Ehcache及DaoCache集成
-* snakerflow工作流集成(未全部完成)
-* 自定义表单(未全部完成)
 * redis 集成(配置及拦截器应用)
 * sockerio 集成及demo聊天工具
 * jetbrick模板集成
@@ -28,6 +26,9 @@ http://nutzbook.wendal.net/jars/
 * 二维码生成及跨屏登陆
 * 声明式系统日志
 * 基于socialauth的Oauth登陆(客户端,非服务器端实现)
+* 集成极光推送(jpush)
+* snakerflow工作流集成(未全部完成)
+* 自定义表单(未全部完成)
 
 ## 在线演示地址
 
