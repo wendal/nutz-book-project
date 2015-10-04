@@ -11,7 +11,14 @@ import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
 
+/**
+ * 通过请求参数中的accesstoken进行授权
+ * @author wendal
+ *
+ */
 public class AccessTokenFilter implements ActionFilter {
+	
+	YvrService yvrService;
 
 	public View match(ActionContext ac) {
 		String at = ac.getRequest().getParameter("accesstoken");
@@ -25,12 +32,14 @@ public class AccessTokenFilter implements ActionFilter {
 				return null;
 			}
 		}
-		int uid = ac.getIoc().get(YvrService.class).getUserByAccessToken(at);
+		if (yvrService == null)
+			yvrService = ac.getIoc().get(YvrService.class);
+		int uid = yvrService.getUserByAccessToken(at);
 		if (uid < 1) {
 			return BaseModule.HTTP_403;
 		}
-		ac.getRequest().getSession().setAttribute(NutShiro.SessionKey, uid);
-		ac.getRequest().getSession().setAttribute(NutShiro.SessionKey + "_at", at);
+		session.setAttribute(NutShiro.SessionKey, uid);
+		session.setAttribute(NutShiro.SessionKey + "_at", at);
 		return null;
 	}
 

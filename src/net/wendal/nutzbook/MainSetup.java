@@ -44,22 +44,33 @@ import redis.clients.jedis.JedisPool;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 
+/**
+ * Nutz内核初始化完成后的操作
+ * @author wendal
+ *
+ */
 public class MainSetup implements Setup {
 	
 	private static final Log log = Logs.get();
 	
 	@SuppressWarnings("unchecked")
 	public void init(NutConfig nc) {
-		// netty的东西
+		// netty的东西,强制让它使用log4j记录日志. 因为环境中存在slf4j,它会自动选用,导致log4j配置日志级别失效
 		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
 		
+		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
 		Dao dao = ioc.get(Dao.class);
+		
+		// 为全部标注了@Table的bean建表
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
+		// 修正表结构
 		Daos.migration(dao, UserProfile.class, true, false);
+		
+		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
 		
-		// 初始化SysLog
+		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
 		
 		// 初始化默认根用户
@@ -68,6 +79,7 @@ public class MainSetup implements Setup {
 			UserService us = ioc.get(UserService.class);
 			admin = us.add("admin", "123456");
 		}
+		// 初始化游客用户
 		User guest = dao.fetch(User.class, "guest");
 		if (guest == null) {
 			UserService us = ioc.get(UserService.class);
@@ -76,6 +88,7 @@ public class MainSetup implements Setup {
 			profile.setNickname("游客");
 			dao.update(profile, "nickname");
 		}
+		// 修正没有设置loginname的UserProfile
 		List<UserProfile> profiles = Daos.ext(dao, FieldFilter.create(UserProfile.class, "userId")).query(UserProfile.class, Cnd.where("loginname", "=", null));
 		for (UserProfile profile : profiles) {
 			User user = dao.fetch(User.class, profile.getUserId());
@@ -89,24 +102,25 @@ public class MainSetup implements Setup {
 		// 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
 		ioc.get(NutQuartzCronJobFactory.class);
 		
+		// 权限系统初始化
 		AuthorityService as = ioc.get(AuthorityService.class);
 		as.initFormPackage("net.wendal.nutzbook");
 		as.checkBasicRoles(admin);
-		
-		//ioc.get(TopicService.class);
 		
 		// 检查一下Ehcache CacheManager 是否正常.
 		CacheManager cacheManager = ioc.get(CacheManager.class);
 		log.debug("Ehcache CacheManager = " + cacheManager);
 		//CachedNutDaoExecutor.DEBUG = true;
 		
+		// 初始化Snaker流程引擎
 		SnakerEngine snakerEngine = ioc.get(SnakerEngine.class);
-		// 塞点对象进去
+		// 塞点额外的对象进去流程引擎
 		ServiceContext.put("NutzbookAccessStrategy", ioc.get(NutzbookAccessStrategy.class));
 		ServiceContext.put("NutDao", dao);
 		ServiceContext.put("nutz-email", ioc.get(SnakerEmailInterceptor.class));
 		log.info("snakerflow init complete == " + snakerEngine);
 		
+		// 启用FastClass执行入口方法
 		Mvcs.disableFastClassInvoker = false;
 		
 		// 测试一下能不能拿到原生连接对象
@@ -122,6 +136,7 @@ public class MainSetup implements Setup {
 			}
 		});
 		
+		// 测试Redis是否正常
 		if (conf.getBoolean("redis.enable", false)) {
 			// redis测试
 			JedisPool jedisPool = ioc.get(JedisPool.class);
@@ -137,7 +152,7 @@ public class MainSetup implements Setup {
 			log.debug("redis say again : "  + redis.get("hi"));
 		}
 		
-		
+		// 启动socketio相关的服务
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
 		

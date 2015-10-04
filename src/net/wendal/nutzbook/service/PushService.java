@@ -9,6 +9,11 @@ import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.PushPayload;
 
+/**
+ * 推送服务,当前用jpush实现
+ * @author wendal
+ *
+ */
 @IocBean
 public class PushService implements MsgEventHandler<PushPayload> {
 	
@@ -21,7 +26,7 @@ public class PushService implements MsgEventHandler<PushPayload> {
 	public Object call(MsgBus bus, PushPayload event) throws Exception {
 		if (!enable)
 			return null;
-		System.out.println(event.toJSON());
+		//System.out.println(event.toJSON());
 		PushResult re = jpush.sendPush(event);
 		return re;
 	}

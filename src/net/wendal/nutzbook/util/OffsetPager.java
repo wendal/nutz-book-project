@@ -2,6 +2,11 @@ package net.wendal.nutzbook.util;
 
 import org.nutz.dao.pager.Pager;
 
+/**
+ * 指定偏移量及大小的Pager, 这样就不会受限于原生Pager的offset=(pageNumber-1)*pageSize
+ * @author wendal
+ *
+ */
 public class OffsetPager extends Pager {
 	
 	private static final long serialVersionUID = -1385308131663113162L;
@@ -22,6 +27,9 @@ public class OffsetPager extends Pager {
 		setPageSize(size);
 	}
 
+	/**
+	 * 覆盖超类的计算得到的offset
+	 */
 	public int getOffset() {
 		if (offset > -1)
 			return offset;

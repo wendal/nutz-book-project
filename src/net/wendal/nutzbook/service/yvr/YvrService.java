@@ -226,7 +226,7 @@ public class YvrService implements RedisKey {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
-		bus.event(builder.build());
+		bus.event(builder.build()); // 发送到总线,等待对应的服务处理
 	}
 	
 	public List<Topic> getRecentTopics(int userId) {

@@ -11,6 +11,11 @@ import org.apache.shiro.realm.Realm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 改变Shiro原生的ModularRealmAuthenticator在多个Realm时的行为,如果仅一个Realm识别Token,那么行为跟单个Realm时一致
+ * @author wendal
+ *
+ */
 public class ModularRealmAuthenticator2 extends ModularRealmAuthenticator {
 	
 	private static final Logger log = LoggerFactory.getLogger(ModularRealmAuthenticator.class);

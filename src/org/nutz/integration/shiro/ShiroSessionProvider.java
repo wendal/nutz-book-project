@@ -7,10 +7,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.nutz.mvc.SessionProvider;
 
+/**
+ * 代理Nutz内部使用Session的调用为Shiro的Shiro的session
+ * @author wendal
+ *
+ */
 public class ShiroSessionProvider implements SessionProvider {
 
 	public HttpServletRequest filter(HttpServletRequest req, HttpServletResponse resp, ServletContext servletContext) {
-		if (resp.getHeader("Access-Control-Allow-Origin") == null) {
+		if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
 			resp.addHeader("Access-Control-Allow-Origin", "*");
 			resp.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Key");
 		}
