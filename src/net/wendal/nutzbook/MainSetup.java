@@ -96,6 +96,13 @@ public class MainSetup implements Setup {
 				dao.delete(UserProfile.class, profile.getUserId());
 			else {
 				dao.update(UserProfile.class, Chain.make("loginname", user.getName()), Cnd.where("userId", "=", user.getId()));
+				if (profile.getCreateTime() == null || profile.getUpdateAt() == null) {
+					if (profile.getCreateTime() == null)
+						profile.setCreateTime(user.getCreateTime());
+					if (profile.getUpdateTime() == null)
+						profile.setUpdateTime(user.getUpdateTime());
+					dao.update(profile, "createTime|updateTime");
+				}
 			}
 		}
 		
