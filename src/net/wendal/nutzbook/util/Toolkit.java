@@ -138,6 +138,8 @@ public class Toolkit {
 	}
 	
 	public static String createAt(Date date) {
+		if (date == null)
+			return "未知";
 		long now = System.currentTimeMillis() / 1000;
 		long t = date.getTime() / 1000;
 		long diff = now - t;

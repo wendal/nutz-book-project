@@ -35,9 +35,11 @@ public class LuceneIndex implements AutoCloseable, Closeable {
 	}
 	
 	public void close() throws IOException {
+		IndexWriter writer = this.writer;
 		if (writer != null) {
 			writer.commit();
 			writer.close(true);
+			this.writer = null;
 		}
 	}
 	
