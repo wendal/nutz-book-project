@@ -16,9 +16,12 @@
         请先注册或登录,还可以
         <a href="${ctxPath}/yvr/u/oauth/github">
           <span class="span-info">
-            推荐通过 GitHub 一键登录
+            推荐GitHub一键登录
           </span>
         </a>
+      <a id='u2f_auth_btn'>
+      	<span class='span-success'>U2F登录</span>
+      </a>
       </div>
     </div>
     <% } %>
@@ -35,9 +38,6 @@
       </a>
       <a href='${ctxPath}/oauth/qq' id='qq_btn'>
       	<img src="${cdnbase}${base}/rs/images/qq_connect.png"/>
-      </a>
-      <a href='#' id='u2f_auth_btn'>
-      	<span class='span-success'>U2F登录</span>
       </a>
     </div>
   </div>
@@ -68,6 +68,98 @@ if (!socket) {
 };
 </script>
   <% } %>
+<script>
+// U2F 绑定和登陆
+function getChromeVersion () {     
+    var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+
+    return raw ? parseInt(raw[2], 10) : 0;
+}
+$(function(){
+	if (getChromeVersion() >= 41) {
+		console.log("this chrome support u2f");
+	} else {
+		$("#u2f_reg_btn").hidden();
+		$("#u2f_auth_btn").hidden();
+		return;
+	}
+	$("#u2f_reg_btn").click(function(){
+		$.ajax({
+			url : "${ctxPath}/u2f/startRegistration",
+			dataType : "json",
+			success : function(re) {
+				if (re && re.ok) {
+					var challenge = re.data;
+					if (console)
+						console.log(re.data);
+					layer.alert("请在15秒内按一下U2F key");
+					u2f.sign(challenge, [], function(resp) {
+						if (console)
+							console.log(resp);
+						var tokenResponse = JSON.stringify(resp);
+						$.ajax({
+							url : "${ctxPath}/u2f/finishRegistration",
+							method : "POST",
+							data : {"tokenResponse":tokenResponse},
+							dataType : "json",
+							success : function(re2) {
+								if (re2 && re2.ok) {
+									layer.alert("绑定成功");
+								} else {
+									layer.alert(re2.msg);
+								}
+							}
+						});
+					});
+				} else {
+					layer.alert(re.msg);
+				}
+			}
+		})
+	});
+	
+	$("#u2f_auth_btn").click(function(){
+		var username = prompt("请输入用户名");
+		if ( ! username) {
+			return;
+		}
+		$.ajax({
+			url : "${ctxPath}/u2f/startAuthentication",
+			method : "POST",
+			data : {"username":username}
+			dataType : "json",
+			success : function(re) {
+				if (re && re.ok) {
+					var challenge = re.data;
+					if (console)
+						console.log(re.data);
+					layer.alert("请在15秒内按一下U2F key");
+					u2f.sign(challenge, [], function(resp) {
+						if (console)
+							console.log(resp);
+						var tokenResponse = JSON.stringify(resp);
+						$.ajax({
+							url : "${ctxPath}/u2f/finishAuthentication",
+							method : "POST",
+							data : {"tokenResponse":tokenResponse, "username":username},
+							dataType : "json",
+							success : function(re2) {
+								if (re2 && re2.ok) {
+									location.reload();
+								} else {
+									layer.alert(re2.msg);
+								}
+							}
+						});
+					});
+				} else {
+					layer.alert(re.msg);
+				}
+			}
+		})
+	});
+});
+</script>
 
   <% if (null != obj.current_user!) { %>
   <div class="panel">

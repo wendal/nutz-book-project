@@ -18,6 +18,7 @@
             这家伙很懒，什么个性签名都没有留下。
         <%}%>”
     </span>
+    <div class="space clearfix"></div>
     <a href='#' id='u2f_reg_btn'>
       	<span class='span-success'>U2F绑定</span>
     </a>

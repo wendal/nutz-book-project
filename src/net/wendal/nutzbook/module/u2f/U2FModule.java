@@ -8,8 +8,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.crossscreen.CrossScreenUserToken;
 import net.wendal.nutzbook.module.BaseModule;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.Scope;
@@ -40,7 +44,7 @@ public class U2FModule extends BaseModule {
     
     protected final U2F u2f = U2F.withoutAppIdValidation();
 
-    @At("startRegistration")
+    @At("/startRegistration")
     @GET
     public Object startRegistration(@Attr(scope=Scope.SESSION, value="me")int userId) {
     	if (userId < 1)
@@ -48,10 +52,10 @@ public class U2FModule extends BaseModule {
     	User user = dao.fetch(User.class, userId);
         RegisterRequestData registerRequestData = u2f.startRegistration(APP_ID, getRegistrations(user.getName()));
         requestStorage.put(registerRequestData.getRequestId(), registerRequestData.toJson());
-        return ajaxOk(registerRequestData.toJson());
+        return ajaxOk(registerRequestData.getRegisterRequests().get(0).getChallenge());
     }
 
-    @At("finishRegistration")
+    @At("/finishRegistration")
     @POST
     public Object finishRegistration(@Param("tokenResponse") String response, @Attr(scope=Scope.SESSION, value="me")int userId) {
     	if (userId < 1)
@@ -64,7 +68,7 @@ public class U2FModule extends BaseModule {
         return ajaxOk(null);
     }
 
-    @At("startAuthentication")
+    @At("/startAuthentication")
     @GET
     public Object startAuthentication(@Param("username")String username) throws NoEligableDevicesException {
         AuthenticateRequestData authenticateRequestData = u2f.startAuthentication(APP_ID, getRegistrations(username));
@@ -72,7 +76,7 @@ public class U2FModule extends BaseModule {
         return ajaxOk(authenticateRequestData.toJson());
     }
 
-    @At("finishAuthentication")
+    @At("/finishAuthentication")
     @POST
     public Object finishAuthentication(@Param("tokenResponse") String response, @Param("username")String username) {
         AuthenticateResponse authenticateResponse = AuthenticateResponse.fromJson(response);
@@ -84,6 +88,10 @@ public class U2FModule extends BaseModule {
             registration = e.getDeviceRegistration();
             return ajaxFail(registration.toJson());
         }
+        CrossScreenUserToken cs = new CrossScreenUserToken(dao.fetch(User.class, username).getId());
+        Subject subject = SecurityUtils.getSubject();
+		subject.login(cs);
+		subject.getSession().setAttribute(NutShiro.SessionKey, subject.getPrincipal());
         return ajaxOk(null);
     }
 
