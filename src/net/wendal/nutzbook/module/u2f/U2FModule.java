@@ -69,7 +69,7 @@ public class U2FModule extends BaseModule {
     }
 
     @At("/startAuthentication")
-    @GET
+    @POST
     public Object startAuthentication(@Param("username")String username) throws NoEligableDevicesException {
         AuthenticateRequestData authenticateRequestData = u2f.startAuthentication(APP_ID, getRegistrations(username));
         requestStorage.put(authenticateRequestData.getRequestId(), authenticateRequestData.toJson());
