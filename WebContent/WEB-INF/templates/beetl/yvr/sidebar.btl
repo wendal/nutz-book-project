@@ -126,7 +126,7 @@ $(function(){
 		$.ajax({
 			url : "${ctxPath}/u2f/startAuthentication",
 			method : "POST",
-			data : {"username":username}
+			data : {"username":username},
 			dataType : "json",
 			success : function(re) {
 				if (re && re.ok) {

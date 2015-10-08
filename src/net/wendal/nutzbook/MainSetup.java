@@ -11,6 +11,7 @@ import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
@@ -66,6 +67,7 @@ public class MainSetup implements Setup {
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
 		// 修正表结构
 		Daos.migration(dao, UserProfile.class, true, false);
+		Daos.migration(dao, TopicReply.class, true, false);
 		
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");

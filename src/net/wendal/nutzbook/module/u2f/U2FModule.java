@@ -98,7 +98,7 @@ public class U2FModule extends BaseModule {
     @Aop("redis")
     protected Iterable<DeviceRegistration> getRegistrations(String userId) {
         List<DeviceRegistration> registrations = new ArrayList<DeviceRegistration>();
-        String auth = jedis().hget(RKEY_U2F_AUTH, userId+"");
+        String auth = jedis().hget(RKEY_U2F_AUTH, userId);
         if (auth != null) {
         	registrations.add(DeviceRegistration.fromJson(auth));
         }
@@ -107,6 +107,6 @@ public class U2FModule extends BaseModule {
 
     @Aop("redis")
     protected void addRegistration(String userId, DeviceRegistration registration) {
-    	jedis().hset(RKEY_U2F_AUTH, userId+"", registration.toJson());
+    	jedis().hset(RKEY_U2F_AUTH, userId, registration.toJson());
     }
 }

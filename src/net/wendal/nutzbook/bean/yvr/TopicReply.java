@@ -27,6 +27,9 @@ public class TopicReply extends BasePojo {
 	@Column
 	protected String topicId;
 	
+	@Column
+	protected String replyTo;
+	
 	@Column("u_id")
 	protected int userId;
 	
@@ -94,5 +97,13 @@ public class TopicReply extends BasePojo {
 
 	public void setUps(Set<String> ups) {
 		this.ups = ups;
+	}
+
+	public String getReplyTo() {
+		return replyTo;
+	}
+
+	public void setReplyTo(String replyTo) {
+		this.replyTo = replyTo;
 	}
 }

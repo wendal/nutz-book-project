@@ -120,7 +120,7 @@ layout("_layout.btl",{}){
     </div>
     <div class='inner reply'>
     <% if (null != obj.current_user!){ %>
-      <form id='reply_form' action='${ctxPath}/yvr/t/${obj.topic.id}/reply' method='post'>
+      <form id='reply_form' action='#'>
 
         <div class='markdown_editor in_editor'>
           <div class='markdown_in_editor'>
@@ -316,17 +316,39 @@ var ctxPath = "${ctxPath}";
     // 提交回复
     $('#reply_form').on('submit', function (e) {
     	if (console) 
-    		console.log($("#reply_form").serialize());
+    		console.log($(this).serialize());
     	$.ajax({
     		url : "${ctxPath}/yvr/t/${obj.topic.id}/reply",
     		method : "POST",
-    		data : $("#reply_form").serialize(),
+    		data : $(this).serialize(),
     		dataType : "json",
     		success : function(re) {
     			if (re.ok) {
     				location.reload();
     			} else {
-    				alert(re.msg);
+    				$('#reply_form').button('reset');
+    				layer.alert(re.msg);
+    			}
+    		}
+    	});
+    	return false;
+    });
+    $('.reply2_area').on('submit', function (event) {
+    	var $btn = $(event.currentTarget);
+      	var editorWrap = $btn.closest('.reply2_area').find('.reply2_form');
+    	if (console) 
+    		console.log($(editorWrap).serialize());
+    	$.ajax({
+    		url : "${ctxPath}/yvr/t/${obj.topic.id}/reply",
+    		method : "POST",
+    		data : $(editorWrap).serialize(),
+    		dataType : "json",
+    		success : function(re) {
+    			if (re.ok) {
+    				location.reload();
+    			} else {
+    				layer.alert(re.msg);
+    				$('.reply2_area').button('reset');
     			}
     		}
     	});

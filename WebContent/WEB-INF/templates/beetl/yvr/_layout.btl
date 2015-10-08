@@ -282,7 +282,7 @@ function next_captcha() {
 
 $(document).ready(function () {
   if($.support.pjax) {
-  //  $(document).pjax('a[data-pjax]', '#content', {fragment: '#content',maxCacheLength:0,timeout: 8000});
+  	$(document).pjax('a[data-pjax]', '#content', {fragment: '#content',maxCacheLength:0,timeout: 8000});
   }
   if (console)
   	console.log("^_^ 在找源码?这么巧. footer就有地址哦 https://github.com/wendal/nutz-book-project");

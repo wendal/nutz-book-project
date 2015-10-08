@@ -1,7 +1,7 @@
 <%DIRECTIVE DYNAMIC;%>
 <div class='cell reply_area reply_item
   <% if ( reply.ups.~size > 3) {%> reply_highlight <%}%>'
-  id="reply${indexInCollection+1}" reply_id="${reply.id}" reply_to_id="">
+  id="reply${indexInCollection+1}" reply_id="${reply.id}" reply_to_id="${reply.replyTo}">
   <a class="anchor" id="${reply.id}"></a>
 
   <div class='author_content'>
@@ -43,6 +43,26 @@
   </div>
   <div class='clearfix'>
     <div class='reply2_area'>
+    <% if (null != obj.current_user!) { %>
+      <form class='reply2_form' action='#' method='post'>
+        <input type='hidden' name='_csrf' value='${obj.csrf!}'/>
+        <input type='hidden' name='replyTo' value='${reply.id}'/>
+
+        <div class='markdown_editor in_editor'>
+          <div class='markdown_in_editor'>
+            <textarea class='span8 editor reply_editor'
+                      id="reply2_editor_${reply.id}" name='content' rows='4'></textarea>
+
+            <div class='editor_buttons'>
+              <input class='span-primary reply2_submit_btn submit_btn'
+                     type="submit" data-id='${reply.id}' data-loading-text="回复中.." value="回复">
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+      <% } %>
     </div>
   </div>
 </div>
