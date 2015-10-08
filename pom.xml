@@ -130,6 +130,12 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-daocache</artifactId>
 			<version>1.b.52.r4</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>fst</artifactId>
+					<groupId>de.ruedigermoeller</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
