@@ -91,9 +91,9 @@ $(function(){
 				if (re && re.ok) {
 					var challenge = re.data;
 					if (console)
-						console.log(re.data);
+						console.log("Register: ", challenge);
 					layer.alert("请在15秒内按一下U2F key");
-					u2f.sign(challenge, [], function(resp) {
+					u2f.register([challenge], [], function(resp) {
 						if (console)
 							console.log(resp);
 						var tokenResponse = JSON.stringify(resp);
@@ -134,7 +134,7 @@ $(function(){
 					if (console)
 						console.log(re.data);
 					layer.alert("请在15秒内按一下U2F key");
-					u2f.sign(challenge, [], function(resp) {
+					u2f.sign([challenge], function(resp) {
 						if (console)
 							console.log(resp);
 						var tokenResponse = JSON.stringify(resp);

@@ -52,7 +52,7 @@ public class U2FModule extends BaseModule {
     	User user = dao.fetch(User.class, userId);
         RegisterRequestData registerRequestData = u2f.startRegistration(APP_ID, getRegistrations(user.getName()));
         requestStorage.put(registerRequestData.getRequestId(), registerRequestData.toJson());
-        return ajaxOk(registerRequestData.getRegisterRequests().get(0).getChallenge());
+        return ajaxOk(registerRequestData.getRegisterRequests().get(0));
     }
 
     @At("/finishRegistration")
@@ -73,7 +73,7 @@ public class U2FModule extends BaseModule {
     public Object startAuthentication(@Param("username")String username) throws NoEligableDevicesException {
         AuthenticateRequestData authenticateRequestData = u2f.startAuthentication(APP_ID, getRegistrations(username));
         requestStorage.put(authenticateRequestData.getRequestId(), authenticateRequestData.toJson());
-        return ajaxOk(authenticateRequestData.toJson());
+        return ajaxOk(authenticateRequestData.getAuthenticateRequests().get(0));
     }
 
     @At("/finishAuthentication")
