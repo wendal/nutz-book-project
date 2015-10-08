@@ -12,13 +12,14 @@
     </div>
     <div class="space clearfix"></div>
     <span class="signature">
-        “
-        <% if ( null != user.description!) {%>
+        “<% if ( null != user.description!) {%>
             ${user.description, escape}
         <%} else {%>
             这家伙很懒，什么个性签名都没有留下。
-        <%}%>
-        ”
+        <%}%>”
     </span>
+    <a href='#' id='u2f_reg_btn'>
+      	<span class='span-success'>U2F绑定</span>
+    </a>
   </div>
 </div>

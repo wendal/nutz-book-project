@@ -69,6 +69,7 @@ html { overflow-y: scroll; }
 <script src="${cdnbase}${base}/rs/javascripts/responsive.js"></script>
 <script src="${cdnbase}${base}/rs/layer2/layer/layer.js"></script>
 <script src="${cdnbase}${base}/rs/libs/jquery.pjax.js"></script>
+<script src="${cdnbase}${base}/rs/js/u2f-api.js"></script>
 
   <% if (null != obj.topic!) { %>
   <title>${obj.topic.title, escape} - Nutz社区</title>

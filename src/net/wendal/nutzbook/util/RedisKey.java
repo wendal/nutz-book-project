@@ -23,4 +23,7 @@ public interface RedisKey {
 	String RKEY_REPLY_LAST = "t:reply:last";
 	
 	String RKEY_TOPIC_SEXY = "t:sexy";
+	
+	String RKEY_U2F_REQ = "u2f:req";
+	String RKEY_U2F_AUTH = "u2f:auth";
 }

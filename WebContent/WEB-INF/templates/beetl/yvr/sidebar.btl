@@ -36,6 +36,9 @@
       <a href='${ctxPath}/oauth/qq' id='qq_btn'>
       	<img src="${cdnbase}${base}/rs/images/qq_connect.png"/>
       </a>
+      <a href='#' id='u2f_auth_btn'>
+      	<span class='span-success'>U2F登录</span>
+      </a>
     </div>
   </div>
 <script src="${cdnbase}${base}/rs/js/socket.io-1.3.0.js"></script>
