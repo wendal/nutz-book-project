@@ -25,4 +25,11 @@
 		memoryStoreEvictionPolicy="LFU"
 		eternal="true">
 	</cache>
+	
+	<cache name="markdown" maxEntriesLocalHeap="1000"
+		maxEntriesLocalDisk="1000000" overflowToDisk="true" diskPersistent="true"
+		diskSpoolBufferSizeMB="20" timeToIdleSeconds="0" timeToLiveSeconds="0"
+		memoryStoreEvictionPolicy="LFU"
+		eternal="true">
+	</cache>
 </ehcache>

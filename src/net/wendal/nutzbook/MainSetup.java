@@ -19,6 +19,7 @@ import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
 import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
+import net.wendal.nutzbook.util.Markdowns;
 
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -175,9 +176,15 @@ public class MainSetup implements Setup {
 		// 启动消息总线,测试性质
 		MsgBus bus = ioc.get(MsgBus.class, "bus");
 		bus.event(SysLog.c("method", "sys", null, 1, "系统启动完成"));
+		
+		// 设置Markdown缓存
+		if (cacheManager.getCache("markdown") == null)
+			cacheManager.addCache("markdown");
+		Markdowns.cache = cacheManager.getCache("markdown");
 	}
 	
 	public void destroy(NutConfig conf) {
+		Markdowns.cache = null;
 		// 非mysql数据库,或多webapp共享mysql驱动的话,以下语句删掉
 		try {
 			Mirror.me(Class.forName("com.mysql.jdbc.AbandonedConnectionCleanupThread")).invoke(null, "shutdown");

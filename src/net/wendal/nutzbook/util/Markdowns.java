@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
 import org.nutz.lang.Stopwatch;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -24,6 +27,8 @@ import org.pegdown.ast.VerbatimNode;
 public class Markdowns {
 
 	protected static final Log log = Logs.get();
+	
+	public static Cache cache;
 	
 	public static HashSet<String> codeNames = new HashSet<String>();
 	static {
@@ -65,13 +70,21 @@ public class Markdowns {
 	public static String toHtml(String cnt, final String urlbase) {
 		if (Strings.isBlank(cnt) || cnt == null)
 			return "";
+		String key = urlbase == null ? "" : urlbase;
+		key += "," + cnt;
+		if (cache != null) {
+			Element ele = cache.get(key);
+			if (ele != null) {
+				return (String)ele.getObjectValue();
+			}
+		}
 		Stopwatch sw = Stopwatch.begin();
 		PegDownProcessor processor = new PegDownProcessor(Extensions.SUPPRESS_INLINE_HTML | Extensions.AUTOLINKS | Extensions.HARDWRAPS | Extensions.FENCED_CODE_BLOCKS, 5000);
 		try {
 			Map<String, VerbatimSerializer> plugins = new HashMap<String, VerbatimSerializer>();
 			plugins.put(VerbatimSerializer.DEFAULT, PrettyPrint);
             RootNode astRoot = processor.parseMarkdown(cnt.toCharArray());
-            return new ToHtmlSerializer(new LinkRenderer(){
+            String re = new ToHtmlSerializer(new LinkRenderer(){
             	public Rendering render(ExpImageNode node, String text) {
             		String url = node.url;
             		if (urlbase != null && node.url != null && node.url.startsWith("/")) {
@@ -81,6 +94,10 @@ public class Markdowns {
                     return StringUtils.isEmpty(node.title) ? rendering : rendering.withAttribute("title", encode(node.title));
             	}
             }, plugins).toHtml(astRoot);
+            if (cache != null) {
+            	cache.put(new Element(key, re));
+            }
+            return re;
         } catch(Exception e) {
             return "";
         } finally {

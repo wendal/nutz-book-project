@@ -2,7 +2,6 @@ package net.wendal.nutzbook.module.yvr;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
@@ -26,6 +25,7 @@ import org.nutz.http.Http;
 import org.nutz.http.Response;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.meta.Email;
@@ -94,16 +94,14 @@ public class YvrUserModule extends BaseModule {
 	@Ok("raw:jpg")
 	@At("/?/avatar")
 	public Object userAvatar(String username, HttpServletRequest req, HttpServletResponse _resp){
-		Object re = null;
+		byte[] buf = null;
 		Element ele = avatarCache.get(username);
 		if (ele == null) {
 			User user = dao.fetch(User.class, username);
 			if (user != null) {
 				dao.fetchLinks(user, "profile");
 				if (user.getProfile() != null && user.getProfile().getAvatar() != null && user.getProfile().getAvatar().length > 0) {
-					byte[] buf = user.getProfile().getAvatar();
-					avatarCache.put(new Element(username, buf));
-					re = buf;
+					buf = user.getProfile().getAvatar();
 				} 
 				else {
 					OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
@@ -113,13 +111,11 @@ public class YvrUserModule extends BaseModule {
 							if (resp != null && resp.isOK()) {
 								InputStream ins = resp.getStream();
 								ByteArrayOutputStream out = new ByteArrayOutputStream();
-								byte[] buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
+								buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
 								int len = 0;
 								while (-1 != (len = ins.read(buf)))
 									out.write(buf, 0, len);
 								buf = out.toByteArray();
-								avatarCache.put(new Element(username, buf));
-								re = buf;
 							}
 						} catch (IOException e) {
 							log.debug("load github avatar fail");
@@ -127,24 +123,22 @@ public class YvrUserModule extends BaseModule {
 					}
 				}
 			}
+			if (buf == null) {
+				buf = Files.readBytes(req.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
+			}
 		} else {
-			re = ele.getObjectValue();
+			buf = (byte[])ele.getObjectValue();
 		}
-		if (re == null) {
-			re = new File(req.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
+		if (ele == null) {
+			avatarCache.put(new Element(username, buf));
 		}
-		String etag = null;
-		if (re instanceof File) {
-			etag = "F"+((File)re).lastModified();
-		} else {
-			etag = Lang.md5(new ByteArrayInputStream((byte[])re));
-		}
+		String etag = Lang.md5(new ByteArrayInputStream(buf));
 		if (etag.equals(req.getHeader("If-None-Match"))) {
 			return HTTP_304;
 		}
 		_resp.setHeader("ETag", etag);
-		_resp.setHeader("Cache-Control", "max-age=10");
-		return re;
+		_resp.setHeader("Cache-Control", "max-age=86400");
+		return buf;
 	}
 	
 	/**
