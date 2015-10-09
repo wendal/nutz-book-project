@@ -18,7 +18,6 @@
   <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/logo/logo.css"/>
   
   <head itemscope itemtype="http://schema.org/WebSite">
-  <title itemprop='name'>Nutz社区</title>
   <link rel="canonical" href="https://nutz.cn/" itemprop="url">
 
   <!-- style -->
@@ -72,11 +71,11 @@ html { overflow-y: scroll; }
 <script src="${cdnbase}${base}/rs/js/u2f-api.js"></script>
 
   <% if (null != obj.topic!) { %>
-  <title>${obj.topic.title, escape} - Nutz社区</title>
+  <title itemprop='name'>${obj.topic.title, escape} - Nutz社区</title>
   <% } else if (null != title!) {%>
-  <title>${title, escape} - Nutz社区</title>
+  <title itemprop='name'>${title, escape} - Nutz社区</title>
   <% } else { %>
-  <title>Nutz社区</title>
+  <title itemprop='name'>Nutz社区</title>
   <% } %>
   <meta name="Keywords" content="Nutz,Nutz是什么,Nutz下载,Nutz社区"/>
   <% if (null != obj.topic!) { %>
