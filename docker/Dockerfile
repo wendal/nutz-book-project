@@ -30,7 +30,7 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && cd /tmp2 && ls -l  && cd nutz-book-project-master \
   && mvn clean package \
   && mkdir -p /usr/local/tomcat/webapps/ROOT \
-  && cp -r target/nutzbook-1.3.2/* /usr/local/tomcat/webapps/ROOT/ \
+  && cp -r target/nutzbook-2.1.0/* /usr/local/tomcat/webapps/ROOT/ \
   && find /usr/local/tomcat/webapps/ROOT/ \
   && cd / \
   && rm -fr /tmp2 usr/share/maven /usr/bin/mvn ~/.m2
