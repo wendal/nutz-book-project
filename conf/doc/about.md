@@ -18,8 +18,17 @@ iOS客户端尚未发布到APP Store
 
 ### 友情链接
 
-* [Beetl 最好的Java模板引擎](http://ibeetl.com/)
-* [查找网](http://www.chazhao.com)
 * [Nutz官网](http://www.nutzam.com)
 * [NutzBook Nutz入门指南](http://nutzbook.wendal.net)
+* [Beetl 最好的Java模板引擎](http://ibeetl.com/)
+* [查找网](http://www.chazhao.com)
 * [七牛云存储 移动时代的云存储服务商](http://www.qiniu.com/)
+* [一米阳光(大鲨鱼的个人博客)](http://www.wizzer.cn/)
+
+### 有爱的公众号
+
+* zozoh(nutz的发起者)的"雨打沙滩点点坑"
+
+![雨打沙滩点点坑](/rs/images/zozoh_mp.jpg)
+
+

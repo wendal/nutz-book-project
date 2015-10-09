@@ -20,7 +20,7 @@ http://nutzbook.wendal.net/jars/
 * Shiro集成及权限管理
 * Ehcache及DaoCache集成
 * redis 集成(配置及拦截器应用)
-* sockerio 集成及demo聊天工具
+* socketio 集成及demo聊天工具
 * jetbrick模板集成
 * beetl模板集成及应用
 * 二维码生成及跨屏登陆
@@ -29,14 +29,15 @@ http://nutzbook.wendal.net/jars/
 * 集成极光推送(jpush)
 * snakerflow工作流集成(未全部完成)
 * 自定义表单(未全部完成)
+* U2F绑定与登陆
 
 ## 在线演示地址
 
-https://nutz.cn/user/login
+论坛系统(即Nutz社区的官网) https://nutz.cn
 
-若不可访问,请报issue
+管理后台  https://nutz.cn/home
 
-演示机配置: 阿里云, 1G RAM
+配置: 阿里云, 2G RAM, 缓存, https, 七牛云存储CDN, jpush及socketio均启用
 
 ## war包下载使用说明
 
