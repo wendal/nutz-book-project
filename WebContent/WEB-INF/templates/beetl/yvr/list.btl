@@ -16,7 +16,7 @@
   </span>
 
   <% if (null != topic.lastComment!) {%>
-  <a data-pjax class='last_time pull-right' href="${ctxPath}/yvr/t/${topic.id}#${topic.lastComment.id}">
+  <a class='last_time pull-right' href="${ctxPath}/yvr/t/${topic.id}#${topic.lastComment.id}">
     <img class="user_small_avatar" src="${cdnbase}${ctxPath}/yvr/u/${topic.lastComment.author.loginname}/avatar">
     <span class="last_active_time">${topic.lastComment.createAt}</span>
   </a>
@@ -31,7 +31,7 @@
 		<%
 		layout("_top_good.btl",{"topic":topic}){};
 		%>
-    <a data-pjax class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title, escape}'>
+    <a class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title, escape}'>
       ${topic.title}
     </a>
   </div>

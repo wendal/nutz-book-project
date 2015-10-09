@@ -1,4 +1,4 @@
 <li>
-  <div><a data-pjax class='dark topic_title' href="${ctxPath}/yvr/t/${topic.id}" title="${topic.title, escape}">${topic.title, escape}</a>
+  <div><a class='dark topic_title' href="${ctxPath}/yvr/t/${topic.id}" title="${topic.title, escape}">${topic.title, escape}</a>
   </div>
 </li>
