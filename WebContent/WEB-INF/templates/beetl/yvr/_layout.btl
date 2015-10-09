@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<head itemscope itemtype="http://schema.org/WebSite">
   <%DIRECTIVE DYNAMIC;%>
   <!-- meta -->
   <meta charset="utf-8"/>
@@ -17,7 +17,6 @@
   <link rel="icon" href="${cdnbase}${base}/rs/logo.png" type="image/x-icon"/>
   <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/logo/logo.css"/>
   
-  <head itemscope itemtype="http://schema.org/WebSite">
   <link rel="canonical" href="https://nutz.cn/" itemprop="url">
 
   <!-- style -->
