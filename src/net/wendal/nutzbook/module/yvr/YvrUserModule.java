@@ -229,6 +229,19 @@ public class YvrUserModule extends BaseModule {
 		return ajaxOk("发送邮件失败");
 	}
 	
+	@At("/updateSign")
+	@Ok("json")
+	public Object updateUserDt(@Attr(scope = Scope.SESSION, value = "me") int userId,@Param("update_value")String original_value,@Param("update_value")String update_value){
+		UserProfile profile = fetch_userprofile(userId);
+		if (profile != null) {
+			profile.setDescription(update_value);
+			dao.update(profile);
+		}else{
+			return original_value;
+		}
+		return profile.getDescription();
+	}
+	
 	@At("/oauth/github")
 	@Ok("->:/oauth/github")
 	public void oauth(String type, HttpServletRequest req, HttpSession session){
