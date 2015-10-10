@@ -229,9 +229,7 @@ $(function(){
         <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
         <div class="sep10"></div>
         <li>
-        <li>
         <a href="http://any.nutz.cn/NutzCN.apk">客户端(当前仅Android)</a>
-        </li>
         </li>
       </ol>
     </div>

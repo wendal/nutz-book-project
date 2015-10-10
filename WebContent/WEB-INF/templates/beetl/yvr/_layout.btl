@@ -4,28 +4,29 @@
   <%DIRECTIVE DYNAMIC;%>
   <!-- meta -->
   <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="referrer" content="always">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="referrer" content="always"/>
   <meta property="qc:admins" content="345615513542636" />
-<link rel="dns-prefetch" href="//hm.baidu.com">
-<link rel="dns-prefetch" href="//s95.cnzz.com">
-<link rel="dns-prefetch" href="${cdnbase}">
-
+<link rel="dns-prefetch" href="//hm.baidu.com"/>
+<link rel="dns-prefetch" href="//s95.cnzz.com"/>
+<%if (cdnbase != null && cdnbase != ""){%>
+<link rel="dns-prefetch" href="${cdnbase}"/>
+<%}%>
   <link title="RSS" type="application/rss+xml" rel="alternate" href="${ctxPath}/yvr/rss.xml"/>
 
   <link rel="icon" href="${cdnbase}${base}/rs/logo.png" type="image/x-icon"/>
   <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/logo/logo.css"/>
   
-  <link rel="canonical" href="https://nutz.cn/" itemprop="url">
+  <link rel="canonical" href="https://nutz.cn/" itemprop="url"/>
 
   <!-- style -->
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/bootstrap/css/bootstrap.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/common.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/style.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/responsive.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/jquery.atwho.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/layer2/layer/skin/layer.css"></link>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/bootstrap/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/common.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/style.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/responsive.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/jquery.atwho.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/layer2/layer/skin/layer.css"/>
 <style>
 html { overflow-y: scroll; }
 @font-face {
@@ -39,9 +40,9 @@ html { overflow-y: scroll; }
 	font-style: normal;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/editor/editor.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/webuploader/webuploader.css"></link>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/code-prettify/prettify.css"></link>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/editor/editor.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/webuploader/webuploader.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/code-prettify/prettify.css"/>
 <style>
 @font-face {
   font-family: 'FontAwesome';
@@ -51,7 +52,7 @@ html { overflow-y: scroll; }
   font-style: normal;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/font-awesome/css/font-awesome.css"></link>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/font-awesome/css/font-awesome.css"/>
 
   <!-- scripts -->
 <script src="${cdnbase}${base}/rs/libs/jquery-2.1.4.min.js"></script>
@@ -92,8 +93,8 @@ html { overflow-y: scroll; }
     }
 </script>
   
-  <meta content="_csrf" name="csrf-param">
-  <meta content="${obj._csrf!}" name="csrf-token">
+  <meta content="_csrf" name="csrf-param"/>
+  <meta content="${obj._csrf!}" name="csrf-token"/>
 </head>
 <body>
 <!-- navbar -->
@@ -160,7 +161,7 @@ html { overflow-y: scroll; }
       ,
       <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
       ,
-      <a class='dark' href='http://www.qiniu.com/'><img src="${cdnbase}${base}/rs/images/qiniu-transparent.png"></img></a>
+      <a class='dark' href='http://www.qiniu.com/'><img src="${cdnbase}${base}/rs/images/qiniu-transparent.png"/></a>
       | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
       |
@@ -188,8 +189,6 @@ html { overflow-y: scroll; }
 	<a href="${ctxPath}/yvr/u/oauth/github">推荐通过github登陆</a>
 	</form>
 </div>
-</form>
-</div>
 
 <div id="signin_div" style="display: none">
 	<form id='signin_form' style="padding: 30px 30px 30px 30px">
@@ -211,8 +210,6 @@ html { overflow-y: scroll; }
 	<button type="button" onclick="do_signin();" class="btn btn-primary">登陆</button>
 	<a href="${ctxPath}/yvr/u/oauth/github">推荐通过github登陆</a>
 	</form>
-</div>
-</form>
 </div>
 
 <script>
