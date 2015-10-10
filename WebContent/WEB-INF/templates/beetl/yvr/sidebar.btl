@@ -79,8 +79,8 @@ $(function(){
 	if (getChromeVersion() >= 41) {
 		console.log("this chrome support u2f");
 	} else {
-		$("#u2f_reg_btn").hidden();
-		$("#u2f_auth_btn").hidden();
+		$("#u2f_reg_btn").hide();
+		$("#u2f_auth_btn").hide();
 		return;
 	}
 	$("#u2f_reg_btn").click(function(){
