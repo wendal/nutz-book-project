@@ -61,12 +61,10 @@ public class NutDaoRunner implements DaoRunner {
             // 开始一个连接
             try {
                 conn = dataSource.getConnection();
-                // 多条语句运行，将自动提交设为 false
                 // 开始循环运行
                 callback.invoke(conn);
                 // 完成提交
-                if (!conn.getAutoCommit())
-                    conn.commit();
+                conn.commit();
             }
             // 异常回滚
             catch (Exception e) {

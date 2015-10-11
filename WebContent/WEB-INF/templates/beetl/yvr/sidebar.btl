@@ -79,8 +79,8 @@ $(function(){
 	if (getChromeVersion() >= 41) {
 		console.log("this chrome support u2f");
 	} else {
-		$("#u2f_reg_btn").hidden();
-		$("#u2f_auth_btn").hidden();
+		$("#u2f_reg_btn").hide();
+		$("#u2f_auth_btn").hide();
 		return;
 	}
 	$("#u2f_reg_btn").click(function(){
@@ -229,9 +229,7 @@ $(function(){
         <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
         <div class="sep10"></div>
         <li>
-        <li>
         <a href="http://any.nutz.cn/NutzCN.apk">客户端(当前仅Android)</a>
-        </li>
         </li>
       </ol>
     </div>

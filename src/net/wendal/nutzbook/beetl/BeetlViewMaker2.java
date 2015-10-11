@@ -16,8 +16,12 @@ public class BeetlViewMaker2 extends BeetlViewMaker {
 		super();
 	}
 
-	public void init() throws IOException {
-		super.init();
+	public void init() {
+		try {
+			super.init();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		// 添加全局变量
 		Map<String, Object> share = groupTemplate.getSharedVars();
 		if (share == null) {

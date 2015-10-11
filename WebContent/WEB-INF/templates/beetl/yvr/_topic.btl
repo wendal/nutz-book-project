@@ -48,7 +48,7 @@ layout("_layout.btl",{}){
     </div>
     <div itemscope itemtype="http://schema.org/NewsArticle">
     <meta itemprop="datePublished" content="${obj.topic.createTime, ISO_8601}"/>
-    <div style="display: none;"><img itemprop="image" src="${ctxPath}/rs/logo/logo.png" alt="NutzCN Logo"/></div>
+    <div style="display: none;"><img itemprop="image" src="${cdnbase}${ctxPath}/rs/logo/logo.png" alt="NutzCN Logo"/></div>
     <div class='header topic_header'>
       <span class="topic_full_title" itemprop="headline">
         <%

@@ -229,13 +229,14 @@ public class YvrUserModule extends BaseModule {
 		return ajaxOk("发送邮件失败");
 	}
 	
-	@At("/updateSign")
+	@At("/description")
 	@Ok("json")
+	@POST
 	public Object updateUserDt(@Attr(scope = Scope.SESSION, value = "me") int userId,@Param("update_value")String original_value,@Param("update_value")String update_value){
 		UserProfile profile = fetch_userprofile(userId);
 		if (profile != null) {
 			profile.setDescription(update_value);
-			dao.update(profile);
+			dao.update(profile, "description");
 		}else{
 			return original_value;
 		}
