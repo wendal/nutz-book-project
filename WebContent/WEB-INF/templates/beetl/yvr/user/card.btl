@@ -20,10 +20,12 @@
         <%}%>
 
     </span>
+    <% if (null != obj.current_user! && obj.current_user.userId == user.userId) {%>
     <div class="space clearfix"></div>
     <a href='#' id='u2f_reg_btn'>
       	<span class='span-success'>U2F绑定</span>
     </a>
+    <%}%>
   </div>
 </div>
 <% if (null != obj.current_user! && obj.current_user.userId == user.userId) {%>
