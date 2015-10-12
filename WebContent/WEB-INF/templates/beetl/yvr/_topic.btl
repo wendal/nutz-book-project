@@ -511,7 +511,7 @@ $(function(){
         });
 	} else {
 		$("#watch_btn").show();
-		log.console("not watch");
+		console.log("not watch");
 	}
 });
 function watch_me() {

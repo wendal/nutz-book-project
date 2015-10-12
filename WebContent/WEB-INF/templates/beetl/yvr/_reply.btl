@@ -45,7 +45,7 @@
     <div class='reply2_area'>
     <% if (null != obj.current_user!) { %>
       <form class='reply2_form' action='#' method='post'>
-        <input type='hidden' name='_csrf' value='${obj.csrf!}'/>
+        <input type='hidden' name='_csrf' value='${obj._csrf!}'/>
         <input type='hidden' name='replyTo' value='${reply.id}'/>
 
         <div class='markdown_editor in_editor'>
