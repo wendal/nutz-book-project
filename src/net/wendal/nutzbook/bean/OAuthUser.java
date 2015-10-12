@@ -80,5 +80,26 @@ public class OAuthUser extends BasePojo {
 	public void setAvatar_url(String avatar_url) {
 		this.avatar_url = avatar_url;
 	}
-	
+//--SerializationBuilder
+private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+    java.io.DataOutputStream dos = new java.io.DataOutputStream(out);
+    dos.writeUTF(providerId==null?"":providerId);
+    dos.writeUTF(validatedId==null?"":validatedId);
+    dos.writeInt(userId);
+    dos.writeUTF(avatar_url==null?"":avatar_url);
+    dos.writeLong(createTime == null ? 0 : createTime.getTime());
+    dos.writeLong(updateTime == null ? 0 : updateTime.getTime());
+
+}
+private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException{
+    java.io.DataInputStream dis = new java.io.DataInputStream(in);
+    providerId = dis.readUTF();
+    validatedId = dis.readUTF();
+    userId = dis.readInt();
+    avatar_url = dis.readUTF();
+    createTime = new java.util.Date(dis.readLong());
+    updateTime = new java.util.Date(dis.readLong());
+
+}
+//SerializationBuilder--
 }
