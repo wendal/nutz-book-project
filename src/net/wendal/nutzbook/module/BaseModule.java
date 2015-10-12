@@ -44,9 +44,9 @@ public abstract class BaseModule implements RedisKey {
 		}
 		List<?> roles = dao.query(klass, cnd, pager);
 		dao.fetchLinks(roles, null);
-	        if (pager != null ) {
-	            pager.setRecordCount(dao.count(klass, cnd));
-	        }
+	    if (pager != null ) {
+	    	pager.setRecordCount(dao.count(klass, cnd));
+	    }
 		return new QueryResult(roles, pager);
 	}
 	
