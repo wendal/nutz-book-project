@@ -64,7 +64,8 @@ public class NutDaoRunner implements DaoRunner {
                 // 开始循环运行
                 callback.invoke(conn);
                 // 完成提交
-                conn.commit();
+                if (!conn.getAutoCommit())
+                	conn.commit();
             }
             // 异常回滚
             catch (Exception e) {

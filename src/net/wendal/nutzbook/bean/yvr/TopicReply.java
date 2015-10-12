@@ -106,4 +106,28 @@ public class TopicReply extends BasePojo {
 	public void setReplyTo(String replyTo) {
 		this.replyTo = replyTo;
 	}
+//--SerializationBuilder
+private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+    java.io.DataOutputStream dos = new java.io.DataOutputStream(out);
+    dos.writeUTF(id==null?"":id);
+    dos.writeUTF(topicId==null?"":topicId);
+    dos.writeUTF(replyTo==null?"":replyTo);
+    dos.writeInt(userId);
+    dos.writeUTF(content==null?"":content);
+    dos.writeLong(createTime == null ? 0 : createTime.getTime());
+    dos.writeLong(updateTime == null ? 0 : updateTime.getTime());
+
+}
+private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException{
+    java.io.DataInputStream dis = new java.io.DataInputStream(in);
+    id = dis.readUTF();
+    topicId = dis.readUTF();
+    replyTo = dis.readUTF();
+    userId = dis.readInt();
+    content = dis.readUTF();
+    createTime = new java.util.Date(dis.readLong());
+    updateTime = new java.util.Date(dis.readLong());
+
+}
+//SerializationBuilder--
 }
