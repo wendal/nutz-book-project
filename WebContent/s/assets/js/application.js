@@ -6,7 +6,7 @@ $(function () {
 });
 
 function navbar() {
-  $('<div class="navbar-inner"><div class="container"><a class="brand" href="./">短点!</a></div></div>').appendTo($('#navbar'));
+  $('<div class="navbar-inner"><div class="container"><a class="brand" href="/s/">短点!</a></div></div>').appendTo($('#navbar'));
 }
 
 function footer() {
@@ -20,12 +20,7 @@ function footer() {
   var $secondUlFooterLinks = $('<ul class="footer-links"></ul>');
   $secondUlFooterLinks
   .append($('<li><a target="_blank" href="http://nutz.cn/yvr/list">返回论坛</a></li>'))
-  .append($('<li><a target="_blank" href="http://nutzam.com">Nutz 官网地址</a></li>'))
-    .append($('<li><a target="_blank" href="https://github.com/nutzam/nutz">Nutz Github</a></li>'))
-    .append($('<li><a target="_blank" href="http://code.google.com/p/nutz">Nutz GoogleCode 首页</a></li>'))
-    .append($('<li><a target="_blank" href="https://github.com/wendal/shortit">本站源码地址</a></li>'))
-    .append($('<li><a target="_blank" href="http://nutz.cn/LD">Chrome插件</a></li>'))
-    .append($('<li><a target="_blank" href="http://nutz.cn/index.jsp">收藏夹插件</a></li>'));
+  .append($('<li><a target="_blank" href="http://nutzam.com">Nutz 官网地址</a></li>'));
 
   $unstyledUl
     .append($('<li class="footer-links">Coded and designed by <a target="_blank" href="https://github.com/nutzam?tab=members">Nutz Production Committee</a> &copy; 2012</li>'))
