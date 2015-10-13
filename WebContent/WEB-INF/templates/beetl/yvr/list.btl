@@ -31,7 +31,7 @@
 		<%
 		layout("_top_good.btl",{"topic":topic}){};
 		%>
-    <a class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title, escape}'>
+    <a class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title}'>
       ${topic.title}
     </a>
   </div>

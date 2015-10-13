@@ -1,4 +1,3 @@
-
 <%DIRECTIVE DYNAMIC;%>
 <%
 layout("_layout.btl",{}){
@@ -54,7 +53,7 @@ layout("_layout.btl",{}){
         <%
 		layout("_top_good.btl",{"topic":obj.topic}){}
 		%>
-		${obj.topic.title, escape}
+		${obj.topic.title}
       </span>
       <div class="changes">
         <span>
