@@ -1,3 +1,7 @@
 User-agent: *
-Allow: /
 Disallow: /s/
+Disallow: /yvr/api/
+Disallow: /u2f/
+Disallow: /up/
+Disallow: /apidocs/
+Allow: /

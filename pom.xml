@@ -163,11 +163,6 @@
 			<version>2.5.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.zxing</groupId>
-			<artifactId>javase</artifactId>
-			<version>3.2.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.brickred</groupId>
 			<artifactId>socialauth</artifactId>
 			<version>4.9</version>
@@ -331,6 +326,11 @@
 			<groupId>com.yubico</groupId>
 			<artifactId>u2flib-server-core</artifactId>
 			<version>0.15.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-qrcode</artifactId>
+			<version>1.b.53</version>
 		</dependency>
 	</dependencies>
 	<version>2.1.0</version>
