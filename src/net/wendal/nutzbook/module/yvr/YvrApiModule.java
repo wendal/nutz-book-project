@@ -429,7 +429,7 @@ public class YvrApiModule extends BaseModule {
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
 		tp.put("tab", topic.getType().toString());
 		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
-		tp.put("title", topic.getTitle());
+		tp.put("title", topic.getTitle().replace('&', ' ').replace('\'', ' '));//需要干掉特殊字符
 		if (topic.getLastComment() != null)
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));
 		tp.put("good", topic.isGood());
