@@ -37,6 +37,7 @@ import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
@@ -168,7 +169,7 @@ public class YvrModule extends BaseModule {
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.btl")
 	@Aop("redis")
-	public Object topic(String id, HttpSession session, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object topic(String id, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
@@ -188,10 +189,12 @@ public class YvrModule extends BaseModule {
 		NutMap re = new NutMap();
 		re.put("topic", topic);
 
-		String csrf = Lang.md5(R.UU16());
-		session.setAttribute("_csrf", csrf);
-		re.put("_csrf", csrf);
-		re.put("current_user", fetch_userprofile(userId));
+		if (userId > 0) {
+			String csrf = Lang.md5(R.UU16());
+			Mvcs.getHttpSession().setAttribute("_csrf", csrf);
+			re.put("_csrf", csrf);
+			re.put("current_user", fetch_userprofile(userId));
+		}
 		return re;
 	}
 
