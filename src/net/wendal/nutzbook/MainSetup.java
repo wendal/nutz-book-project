@@ -11,6 +11,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.FieldFilter;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
+import org.nutz.integration.zbus.ZBusServiceFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Mirror;
@@ -24,6 +25,7 @@ import org.quartz.Scheduler;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.core.ServiceContext;
 import org.zbus.mq.server.MqServer;
+import org.zbus.rpc.RpcProcessor;
 import org.zbus.rpc.mq.Service;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
@@ -79,6 +81,8 @@ public class MainSetup implements Setup {
 				ioc.get(MqServer.class);
 			}
 			if (conf.getBoolean("zbus.rpc.service.enable", true)) {
+				RpcProcessor rpcProcessor = ioc.get(RpcProcessor.class);
+				ZBusServiceFactory.build(rpcProcessor, ioc, getClass().getPackage().getName());
 				ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
 			}
 		}

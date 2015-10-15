@@ -3,8 +3,8 @@ var ioc = {
 		rpcProcessor:{
 			type: "org.zbus.rpc.RpcProcessor",
 			args : [
-			        // 需要导出的对象列表
-			        {refer:"sayHelloWorldImpl"}
+			        // 需要导出的对象列表, 通过调用ZBusServiceFactory更方便
+			        {refer:"emailService"}
 			        ]
 		},
 		serviceConfig : {

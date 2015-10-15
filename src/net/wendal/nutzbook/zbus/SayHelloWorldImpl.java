@@ -1,7 +1,9 @@
 package net.wendal.nutzbook.zbus;
 
+import org.nutz.integration.zbus.ZBusService;
 import org.nutz.ioc.loader.annotation.IocBean;
 
+@ZBusService
 @IocBean
 public class SayHelloWorldImpl implements SayHelloWorld{
 
