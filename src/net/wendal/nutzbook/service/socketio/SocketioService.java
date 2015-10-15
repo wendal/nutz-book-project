@@ -61,6 +61,9 @@ public class SocketioService implements Closeable {
 	    // 洋葱验证
 	    srv.addNamespace("/secken").addListeners(ioc.get(SeckenAuthService.class));
 	    
+	    // 帖子详情页的自动刷新
+	    srv.addNamespace("/twatch").addListeners(ioc.get(TopicWatcheService.class));
+	    
 	    srv.start();
 	}
 	

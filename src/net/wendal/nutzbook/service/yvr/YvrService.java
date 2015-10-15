@@ -20,6 +20,7 @@ import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.bean.yvr.TopicWatch;
 import net.wendal.nutzbook.util.RedisKey;
 
 import org.nutz.dao.Cnd;
@@ -172,8 +173,13 @@ public class YvrService implements RedisKey {
 		jedis().zincrby(RKEY_REPLY_COUNT, 1, topicId);
 		jedis().zincrby(RKEY_USER_SCORE, 10, ""+userId);
 		
+
+		// 通知页面刷新
+		bus.event(new TopicWatch(topicId));
+		
 		bus.add(new Callable<Object>() {
 			public Object call() throws Exception {
+				
 				String replyAuthorName = dao.fetch(User.class, userId).getName();
 				// 通知原本的作者
 				if (topic.getUserId() != userId) {

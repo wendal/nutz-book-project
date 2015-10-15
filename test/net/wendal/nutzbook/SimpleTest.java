@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.demo.APIResult;
 import net.wendal.nutzbook.util.Markdowns;
 
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nutz.json.Json;
 import org.nutz.lang.util.NutMap;
 
 public class SimpleTest extends Assert {
@@ -62,4 +64,13 @@ public class SimpleTest extends Assert {
 //		String url=new String(Base64.decode("aHR0cDovL3Bob3RvLnNjb2wuY29tLmNuL3Nqc2MvMjAxNTA5LzU0MDE2NzI3Lmh0bWwg"));
 //        System.out.println("Decoder url: ["+ url + "]");
 //	}
+	
+	@Test
+	public void test_json_output() {
+		APIResult re = new APIResult();
+		re.setCode(200);
+		re.setMessage("null");
+		re.setResult(new NutMap());
+		System.out.println(Json.toJson(re));
+	}
 }

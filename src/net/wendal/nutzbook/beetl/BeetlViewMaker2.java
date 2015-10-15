@@ -60,7 +60,7 @@ public class BeetlViewMaker2 extends BeetlViewMaker {
 				Stopwatch sw = Stopwatch.begin();
 				super.render(req, resp, obj);
 				sw.stop();
-				log.debug("render time=" + sw.getDuration());
+				log.debugf("render time=%dms", sw.getDuration());
 			}
 		};
         return null;
