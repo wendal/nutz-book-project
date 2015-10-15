@@ -1,25 +1,8 @@
 package net.wendal.nutzbook;
 
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.Log4JLoggerFactory;
-
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
-
-import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.SysLog;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.service.AuthorityService;
-import net.wendal.nutzbook.service.RedisService;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.socketio.SocketioService;
-import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
-import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
-import net.wendal.nutzbook.util.Markdowns;
 
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -40,11 +23,28 @@ import org.nutz.plugins.zbus.MsgBus;
 import org.quartz.Scheduler;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.core.ServiceContext;
-
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
+import org.zbus.mq.server.MqServer;
+import org.zbus.rpc.mq.Service;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
+
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Log4JLoggerFactory;
+import net.sf.ehcache.CacheManager;
+import net.wendal.nutzbook.bean.SysLog;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.service.AuthorityService;
+import net.wendal.nutzbook.service.RedisService;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.socketio.SocketioService;
+import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
+import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
+import net.wendal.nutzbook.util.Markdowns;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -72,6 +72,17 @@ public class MainSetup implements Setup {
 		
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
+		
+		// 启动zbus
+		if (conf.getBoolean("zbus.enable", true)) {
+			if (conf.getBoolean("zbus.server.embed.enable", true)) {
+				ioc.get(MqServer.class);
+			}
+			if (conf.getBoolean("zbus.rpc.service.enable", true)) {
+				ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
+			}
+		}
+		
 		
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
@@ -181,6 +192,11 @@ public class MainSetup implements Setup {
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
+		
+		/**
+		SayHelloWorld sayHi = ioc.get(SayHelloWorld.class, "sayHi");
+		log.info("hi from zbus : " + sayHi.hi("wendal"));
+		 */
 	}
 	
 	public void destroy(NutConfig conf) {

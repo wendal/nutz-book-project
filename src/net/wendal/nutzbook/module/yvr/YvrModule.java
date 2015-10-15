@@ -243,7 +243,7 @@ public class YvrModule extends BaseModule {
 
 	@At("/t/?/reply/?/up")
 	@Ok("json")
-	public Object replyUp(String _, String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object replyUp(String topicId, String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		return yvrService.replyUp(replyId, userId);
 	}
 
