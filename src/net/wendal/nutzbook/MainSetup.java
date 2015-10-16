@@ -73,18 +73,20 @@ public class MainSetup implements Setup {
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
 		
-		// 启动zbus
-		if (conf.getBoolean("zbus.enable", true)) {
-			if (conf.getBoolean("zbus.server.embed.enable", true)) {
-				ioc.get(MqServer.class);
-			}
-			if (conf.getBoolean("zbus.rpc.service.enable", true)) {
-				RpcProcessor rpcProcessor = ioc.get(RpcProcessor.class);
-				ZBusFactory.buildServices(rpcProcessor, ioc, getClass().getPackage().getName());
-				ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
-			}
+		// 启动zbus######################
+		// 启动内置zbus服务器
+		if (conf.getBoolean("zbus.server.embed.enable", true)) {
+			ioc.get(MqServer.class);
 		}
-		
+		// 启动RPC服务端
+		if (conf.getBoolean("zbus.rpc.service.enable", true)) {
+			RpcProcessor rpcProcessor = ioc.get(RpcProcessor.class);
+			ZBusFactory.buildServices(rpcProcessor, ioc, getClass().getPackage().getName());
+			ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
+		}
+		// 启动 生产者/消费者
+		ioc.get(ZBusFactory.class, "zbus");
+		// END zbus ######################
 		
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
