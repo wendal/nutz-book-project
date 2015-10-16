@@ -8,7 +8,10 @@ var ioc = {
 		},
 		broker : {
 			type : "org.zbus.broker.SingleBroker",
-			args : [{refer:"brokerConfig"}]
+			args : [{refer:"brokerConfig"}],
+			events : {
+				depose : "close"
+			}
 		},
 		zbus : {
 			type: "org.nutz.integration.zbus.ZBusFactory",
