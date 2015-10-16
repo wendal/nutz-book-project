@@ -5,5 +5,21 @@ var ioc = {
 			fields:{
 				"serverAddress" : {java:"$conf.get('zbus.serverAddr', '127.0.0.1:15555')"}
 			}
+		},
+		broker : {
+			type : "org.zbus.broker.SingleBroker",
+			args : [{refer:"brokerConfig"}]
+		},
+		zbus : {
+			type: "org.nutz.integration.zbus.ZBusFactory",
+			fields : {
+				pkgs : ["net.wendal.nutzbook"],
+				ioc : {refer:"$ioc"},
+				broker : {refer:"broker"}
+			},
+			events : {
+				create : "init",
+				depose : "close"
+			}
 		}
 };

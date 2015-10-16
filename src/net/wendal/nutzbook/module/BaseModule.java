@@ -3,12 +3,6 @@ package net.wendal.nutzbook.module;
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.service.EmailService;
-import net.wendal.nutzbook.service.yvr.YvrService;
-import net.wendal.nutzbook.util.RedisKey;
-
 import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
 import org.nutz.dao.QueryResult;
@@ -18,7 +12,12 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.view.HttpStatusView;
-import org.nutz.plugins.zbus.MsgBus;
+
+import net.sf.ehcache.CacheManager;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.service.EmailService;
+import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.util.RedisKey;
 
 public abstract class BaseModule implements RedisKey {
 	
@@ -31,9 +30,6 @@ public abstract class BaseModule implements RedisKey {
 	
 	@Inject("java:$conf.get('topic_seo.urlbase')")
 	protected String urlbase;
-	
-	@Inject
-	protected MsgBus bus;
 	
 	@Inject
 	protected YvrService yvrService;

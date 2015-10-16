@@ -1,6 +1,6 @@
 package net.wendal.nutzbook.zbus;
 
-import org.nutz.integration.zbus.ZBusService;
+import org.nutz.integration.zbus.annotation.ZBusService;
 import org.nutz.ioc.loader.annotation.IocBean;
 
 @ZBusService

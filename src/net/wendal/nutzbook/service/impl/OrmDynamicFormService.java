@@ -48,7 +48,7 @@ public class OrmDynamicFormService extends AbstactDynamicFormService {
 		if (form != null) {
 			form = dao().fetchLinks(form, null);
 			form.setName(name);
-			return dao().insertWith(form, null);
+			return dao().insertWith(form, "data");
 		}
 		return null;
 	}

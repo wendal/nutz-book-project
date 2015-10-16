@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.service.syslog;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -8,19 +9,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import net.wendal.nutzbook.bean.SysLog;
-
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.zbus.annotation.ZBusConsumer;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.plugins.zbus.MsgBus;
-import org.nutz.plugins.zbus.MsgEventHandler;
+import org.zbus.net.core.Session;
+import org.zbus.net.http.Message;
+import org.zbus.net.http.Message.MessageHandler;
 
+import net.wendal.nutzbook.bean.SysLog;
+
+@ZBusConsumer(mq="syslog")
 @IocBean(create="init", depose="close")
-public class SysLogService implements Runnable, MsgEventHandler<SysLog> {
+public class SysLogService implements Runnable, MessageHandler {
 	
 	private static final Log log = Logs.get();
 	
@@ -95,9 +100,9 @@ public class SysLogService implements Runnable, MsgEventHandler<SysLog> {
 			es.awaitTermination(5, TimeUnit.SECONDS);
 		}
 	}
-
-	public Object call(MsgBus bus, SysLog sysLog) throws Exception {
+	
+	public void handle(Message msg, Session sess) throws IOException {
+		SysLog sysLog = Json.fromJson(SysLog.class, msg.getBodyString());
 		this.sync(sysLog);
-		return null;
 	}
 }

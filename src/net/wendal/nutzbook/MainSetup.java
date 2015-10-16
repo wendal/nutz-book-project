@@ -11,7 +11,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.FieldFilter;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
-import org.nutz.integration.zbus.ZBusServiceFactory;
+import org.nutz.integration.zbus.ZBusFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Mirror;
@@ -20,7 +20,6 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
-import org.nutz.plugins.zbus.MsgBus;
 import org.quartz.Scheduler;
 import org.snaker.engine.SnakerEngine;
 import org.snaker.engine.core.ServiceContext;
@@ -33,7 +32,6 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -82,7 +80,7 @@ public class MainSetup implements Setup {
 			}
 			if (conf.getBoolean("zbus.rpc.service.enable", true)) {
 				RpcProcessor rpcProcessor = ioc.get(RpcProcessor.class);
-				ZBusServiceFactory.build(rpcProcessor, ioc, getClass().getPackage().getName());
+				ZBusFactory.buildServices(rpcProcessor, ioc, getClass().getPackage().getName());
 				ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
 			}
 		}
@@ -187,11 +185,7 @@ public class MainSetup implements Setup {
 		System.out.println(map.size());
 		System.out.println(map.keySet());
 		System.out.println(map);
-		
-		// 启动消息总线,测试性质
-		MsgBus bus = ioc.get(MsgBus.class, "bus");
-		bus.event(SysLog.c("method", "sys", null, 1, "系统启动完成"));
-		
+
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");

@@ -3,6 +3,7 @@ package org.nutz.integration.zbus;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nutz.integration.zbus.annotation.ZBusInvoker;
 import org.nutz.ioc.IocLoader;
 import org.nutz.ioc.IocLoading;
 import org.nutz.ioc.ObjectLoadException;
@@ -61,7 +62,6 @@ public class ZBusIocLoader implements IocLoader {
 		return loading.map2iobj(_map);
 	}
 
-	@Override
 	public boolean has(String name) {
 		return map.containsKey(name);
 	}

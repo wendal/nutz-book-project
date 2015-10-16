@@ -1,9 +1,5 @@
 var ioc = {
 		// 客户端配置--------------------------
-		broker : {
-			type : "org.zbus.broker.SingleBroker",
-			args : [{refer:"brokerConfig"}]
-		},
 		mqInvoker :{
 			type : "org.zbus.rpc.mq.MqInvoker",
 			args : [
