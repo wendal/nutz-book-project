@@ -491,9 +491,11 @@ var QueryString = function () {
     return query_string;
 }();
 $(function(){
-	console.log(QueryString);
+	if (console)
+			console.log(QueryString);
 	if (QueryString.watch) {
-		console.log("watch topic");
+		if (console)
+			console.log("watch topic");
 		var twatch = io.connect('//'+window.location.hostname+ ':81/twatch', {
         	'reconnection delay' : 2000,
         	'force new connection' : true
@@ -510,7 +512,8 @@ $(function(){
         });
 	} else {
 		$("#watch_btn").show();
-		console.log("not watch");
+		if (console)
+			console.log("not watch");
 	}
 });
 function watch_me() {

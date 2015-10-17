@@ -45,7 +45,8 @@ $("#MySign").editInPlace({
 		$("#MyResume").html(data);
 	},
 	error: function(e){
-		console.log(e);
+		if (console)
+			console.log(e);
 		layer.alert("修改个性签名失败了");
 	}
 });
