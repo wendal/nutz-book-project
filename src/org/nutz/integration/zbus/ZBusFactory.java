@@ -9,9 +9,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.nutz.integration.zbus.annotation.ZBusConsumer;
+import org.nutz.integration.zbus.annotation.ZBusInvoker;
 import org.nutz.integration.zbus.annotation.ZBusService;
 import org.nutz.ioc.Ioc;
 import org.nutz.lang.Streams;
+import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.resource.Scans;
 import org.zbus.broker.Broker;
 import org.zbus.mq.Consumer;
@@ -23,6 +28,8 @@ import org.zbus.net.http.Message.MessageHandler;
 import org.zbus.rpc.RpcProcessor;
 
 public class ZBusFactory {
+	
+	private static final Log log = Logs.get();
 
 	protected Set<Consumer> consumers = new HashSet<>();
 	protected Map<String, ZBusProducer> producers = new ConcurrentHashMap<>();
@@ -149,5 +156,28 @@ public class ZBusFactory {
 				}
 			}
 		}
+	}
+	
+	public static void addInovker(Class<?> klass, Map<String, Map<String, Object>> map) {
+		ZBusInvoker export = klass.getAnnotation(ZBusInvoker.class);
+		if (export != null) {
+			String name = export.value();
+			if (Strings.isBlank(name)) {
+				name = Strings.lowerFirst(klass.getSimpleName());
+			}
+			log.debugf("define zbus Invoker bean name=%s type=%s", name, klass.getName());
+			NutMap _map = new NutMap().setv("factory", "$rpc#getService").setv("args", new String[] { klass.getName() });
+			map.put(name, _map);
+		}
+	}
+	
+	public void mq(String mq, Object message) {
+		ZBusProducer p = getProducer(mq);
+		p.async(message);
+	}
+	
+	public void publish(String topic, Object message) {
+		ZBusProducer p = getProducer(topic);
+		p.async(message);
 	}
 }

@@ -1,17 +1,13 @@
 package org.nutz.integration.zbus;
 
-import java.util.HashMap;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
-import org.nutz.integration.zbus.annotation.ZBusInvoker;
-import org.nutz.ioc.IocLoader;
-import org.nutz.ioc.IocLoading;
-import org.nutz.ioc.ObjectLoadException;
-import org.nutz.ioc.meta.IocObject;
-import org.nutz.lang.Strings;
-import org.nutz.lang.util.NutMap;
-import org.nutz.log.Log;
-import org.nutz.log.Logs;
+import org.nutz.ioc.loader.json.JsonLoader;
+import org.nutz.json.Json;
+import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.resource.Scans;
 
 /**
@@ -20,50 +16,41 @@ import org.nutz.resource.Scans;
  * @author wendal
  *
  */
-public class ZBusIocLoader implements IocLoader {
+public class ZBusIocLoader extends JsonLoader {
 	
-	private static final Log log = Logs.get();
-
-	protected Map<String, Class<?>> map = new HashMap<>();
+	public ZBusIocLoader(){}
 
 	public ZBusIocLoader(String... pkgs) {
 		for (String pkg : pkgs) {
 			add(pkg);
 		}
+		_load("zbus-common.js");
+		_load("zbus-rpc-invoker.js");
+		_load("zbus-rpc-service.js");
+		_load("zbus-server.js");
 	}
 
 	protected void add(String pkg) {
 		for (Class<?> klass : Scans.me().scanPackage(pkg)) {
-			add(klass);
+			ZBusFactory.addInovker(klass, getMap());
 		}
 	}
 
-	protected void add(Class<?> klass) {
-		ZBusInvoker export = klass.getAnnotation(ZBusInvoker.class);
-		if (export != null) {
-			String name = export.value();
-			if (Strings.isBlank(name)) {
-				name = Strings.lowerFirst(klass.getSimpleName());
-			}
-			log.debugf("define zbus export bean [%s] as name=%s", klass.getName(), name);
-			map.put(name, klass);
+	@SuppressWarnings("unchecked")
+	public void _load(String path) {
+		InputStream ins = getClass().getClassLoader().getResourceAsStream("ioc/"+path);
+		if (ins == null)
+			ins = getClass().getResourceAsStream(path);
+		if (ins == null)
+			return;
+		try {
+			String s = Lang.readAll(new InputStreamReader(ins));
+	        Map<String, Map<String, Object>> map = (Map<String, Map<String, Object>>) Json.fromJson(s);
+	        if (null != map && map.size() > 0)
+	            getMap().putAll(map);
+		} catch (Exception e) {
+		} finally {
+			Streams.safeClose(ins);
 		}
 	}
-
-	public String[] getName() {
-		return map.keySet().toArray(new String[map.size()]);
-	}
-
-	public IocObject load(IocLoading loading, String name) throws ObjectLoadException {
-		Class<?> klass = map.get(name);
-		if (klass == null)
-			return null;
-		NutMap _map = new NutMap().setv("factory", "$rpc#getService").setv("args", new String[] { klass.getName() });
-		return loading.map2iobj(_map);
-	}
-
-	public boolean has(String name) {
-		return map.containsKey(name);
-	}
-
 }
