@@ -49,6 +49,9 @@ public class ZBusIocLoader extends JsonLoader {
 	        if (null != map && map.size() > 0)
 	            getMap().putAll(map);
 		} catch (Exception e) {
+			if (e instanceof RuntimeException)
+				throw e;
+			throw new RuntimeException("load fail , path="+path, e);
 		} finally {
 			Streams.safeClose(ins);
 		}
