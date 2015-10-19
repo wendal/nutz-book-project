@@ -4,6 +4,8 @@ import static net.wendal.nutzbook.bean.CResult._fail;
 import static net.wendal.nutzbook.bean.CResult._ok;
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,8 +25,12 @@ import org.nutz.integration.zbus.ZBusProducer;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.upload.TempFile;
 
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
@@ -57,6 +63,9 @@ public class YvrService implements RedisKey {
 	
 	@Inject("java:$zbus.getProducer('topic-watch')")
 	protected ZBusProducer topicWatchProducer;
+
+	@Inject("java:$conf.get('topic.image.dir')")
+	protected String imageDir;
 	
 	@Aop("redis")
 	public void fillTopic(Topic topic, Map<Integer, UserProfile> authors) {
@@ -271,6 +280,26 @@ public class YvrService implements RedisKey {
 		} else {
 			return score.intValue();
 		}
+	}
+	
+	public NutMap upload(TempFile tmp, int userId) throws IOException {
+		NutMap re = new NutMap();
+		if (userId < 1)
+			return re.setv("msg", "请先登陆!");
+		if (tmp == null || tmp.getFile().length() == 0) {
+			return re.setv("msg", "空文件");
+		}
+		if (tmp.getFile().length() > 2 * 1024 * 1024) {
+			return re.setv("msg", "文件太大了");
+		}
+		String id = R.UU32();
+		String path = "/" + id.substring(0, 2) + "/" + id.substring(2);
+		File f = new File(imageDir + path);
+		Files.createNewFile(f);
+		Files.copyFile(tmp.getFile(), f);
+		re.put("url", Mvcs.getServletContext().getContextPath()+"/yvr/upload" + path);
+		re.setv("success", true);
+		return re;
 	}
 	
 	public Dao daoNoContent() {

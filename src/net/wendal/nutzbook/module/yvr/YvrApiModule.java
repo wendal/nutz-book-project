@@ -2,6 +2,7 @@ package net.wendal.nutzbook.module.yvr;
 
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,16 +13,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.mvc.AccessTokenFilter;
-import net.wendal.nutzbook.util.Markdowns;
+import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -41,7 +35,19 @@ import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.upload.TempFile;
+import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.HttpStatusView;
+
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.mvc.AccessTokenFilter;
+import net.wendal.nutzbook.util.Markdowns;
 
 /**
  * 对外公开的HTTP API, 使用http://apidocjs.com/的进行注释生成
@@ -387,7 +393,7 @@ public class YvrApiModule extends BaseModule {
 	}
 	
 	/**
-	 * @api {get} /yvr/api/v1/message/mark_all 标记所有消息为已读
+	 * @api {post} /yvr/api/v1/message/mark_all 标记所有消息为已读
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
 	 * 
@@ -398,8 +404,27 @@ public class YvrApiModule extends BaseModule {
 	 */
 	@POST
 	@At("/message/mark_all")
+	@Filters(@By(type=AccessTokenFilter.class))
 	public Object markAllMessage() {
 		return _map("success", true);
+	}
+	/**
+	 * @api {post} /yvr/api/v1/images 上传图片
+	 * @apiGroup Topic
+	 * @apiVersion 1.0.0
+	 * 
+	 * @apiUse TOKEN
+	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiSuccess {boolean} success 成功与否
+	 * @apiSuccess {String} url 图片地址
+	 */
+	@POST
+	@At("/images")
+	@AdaptBy(type=UploadAdaptor.class, args={"${app.root}/tmp/api_images"})
+	@Filters(@By(type=AccessTokenFilter.class))
+	public Object images(@Param("file")TempFile tmp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException, ServletException {
+		return yvrService.upload(tmp, userId);
 	}
 	
 	// --------------------
@@ -429,7 +454,7 @@ public class YvrApiModule extends BaseModule {
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
 		tp.put("tab", topic.getType().toString());
 		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
-		tp.put("title", topic.getTitle());
+		tp.put("title", StringEscapeUtils.unescapeHtml(topic.getTitle()));
 		if (topic.getLastComment() != null)
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));
 		tp.put("good", topic.isGood());

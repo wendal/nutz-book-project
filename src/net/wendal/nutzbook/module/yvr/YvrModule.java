@@ -64,11 +64,11 @@ public class YvrModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 
-	@Inject("java:$conf.get('topic.image.dir')")
-	protected String imageDir;
-
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
+
+	@Inject("java:$conf.get('topic.image.dir')")
+	protected String imageDir;
 
 	@At({ "/", "/index" })
 	@Ok("->:/yvr/list")
@@ -205,23 +205,7 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type = CsrfActionFilter.class))
 	public Object upload(@Param("file") TempFile tmp, HttpServletRequest req, HttpServletResponse resp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException {
 		resp.setContentType("application/json");
-		NutMap jsonrpc = new NutMap();
-		if (userId < 1)
-			return jsonrpc.setv("msg", "请先登陆!");
-		if (tmp == null || tmp.getFile().length() == 0) {
-			return jsonrpc.setv("msg", "空文件");
-		}
-		if (tmp.getFile().length() > 2 * 1024 * 1024) {
-			return jsonrpc.setv("msg", "文件太大了");
-		}
-		String id = R.UU32();
-		String path = "/" + id.substring(0, 2) + "/" + id.substring(2);
-		File f = new File(imageDir + path);
-		Files.createNewFile(f);
-		Files.copyFile(tmp.getFile(), f);
-		jsonrpc.setv("url", req.getRequestURI() + path);
-		jsonrpc.setv("success", true);
-		return jsonrpc;
+		return yvrService.upload(tmp, userId);
 	}
 
 	@Ok("raw:jpg")
