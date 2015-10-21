@@ -24,7 +24,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Scope;
-import org.nutz.mvc.adaptor.JsonAdaptor;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
@@ -281,7 +281,7 @@ public class YvrApiModule extends BaseModule {
 	 */
 	@POST
 	@At("/topics")
-	@AdaptBy(type=JsonAdaptor.class)
+	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
 	public Object add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId, @Param("tab")String tab) {
 		if (tab != null)
@@ -312,7 +312,7 @@ public class YvrApiModule extends BaseModule {
 	 */
 	@POST
 	@At("/topic/?/replies")
-	@AdaptBy(type=JsonAdaptor.class)
+	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
 	public Object addReply(String topicId, @Param("..") TopicReply reply, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		CResult re =  yvrService.addReply(topicId, reply, userId);
