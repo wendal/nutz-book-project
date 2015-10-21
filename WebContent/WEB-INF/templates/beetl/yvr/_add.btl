@@ -42,14 +42,6 @@ layout("_layout.btl",{title:'添加新帖子'}){
   </div>
 </div>
 <script>
-var ctxPath = "${ctxPath}";
-</script>
-<script src="${cdnbase}${base}/rs/libs/bootstrap/js/bootstrap.js"></script>
-<script src="${cdnbase}${base}/rs/libs/markdownit.js"></script>
-<script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/editor.js"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/ext.js"></script>
-<script>
   (function () {
     var editor = new Editor();
     editor.render($('.editor')[0]);

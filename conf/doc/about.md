@@ -12,7 +12,8 @@ Android官方客户端 下载地址 http://fir.im/nutzcn 当前由[@wendal](http
 
 iOS客户端尚未发布到APP Store
 
-源码地址 https://github.com/wendal/nutzcn-ionic
+源码地址(2.x) https://github.com/wendal/nutzcn-ionic
+源码地址(3.x) https://github.com/wendal/NutzCN-Material-Design
 
 同时开放[Http API](https://nutz.cn/apidocs/), 欢迎实现第三方客户端
 

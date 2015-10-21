@@ -151,12 +151,6 @@ layout("_layout.btl",{}){
 </div>
 <% if (null != obj.current_user!){ %>
 <script>
-var ctxPath = "${ctxPath}";
-</script>
-<script src="${cdnbase}${base}/rs/libs/editor/editor.js"></script>
-<script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/ext.js"></script>
-<script>
   $(document).ready(function () {
     // 获取所有回复者name
     var allNames = $('.reply_author').map(function (idx, ele) {
