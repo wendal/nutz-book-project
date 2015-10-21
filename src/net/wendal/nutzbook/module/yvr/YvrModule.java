@@ -14,17 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.mvc.CsrfActionFilter;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
-import net.wendal.nutzbook.service.yvr.TopicSearchService;
-
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -39,6 +28,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.Scope;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
@@ -50,9 +40,19 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
-import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
+
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.mvc.CsrfActionFilter;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
+import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 @IocBean(create = "init")
 @At("/yvr")
@@ -198,7 +198,7 @@ public class YvrModule extends BaseModule {
 		return re;
 	}
 
-	@AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp2" })
+	@AdaptBy(type = WhaleAdaptor.class)
 	@POST
 	@At
 	@Ok("json")

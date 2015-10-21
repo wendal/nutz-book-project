@@ -297,6 +297,7 @@ public class YvrService implements RedisKey {
 		File f = new File(imageDir + path);
 		Files.createNewFile(f);
 		Files.copyFile(tmp.getFile(), f);
+		tmp.getFile().delete();
 		re.put("url", Mvcs.getServletContext().getContextPath()+"/yvr/upload" + path);
 		re.setv("success", true);
 		return re;

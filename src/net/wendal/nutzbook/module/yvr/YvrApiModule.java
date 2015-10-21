@@ -36,7 +36,6 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
-import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.HttpStatusView;
 
 import net.wendal.nutzbook.bean.CResult;
@@ -421,7 +420,7 @@ public class YvrApiModule extends BaseModule {
 	 */
 	@POST
 	@At("/images")
-	@AdaptBy(type=UploadAdaptor.class, args={"${app.root}/tmp/api_images"})
+	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
 	public Object images(@Param("file")TempFile tmp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException, ServletException {
 		return yvrService.upload(tmp, userId);
