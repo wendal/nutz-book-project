@@ -1,12 +1,14 @@
 package org.nutz.integration.zbus;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.nutz.integration.zbus.annotation.ZBusConsumer;
 import org.nutz.integration.zbus.annotation.ZBusInvoker;
@@ -22,6 +24,7 @@ import org.zbus.broker.Broker;
 import org.zbus.mq.Consumer;
 import org.zbus.mq.MqConfig;
 import org.zbus.mq.Protocol.MqMode;
+import org.zbus.net.Client;
 import org.zbus.net.core.Session;
 import org.zbus.net.http.Message;
 import org.zbus.net.http.Message.MessageHandler;
@@ -60,12 +63,23 @@ public class ZBusFactory {
 		}
 	}
 
-	public void close() {
+	@SuppressWarnings("rawtypes")
+	public void close() throws Exception {
+		Field clientField = Consumer.class.getDeclaredField("client");
+		Field heartbeatorField = Client.class.getDeclaredField("heartbeator");
+		clientField.setAccessible(true);
+		heartbeatorField.setAccessible(true);
 		for (Consumer consumer : consumers) {
 			try {
 				consumer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				// 下面的代码解决zbus的broker先于consumer关闭,导致Consumer的心跳线程不能关闭的问题
+				Client client = (Client) clientField.get(consumer);
+				if (client != null) {
+					ScheduledExecutorService es = (ScheduledExecutorService) heartbeatorField.get(client);
+					if (!es.isShutdown())
+						es.shutdown();
+				}
 			}
 		}
 	}
