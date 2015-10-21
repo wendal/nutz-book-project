@@ -75,11 +75,9 @@ html { overflow-y: scroll; }
 <script>
 var ctxPath = "${ctxPath}";
 </script>
-<script src="${cdnbase}${base}/rs/libs/bootstrap/js/bootstrap.js"></script>
 <script src="${cdnbase}${base}/rs/libs/markdownit.js"></script>
 <script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=2"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/ext.js?v=2"></script>
+<script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
 
 
   <% if (null != obj.topic!) { %>

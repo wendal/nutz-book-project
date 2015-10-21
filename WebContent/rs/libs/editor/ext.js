@@ -231,7 +231,7 @@
         toolLink.bind(editor);
     });
     replaceTool('code', function(editor){
-    	editor.push('\r\n```\rn这里贴代码\r\n```\r\n');
+    	editor.push('\r\n```\r\n这里贴代码\r\n```\r\n');
     });
 
     //当编辑器取得焦点时，绑定 toolImage；

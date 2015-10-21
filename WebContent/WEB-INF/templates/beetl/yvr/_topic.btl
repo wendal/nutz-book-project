@@ -150,6 +150,7 @@ layout("_layout.btl",{}){
   <div class="anchor"></div>
 </div>
 <% if (null != obj.current_user!){ %>
+<script src="${cdnbase}${base}/rs/libs/editor/ext.js?v=3"></script>
 <script>
   $(document).ready(function () {
     // 获取所有回复者name
