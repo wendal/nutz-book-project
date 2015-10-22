@@ -150,12 +150,7 @@ layout("_layout.btl",{}){
   <div class="anchor"></div>
 </div>
 <% if (null != obj.current_user!){ %>
-<script>
-var ctxPath = "${ctxPath}";
-</script>
-<script src="${cdnbase}${base}/rs/libs/editor/editor.js"></script>
-<script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/ext.js"></script>
+<script src="${cdnbase}${base}/rs/libs/editor/ext.js?v=4"></script>
 <script>
   $(document).ready(function () {
     // 获取所有回复者name
@@ -491,9 +486,11 @@ var QueryString = function () {
     return query_string;
 }();
 $(function(){
-	console.log(QueryString);
+	if (console)
+			console.log(QueryString);
 	if (QueryString.watch) {
-		console.log("watch topic");
+		if (console)
+			console.log("watch topic");
 		var twatch = io.connect('//'+window.location.hostname+ ':81/twatch', {
         	'reconnection delay' : 2000,
         	'force new connection' : true
@@ -510,7 +507,8 @@ $(function(){
         });
 	} else {
 		$("#watch_btn").show();
-		console.log("not watch");
+		if (console)
+			console.log("not watch");
 	}
 });
 function watch_me() {

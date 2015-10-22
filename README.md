@@ -30,6 +30,7 @@ http://nutzbook.wendal.net/jars/
 * snakerflow工作流集成(未全部完成)
 * 自定义表单(未全部完成)
 * U2F绑定与登陆
+* zbus集成(RPC及MQ)
 
 ## 在线演示地址
 

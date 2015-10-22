@@ -14,17 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.mvc.CsrfActionFilter;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
-import net.wendal.nutzbook.service.yvr.TopicSearchService;
-
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -39,6 +28,7 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.Scope;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
@@ -50,9 +40,19 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
-import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
+
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.mvc.CsrfActionFilter;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
+import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 @IocBean(create = "init")
 @At("/yvr")
@@ -64,11 +64,11 @@ public class YvrModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 
-	@Inject("java:$conf.get('topic.image.dir')")
-	protected String imageDir;
-
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
+
+	@Inject("java:$conf.get('topic.image.dir')")
+	protected String imageDir;
 
 	@At({ "/", "/index" })
 	@Ok("->:/yvr/list")
@@ -198,30 +198,14 @@ public class YvrModule extends BaseModule {
 		return re;
 	}
 
-	@AdaptBy(type = UploadAdaptor.class, args = { "${app.root}/WEB-INF/tmp2" })
+	@AdaptBy(type = WhaleAdaptor.class)
 	@POST
 	@At
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
 	public Object upload(@Param("file") TempFile tmp, HttpServletRequest req, HttpServletResponse resp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException {
 		resp.setContentType("application/json");
-		NutMap jsonrpc = new NutMap();
-		if (userId < 1)
-			return jsonrpc.setv("msg", "请先登陆!");
-		if (tmp == null || tmp.getFile().length() == 0) {
-			return jsonrpc.setv("msg", "空文件");
-		}
-		if (tmp.getFile().length() > 2 * 1024 * 1024) {
-			return jsonrpc.setv("msg", "文件太大了");
-		}
-		String id = R.UU32();
-		String path = "/" + id.substring(0, 2) + "/" + id.substring(2);
-		File f = new File(imageDir + path);
-		Files.createNewFile(f);
-		Files.copyFile(tmp.getFile(), f);
-		jsonrpc.setv("url", req.getRequestURI() + path);
-		jsonrpc.setv("success", true);
-		return jsonrpc;
+		return yvrService.upload(tmp, userId);
 	}
 
 	@Ok("raw:jpg")
@@ -243,7 +227,7 @@ public class YvrModule extends BaseModule {
 
 	@At("/t/?/reply/?/up")
 	@Ok("json")
-	public Object replyUp(String _, String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object replyUp(String topicId, String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		return yvrService.replyUp(replyId, userId);
 	}
 

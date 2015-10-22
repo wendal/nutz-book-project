@@ -1,10 +1,12 @@
 package net.wendal.nutzbook.service.socketio;
 
-import net.wendal.nutzbook.bean.yvr.TopicWatch;
+import java.io.IOException;
 
+import org.nutz.integration.zbus.annotation.ZBusConsumer;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.plugins.zbus.MsgBus;
-import org.nutz.plugins.zbus.MsgEventHandler;
+import org.zbus.net.core.Session;
+import org.zbus.net.http.Message;
+import org.zbus.net.http.Message.MessageHandler;
 
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.BroadcastOperations;
@@ -13,8 +15,9 @@ import com.corundumstudio.socketio.SocketIONamespace;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
 
+@ZBusConsumer(mq="topic-watch")
 @IocBean
-public class TopicWatcheService implements MsgEventHandler<TopicWatch> {
+public class TopicWatcheService implements MessageHandler {
 	
 	protected SocketIONamespace namespace;
 	
@@ -32,13 +35,12 @@ public class TopicWatcheService implements MsgEventHandler<TopicWatch> {
 	}
 
 	@Override
-	public Object call(MsgBus bus, TopicWatch event) throws Exception {
+	public void handle(Message msg, Session sess) throws IOException {
 		if (namespace != null) {
-			BroadcastOperations opt = namespace.getRoomOperations("topic:"+event.getId());
+			BroadcastOperations opt = namespace.getRoomOperations("topic:"+msg.getBodyString());
 			if (opt != null) {
 				opt.sendEvent("reload", "");
 			}
 		}
-		return null;
 	}
 }

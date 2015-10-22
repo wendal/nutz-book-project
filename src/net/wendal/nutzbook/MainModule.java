@@ -21,6 +21,7 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 										   "*tx",
 										   "*org.nutz.integration.quartz.QuartzIocLoader",// 关联Quartz
 										   "*org.snaker.nutz.SnakerIocLoader", /*"flows"*/ //关联snakerflow
+										   "*org.nutz.integration.zbus.ZBusIocLoader", "net.wendal.nutzbook"
 										   })
 @Modules(scanPackage=true)
 @ChainBy(args="mvc/nutzbook-mvc-chain.js")

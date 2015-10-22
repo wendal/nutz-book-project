@@ -4,24 +4,16 @@ import static net.wendal.nutzbook.bean.CResult._fail;
 import static net.wendal.nutzbook.bean.CResult._ok;
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.bean.yvr.TopicWatch;
-import net.wendal.nutzbook.util.RedisKey;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -29,12 +21,16 @@ import org.nutz.dao.FieldFilter;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.zbus.ZBusProducer;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
-import org.nutz.plugins.zbus.MsgBus;
+import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.upload.TempFile;
 
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
@@ -42,6 +38,13 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.util.RedisKey;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
@@ -55,8 +58,14 @@ public class YvrService implements RedisKey {
 	@Inject
 	protected TopicSearchService topicSearchService;
 	
-	@Inject
-	protected MsgBus bus;
+	@Inject("java:$zbus.getProducer('jpush')")
+	protected ZBusProducer jPushProducer;
+	
+	@Inject("java:$zbus.getProducer('topic-watch')")
+	protected ZBusProducer topicWatchProducer;
+
+	@Inject("java:$conf.get('topic.image.dir')")
+	protected String imageDir;
 	
 	@Aop("redis")
 	public void fillTopic(Topic topic, Map<Integer, UserProfile> authors) {
@@ -175,33 +184,27 @@ public class YvrService implements RedisKey {
 		
 
 		// 通知页面刷新
-		bus.event(new TopicWatch(topicId));
+		topicWatchProducer.async(topicId);
 		
-		bus.add(new Callable<Object>() {
-			public Object call() throws Exception {
-				
-				String replyAuthorName = dao.fetch(User.class, userId).getName();
-				// 通知原本的作者
-				if (topic.getUserId() != userId) {
-					String alert = replyAuthorName+"回复了您的帖子";
-					pushUser(topic.getUserId(), alert, topicId);
-				}
-				
-				Set<String> ats = findAt(cnt, 5);
-				for (String at : ats) {
-					User user = dao.fetch(User.class, at);
-					if (user == null)
-						continue;
-					if (topic.getUserId() == user.getId())
-						continue; // 前面已经发过了
-					if (userId == user.getId())
-						continue; // 自己@自己, 忽略
-					String alert = replyAuthorName + "在帖子回复中@了你";
-					pushUser(user.getId(), alert, topicId);
-				}
-				return null;
-			}
-		});
+		String replyAuthorName = dao.fetch(User.class, userId).getName();
+		// 通知原本的作者
+		if (topic.getUserId() != userId) {
+			String alert = replyAuthorName + "回复了您的帖子";
+			pushUser(topic.getUserId(), alert, topicId);
+		}
+
+		Set<String> ats = findAt(cnt, 5);
+		for (String at : ats) {
+			User user = dao.fetch(User.class, at);
+			if (user == null)
+				continue;
+			if (topic.getUserId() == user.getId())
+				continue; // 前面已经发过了
+			if (userId == user.getId())
+				continue; // 自己@自己, 忽略
+			String alert = replyAuthorName + "在帖子回复中@了你";
+			pushUser(user.getId(), alert, topicId);
+		}
 		return _ok(reply.getId());
 	}
 	
@@ -232,7 +235,7 @@ public class YvrService implements RedisKey {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
-		bus.event(builder.build()); // 发送到总线,等待对应的服务处理
+		jPushProducer.async(builder.build().toString()); // 发送到总线,等待对应的服务处理
 	}
 	
 	public List<Topic> getRecentTopics(int userId) {
@@ -277,6 +280,27 @@ public class YvrService implements RedisKey {
 		} else {
 			return score.intValue();
 		}
+	}
+	
+	public NutMap upload(TempFile tmp, int userId) throws IOException {
+		NutMap re = new NutMap();
+		if (userId < 1)
+			return re.setv("msg", "请先登陆!");
+		if (tmp == null || tmp.getFile().length() == 0) {
+			return re.setv("msg", "空文件");
+		}
+		if (tmp.getFile().length() > 2 * 1024 * 1024) {
+			return re.setv("msg", "文件太大了");
+		}
+		String id = R.UU32();
+		String path = "/" + id.substring(0, 2) + "/" + id.substring(2);
+		File f = new File(imageDir + path);
+		Files.createNewFile(f);
+		Files.copyFile(tmp.getFile(), f);
+		tmp.getFile().delete();
+		re.put("url", Mvcs.getServletContext().getContextPath()+"/yvr/upload" + path);
+		re.setv("success", true);
+		return re;
 	}
 	
 	public Dao daoNoContent() {

@@ -7087,6 +7087,7 @@ var toolbar = [
 
   {name: 'link', action: drawLink},
   {name: 'image', action: drawImage},
+  {name: 'code', action : "https://nutz.cn"},
   '|',
 
   {name: 'info', action: 'http://lab.lepture.com/editor/markdown'},

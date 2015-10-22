@@ -1,14 +1,37 @@
 package net.wendal.nutzbook;
 
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.Log4JLoggerFactory;
-
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+import org.nutz.dao.Chain;
+import org.nutz.dao.Cnd;
+import org.nutz.dao.ConnCallback;
+import org.nutz.dao.Dao;
+import org.nutz.dao.FieldFilter;
+import org.nutz.dao.util.Daos;
+import org.nutz.integration.quartz.NutQuartzCronJobFactory;
+import org.nutz.integration.zbus.ZBusFactory;
+import org.nutz.ioc.Ioc;
+import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.lang.Mirror;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.NutConfig;
+import org.nutz.mvc.Setup;
+import org.quartz.Scheduler;
+import org.snaker.engine.SnakerEngine;
+import org.snaker.engine.core.ServiceContext;
+import org.zbus.mq.server.MqServer;
+import org.zbus.rpc.RpcProcessor;
+import org.zbus.rpc.mq.Service;
+
+import com.alibaba.druid.pool.DruidPooledConnection;
+
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -20,31 +43,8 @@ import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
 import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
 import net.wendal.nutzbook.util.Markdowns;
-
-import org.nutz.dao.Chain;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.ConnCallback;
-import org.nutz.dao.Dao;
-import org.nutz.dao.FieldFilter;
-import org.nutz.dao.util.Daos;
-import org.nutz.integration.quartz.NutQuartzCronJobFactory;
-import org.nutz.ioc.Ioc;
-import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.lang.Mirror;
-import org.nutz.log.Log;
-import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
-import org.nutz.mvc.NutConfig;
-import org.nutz.mvc.Setup;
-import org.nutz.plugins.zbus.MsgBus;
-import org.quartz.Scheduler;
-import org.snaker.engine.SnakerEngine;
-import org.snaker.engine.core.ServiceContext;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
-import com.alibaba.druid.pool.DruidPooledConnection;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -72,6 +72,21 @@ public class MainSetup implements Setup {
 		
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
+		
+		// 启动zbus######################
+		// 启动内置zbus服务器
+		if (conf.getBoolean("zbus.server.embed.enable", true)) {
+			ioc.get(MqServer.class);
+		}
+		// 启动RPC服务端
+		if (conf.getBoolean("zbus.rpc.service.enable", true)) {
+			RpcProcessor rpcProcessor = ioc.get(RpcProcessor.class);
+			ZBusFactory.buildServices(rpcProcessor, ioc, getClass().getPackage().getName());
+			ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
+		}
+		// 启动 生产者/消费者
+		ioc.get(ZBusFactory.class, "zbus");
+		// END zbus ######################
 		
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
@@ -172,15 +187,16 @@ public class MainSetup implements Setup {
 		System.out.println(map.size());
 		System.out.println(map.keySet());
 		System.out.println(map);
-		
-		// 启动消息总线,测试性质
-		MsgBus bus = ioc.get(MsgBus.class, "bus");
-		bus.event(SysLog.c("method", "sys", null, 1, "系统启动完成"));
-		
+
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
+		
+		/**
+		SayHelloWorld sayHi = ioc.get(SayHelloWorld.class, "sayHi");
+		log.info("hi from zbus : " + sayHi.hi("wendal"));
+		 */
 	}
 	
 	public void destroy(NutConfig conf) {

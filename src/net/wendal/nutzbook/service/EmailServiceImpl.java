@@ -1,17 +1,24 @@
 package net.wendal.nutzbook.service;
 
+import java.io.IOException;
+
 import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
+import org.nutz.integration.zbus.annotation.ZBusConsumer;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.plugins.zbus.MsgBus;
-import org.nutz.plugins.zbus.MsgEventHandler;
+import org.zbus.net.core.Session;
+import org.zbus.net.http.Message;
+import org.zbus.net.http.Message.MessageHandler;
 
+@ZBusConsumer(mq="email")
 @IocBean(name="emailService")
-public class EmailServiceImpl implements EmailService, MsgEventHandler<Email> {
+public class EmailServiceImpl implements EmailService, MessageHandler {
 
 	private static final Log log = Logs.get();
 	
@@ -36,9 +43,13 @@ public class EmailServiceImpl implements EmailService, MsgEventHandler<Email> {
 	public boolean isSupport(Object event) {
 		return event instanceof Email;
 	}
-
-	public Object call(MsgBus bus, Email email) throws Exception {
-		email.sendMimeMessage();
-		return null;
+	
+	public void handle(Message msg, Session sess) throws IOException {
+		Email email = Json.fromJson(Email.class, msg.getBodyString());
+		try {
+			email.send();
+		} catch (EmailException e) {
+			e.printStackTrace();
+		}
 	}
 }

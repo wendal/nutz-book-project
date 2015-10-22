@@ -14,7 +14,7 @@
     window.markdowniter = md;
 
     var toolbar = Editor.toolbar;
-
+    
     var replaceTool = function(name, callback){
         for(var i=0, len=toolbar.length; i<len; i++){
             var v = toolbar[i];
@@ -45,7 +45,7 @@
                             '</div>',
                         '</div>',
                         '<div class="control-group">',
-                            '<label class="control-label">连接</label>',
+                            '<label class="control-label">链接</label>',
                             '<div class="controls">',
                                 '<input type="text" name="link" value="http://" placeholder="Link">',
                             '</div>',
@@ -151,7 +151,9 @@
         		console.log(res);
             if(res.success){
                 self.$win.modal('hide');
-                self.editor.push(' !['+ file.name +']('+ res.url +')');
+                var fname = file.name;
+                fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
+                self.editor.push(' !['+ fname +']('+ res.url +')');
             }
             else{
                 self.removeFile();
@@ -227,6 +229,9 @@
     });
     replaceTool('link', function(editor){
         toolLink.bind(editor);
+    });
+    replaceTool('code', function(editor){
+    	editor.push('\r\n```\r\n这里贴代码\r\n```\r\n');
     });
 
     //当编辑器取得焦点时，绑定 toolImage；

@@ -335,6 +335,16 @@
 			<artifactId>nutz-qrcode</artifactId>
 			<version>1.b.53</version>
 		</dependency>
+		<dependency>
+			<groupId>org.zbus</groupId>
+			<artifactId>zbus</artifactId>
+			<version>6.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.7</version>
+		</dependency>
 	</dependencies>
 	<version>2.2.0</version>
 </project>
