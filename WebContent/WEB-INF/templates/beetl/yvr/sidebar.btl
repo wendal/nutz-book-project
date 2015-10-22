@@ -1,5 +1,5 @@
 <div id='sidebar'>
-
+<%DIRECTIVE DYNAMIC;%>
   <div class='panel'
   	<%if (null != c_user! && null != obj.current_user! && c_user.userId == obj.current_user.userId){%>
   		data-intro="您的个人统计,手机客户端的accesstoken也在这里"
