@@ -92,7 +92,7 @@
                 '<div class="modal-body">',
                     '<div class="upload-img">',
                         '<div class="button">上传图片</div>',
-                        '<span class="tip"></span>',
+                        '<span class="tip">请不是单纯地上传代码截图!</span>',
                         '<div class="alert alert-error hide"></div>',
                     '</div>',
                 '</div>',
@@ -112,7 +112,7 @@
             margin: '0 auto'
         });
 
-        this.$uploadTip = this.$upload.find('.tip').hide();
+        this.$uploadTip = this.$upload.find('.tip').show();
 
         this.file = false;
         var _csrf = $('[name=_csrf]').val();
@@ -191,7 +191,7 @@
         //var self = this;
         this.file = false;
         this.$uploadBtn.show();
-        this.$uploadTip.hide();
+        this.$uploadTip.show();
     };
 
     ToolImage.prototype.showFile = function(file){

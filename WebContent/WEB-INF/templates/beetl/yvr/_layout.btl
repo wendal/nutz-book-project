@@ -146,7 +146,6 @@ var ctxPath = "${ctxPath}";
         <li><a href='#' onclick="f_signup();">注册</a></li>
         <li><a href='#' onclick="f_signin();">登录</a></li>
         <% } %>
-		<li><a href='#' onclick="cs_qrcode();">跨屏二维码</a></li>
       </ul>
       <a class="btn btn-navbar" id="responsive-sidebar-trigger">
         <span class="icon-bar"></span>

@@ -231,6 +231,10 @@ $(function(){
         <li>
         <a href="http://fir.im/nutzcn">客户端(当前仅Android)</a>
         </li>
+        <div class="sep10"></div>
+		<li>
+			<a href='#' onclick="cs_qrcode();">跨屏二维码</a>
+		</li>
       </ol>
     </div>
   </div>

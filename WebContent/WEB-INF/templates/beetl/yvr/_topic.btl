@@ -65,9 +65,14 @@ layout("_layout.btl",{}){
         <span>
           ${obj.topic.visitCount} 次浏览
         </span>
-        <span id="watch_btn" style="display: none;">
-          <a href="#" onclick="watch_me();">自动刷新</a>
+        <% if (null != obj.current_user!) { %>
+        <span id="watch_btn">
+          <a href="#" onclick="watch_me();" title="有新回复时自动刷新页面">自动刷新</a>
         </span>
+        <span id="send_to_phone_btn">
+          <a href="#" onclick="send_to_phone();" title="瞬间推送到手机客户端">推送到手机</a>
+        </span>
+        <%}%>
         
         <!-- 有点丑,先禁用了 -->
           <% if ( 1 != 1) {%>
@@ -513,5 +518,20 @@ $(function(){
 });
 function watch_me() {
 	window.location.href = window.location.href + "?watch=1";
+}
+function send_to_phone() {
+	$.ajax({
+		url : "${base}/yvr/t/${obj.topic.id}/push",
+		method : "POST",
+		success : function(){
+			layer.alert("已推送到手机");
+		},
+		fail : function() {
+			layer.alert("服务器走神了");
+		},
+		error : function() {
+			layer.alert("服务器走神了");
+		}
+	});
 }
 </script>

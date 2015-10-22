@@ -50,6 +50,7 @@ import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
+import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
@@ -77,6 +78,9 @@ public class YvrModule extends BaseModule {
 
 	@Inject
 	protected TopicSearchService topicSearchService;
+	
+	@Inject
+	protected PushService pushService;
 
 	@GET
 	@At
@@ -255,6 +259,17 @@ public class YvrModule extends BaseModule {
 	@At("/search/rebuild")
 	public void rebuild() throws IOException {
 		topicSearchService.rebuild();
+	}
+	
+	@POST
+	@At("/t/?/push")
+	public void push(String topicId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+		if (userId < 1)
+			return;
+		Map<String, String> extras = new HashMap<String, String>();
+		extras.put("topic_id", topicId);
+		extras.put("action", "open_topic");
+		pushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
 	}
 
 	public void init() {

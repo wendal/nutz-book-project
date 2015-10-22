@@ -32,18 +32,13 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.upload.TempFile;
 
-import cn.jpush.api.push.model.Platform;
-import cn.jpush.api.push.model.PushPayload;
-import cn.jpush.api.push.model.audience.Audience;
-import cn.jpush.api.push.model.notification.AndroidNotification;
-import cn.jpush.api.push.model.notification.IosNotification;
-import cn.jpush.api.push.model.notification.Notification;
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.RedisKey;
 
 @IocBean(create="init")
@@ -58,8 +53,8 @@ public class YvrService implements RedisKey {
 	@Inject
 	protected TopicSearchService topicSearchService;
 	
-	@Inject("java:$zbus.getProducer('jpush')")
-	protected ZBusProducer jPushProducer;
+	@Inject
+	protected PushService pushService;
 	
 	@Inject("java:$zbus.getProducer('topic-watch')")
 	protected ZBusProducer topicWatchProducer;
@@ -229,13 +224,7 @@ public class YvrService implements RedisKey {
 	protected void pushUser(int userId, String alert, String topic_id) {
 		Map<String, String> extras = new HashMap<String, String>();
 		extras.put("topic_id", topic_id);
-		AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
-		IosNotification ios = IosNotification.newBuilder().setAlert(alert).addExtras(extras).build();
-		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
-		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
-		builder.setAudience(Audience.alias("u_"+ userId));
-		builder.setNotification(notif);
-		jPushProducer.async(builder.build().toString()); // 发送到总线,等待对应的服务处理
+		pushService.alert(userId, alert, extras);
 	}
 	
 	public List<Topic> getRecentTopics(int userId) {
