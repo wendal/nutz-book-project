@@ -5,7 +5,7 @@ layout("_layout.btl",{}){
 
 <% layout("sidebar.btl",{"c_user":obj.current_user!}){};%>
 
-<div id="content">
+<div id="content" data-intro="看看大家都在说什么">
   <div class="panel">
     <div class="header">
       <ol class='breadcrumb' vocab="http://schema.org/" typeof="BreadcrumbList">

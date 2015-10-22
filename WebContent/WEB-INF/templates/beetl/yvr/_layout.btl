@@ -53,6 +53,8 @@ html { overflow-y: scroll; }
 }
 </style>
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/font-awesome/css/font-awesome.css"/>
+<!-- 引导库 -->
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/css/introjs.css"/>
 
   <!-- scripts -->
 <script src="${cdnbase}${base}/rs/libs/jquery-2.1.4.min.js"></script>
@@ -78,6 +80,8 @@ var ctxPath = "${ctxPath}";
 <script src="${cdnbase}${base}/rs/libs/markdownit.js"></script>
 <script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
 <script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
+
+<script src="${cdnbase}${base}/rs/js/intro.js?v=1.1.1"></script>
 
 
   <% if (null != obj.topic!) { %>
@@ -139,7 +143,8 @@ var ctxPath = "${ctxPath}";
         <li><a href='${ctxPath}/yvr/links/about.html' target="_blank">关于</a></li>
         
         <% if ( null != obj.current_user!) { %>
-        <li><a href='${ctxPath}/yvr/add' rel="nofollow">发新贴</a></li>
+        <li><a href='${ctxPath}/yvr/add' rel="nofollow" >发新贴</a></li>
+        <li><a href='#' id='guide_btn' onclick="startGuide();">操作向导</a></li>
         <li><a href='${ctxPath}/yvr/u/${obj.current_user.loginname!}'>${obj.current_user.nickname!, escape}</a></li>
         <li><a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow">退出</a></li>
         <% } else { %>
@@ -291,6 +296,19 @@ $(document).ready(function () {
   if (console)
   	console.log("^_^ 在找源码?这么巧. footer就有地址哦 https://github.com/wendal/nutz-book-project");
 });
+
+function startGuide(){
+	var _intro = introJs();
+	_intro.setOptions({
+		'prevLabel':'&larr; 上一步',
+		'nextLabel':'下一步 &rarr;',
+		'skipLabel':'跳过',
+		'doneLabel':'完成',
+		//"scrollToElement":true,
+		"showProgress":true,
+		exitOnEsc : true
+		}).start();
+};
 </script>
 <% if (null != conf["topic_seo.cnzz"]) {%>
 <div style="display: none;">

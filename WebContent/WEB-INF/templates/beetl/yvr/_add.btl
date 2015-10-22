@@ -15,20 +15,23 @@ layout("_layout.btl",{title:'添加新帖子'}){
         <form id='create_topic_form' action='#' method='post'>
           <fieldset>
             <span class="tab-selector">选择版块：</span>
-            <select name="type" id="tab-value">
+            <select name="type" id="tab-value" data-intro="请根据内容正确的选择板块">
               <% for (ttype in obj.types) {%>
               <option value="${ttype}" >${ttype.display}</option>
               <% } %>
             </select>
             <span id="topic_create_warn"></span>
-            <textarea autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上" ></textarea>
+            <textarea autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上" 
+            	data-intro="标题很重要,请用一句话概括帖子的内容,切勿使用'有问题求教'之类的无意义语句"></textarea>
 
             <div class='markdown_editor in_editor'>
               <div class='markdown_in_editor'>
-                <textarea class='editor' name='content' rows='20' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
+                <textarea class='editor' name='content' rows='20' placeholder='文章支持 Markdown 语法, 请注意标记代码'
+                	></textarea>
 
                 <div class='editor_buttons'>
-                  <input id="topic_submit" type="submit" class='span-primary submit_btn' data-loading-text="提交中" value="提交">
+                  <input id="topic_submit" type="submit" class='span-primary submit_btn' data-loading-text="提交中" value="提交"
+                  data-intro="请详细描述遇到的问题,相关的版本号,场景,切勿仅提供一个截图">
                 </div>
               </div>
 

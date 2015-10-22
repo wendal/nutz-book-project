@@ -1,6 +1,10 @@
 <div id='sidebar'>
 
-  <div class='panel'>
+  <div class='panel'
+  	<%if (null != c_user! && null != obj.current_user! && c_user.userId == obj.current_user.userId){%>
+  		data-intro="您的个人统计,手机客户端的accesstoken也在这里"
+  	<%}%>
+  	>
     <% if (null != c_user!) { %>
     <div class='header'>
       <span class='col_fade'>个人信息</span>
@@ -14,12 +18,12 @@
 
       <div>
         请先注册或登录,还可以
-        <a href="${ctxPath}/yvr/u/oauth/github">
+        <a href="${ctxPath}/yvr/u/oauth/github" data-intro="使用Github登陆是推荐方式">
           <span class="span-info">
             推荐GitHub一键登录
           </span>
         </a>
-      <a id='u2f_auth_btn'>
+      <a id='u2f_auth_btn' data-intro="炫酷的U2F登陆,前提是有相关硬件">
       	<span class='span-success'>U2F登录</span>
       </a>
       </div>
@@ -33,10 +37,10 @@
       <span class='col_fade'>其他登陆方式</span>
     </div>
     <div class='inner'>
-      <a href='#' id='secken_btn' onclick='secken_auth();'>
+      <a href='#' id='secken_btn' onclick='secken_auth();' data-intro="用洋葱APP扫描就登陆完成,so easy">
         <span class='span-success'>洋葱登陆</span>
       </a>
-      <a href='${ctxPath}/oauth/qq' id='qq_btn'>
+      <a href='${ctxPath}/oauth/qq' id='qq_btn' data-intro="QQ登陆,我不想解释了">
       	<img src="${cdnbase}${base}/rs/images/qq_connect.png"/>
       </a>
     </div>
@@ -53,7 +57,7 @@ if (!socket) {
         if (data.ok) {
         		setTimeout(function() {
                 	var tmp = "<img src='" + data.url + "'>";
-                	layer.open({"title":"请使用洋葱APP扫描二维码", shadeClose : true, "type":1, content:tmp, area : ['256px', '291px']}); // 256+35 = 291
+                	layer.open({"title":"请使用洋葱APP扫码", shadeClose : true, "type":1, content:tmp, area : ['256px', '291px']}); // 256+35 = 291
         		}, 300);
         }
 	});
@@ -169,6 +173,7 @@ $(function(){
       </a>
     </div>
   </div>
+  
   <% } %>
 
   <% if ( null != obj.no_reply_topics!) { %>
@@ -216,7 +221,7 @@ $(function(){
       </ol>
     </div>
   </div>
-  <div class='panel'>
+  <div class='panel' data-intro="小功能,有点意思">
     <div class='header'>
       <span class='col_fade'>小功能区</span>
     </div>
