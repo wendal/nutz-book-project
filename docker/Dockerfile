@@ -30,7 +30,7 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && cd /tmp2 && ls -l  && cd nutz-book-project-master \
   && mvn clean package \
   && mkdir -p /usr/local/tomcat/webapps/ROOT \
-  && cp -r target/nutzbook-2.2.0/* /usr/local/tomcat/webapps/ROOT/ \
+  && cp -r target/nutzbook-2.3.0/* /usr/local/tomcat/webapps/ROOT/ \
   && find /usr/local/tomcat/webapps/ROOT/ \
   && cd / \
   && rm -fr /tmp2 usr/share/maven /usr/bin/mvn ~/.m2
@@ -39,6 +39,7 @@ WORKDIR $CATALINA_HOME
 
 EXPOSE 8080
 EXPOSE 81
+EXPOSE 15555
 COPY docker-entrypoint.py /entrypoint.py
 CMD ["python", "/entrypoint.py"]
 ENV LANG C.UTF-8
