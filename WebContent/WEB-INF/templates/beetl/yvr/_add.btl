@@ -41,7 +41,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
     </div>
   </div>
 </div>
-<script src="${cdnbase}${base}/rs/libs/editor/ext.js?v=3"></script>
+<script src="${cdnbase}${base}/rs/libs/editor/ext.js?v=4"></script>
 <script>
   (function () {
     var editor = new Editor();

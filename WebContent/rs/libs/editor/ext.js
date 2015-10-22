@@ -152,7 +152,7 @@
             if(res.success){
                 self.$win.modal('hide');
                 var fname = file.name;
-                fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+                fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
                 self.editor.push(' !['+ fname +']('+ res.url +')');
             }
             else{
