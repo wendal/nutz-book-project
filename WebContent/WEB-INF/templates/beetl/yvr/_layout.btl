@@ -77,7 +77,6 @@ html { overflow-y: scroll; }
 <script>
 var ctxPath = "${ctxPath}";
 </script>
-<script src="${cdnbase}${base}/rs/libs/markdownit.js"></script>
 <script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
 <script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
 
@@ -88,6 +87,8 @@ var ctxPath = "${ctxPath}";
   <title itemprop='name'>${obj.topic.title} - Nutz社区</title>
   <% } else if (null != title!) {%>
   <title itemprop='name'>${title, escape} - Nutz社区</title>
+  <% } else if (null != obj.title!) {%>
+  <title itemprop='name'>${obj.title, escape} - Nutz社区</title>
   <% } else { %>
   <title itemprop='name'>Nutz社区</title>
   <% } %>
@@ -138,13 +139,13 @@ var ctxPath = "${ctxPath}";
         <li>
         </li>
         <% } %>
-        <li><a href='http://nutzbook.wendal.net' target="_blank">新手入门</a></li>
-        <li><a href='${ctxPath}/apidocs/' target="_blank">API</a></li>
-        <li><a href='${ctxPath}/yvr/links/about.html' target="_blank">关于</a></li>
+        <li><a href='http://nutzbook.wendal.net'>新手入门</a></li>
+        <li><a href='${ctxPath}/apidocs/'>API</a></li>
+        <li><a href='${ctxPath}/yvr/links/about.html'>关于</a></li>
         
+        <li><a href='#' id='guide_btn' onclick="startGuide();">操作向导</a></li>
         <% if ( null != obj.current_user!) { %>
         <li><a href='${ctxPath}/yvr/add' rel="nofollow" >发新贴</a></li>
-        <li><a href='#' id='guide_btn' onclick="startGuide();">操作向导</a></li>
         <li><a href='${ctxPath}/yvr/u/${obj.current_user.loginname!}'>${obj.current_user.nickname!, escape}</a></li>
         <li><a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow">退出</a></li>
         <% } else { %>
