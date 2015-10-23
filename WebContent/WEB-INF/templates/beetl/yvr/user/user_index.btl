@@ -25,7 +25,8 @@
   <%if (null != obj.access_token!) {%>
   <div class='panel'>
     <div class='header'>
-      <span class='col_fade'>accesstoken二维码</span>
+      <span class='col_fade'>AccessToken二维码</span>
+      <button onclick="resetToken();">重置</button>
     </div>
     <div class='inner'>
       <span id="access-token-qrcode"></span>
@@ -38,6 +39,15 @@
     	height: 200,
   	});
   	// END qrcode generate
+  	function resetToken() {
+  		$.ajax({
+  			url : "${base}/yvr/u/me/reset/token",
+  			method : "POST",
+  			success : function() {
+  				window.location.reload();
+  			}
+  		});
+  	}
 	</script>
     </div>
   </div>

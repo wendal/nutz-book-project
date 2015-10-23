@@ -20,6 +20,7 @@ import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.http.Http;
 import org.nutz.http.Response;
@@ -89,6 +90,15 @@ public class YvrUserModule extends BaseModule {
 		return re;
 	}
 	
+	
+	@POST
+	@RequiresUser
+	@At("/me/reset/token")
+	public void resetAccessToken(@Attr(scope = Scope.SESSION, value = "me")int userId) {
+		User user = dao.fetch(User.class, userId);
+		if (user != null)
+			yvrService.resetAccessToken(user.getName());
+	}
 	
 
 	@Ok("raw:jpg")

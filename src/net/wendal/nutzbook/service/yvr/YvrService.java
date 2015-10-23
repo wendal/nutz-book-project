@@ -107,6 +107,15 @@ public class YvrService implements RedisKey {
 	}
 	
 	@Aop("redis")
+	public void resetAccessToken(String loginname) {
+		String at = jedis().hget(RKEY_USER_ACCESSTOKEN, loginname); {
+			jedis().hdel(RKEY_USER_ACCESSTOKEN, loginname);
+			jedis().hdel(RKEY_USER_ACCESSTOKEN2, at);
+			jedis().hdel(RKEY_USER_ACCESSTOKEN3, at);
+		}
+	}
+	
+	@Aop("redis")
 	public int getUserByAccessToken(String at) {
 		String uid_str = jedis().hget(RKEY_USER_ACCESSTOKEN3, at);
 		if (uid_str == null)
