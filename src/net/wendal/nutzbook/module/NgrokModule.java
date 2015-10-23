@@ -47,7 +47,7 @@ public class NgrokModule extends BaseModule {
 		if (token == null) {
 			return HTTP_403;
 		}
-		String filename = URLEncoder.encode("ngrok.xml", Encoding.UTF8);
+		String filename = URLEncoder.encode("ngrok.yml", Encoding.UTF8);
         resp.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 		String[] lines = new String[]{
 				"server_addr: nutz.cn:4443",
