@@ -161,7 +161,8 @@ public class YvrModule extends BaseModule {
 		re.put("page_end", page_end);
 		re.put("current_page", pager.getPageNumber());
 		re.put("pages", pager.getPageCount());
-		re.put("current_user", fetch_userprofile(userId));
+		if (userId > 0)
+			re.put("current_user", fetch_userprofile(userId));
 		
 		// 添加未回复的列表
 		if (!no_replies.isEmpty())
