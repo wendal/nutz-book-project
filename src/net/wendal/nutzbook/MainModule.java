@@ -20,7 +20,6 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 										   "*anno", "net.wendal.nutzbook",
 										   "*tx",
 										   "*org.nutz.integration.quartz.QuartzIocLoader",// 关联Quartz
-										   "*org.snaker.nutz.SnakerIocLoader", /*"flows"*/ //关联snakerflow
 										   "*org.nutz.integration.zbus.ZBusIocLoader", "net.wendal.nutzbook"
 										   })
 @Modules(scanPackage=true)

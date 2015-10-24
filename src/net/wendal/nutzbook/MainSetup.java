@@ -21,8 +21,6 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.quartz.Scheduler;
-import org.snaker.engine.SnakerEngine;
-import org.snaker.engine.core.ServiceContext;
 import org.zbus.mq.server.MqServer;
 import org.zbus.rpc.RpcProcessor;
 import org.zbus.rpc.mq.Service;
@@ -40,8 +38,6 @@ import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.snakerflow.NutzbookAccessStrategy;
-import net.wendal.nutzbook.snakerflow.SnakerEmailInterceptor;
 import net.wendal.nutzbook.util.Markdowns;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -136,14 +132,6 @@ public class MainSetup implements Setup {
 		CacheManager cacheManager = ioc.get(CacheManager.class);
 		log.debug("Ehcache CacheManager = " + cacheManager);
 		//CachedNutDaoExecutor.DEBUG = true;
-		
-		// 初始化Snaker流程引擎
-		SnakerEngine snakerEngine = ioc.get(SnakerEngine.class);
-		// 塞点额外的对象进去流程引擎
-		ServiceContext.put("NutzbookAccessStrategy", ioc.get(NutzbookAccessStrategy.class));
-		ServiceContext.put("NutDao", dao);
-		ServiceContext.put("nutz-email", ioc.get(SnakerEmailInterceptor.class));
-		log.info("snakerflow init complete == " + snakerEngine);
 		
 		// 启用FastClass执行入口方法
 		Mvcs.disableFastClassInvoker = false;

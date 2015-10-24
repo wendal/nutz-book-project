@@ -77,40 +77,12 @@
                 type: 'url',
                 url: '/topics.jsp'
             }, {
-                label: '系统配置',
-                icon: 'md-insert-chart',
-                type: 'url',
-                url: '/sys_configure.jsp'
-            }, {
                 label: 'Druid监控',
                 icon: 'md-insert-chart',
                 type: 'url',
                 url: '/druid_static.jsp'
-            }, {
-                label: '动态表单',
-                icon: 'md-insert-chart',
-                type: 'url',
-                url: '/dyform.jsp'
-            }, {
-                label: '流程定义管理',
-                icon: 'md-insert-chart',
-                type: 'url',
-                url: '/workflow_define.jsp'
-            }, {
-                label: '流程实例管理',
-                icon: 'md-insert-chart',
-                type: 'url',
-                url: '/workflow_order.jsp'
-            }, {
-                label: '流程任务',
-                icon: 'md-insert-chart',
-                type: 'url',
-                url: '/workflow_task.jsp'
             }],
             actions: {
-                'login': function () {
-                    alert('暂时不提供该服务');
-                },
                 'logout' : function() {
                 	window.location.href = home_base + "/user/logout";
                 },
