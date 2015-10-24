@@ -18,12 +18,12 @@
 
       <div>
         请先注册或登录,还可以
-        <a href="${ctxPath}/yvr/u/oauth/github" data-intro="使用Github登陆是推荐方式">
+        <a href="${ctxPath}/yvr/u/oauth/github" data-intro="使用Github登陆是推荐方式" data-position="bottom">
           <span class="span-info">
             推荐GitHub一键登录
           </span>
         </a>
-      <a id='u2f_auth_btn' data-intro="炫酷的U2F登陆,前提是有相关硬件">
+      <a id='u2f_auth_btn' data-intro="炫酷的U2F登陆,前提是有相关硬件" data-position="bottom">
       	<span class='span-success'>U2F登录</span>
       </a>
       </div>
@@ -83,8 +83,8 @@ $(function(){
 		if (console)
 			console.log("this chrome support u2f");
 	} else {
-		$("#u2f_reg_btn").hide();
-		$("#u2f_auth_btn").hide();
+		$("#u2f_reg_btn").remove();
+		$("#u2f_auth_btn").remove();
 		return;
 	}
 	$("#u2f_reg_btn").click(function(){
@@ -221,7 +221,7 @@ $(function(){
       </ol>
     </div>
   </div>
-  <div class='panel' data-intro="小功能,有点意思">
+  <div class='panel' data-intro="小功能,有点意思" data-position="top">
     <div class='header'>
       <span class='col_fade'>小功能区</span>
     </div>
