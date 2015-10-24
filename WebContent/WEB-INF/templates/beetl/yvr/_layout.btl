@@ -29,30 +29,11 @@
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/layer2/layer/skin/layer.css"/>
 <style>
 html { overflow-y: scroll; }
-@font-face {
-	font-family: 'icomoon';
-	src:url('${cdnbase}${base}/rs/libs/editor/fonts/icomoon.eot');
-	src:url('${cdnbase}${base}/rs/libs/editor/fonts/icomoon.eot?#iefix') format('embedded-opentype'),
-		url('${cdnbase}${base}/rs/libs/editor/fonts/icomoon.woff') format('woff'),
-		url('${cdnbase}${base}/rs/libs/editor/fonts/icomoon.ttf') format('truetype'),
-		url('${cdnbase}${base}/rs/libs/editor/fonts/icomoon.svg#icomoon') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
 </style>
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/editor/editor.css"/>
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/webuploader/webuploader.css"/>
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/code-prettify/prettify.css"/>
-<style>
-@font-face {
-  font-family: 'FontAwesome';
-  src: url('${cdnbase}${base}/rs/libs/font-awesome/fonts/fontawesome-webfont.eot?v=4.2.0');
-  src: url('${cdnbase}${base}/rs/libs/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'), url('${cdnbase}${base}/rs/libs/font-awesome/fonts/fontawesome-webfont.woff?v=4.2.0') format('woff'), url('${cdnbase}${base}/rs/libs/font-awesome/fonts/fontawesome-webfont.ttf?v=4.2.0') format('truetype'), url('${cdnbase}${base}/rs/libs/font-awesome/fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-</style>
-<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/font-awesome/css/font-awesome.css"/>
+<link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/font-awesome/font-awesome.css"/>
 <!-- 引导库 -->
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/css/introjs.css"/>
 
