@@ -27,8 +27,6 @@ http://nutzbook.wendal.net/jars/
 * 声明式系统日志
 * 基于socialauth的Oauth登陆(客户端,非服务器端实现)
 * 集成极光推送(jpush)
-* snakerflow工作流集成(未全部完成)
-* 自定义表单(未全部完成)
 * U2F绑定与登陆
 * zbus集成(RPC及MQ)
 

@@ -18,6 +18,8 @@
 
 [Ngrok客户端v1.x 不支持2.x客户端](https://ngrok.com/download/1)
 
+http://pan.baidu.com/s/1eQptxvk 客户端网盘地址
+
 ### 使用方法
 
 下载配置文件(ngrok.yml)及客户端后, 启动之, 以转发到8080端口为例

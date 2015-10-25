@@ -39,6 +39,7 @@ import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.annotation.ReqHeader;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
@@ -174,13 +175,12 @@ public class YvrModule extends BaseModule {
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.btl")
 	@Aop("redis")
-	public Object topic(String id, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object topic(String id, @Attr(scope = Scope.SESSION, value = "me") int userId,
+						@ReqHeader("User-Agent")String userAgent) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		Double visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
-		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
 		topic.setAuthor(fetch_userprofile(topic.getUserId()));
@@ -200,6 +200,29 @@ public class YvrModule extends BaseModule {
 			re.put("_csrf", csrf);
 			re.put("current_user", fetch_userprofile(userId));
 		}
+		Double visited = 0d;
+		boolean flag = userId == topic.getAuthor().getUserId();
+		if (!flag && userAgent != null && userAgent.length() < 1024) {
+			userAgent = userAgent.toLowerCase();
+			flag = userAgent.contains("robot") || userAgent.contains("spider") || userAgent.contains("bot.");
+		}
+		if (!flag) {
+			for (TopicReply reply : topic.getReplies()) {
+				if (reply.getAuthor().getUserId() == userId) {
+					flag = true;
+					break;
+				}
+			}
+		}
+		if (flag) {
+			visited = jedis().zscore(RKEY_TOPIC_VISIT, id);
+			if (visited == null)
+				visited = 0d;
+		}
+		else {
+			visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
+		}
+		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		return re;
 	}
 

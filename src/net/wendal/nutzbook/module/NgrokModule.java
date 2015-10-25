@@ -50,7 +50,7 @@ public class NgrokModule extends BaseModule {
 		String filename = URLEncoder.encode("ngrok.yml", Encoding.UTF8);
         resp.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 		String[] lines = new String[]{
-				"server_addr: nutz.cn:4443",
+				"server_addr: wendal.cn:4443",
 				"trust_host_root_certs: true",
 				"auth_token: " + token,
 				""
