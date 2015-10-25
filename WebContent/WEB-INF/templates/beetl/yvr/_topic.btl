@@ -103,7 +103,7 @@ layout("_layout.btl",{}){
     %>
   </div>
   <% } %>
-  <div class='panel' data-intro="回帖回帖回帖!!">
+  <div class='panel' data-intro="回帖回帖回帖!!" data-position="top">
     <div class='header'>
       <span class='col_fade'>添加回复</span>
     </div>
