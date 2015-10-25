@@ -14,6 +14,8 @@
 
 ### 下载链接
 
+** 注意: 已单独部署为域名 wendal.cn **
+
 [配置文件](/ngrok/config/download)
 
 [Ngrok客户端v1.x 不支持2.x客户端](https://ngrok.com/download/1)
@@ -35,8 +37,8 @@ ngrok
 
 Tunnel Status                 online
 Version                       1.7/1.7
-Forwarding                    http://wendal.ngrok.nutz.cn:9080 -> 127.0.0.1:8080
-Forwarding                    https://wendal.ngrok.nutz.cn:9080 -> 127.0.0.1:8080
+Forwarding                    http://wendal.ngrok.wendal.cn:9080 -> 127.0.0.1:8080
+Forwarding                    https://wendal.ngrok.wendal.cn:9080 -> 127.0.0.1:8080
 Web Interface                 127.0.0.1:4040
 # Conn                        6
 Avg Conn Time                 30758.59ms
@@ -52,7 +54,7 @@ GET /nutzbook/rs/logo.png     200 OK
 本地启动tomcat或其他web应用后, 访问对应的地址即可(替换成自己的地址哦)
 
 ```
-http://wendal.ngrok.nutz.cn:9080/nutzbook/
+http://wendal.ngrok.wendal.cn:9080/nutzbook/
 ```
 
 ### 注意事项
