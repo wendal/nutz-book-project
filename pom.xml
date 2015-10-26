@@ -350,11 +350,6 @@
 			<artifactId>nutz-integration-zbus</artifactId>
 			<version>1.b.52</version>
 		</dependency>
-		<dependency>
-			<groupId>org.nutz</groupId>
-			<artifactId>nutz-plugins-sqltpl</artifactId>
-			<version>1.b.53</version>
-		</dependency>
 	</dependencies>
 	<version>2.3.3</version>
 </project>
