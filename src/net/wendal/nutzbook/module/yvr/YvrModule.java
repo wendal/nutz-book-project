@@ -201,27 +201,27 @@ public class YvrModule extends BaseModule {
 			re.put("current_user", fetch_userprofile(userId));
 		}
 		Double visited = 0d;
-		boolean flag = userId == topic.getAuthor().getUserId();
-		if (!flag && userAgent != null && userAgent.length() < 1024) {
-			userAgent = userAgent.toLowerCase();
-			flag = userAgent.contains("robot") || userAgent.contains("spider") || userAgent.contains("bot.");
-		}
-		if (!flag) {
-			for (TopicReply reply : topic.getReplies()) {
-				if (reply.getAuthor().getUserId() == userId) {
-					flag = true;
-					break;
-				}
-			}
-		}
-		if (flag) {
-			visited = jedis().zscore(RKEY_TOPIC_VISIT, id);
-			if (visited == null)
-				visited = 0d;
-		}
-		else {
+//		boolean flag = userId == topic.getAuthor().getUserId();
+//		if (!flag && userAgent != null && userAgent.length() < 1024) {
+//			userAgent = userAgent.toLowerCase();
+//			flag = userAgent.contains("robot") || userAgent.contains("spider") || userAgent.contains("bot.");
+//		}
+//		if (!flag) {
+//			for (TopicReply reply : topic.getReplies()) {
+//				if (reply.getAuthor().getUserId() == userId) {
+//					flag = true;
+//					break;
+//				}
+//			}
+//		}
+//		if (flag) {
+//			visited = jedis().zscore(RKEY_TOPIC_VISIT, id);
+//			if (visited == null)
+//				visited = 0d;
+//		}
+//		else {
 			visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
-		}
+//		}
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		return re;
 	}
