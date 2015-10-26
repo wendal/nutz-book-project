@@ -92,9 +92,6 @@
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
-			<releases>
-				<updatePolicy>always</updatePolicy>
-			</releases>
 		</repository>
 		<repository>
 			<id>nexus-osc-thirdparty</id>
