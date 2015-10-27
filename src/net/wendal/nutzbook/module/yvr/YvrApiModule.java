@@ -408,12 +408,14 @@ public class YvrApiModule extends BaseModule {
 		return _map("success", true);
 	}
 	/**
-	 * @api {post} /yvr/api/v1/images 上传图片
+	 * @api {post} /yvr/api/v1/images 上传图片, mulitpart格式上传
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
 	 * 
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
+	 * 
+	 * @apiParam {File} file 	上传的图片
 	 * 
 	 * @apiSuccess {boolean} success 成功与否
 	 * @apiSuccess {String} url 图片地址
