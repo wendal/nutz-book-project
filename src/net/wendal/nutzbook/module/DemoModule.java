@@ -105,4 +105,10 @@ public class DemoModule {
 		System.out.println(Json.toJson(children));
 		return "哈哈";
 	}
+	
+	@At("/re/view3")
+	@Ok("re:jsp:jsp.home")
+	public String test_re_view() {
+		return null;
+	}
 }

@@ -8,15 +8,18 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
-import net.wendal.nutzbook.bean.User;
-
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
+import org.nutz.integration.shiro.NutShiro;
 import org.nutz.lang.Lang;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
+
+import net.wendal.nutzbook.bean.User;
 
 public class Toolkit {
 
@@ -156,5 +159,12 @@ public class Toolkit {
 			return (diff/60/60)+"小时";
 		}
 		return (diff/24/60/60)+"天前";
+	}
+	
+	public static void doLogin(AuthenticationToken token, int userId) {
+		Subject subject = SecurityUtils.getSubject();
+		if (token != null)
+			subject.login(token);
+		subject.getSession().setAttribute(NutShiro.SessionKey, userId);
 	}
 }

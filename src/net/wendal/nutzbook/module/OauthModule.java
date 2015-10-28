@@ -10,16 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.wendal.nutzbook.bean.OAuthUser;
-import net.wendal.nutzbook.bean.SysLog;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.shiro.realm.OAuthAuthenticationToken;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.SocialAuthConfig;
@@ -27,7 +17,6 @@ import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
 import org.nutz.dao.util.Daos;
-import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
@@ -43,6 +32,15 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
+
+import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.SysLog;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.shiro.realm.OAuthAuthenticationToken;
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean(create = "init")
 @At("/oauth")
@@ -140,9 +138,7 @@ public class OauthModule extends BaseModule {
 	
 	// 进行Shiro登录
 	protected void doShiroLogin(int userId, String _providerId) {
-		Subject subject = SecurityUtils.getSubject();
-		subject.login(new OAuthAuthenticationToken(userId));
-		subject.getSession().setAttribute(NutShiro.SessionKey, userId);
+		Toolkit.doLogin(new OAuthAuthenticationToken(userId), userId);
 		sysLogService.async(SysLog.c("method", "用户登陆", null, userId, "用户通过"+_providerId+" Oauth登陆"));
 	}
 	

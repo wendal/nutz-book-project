@@ -7,13 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.crossscreen.CrossScreenUserToken;
-import net.wendal.nutzbook.module.BaseModule;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.Scope;
@@ -32,6 +25,11 @@ import com.yubico.u2f.data.messages.RegisterRequestData;
 import com.yubico.u2f.data.messages.RegisterResponse;
 import com.yubico.u2f.exceptions.DeviceCompromisedException;
 import com.yubico.u2f.exceptions.NoEligableDevicesException;
+
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.crossscreen.CrossScreenUserToken;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.util.Toolkit;
 
 @At("/u2f")
 @IocBean(create="init")
@@ -88,10 +86,9 @@ public class U2FModule extends BaseModule {
             registration = e.getDeviceRegistration();
             return ajaxFail(registration.toJson());
         }
-        CrossScreenUserToken cs = new CrossScreenUserToken(dao.fetch(User.class, username).getId());
-        Subject subject = SecurityUtils.getSubject();
-		subject.login(cs);
-		subject.getSession().setAttribute(NutShiro.SessionKey, subject.getPrincipal());
+        User user = dao.fetch(User.class, username);
+        CrossScreenUserToken cs = new CrossScreenUserToken(user.getId());
+        Toolkit.doLogin(cs, user.getId());
         return ajaxOk(null);
     }
 

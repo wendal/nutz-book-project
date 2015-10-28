@@ -5,20 +5,17 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.wendal.nutzbook.bean.SysLog;
-import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.util.Toolkit;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.nutz.integration.shiro.NutShiro;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
+
+import net.wendal.nutzbook.bean.SysLog;
+import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 处理跨屏登陆的入口授权
@@ -49,9 +46,7 @@ public class CrossScreenAuthentication extends FormAuthenticationFilter {
 				Integer uid = (Integer) map.get("uid");
 				if (uid != null) {
 					// 有登陆用户
-					Subject subject = SecurityUtils.getSubject();
-					subject.login(new CrossScreenUserToken(uid));
-					subject.getSession().setAttribute(NutShiro.SessionKey, subject.getPrincipal());
+					Toolkit.doLogin(new CrossScreenUserToken(uid), uid);
 					if (sysLogService == null) {
 						try {
 							sysLogService = Mvcs.ctx().getDefaultIoc().get(SysLogService.class);
