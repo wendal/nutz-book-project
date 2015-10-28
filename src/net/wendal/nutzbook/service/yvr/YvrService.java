@@ -29,6 +29,8 @@ import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.upload.TempFile;
 
@@ -43,6 +45,8 @@ import net.wendal.nutzbook.util.RedisKey;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
+	
+	private static final Log log = Logs.get();
 
 	@Inject 
 	protected Dao dao;
@@ -56,11 +60,17 @@ public class YvrService implements RedisKey {
 	@Inject
 	protected PushService pushService;
 	
+	// TODO 改成发布-订阅模式
 	@Inject("java:$zbus.getProducer('topic-watch')")
 	protected ZBusProducer topicWatchProducer;
 
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
+	
+	@Inject("java:$conf.get('topic.global.watchers')")
+	protected String topicGlobalWatchers;
+	
+	protected Set<Integer> globalWatcherIds = new HashSet<>();
 	
 	@Aop("redis")
 	public void fillTopic(Topic topic, Map<Integer, UserProfile> authors) {
@@ -156,6 +166,9 @@ public class YvrService implements RedisKey {
 		}
 		jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), System.currentTimeMillis(), topic.getId());
 		jedis().zincrby(RKEY_USER_SCORE, 100, ""+userId);
+		for (Integer watcherId : globalWatcherIds) {
+			pushUser(watcherId, "新帖:" + topic.getTitle(), topic.getId());
+		}
 		return _ok(topic.getId());
 	}
 
@@ -307,6 +320,16 @@ public class YvrService implements RedisKey {
 	
 	public void init() {
 		daoNoContent = Daos.ext(dao, FieldFilter.locked(Topic.class, "content").set(TopicReply.class, null, "content", false));
+		if (topicGlobalWatchers != null) {
+			for (String username : Strings.splitIgnoreBlank(topicGlobalWatchers)) {
+				User user = dao.fetch(User.class, username);
+				if (user == null) {
+					log.infof("no such user[name=%s] for topic watch", username);
+					continue;
+				}
+				globalWatcherIds.add(user.getId());
+			}
+		}
 	}
 	
 	static Pattern atPattern = Pattern.compile("@([a-zA-Z0-9\\_]{4,20}\\s)");
