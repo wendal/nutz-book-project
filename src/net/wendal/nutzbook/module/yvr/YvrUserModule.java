@@ -259,7 +259,6 @@ public class YvrUserModule extends BaseModule {
 		String url = req.getHeader("Rerefer");
 		if (url == null)
 			url = "/yvr/list";
-		session.setAttribute("oauth.return.url", url);
 	}
 
 	@At
