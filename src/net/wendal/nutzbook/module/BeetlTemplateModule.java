@@ -2,9 +2,13 @@ package net.wendal.nutzbook.module;
 
 import net.wendal.nutzbook.bean.UserProfile;
 
+import java.util.List;
+
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
+import org.nutz.lang.util.Context;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
@@ -33,5 +37,17 @@ public class BeetlTemplateModule extends BaseModule {
 	@Ok("beetl:notExist")
 	@Fail("http:404")
 	public void error() {
+	}
+	
+	@At("/ctx")
+	@Ok("beetl:ctx.btl")
+	public Context withContext() {
+		Context ctx = Lang.context();
+		Pager pager = dao.createPager(1, 20);
+		pager.setRecordCount(dao.count(UserProfile.class));
+		List<UserProfile> list = dao.query(UserProfile.class, null, pager);
+		ctx.set("pager", pager);
+		ctx.set("list", list);
+		return ctx;
 	}
 }
