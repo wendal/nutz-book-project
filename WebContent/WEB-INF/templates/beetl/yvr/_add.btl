@@ -71,7 +71,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
     });
     
       var warnMsg = '';
-      warnMsg = '<strong>提问时，请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点，以便您更接收到高质量回复。</strong>'
+      warnMsg = '<strong>请用一句话概括帖子的内容,切勿使用'有问题求教'之类的无意义语句. 请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点，以便您更接收到高质量回复。</strong>'
       $('#topic_create_warn').html(warnMsg);
       
   })();
