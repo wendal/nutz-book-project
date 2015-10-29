@@ -6,43 +6,49 @@ public class Slf4jLogger extends AbstractLog {
 	
 	LocationAwareLogger logger;
 	
-	String fqcn;
+	public static final String SUPER_FQCN = AbstractLog.class.getName();
+    public static final String SELF_FQCN = Slf4jLogger.class.getName();
 	
 	static final Object[] EMTRY = new Object[0];
 	
-	public Slf4jLogger(LocationAwareLogger logger, String fqcn) {
+	public Slf4jLogger(LocationAwareLogger logger) {
 		this.logger = logger;
-		this.fqcn = fqcn;
 	}
 
 	public void fatal(Object message, Throwable t) {
-		logger.log(null, fqcn, LocationAwareLogger.ERROR_INT, (String) message, EMTRY , t);
+		if (this.isErrorEnabled())
+			logger.log(null, SELF_FQCN, LocationAwareLogger.ERROR_INT, (String) message, EMTRY , t);
 	}
 
 	public void error(Object message, Throwable t) {
-		logger.log(null, fqcn, LocationAwareLogger.ERROR_INT, (String) message, EMTRY , t);
+		if (this.isErrorEnabled())
+			logger.log(null, SELF_FQCN, LocationAwareLogger.ERROR_INT, (String) message, EMTRY , t);
 	}
 
 	public void warn(Object message, Throwable t) {
-		logger.log(null, fqcn, LocationAwareLogger.WARN_INT, (String) message, EMTRY , t);
+		if (this.isWarnEnabled())
+			logger.log(null, SELF_FQCN, LocationAwareLogger.WARN_INT, (String) message, EMTRY , t);
 	}
 
 	public void info(Object message, Throwable t) {
-		logger.log(null, fqcn, LocationAwareLogger.INFO_INT, (String) message, EMTRY , t);
+		if (this.isInfoEnabled())
+			logger.log(null, SELF_FQCN, LocationAwareLogger.INFO_INT, (String) message, EMTRY , t);
 	}
 
 	public void debug(Object message, Throwable t) {
-		logger.log(null, fqcn, LocationAwareLogger.DEBUG_INT, (String) message, EMTRY , t);
+		if (this.isDebugEnabled())
+			logger.log(null, SELF_FQCN, LocationAwareLogger.DEBUG_INT, (String) message, EMTRY , t);
 	}
 
 	public void trace(Object message, Throwable t) {
-		logger.log(null, fqcn, LocationAwareLogger.TRACE_INT, (String) message, EMTRY , t);
+		if (this.isTraceEnabled())
+			logger.log(null, SELF_FQCN, LocationAwareLogger.TRACE_INT, (String) message, EMTRY , t);
 	}
 
 	protected void log(int level, Object message, Throwable tx) {
 		if (level == 50)
 			level = 40;// slf4j没有FATEL level
-		logger.log(null, fqcn, level, (String) message, EMTRY , tx);
+		logger.log(null, SUPER_FQCN, level, (String) message, EMTRY , tx);
 	}
 
 

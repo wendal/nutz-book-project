@@ -14,7 +14,7 @@ import org.slf4j.spi.LocationAwareLogger;
 public class Slf4jLogAdapter implements LogAdapter, Plugin {
 
 	public Log getLogger(String className) {
-		return new Slf4jLogger((LocationAwareLogger) LoggerFactory.getLogger(className), className);
+		return new Slf4jLogger((LocationAwareLogger) LoggerFactory.getLogger(className));
 	}
 
 	public boolean canWork() {
