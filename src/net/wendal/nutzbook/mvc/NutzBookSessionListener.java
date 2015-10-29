@@ -9,6 +9,11 @@ import net.wendal.nutzbook.util.Toolkit;
 
 import org.nutz.mvc.Mvcs;
 
+/**
+ * 这个类已经没意义,因为已经用shiro替换了容器的session机制,且shiro配置为一年才过时(相当于永不过时)
+ * @author wendal
+ *
+ */
 public class NutzBookSessionListener implements HttpSessionListener {
 
 	SysLogService sysLogService;
