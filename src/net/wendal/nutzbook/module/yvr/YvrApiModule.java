@@ -154,7 +154,7 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.replies.author.id 回复的作者的id
 	 * @apiSuccess {String} data.replies.author.loginname 回复的作者的登陆名称
 	 * @apiSuccess {String} data.replies.content 回复的内容
-	 * @apiSuccess {String} data.replies.ups	点赞数
+	 * @apiSuccess {String[]} data.replies.ups	点赞数
 	 * @apiSuccess {Object} data.replies.author 回帖作者信息
 	 * @apiSuccess {String} data.replies.create_at 回帖时间
 	 * @apiSuccess {String} data.replies.author.id 		作者id
