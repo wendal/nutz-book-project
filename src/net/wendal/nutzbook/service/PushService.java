@@ -19,6 +19,7 @@ import cn.jpush.api.JPushClient;
 import cn.jpush.api.common.resp.APIConnectionException;
 import cn.jpush.api.common.resp.APIRequestException;
 import cn.jpush.api.push.PushResult;
+import cn.jpush.api.push.model.Options;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
@@ -53,6 +54,8 @@ public class PushService implements MessageHandler {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
+		Options options = Options.newBuilder().setApnsProduction(true).build();
+		builder.setOptions(options);
 		jPushProducer.async(builder.build().toString()); // 发送到总线,等待对应的服务处理
 	}
 	
@@ -63,6 +66,8 @@ public class PushService implements MessageHandler {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
+		Options options = Options.newBuilder().setApnsProduction(true).build();
+		builder.setOptions(options);
 		jPushProducer.async(builder.build().toString()); // 发送到总线,等待对应的服务处理
 	}
 	
