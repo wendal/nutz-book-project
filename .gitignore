@@ -19,3 +19,5 @@ WebContent/META-INF/
 /target/
 dump.rdb
 WebContent/apidocs/
+.idea
+*.iml

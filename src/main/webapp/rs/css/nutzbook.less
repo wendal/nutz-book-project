@@ -1,0 +1,75 @@
+@import "mdcss/md";
+
+@primary-1-color: @indigo-500;
+@primary-2-color: @indigo-700;
+@primary-3-color: @indigo-100;
+@accent-1-color: @pink-A200;
+@accent-2-color: @pink-A400;
+@accent-3-color: @pink-A100;
+
+.login-page-container {
+  @cw: 440px;
+  @ch: 620px;
+  background: #fff;;
+  position: absolute;
+  width: @cw;
+  height: @ch;
+  top: 50%;
+  left: 50%;
+  margin-left: -@cw/2;
+  margin-top: -@ch/2;
+
+  .md-text-field, .md-button {
+    width: 100%;
+  }
+
+  @title-h: 128px;
+  @body-h: @ch - @title-h;
+
+  .title {
+    background: @primary-1-color;
+    height: @title-h;
+    line-height: @title-h;
+    font-size: @font-size-h2;
+    color: @white;
+    padding: 24px 48px;
+    vertical-align: bottom;
+  }
+
+  .body {
+    height: @body-h;
+    padding: 16px 48px;
+
+    // login
+
+    .with-captcha {
+      .md-text-field {
+        width: 70%;
+      }
+
+      img#captcha_img {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 105%;
+        height: 50%;
+        cursor: pointer;
+      }
+    }
+
+    #login_button {
+      margin: 18px 0;
+    }
+
+    // logout
+
+    h1 {
+      font-size: @font-size-h4;
+    }
+
+    #logout_button {
+      margin: 18px 0;
+    }
+  }
+
+}

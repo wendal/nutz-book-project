@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<config>
-	<bean class="net.wendal.nutzbook.snakerflow.SnakerAssignInterceptor"></bean>
-	<!--bean class="org.snaker.engine.impl.LogInterceptor"/-->
-	<bean class="net.wendal.nutzbook.snakerflow.SnakerLogInterceptor"></bean>
-	<bean class="org.snaker.engine.impl.SurrogateInterceptor"/>
-	<bean class="org.snaker.nutz.NutzExpression"></bean>
-</config>
