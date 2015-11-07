@@ -15,6 +15,7 @@ import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 
+import net.wendal.nutzbook.module.yvr.api.YvrApi;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
@@ -65,7 +66,7 @@ import net.wendal.nutzbook.util.Markdowns;
 @At("/yvr/api/v1")
 @Ok("json")
 @Fail("http:500")
-public class YvrApiModule extends BaseModule {
+public class YvrApiModule extends BaseModule implements YvrApi {
 	
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
@@ -76,16 +77,16 @@ public class YvrApiModule extends BaseModule {
 	 * @param type 参数名叫tab,默认是ask,如果传all,也会变成ask
 	 * @param limit 每页数量
 	 * @param mdrender 是否渲染md
-	 * 
+	 *
 	 * @api {get} /yvr/api/v1/topics 获取帖子列表
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiParam {int} 		[page=1] 页数,默认为1
 	 * @apiParam {String} 	[tab=ask] 分类
 	 * @apiParam {int} 		[limit=10] 分页
 	 * @apiParam {boolean} 	[mdrender=true] 是否渲染Markdown
-	 * 
+	 *
 	 * @apiSuccess {Object[]} data 帖子列表数据
 	 * @apiSuccess {String} data.id 	唯一标示符
 	 * @apiSuccess {String} data.title 	标题
@@ -99,12 +100,12 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {Object} data.author 作者信息
 	 * @apiSuccess {String} data.author.id 作者id
 	 * @apiSuccess {String} data.author.loginname 作者登陆名
-	 * 
+	 *
 	 */
 	@GET
 	@At
 	@Aop("redis")
-	public Object topics(@Param("page")int page, @Param("tab")String type, 
+	public Object topics(@Param("page")int page, @Param("tab")String type,
 			@Param("limit")int limit, @Param("mdrender")String mdrender) {
 		if (page < 1)
 			page = 1;
@@ -126,15 +127,15 @@ public class YvrApiModule extends BaseModule {
 		}
 		return _map("data", list);
 	}
-	
+
 	/**
 	 * @api {get} /yvr/api/v1/topic/:id 获取帖子的详细数据
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiParam {String}	id 					帖子id
 	 * @apiParam {boolean} 	[mdrender=true] 	是否渲染Markdown
-	 * 
+	 *
 	 * @apiSuccess {Object[]} data 				帖子数据
 	 * @apiSuccess {String} data.id 			唯一标示符
 	 * @apiSuccess {String} data.title 			标题
@@ -159,7 +160,7 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.replies.create_at 回帖时间
 	 * @apiSuccess {String} data.replies.author.id 		作者id
 	 * @apiSuccess {String} data.replies.author.loginname 作者登陆名
-	 * 
+	 *
 	 * @apiError 404 The <code>id</code> of the Topic was not found.
 	 */
 	@Aop("redis")
@@ -171,24 +172,24 @@ public class YvrApiModule extends BaseModule {
 			return HttpStatusView.HTTP_404;
 		}
 		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender);
-		
+
 		List<NutMap> replies = new ArrayList<NutMap>();
 		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
 			dao.fetchLinks(reply, null);
 			reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
-			
+
 			NutMap re = new NutMap();
 			re.put("id", reply.getId());
 			re.put("author", _author(reply.getAuthor()));
-			
+
 			re.put("content", "false".equals(mdrender) ? reply.getContent() : Markdowns.toHtml(reply.getContent(), urlbase));
 			re.put("ups", new ArrayList<String>(reply.getUps()));
 			re.put("create_at", _time(reply.getCreateTime()));
 			replies.add(re);
 		}
-		
+
 		tp.put("replies", replies);
-		
+
 		jedis().zincrby(RKEY_TOPIC_VISIT, 1, topic.getId());
 		return _map("data", tp);
 	}
@@ -199,11 +200,11 @@ public class YvrApiModule extends BaseModule {
 	 * @apiVersion 1.0.0
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiSuccess {String} success=true 	成功
 	 * @apiSuccess {String} id 				用户id
 	 * @apiSuccess {String} loginname		用户登陆名
-	 * 
+	 *
 	 */
 	@At("/accesstoken")
 	@Aop("redis")
@@ -215,14 +216,14 @@ public class YvrApiModule extends BaseModule {
 			return HTTP_403;
 		return _map("success", true, "loginname", uname, "id", jedis().hget(RKEY_USER_ACCESSTOKEN3, accesstoken.toLowerCase()), "avatar_url", _avatar_url(uname));
 	}
-	
+
 	/**
 	 * @api {get} /yvr/api/v1/user/:id 获取用户信息
-	 * 
+	 *
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
 	 * @apiParam {String} id 用户id
-	 * 
+	 *
 	 * @apiSuccess {Object} data 用户数据
 	 * @apiSuccess {String} data.loginname 	用户登陆名称
 	 * @apiSuccess {String} data.score 		用户积分
@@ -233,11 +234,11 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {Object[]} [data.recent_replies] 最近回复的帖子
 	 * @apiSuccess {String} data.recent_replies.id 	帖子id
 	 * @apiSuccess {String} data.recent_replies.title 帖子标题
-	 * 
+	 *
 	 * @apiSuccess {String} data.create_at  注册时间
-	 * 
+	 *
 	 * @apiError 404 The <code>id</code> of the User was not found.
-	 * 
+	 *
 	 */
 	@At("/user/?")
 	@GET
@@ -255,25 +256,25 @@ public class YvrApiModule extends BaseModule {
 			recent_replies.add(_topic(topic, authors, null));
 		}
 		return _map("data", _map("loginname", loginname,
-				"avatar_url", _avatar_url(loginname), 
+				"avatar_url", _avatar_url(loginname),
 				"recent_topics", recent_topics,
 				"recent_replies", recent_replies,
 				"create_at", _time(user.getCreateTime()),
 				"score", yvrService.getUserScore(user.getId())));
 	}
-	
+
 	/**
 	 * @api {post} /yvr/api/v1/topics 发表帖子, 以json格式提交数据
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiParam {String} title		标题
 	 * @apiParam {String} content 	内容
 	 * @apiParam {String} [tab=ask] 类型,默认为问答
-	 * 
+	 *
 	 * @apiSuccess {boolean} success 是否成功
 	 * @apiSuccess {String} [topic_id] 成功时返回帖子的Id
 	 * @apiSuccess {String} [message] 失败时返回原因
@@ -292,19 +293,19 @@ public class YvrApiModule extends BaseModule {
 			return _map("success", false, "message", re.getMsg());
 		}
 	}
-	
+
 	/**
 	 * @api {post} /yvr/api/v1/topic/:id/replies 发表回复, 以json格式提交数据
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiParam {String} id 		帖子id
 	 * @apiParam {String} content 	内容
 	 * @apiParam {String} [reply_id] 回复哪条内容
-	 * 
+	 *
 	 * @apiSuccess {boolean} success 是否成功
 	 * @apiSuccess {String} [reply_id] 成功时返回回复的Id
 	 * @apiSuccess {String} [message] 失败时返回原因
@@ -321,15 +322,15 @@ public class YvrApiModule extends BaseModule {
 			return _map("success", false, "message", re.getMsg());
 		}
 	}
-	
+
 	/**
 	 * @api {post} /yvr/api/v1/reply/:id/ups 点赞或取消点赞
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiParam {String} id 	回复的id
 	 * @apiSuccess {boolean} success 是否成功
 	 * @apiSuccess {String} [action] 点赞成功为up,取消点赞成功为down
@@ -346,32 +347,33 @@ public class YvrApiModule extends BaseModule {
 			return _map("success", false, "message", re.getMsg());
 		}
 	}
-	
+
 	/**
 	 * @api {get} /yvr/api/v1/message/count 获取用户的未读消息数量
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiSuccess {int} data 未读消息数量
-	 * 
+	 *
 	 */
+	@Filters(@By(type=AccessTokenFilter.class))
 	@GET
 	@At("/message/count")
-	public Object msgCount() {
+	public Object msgCount(@Attr(scope = Scope.SESSION, value = "me") int userId) {
 		return _map("data", 0);
 	}
-	
+
 	/**
 	 * @api {get} /yvr/api/v1/message/count 获取用户的消息
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiSuccess {Object} data 用户消息
 	 * @apiSuccess {Object[]} [data.has_read_messages] 已读消息列表,当前总是为空
 	 * @apiSuccess {String} data.has_read_messages.id 消息id
@@ -383,40 +385,41 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.hasnot_read_messages.type 消息类型
 	 * @apiSuccess {String} data.hasnot_read_messages.content 消息内容
 	 * @apiSuccess {String} [data.hasnot_read_messages.topic_id] 关联的帖子Id
-	 * 
+	 *
 	 */
+	@Filters(@By(type=AccessTokenFilter.class))
 	@GET
 	@At("/messages")
-	public Object getMessages() {
+	public Object getMessages(@Attr(scope = Scope.SESSION, value = "me") int userId) {
 		return _map("data", _map("has_read_messages", Collections.EMPTY_LIST, "hasnot_read_messages", Collections.EMPTY_LIST));
 	}
-	
+
 	/**
 	 * @api {post} /yvr/api/v1/message/mark_all 标记所有消息为已读
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiSuccess {boolean} success 成功与否
 	 */
 	@POST
 	@At("/message/mark_all")
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object markAllMessage() {
+	public Object markAllMessage(@Attr(scope = Scope.SESSION, value = "me") int userId) {
 		return _map("success", true);
 	}
 	/**
 	 * @api {post} /yvr/api/v1/images 上传图片, mulitpart格式上传
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
-	 * 
+	 *
 	 * @apiUse TOKEN
 	 * @apiUse TOKEN_ERROR
-	 * 
+	 *
 	 * @apiParam {File} file 	上传的图片
-	 * 
+	 *
 	 * @apiSuccess {boolean} success 成功与否
 	 * @apiSuccess {String} url 图片地址
 	 */
@@ -424,10 +427,10 @@ public class YvrApiModule extends BaseModule {
 	@At("/images")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object images(@Param("file")TempFile tmp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException, ServletException {
+	public Object images(@Param("file")TempFile tmp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws Exception {
 		return yvrService.upload(tmp, userId);
 	}
-	
+
 	// --------------------
 	// 辅助方法
 	

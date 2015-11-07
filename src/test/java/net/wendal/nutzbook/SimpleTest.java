@@ -1,23 +1,31 @@
 package net.wendal.nutzbook;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.beetl.core.BeetlKit;
+import org.junit.Assert;
+import org.junit.Test;
+import org.nutz.dao.Cnd;
+import org.nutz.dao.Dao;
+import org.nutz.dao.entity.Entity;
+import org.nutz.dao.entity.MappingField;
+import org.nutz.dao.impl.NutDao;
+import org.nutz.json.Json;
+import org.nutz.lang.util.MethodParamNamesScaner;
+import org.nutz.lang.util.NutMap;
+
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.APIResult;
 import net.wendal.nutzbook.module.yvr.YvrModule;
 import net.wendal.nutzbook.util.Markdowns;
-
-import org.beetl.core.BeetlKit;
-import org.junit.Assert;
-import org.junit.Test;
-import org.nutz.json.Json;
-import org.nutz.lang.util.MethodParamNamesScaner;
-import org.nutz.lang.util.NutMap;
 
 public class SimpleTest extends Assert {
 
@@ -84,6 +92,34 @@ public class SimpleTest extends Assert {
 		Map<String, List<String>> names = MethodParamNamesScaner.getParamNames(YvrModule.class);
 		for (Entry<String, List<String>> en : names.entrySet()) {
 			System.out.println(en.getValue());
+		}
+	}
+	
+	@Test
+	public void test_oracle_timestamp() {
+		System.out.println(new Timestamp(System.currentTimeMillis()));
+	}
+	
+	/**
+	 * 更新或插入对象
+	 * @param dao Dao实例
+	 * @param list 需要操作的列表
+	 * @param field 作为判定依据的属性名称
+	 */
+	public static <T> void insertOrUpdate(Dao dao, List<T> list, String field) {
+		Entity<? extends Object> en = dao.getEntity(list.get(0).getClass());
+		MappingField mf = en.getField(field);
+		for (T t : list) {
+			Object val = mf.getValue(t);
+			// 如果对应的属性不为null,且不为0,到数据库检查一下是否存在
+			if (val != null && !(val instanceof Number && ((Number)val).intValue() == 0)) {
+				// count一下就知道是否存在了
+				if (dao.count(t.getClass(), Cnd.where(field, "=", val)) != 0) {
+					dao.update(t); // 存在,更新之
+					continue;
+				}
+			}
+			dao.insert(t);
 		}
 	}
 }
