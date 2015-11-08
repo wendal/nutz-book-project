@@ -1,16 +1,11 @@
 package net.wendal.nutzbook.shiro.realm;
 
-import net.wendal.nutzbook.bean.Permission;
-import net.wendal.nutzbook.bean.Role;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.util.Toolkit;
-
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -24,8 +19,11 @@ import org.nutz.dao.Dao;
 import org.nutz.integration.shiro.CaptchaUsernamePasswordToken;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
+
+import net.wendal.nutzbook.bean.Permission;
+import net.wendal.nutzbook.bean.Role;
+import net.wendal.nutzbook.bean.User;
 
 /**
  * 用NutDao来实现Shiro的Realm
@@ -72,13 +70,7 @@ public class NutDaoRealm extends AuthorizingRealm {
 	}
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		CaptchaUsernamePasswordToken upToken = (CaptchaUsernamePasswordToken) token;
-		
-		if (Strings.isBlank(upToken.getCaptcha()))
-			throw new AuthenticationException("验证码不能为空");
-		String _captcha = Strings.sBlank(SecurityUtils.getSubject().getSession(true).getAttribute(Toolkit.captcha_attr));
-		if (!upToken.getCaptcha().equalsIgnoreCase(_captcha))
-			throw new AuthenticationException("验证码错误");
+		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 		
 		User user = dao().fetch(User.class, Cnd.where("name", "=", upToken.getUsername()));
         if (user == null)
