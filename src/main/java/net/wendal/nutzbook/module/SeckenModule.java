@@ -75,7 +75,7 @@ public class SeckenModule extends BaseModule {
 		
 		int uid = ouser.getUserId();
 		NutMap map = new NutMap();
-		map.put("url", "https://nutz.cn/yvr/list");
+		map.put("url", websiteUrlBase+"/yvr/list");
 		map.put("t", System.currentTimeMillis());
 		map.put("uid", uid);
 		String json = Json.toJson(map, JsonFormat.compact());

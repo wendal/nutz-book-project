@@ -14,7 +14,7 @@
     </div>
     <% } else { %>
     <div class='inner'>
-      <p>Nutz社区</p>
+      <p>${conf['website.title']}</p>
 
       <div>
         请先注册或登录,还可以
@@ -64,7 +64,7 @@ if (!socket) {
 	socket.on("login_callback", function(data){
 		if (console)
 			console.log(data);
-        window.location = "https://nutz.cn/cs/pass?token=" + data.token;
+        window.location = "${conf["website.urlbase"]}/cs/pass?token=" + data.token;
 	});
 }
     socket.emit("get_auth_qr", {});

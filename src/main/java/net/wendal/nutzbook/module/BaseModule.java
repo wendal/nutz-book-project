@@ -28,11 +28,17 @@ public abstract class BaseModule implements RedisKey {
 	
 	@Inject protected CacheManager cacheManager;
 	
-	@Inject("java:$conf.get('topic_seo.urlbase')")
+	@Inject("java:$conf.get('website.urlbase')")
 	protected String urlbase;
 	
 	@Inject
 	protected YvrService yvrService;
+
+	@Inject("java:$conf.get('website.urlbase')")
+    public String websiteUrlBase = "https://nutz.cn";
+	
+	@Inject("java:$conf.get('website.title')")
+	public String websiteTitle;
 	
 	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {

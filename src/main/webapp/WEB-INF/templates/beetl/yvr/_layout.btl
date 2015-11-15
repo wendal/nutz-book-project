@@ -18,7 +18,7 @@
   <link rel="icon" href="${cdnbase}${base}/rs/logo.png" type="image/x-icon"/>
   <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/logo/logo.css"/>
   
-  <link rel="canonical" href="https://nutz.cn/" itemprop="url"/>
+  <link rel="canonical" href="${conf["website.urlbase"]}" itemprop="url"/>
 
 <!-- style -->
 <style>
@@ -61,27 +61,27 @@ var ctxPath = "${ctxPath}";
 
 
   <% if (null != obj.topic!) { %>
-  <title itemprop='name'>${obj.topic.title} - Nutz社区</title>
+  <title itemprop='name'>${obj.topic.title} - ${conf['website.title']}</title>
   <% } else if (null != title!) {%>
-  <title itemprop='name'>${title, escape} - Nutz社区</title>
+  <title itemprop='name'>${title, escape} - ${conf['website.title']}</title>
   <% } else if (null != obj.title!) {%>
-  <title itemprop='name'>${obj.title, escape} - Nutz社区</title>
+  <title itemprop='name'>${obj.title, escape} - ${conf['website.title']}</title>
   <% } else { %>
-  <title itemprop='name'>Nutz社区</title>
+  <title itemprop='name'>${conf['website.title']}</title>
   <% } %>
-  <meta name="Keywords" content="Nutz,Nutz是什么,Nutz下载,Nutz社区"/>
+  <meta name="Keywords" content="${conf['website.keywords']}"/>
   <% if (null != obj.topic!) { %>
   <meta name="Description" content="${submax(obj.topic.content, 50), escape}"/>
   <% } else { %>
-  <meta name="Description" content="它是开源的，商用也是完全免费的。详尽的文档，众多线上项目 不吹嘘概念,代码严谨可靠，近千个testcase,坚如磐石。"/>
+  <meta name="Description" content="${conf['website.long_description']}"/>
   <% } %>
   
 <script type="application/ld+json">
     {
       "@context": "http://schema.org",
       "@type": "Organization",
-      "url": "https://nutz.cn",
-      "logo": "https://nutz.cn/rs/logo/logo.png"
+      "url": "${conf["website.urlbase"]}",
+      "logo": "${conf["website.urlbase"]}/rs/logo/logo.png"
     }
 </script>
   
@@ -104,9 +104,9 @@ var ctxPath = "${ctxPath}";
       </a>
 
 	  <div itemscope itemtype="http://schema.org/WebSite">
-	    <meta itemprop="url" content="https://nutz.cn/"/>
+	    <meta itemprop="url" content="${conf["website.urlbase"]}"/>
         <form id='search_form' class='navbar-search' action="${ctxPath}/yvr/search" itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction">
-          <meta itemprop="target" content="https://nutz.cn${ctxPath}/yvr/search?q={q}"/>
+          <meta itemprop="target" content="${conf["website.urlbase"]}${ctxPath}/yvr/search?q={q}"/>
           <input type='text' id='q' name='q' class='search-query span3' value='' itemprop="query-input" required/>
         </form>
       </div>
@@ -157,7 +157,7 @@ var ctxPath = "${ctxPath}";
       | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
       |
-      <a title="查看备案信息" target="_blank" href="http://www.miibeian.gov.cn">苏ICP备 10226088号-17</a>
+      <a title="查看备案信息" target="_blank" href="http://www.miibeian.gov.cn">${conf['website.beian']}</a>
     </div>
 
   </div>
@@ -288,21 +288,21 @@ function startGuide(){
 		}).start();
 };
 </script>
-<% if (null != conf["topic_seo.cnzz"]) {%>
+<% if (null != conf["website.cnzz"]) {%>
 <div style="display: none;">
 <script type="text/javascript">
 (function() {
-var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_${conf["topic_seo.cnzz"]}'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D${conf["topic_seo.cnzz"]}' type='text/javascript'%3E%3C/script%3E"));
+var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_${conf["website.cnzz"]}'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D${conf["topic_seo.cnzz"]}' type='text/javascript'%3E%3C/script%3E"));
 })();
 </script>
 </div>
 <% } %>
-<% if (null != conf["topic_seo.tongji"]) { %>
+<% if (null != conf["website.tongji"]) { %>
 <script>
 var _hmt = _hmt || [];
 $(function() {
   var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?${conf["topic_seo.tongji"]}";
+  hm.src = "//hm.baidu.com/hm.js?${conf["website.tongji"]}";
   var s = document.getElementsByTagName("script")[0]; 
   s.parentNode.insertBefore(hm, s);
 });

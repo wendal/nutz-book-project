@@ -57,12 +57,12 @@ public class YvrSeoModule extends BaseModule {
 	public String rss() throws IOException, FeedException {
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("rss_2.0");
-		String urlbase = conf.get("topic_seo.urlbase", "https://nutz.cn");
+		String urlbase = conf.get("website.urlbase", "https://nutz.cn");
 		feed.setLink(urlbase);
-		feed.setTitle(conf.get("topic_seo.title", "Nutz社区"));
-		feed.setDescription(conf.get("topic_seo.description", "一个有爱的社区"));
+		feed.setTitle(conf.get("website.title", "Nutz社区"));
+		feed.setDescription(conf.get("website.description", "一个有爱的社区"));
 		
-		feed.setAuthor(conf.get("topic_seo.author", "wendal"));
+		feed.setAuthor(conf.get("website.author", "wendal"));
 		feed.setEncoding("UTF-8");
 		feed.setLanguage("zh-cn");
 		
@@ -99,7 +99,7 @@ public class YvrSeoModule extends BaseModule {
 	@At
 	@Ok("raw:xml")
 	public File sitemap() throws MalformedURLException, ParseException{
-		String tmpdir = conf.get("topic_seo.tmp_dir", "/tmp");
+		String tmpdir = conf.get("website.tmp_dir", "/tmp");
 		Files.createDirIfNoExists(tmpdir);
 		final WebSitemapGenerator gen = new WebSitemapGenerator(urlbase, new File(tmpdir));
 		gen.addUrl(urlbase + "/yvr/list");

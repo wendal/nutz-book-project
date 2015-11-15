@@ -32,6 +32,8 @@ import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.demo.BeanHasPK;
+import net.wendal.nutzbook.bean.demo.StoreHouseOfShopProd;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
@@ -181,6 +183,12 @@ public class MainSetup implements Setup {
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
 
+		// 测试@PK
+		dao.create(BeanHasPK.class, true);
+		dao.fetchx(BeanHasPK.class, "abc", "wendal");
+		
+		dao.create(StoreHouseOfShopProd.class, true);
+		dao.fetchx(BeanHasPK.class, 1, 2);
 	}
 	
 	public void destroy(NutConfig conf) {

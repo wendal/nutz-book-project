@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +19,7 @@ import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.MappingField;
 import org.nutz.dao.impl.NutDao;
 import org.nutz.json.Json;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.util.MethodParamNamesScaner;
 import org.nutz.lang.util.NutMap;
 
@@ -87,13 +89,13 @@ public class SimpleTest extends Assert {
 		System.out.println(Json.toJson(re));
 	}
 	
-	@Test
-	public void test_jdk8_param_name() throws IOException{
-		Map<String, List<String>> names = MethodParamNamesScaner.getParamNames(YvrModule.class);
-		for (Entry<String, List<String>> en : names.entrySet()) {
-			System.out.println(en.getValue());
-		}
-	}
+//	@Test
+//	public void test_jdk8_param_name() throws IOException{
+//		Map<String, List<String>> names = MethodParamNamesScaner.getParamNames(YvrModule.class);
+//		for (Entry<String, List<String>> en : names.entrySet()) {
+//			System.out.println(en.getValue());
+//		}
+//	}
 	
 	@Test
 	public void test_oracle_timestamp() {
@@ -121,5 +123,14 @@ public class SimpleTest extends Assert {
 			}
 			dao.insert(t);
 		}
+	}
+	
+	@Test
+	public void test_mirror_map_get() {
+		Map<String, Object> map = new LinkedHashMap<>();
+		map.put("abc", "123");
+		Mirror mirror = Mirror.me(map.getClass());
+		mirror.getValue(map, "abc");
+		
 	}
 }

@@ -3,6 +3,7 @@ package net.wendal.nutzbook.module;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -110,5 +111,18 @@ public class DemoModule {
 	@Ok("re:jsp:jsp.home")
 	public String test_re_view() {
 		return null;
+	}
+	
+	@At("/param/list")
+	@Ok("json")
+	public Object test_param_list(@Param("::user")List<User> users) {
+		return users;
+	}
+	
+	@At("/path/**")
+	@Ok("raw")
+	public void test_path(String path, HttpServletRequest req) {
+		System.out.println(path);
+		System.out.println(req.getRequestURI());
 	}
 }

@@ -30,6 +30,16 @@ http://nutzbook.wendal.net/jars/
 * U2F绑定与登陆
 * zbus集成(RPC及MQ)
 
+## 关于目录结构变化
+
+nutzbook中的代码是eclipse结构的, 本项目最新的代码已经改为maven格式, 映射关系如下
+
+src -- src/main/java
+conf -- src/main/resources
+WebContent -- src/main/webapp
+
+eclipse依然可以直接导入本项目
+
 ## 在线演示地址
 
 论坛系统(即Nutz社区的官网) https://nutz.cn
@@ -60,7 +70,7 @@ oracle用户留意一下  db.validationQuery=select 1 from dual
 运行,需要先启动一个mysql和redis哦
 
 ```
-mvn jetty:run
+mvn jetty:run-exploded
 ```
 
 # 用docker镜像启动

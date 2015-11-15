@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
@@ -36,8 +37,6 @@ import net.wendal.nutzbook.util.Toolkit;
 @Ok("json")
 public class U2FModule extends BaseModule {
 
-    public static final String APP_ID = "https://nutz.cn";
-
     protected final Map<String, String> requestStorage = new ConcurrentHashMap<String, String>();
     
     protected final U2F u2f = U2F.withoutAppIdValidation();
@@ -48,7 +47,7 @@ public class U2FModule extends BaseModule {
     	if (userId < 1)
     		return ajaxFail("请先登录");
     	User user = dao.fetch(User.class, userId);
-        RegisterRequestData registerRequestData = u2f.startRegistration(APP_ID, getRegistrations(user.getName()));
+        RegisterRequestData registerRequestData = u2f.startRegistration(websiteUrlBase, getRegistrations(user.getName()));
         requestStorage.put(registerRequestData.getRequestId(), registerRequestData.toJson());
         return ajaxOk(registerRequestData.getRegisterRequests().get(0));
     }
@@ -69,7 +68,7 @@ public class U2FModule extends BaseModule {
     @At("/startAuthentication")
     @POST
     public Object startAuthentication(@Param("username")String username) throws NoEligableDevicesException {
-        AuthenticateRequestData authenticateRequestData = u2f.startAuthentication(APP_ID, getRegistrations(username));
+        AuthenticateRequestData authenticateRequestData = u2f.startAuthentication(websiteUrlBase, getRegistrations(username));
         requestStorage.put(authenticateRequestData.getRequestId(), authenticateRequestData.toJson());
         return ajaxOk(authenticateRequestData.getAuthenticateRequests().get(0));
     }

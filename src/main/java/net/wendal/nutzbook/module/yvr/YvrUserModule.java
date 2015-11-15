@@ -231,7 +231,7 @@ public class YvrUserModule extends BaseModule {
 			String url = req.getRequestURL() + "/" + token;
 			String html = "<div>如果无法点击,请拷贝一下链接到浏览器中打开<p/>注册链接 %s</div>";
 			html = String.format(html, url, url);
-			if (emailService.send(email, "Nutz社区注册邮件 -- " + username, html))
+			if (emailService.send(email, websiteTitle+"注册邮件 -- " + username, html))
 				return ajaxOk("请查收邮件,点击邮件中的链接即可完成注册");
 		} catch (Exception e) {
 			log.debug("有点问题", e);

@@ -65,11 +65,11 @@ layout("_layout.btl",{}){
 			<a class="jiathis_button_tqq"></a>
 			<a class="jiathis_button_weixin"></a>
 			<a class="jiathis_button_renren"></a>
-			<a href="http://www.jiathis.com/share?uid=${conf["topic_seo.jiathis"]}" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+			<a href="http://www.jiathis.com/share?uid=${conf["website.jiathis"]}" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
 			<a class="jiathis_counter_style"></a>
 		</div>
 		<script type="text/javascript">var jiathis_config = {data_track_clickback:'true'};</script>
-		<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=${conf["topic_seo.jiathis"]}" charset="utf-8"></script>
+		<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=${conf["website.jiathis"]}" charset="utf-8"></script>
 		<!-- JiaThis Button END -->
 		</span>
           <% } %>

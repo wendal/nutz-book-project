@@ -7087,10 +7087,10 @@ var toolbar = [
 
   {name: 'link', action: drawLink},
   {name: 'image', action: drawImage},
-  {name: 'code', action : "https://nutz.cn"},
+  {name: 'code', action : "http://wendal.net"},
   '|',
 
-  {name: 'info', action: 'http://lab.lepture.com/editor/markdown'},
+  {name: 'info', action: 'http://wowubuntu.com/markdown/'},
   {name: 'preview', action: togglePreview},
   {name: 'fullscreen', action: toggleFullScreen}
 ];

@@ -23,13 +23,16 @@ public class SeckenAuthService {
 	@Inject Dao dao;
 	
 	@Inject Secken secken;
+
+	@Inject("java:$conf.get('website.urlbase')")
+    public String websiteUrlBase = "https://nutz.cn";
 	
 	@OnEvent("get_auth_qr")
 	public void getAuthQr(SocketIOClient client, Object data, AckRequest ackRequest) {
 		NutMap re = new NutMap();
 		try {
 			// TODO 可配置
-			SeckenResp resp = secken.getAuth(1, "https://nutz.cn/secken/callback/"+R.UU32(client.getSessionId())).check();
+			SeckenResp resp = secken.getAuth(1, websiteUrlBase+"/secken/callback/"+R.UU32(client.getSessionId())).check();
 			String url = resp.qrcode_url();
 			re.put("ok", true);
 			re.put("url", url);
