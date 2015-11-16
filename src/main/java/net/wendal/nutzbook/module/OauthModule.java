@@ -57,7 +57,7 @@ public class OauthModule extends BaseModule {
 	@At("/?")
 	public void auth(String provider, HttpSession session,
 			HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		String returnTo = req.getRequestURL().toString() + "/callback";
+		String returnTo = websiteUrlBase + "/oauth/" + provider + "/callback";
 		if (req.getParameterMap().size() > 0) {
 			StringBuilder sb = new StringBuilder().append(returnTo).append("?");
 			for (Object name : req.getParameterMap().keySet()) {
