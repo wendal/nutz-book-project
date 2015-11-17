@@ -1,8 +1,10 @@
 package net.wendal.nutzbook;
 
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+
 
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -14,6 +16,7 @@ import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.zbus.ZBusFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -30,6 +33,7 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
+import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.BeanHasPK;
@@ -55,6 +59,14 @@ public class MainSetup implements Setup {
 	
 	@SuppressWarnings("unchecked")
 	public void init(NutConfig nc) {
+		// 检查环境
+		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
+			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
+		}
+		if (System.getenv("ehcache.disk.store.dir") == null) {
+			log.info("You shall set up environment variable [ehcache.disk.store.dir], which using at ehcache.xml =>>  -Dehcache.disk.store.dir=/tmp");
+		}
+		
 		// netty的东西,强制让它使用log4j记录日志. 因为环境中存在slf4j,它会自动选用,导致log4j配置日志级别失效
 		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
 		
@@ -67,6 +79,7 @@ public class MainSetup implements Setup {
 		// 修正表结构
 		Daos.migration(dao, UserProfile.class, true, false);
 		Daos.migration(dao, TopicReply.class, true, false);
+		Daos.migration(dao, OAuthUser.class, true, false);
 		
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");

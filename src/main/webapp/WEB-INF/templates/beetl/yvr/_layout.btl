@@ -99,7 +99,7 @@ var ctxPath = "${ctxPath}";
         		<img src="${cdnbase}${base}/rs/logo/logo.png" alt="网站logo"/>
         		<div class="logo-tail"></div>
     		</div>
-    		<div class="nutz-txt">Nutz</div>
+    		<div class="nutz-txt">${conf["website.shortname"]}</div>
 		</div>
       </a>
 
@@ -116,7 +116,7 @@ var ctxPath = "${ctxPath}";
         <li>
         </li>
         <% } %>
-        <li><a href='http://nutzbook.wendal.net'>新手入门</a></li>
+        <li><a href='${conf["website.fornew.url"]}'>新手入门</a></li>
         <li><a href='${ctxPath}/apidocs/'>API</a></li>
         <li><a href='${ctxPath}/yvr/links/about.html'>关于</a></li>
         

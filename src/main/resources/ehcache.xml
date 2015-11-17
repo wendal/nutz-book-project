@@ -3,7 +3,7 @@
 	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="false"
 	monitoring="autodetect" dynamicConfig="true" name="nutzbook">
 	<!-- <diskStore path="java.io.tmpdir/shiro-ehcache"/> -->
-	<diskStore path="/data/yvr_cache/" />
+	<diskStore path="ehcache.disk.store.dir/yvr_cache" />
 	
 	<cache name="shiro-activeSessionCache"
        maxElementsInMemory="1000"

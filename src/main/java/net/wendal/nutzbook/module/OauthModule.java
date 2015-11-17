@@ -16,7 +16,6 @@ import org.brickred.socialauth.SocialAuthConfig;
 import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
-import org.nutz.dao.util.Daos;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
@@ -54,6 +53,7 @@ public class OauthModule extends BaseModule {
 	@Inject
 	protected SysLogService sysLogService;
 
+	@Ok("void")
 	@At("/?")
 	public void auth(String provider, HttpSession session,
 			HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -142,6 +142,7 @@ public class OauthModule extends BaseModule {
 		sysLogService.async(SysLog.c("method", "用户登陆", null, userId, "用户通过"+_providerId+" Oauth登陆"));
 	}
 	
+	// TODO 关联已有用户
 	@At
 	public void link() {
 	}
@@ -155,9 +156,10 @@ public class OauthModule extends BaseModule {
 			devConfig = Files.findFile("oauth_consumer.properties"); // 真实环境所使用的配置文件
 		if (devConfig == null)
 			config.load(new NullInputStream());
-		else
+		else {
+			log.info("Using " + devConfig);
 			config.load(new FileInputStream(devConfig));
+		}
 		this.config = config;
-		Daos.migration(dao, OAuthUser.class, true, false);
 	}
 }

@@ -15,9 +15,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.MappingField;
 import org.nutz.dao.impl.NutDao;
+import org.nutz.dao.sql.Sql;
 import org.nutz.json.Json;
 import org.nutz.lang.Mirror;
 import org.nutz.lang.util.MethodParamNamesScaner;
@@ -132,5 +134,12 @@ public class SimpleTest extends Assert {
 		Mirror mirror = Mirror.me(map.getClass());
 		mirror.getValue(map, "abc");
 		
+	}
+	
+	@Test
+	public void test_sql_cnd() {
+		Sql sql = Sqls.create("select * from WebSite @cnd and Status != -1");
+		sql.setParam("cnd", Cnd.where("id", ">", 0));
+		System.out.println(sql);
 	}
 }
