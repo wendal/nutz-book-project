@@ -16,7 +16,7 @@ web:
     - db
     - redis
   environment:
-    NUTZBOOK_db.url     : jdbc:mysql://db/nutzbook
+    NUTZBOOK_db.url     : "jdbc:mysql://db/nutzbook"
     NUTZBOOK_redis.host : redis
   ports:
     - "8080:8080"
