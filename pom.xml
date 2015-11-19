@@ -69,11 +69,17 @@
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>nexus-osc-thirdparty</id>
 			<name>Nexus osc thirdparty</name>
 			<url>http://maven.oschina.net/content/repositories/thirdparty/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<dependencies>

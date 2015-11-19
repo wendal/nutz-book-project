@@ -7,7 +7,8 @@ https://github.com/wendal/nutz-book
 
 http://nutzbook.wendal.net
 
-[部署指南](INSTALL.md)
+非常欢迎大家自行部署, 请查阅[部署指南](INSTALL.md)
+
 
 ## 当前已经实现或正在实现的功能
 

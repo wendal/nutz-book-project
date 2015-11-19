@@ -5,32 +5,15 @@
 * mysql/oracle/pgsql/h2 数据库
 * redis 2.8+
 * maven 3.1+
+* jdk 8+
 
-## 通过maven进行简易启动(mysql)
+PS: 通过docker部署的话无需上述软件
 
-确保本地mysql和redis启动正常, 并创建数据库
+## 部署方式
 
-```
-create database nutzbook default character set utf8;
-```
-
-默认数据库密码是root, 如果不符,修改custom/db.properties的值
-
-### 在windows控制台
-
-
-```
-chcp 65001
-set MAVEN_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -Xmx1G -Xms128m"
-mvn jetty:run
-```
-
-### linux/mac
-
-```
-export MAVEN_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -Xmx1G -Xms128m"
-mvn jetty:run
-```
+* [通过maven进行简易启动(mysql)](INSTALL_MAVEN.md)
+* [通过maven生成war](INSTALL_WAR.md)
+* [通过docker启动](INSTALL_DOCKER.md)
 
 ### 常见问题
 
@@ -56,19 +39,10 @@ mvn jetty:run
 * custom/website.properties -- 网站信息配置
 * custom/zbus.properties -- ZBus消息总线服务的配置信息
 
+## 自定义的基本步骤
 
-## 用docker镜像启动
+1. 修改website.properties的网站信息
+2. 修改logo文件,位于src/main/resources/webapp/rs/logo/logo.png, logo.css
+3. 配置邮箱信息email.properties
+4. 如需第三方登陆,例如github/qq,配置oauth_consumer.properties,否则请在website.properties关闭之
 
-通过docker-compose启动(推荐)
-
-```
-cd docker
-docker-compose up
-```
-
-单独启动, 需要自行解决mysql/redis的启动哦
-
-```
-docker run -it --rm  -e NUTZBOOK_db.url="jdbc:mysql://192.168.1.111:3306/nutzbook" \
-	-e NUTZBOOK_redis.host=192.168.1.111 -v /dev/urandom:/dev/random wendal/nutzbook2:latest
-```
