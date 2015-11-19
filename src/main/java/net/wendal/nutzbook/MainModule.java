@@ -14,6 +14,7 @@ import org.nutz.mvc.annotation.SessionBy;
 import org.nutz.mvc.annotation.SetupBy;
 import org.nutz.mvc.annotation.Views;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
+import org.nutz.plugins.view.velocity.VelocityViewMaker;
 
 @SetupBy(value=MainSetup.class)
 @IocBy(type=ComboIocProvider.class, args={"*js", "ioc/",
@@ -27,7 +28,7 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @Ok("json:full")
 @Fail("jsp:jsp.500")
 @Localization(value="msg/", defaultLocalizationKey="zh-CN")
-@Views({JetTemplateViewMaker.class, BeetlViewMaker2.class})
+@Views({JetTemplateViewMaker.class, BeetlViewMaker2.class, VelocityViewMaker.class})
 @SessionBy(ShiroSessionProvider.class)
 public class MainModule {
 }

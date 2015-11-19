@@ -1,9 +1,11 @@
 package net.wendal.nutzbook.mvc;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.http.HttpSession;
 
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.json.Json;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.ActionFilter;
@@ -11,8 +13,15 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.view.VoidView;
 
 public class CsrfActionFilter implements ActionFilter {
+	
+	protected Boolean check;
 
 	public org.nutz.mvc.View match(org.nutz.mvc.ActionContext ac) {
+		if (check == null) {
+			check = ac.getIoc().get(PropertiesProxy.class, "conf").getBoolean("website.csrf.enable", false);
+		}
+		if (!check)
+			return null;
 		HttpSession session = Mvcs.getHttpSession(false);
 		if (session != null) {
 			String csrf = (String) session.getAttribute("_csrf");

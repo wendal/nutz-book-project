@@ -1,11 +1,15 @@
 package net.wendal.nutzbook;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.ConnCallback;
@@ -202,6 +206,17 @@ public class MainSetup implements Setup {
 		
 		dao.create(StoreHouseOfShopProd.class, true);
 		dao.fetchx(BeanHasPK.class, 1, 2);
+		
+		try {
+			InputStream ins = getClass().getClassLoader().getResourceAsStream("velocity.properties");
+			Properties props = new Properties();
+			props.load(ins);
+			ins.close();
+			Velocity.setApplicationAttribute("javax.servlet.ServletContext", nc.getServletContext());
+			Velocity.init(props);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void destroy(NutConfig conf) {
