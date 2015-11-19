@@ -16,14 +16,15 @@ web:
     - db
     - redis
   environment:
-    "NUTZBOOK_db.url"				: "jdbc:mysql://db/nutzbook"
-    "NUTZBOOK_redis.host"			: "redis"
-    "OAUTH_api.github.com.consumer_key"	: ""
-    "OAUTH_api.github.com.consumer_secret"	: ""
+    "NUTZBOOK_db.url" : "jdbc:mysql://db/nutzbook"
+    "NUTZBOOK_redis.host" : "redis"
+    "OAUTH_api.github.com.consumer_key" : ""
+    "OAUTH_api.github.com.consumer_secret" : ""
     "OAUTH_api.github.com.custom_permissions" : "user:email"
-    "NGROK_auth_token"				: ""
-    "NGROK_server_addr"				: "wendal.cn"
-    "NGROK_trust_host_root_certs"	: "true"
+
+    "NGROK_auth_token" : ""
+    "NGROK_server_addr" : "wendal.cn:4443"
+    "NGROK_trust_host_root_certs" : "true"
   ports:
     - "8080:8080"
     - "81:81"

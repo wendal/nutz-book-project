@@ -22,8 +22,6 @@ RUN cd $CATALINA_HOME \
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_TGZ_URL https://www.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz
 
-RUN cd / && wget http://115.28.27.32/ngrok && chmod a+x /ngrok
-
 RUN mkdir /tmp2 && cd /tmp2 \
   && curl -sSL $MAVEN_TGZ_URL | tar xzf - -C /usr/share \
   && mv /usr/share/apache-maven-3.3.3 /usr/share/maven \
@@ -36,6 +34,9 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && find /usr/local/tomcat/webapps/ROOT/ \
   && cd / \
   && rm -fr /tmp2 usr/share/maven /usr/bin/mvn ~/.m2
+
+RUN cd / && wget http://115.28.27.32/ngrok && chmod a+x /ngrok
+
 WORKDIR $CATALINA_HOME
 
 EXPOSE 8080

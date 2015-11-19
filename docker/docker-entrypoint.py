@@ -50,7 +50,6 @@ if os.environ.get(PRE + "auth_token") :
       with open(fname, "a") as f :
         f.write("\n")
         f.write(LINE)
-  import subprocess
-  subprocess.Popen(["/ngrok","-c", fname, 8080])
+  #subprocess.call("/ngrok -config /ngrok.yml -log stdout 8080 &", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-os.system("catalina.sh run")
+subprocess.call("catalina.sh run", shell=True)
