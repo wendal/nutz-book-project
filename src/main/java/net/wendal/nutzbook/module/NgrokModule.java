@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
@@ -27,6 +28,12 @@ import net.wendal.nutzbook.bean.User;
 @IocBean
 @At("/ngrok")
 public class NgrokModule extends BaseModule {
+	
+	@Inject("java:$conf.get('ngrok.server')")
+	protected String ngrokServer;
+	
+	@Inject("java:$conf.getBoolean('ngrok.github_only', true)")
+	protected boolean githubOnly;
 
 	@RequiresUser
 	@At
@@ -50,7 +57,7 @@ public class NgrokModule extends BaseModule {
 		String filename = URLEncoder.encode("ngrok.yml", Encoding.UTF8);
         resp.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 		String[] lines = new String[]{
-				"server_addr: wendal.cn:4443",
+				"server_addr: "+ngrokServer,
 				"trust_host_root_certs: true",
 				"auth_token: " + token,
 				""
@@ -61,7 +68,7 @@ public class NgrokModule extends BaseModule {
 	@Aop("redis")
 	public String getAuthToken(int userId) {
 		int count = dao.count(OAuthUser.class, Cnd.where("providerId", "=", "github").and("userId", "=", userId));
-		if (count != 1 && userId > 2) {
+		if (count != 1 && userId > 2 && githubOnly) {
 			return null;
 		}
 		User user = dao.fetch(User.class, userId);
