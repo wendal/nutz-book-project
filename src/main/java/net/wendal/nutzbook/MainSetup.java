@@ -41,7 +41,6 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.BeanHasPK;
 import net.wendal.nutzbook.bean.demo.StoreHouseOfShopProd;
-import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
@@ -49,7 +48,6 @@ import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Markdowns;
-import net.wendal.nutzbook.util.Toolkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -68,7 +66,7 @@ public class MainSetup implements Setup {
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
 		}
-		if (System.getenv("ehcache.disk.store.dir") == null) {
+		if (System.getProperty("ehcache.disk.store.dir") == null) {
 			log.info("You shall set up environment variable [ehcache.disk.store.dir], which using at ehcache.xml =>>  -Dehcache.disk.store.dir=/tmp");
 		}
 		

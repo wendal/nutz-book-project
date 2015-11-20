@@ -46,4 +46,6 @@ COPY docker-entrypoint.py /entrypoint.py
 CMD ["python", "/entrypoint.py"]
 ENV LANG C.UTF-8
 ENV TZ "Asia/Shanghai"
+ENV "ehcache.disk.store.dir" "/data"
+VOLUME /data
 
