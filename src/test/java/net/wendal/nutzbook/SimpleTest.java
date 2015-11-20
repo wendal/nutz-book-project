@@ -1,14 +1,11 @@
 package net.wendal.nutzbook;
 
-import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
@@ -18,17 +15,13 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.MappingField;
-import org.nutz.dao.impl.NutDao;
 import org.nutz.dao.sql.Sql;
 import org.nutz.json.Json;
 import org.nutz.lang.Mirror;
-import org.nutz.lang.util.MethodParamNamesScaner;
 import org.nutz.lang.util.NutMap;
 
-import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.APIResult;
-import net.wendal.nutzbook.module.yvr.YvrModule;
 import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends Assert {
@@ -127,6 +120,7 @@ public class SimpleTest extends Assert {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void test_mirror_map_get() {
 		Map<String, Object> map = new LinkedHashMap<>();

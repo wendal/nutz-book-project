@@ -42,7 +42,8 @@ public class FaceBuilder<T> implements InvocationHandler {
         return this;
     }
 
-    public T build() {
+    @SuppressWarnings("unchecked")
+	public T build() {
         if (this.klass == null || this.endpoint == null)
             throw new RuntimeException("klass and endpoint must set");
         buildConfigure();
