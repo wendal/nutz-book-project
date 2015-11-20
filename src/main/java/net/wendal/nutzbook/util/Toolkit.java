@@ -1,5 +1,10 @@
 package net.wendal.nutzbook.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Date;
 
 import javax.crypto.Cipher;
@@ -166,5 +171,41 @@ public class Toolkit {
 		if (token != null)
 			subject.login(token);
 		subject.getSession().setAttribute(NutShiro.SessionKey, userId);
+	}
+	
+	public static String filteContent(String cnt) {
+		if (cnt != null)
+			try {
+				Reader r = new StringReader(cnt);
+				BufferedReader br = new BufferedReader(r);
+				StringWriter sw = new StringWriter();
+				boolean isCode = false;
+				String  prevLine = "";
+				while (br.ready()) {
+					String line = br.readLine();
+					if (line == null)
+						break;
+					if ("``".equals(line.trim()) && !isCode) {
+						line = "```";
+					}
+					if ("```".equals(line.trim())) {
+						if (isCode) {
+							isCode = false;
+						} else {
+							isCode = true;
+							if (prevLine != null && !prevLine.trim().isEmpty()) {
+								sw.append("\r\n");
+							}
+						}
+					}
+					sw.append(line);
+					sw.append("\r\n");
+					prevLine = line;
+				}
+				return sw.toString();
+			} catch (IOException e) {
+				e.printStackTrace();// 不可能吧
+			}
+		return cnt;
 	}
 }

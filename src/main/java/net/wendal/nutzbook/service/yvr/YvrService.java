@@ -42,6 +42,7 @@ import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.RedisKey;
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
@@ -155,6 +156,7 @@ public class YvrService implements RedisKey {
 		topic.setTop(false);
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
+		topic.setContent(Toolkit.filteContent(topic.getContent()));
 		dao.insert(topic);
 		try {
 			topicSearchService.add(topic);
@@ -189,6 +191,7 @@ public class YvrService implements RedisKey {
 		}
 		reply.setTopicId(topicId);
 		reply.setUserId(userId);
+		reply.setContent(Toolkit.filteContent(reply.getContent()));
 		dao.insert(reply);
 		// 更新topic的时间戳, 然后根据返回值确定是否需要从t:noreply中删除该topic
 		Long re = jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);

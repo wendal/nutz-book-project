@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.ConnCallback;
@@ -42,6 +41,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.BeanHasPK;
 import net.wendal.nutzbook.bean.demo.StoreHouseOfShopProd;
+import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
@@ -49,6 +49,7 @@ import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Markdowns;
+import net.wendal.nutzbook.util.Toolkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -216,6 +217,16 @@ public class MainSetup implements Setup {
 			Velocity.init(props);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		// 临时措施,一次性运行的东西
+		for (Topic topic : dao.query(Topic.class, null)) {
+			topic.setContent(Toolkit.filteContent(topic.getContent()));
+			dao.update(topic, "content");
+		}
+		for (TopicReply reply : dao.query(TopicReply.class, null)) {
+			reply.setContent(Toolkit.filteContent(reply.getContent()));
+			dao.update(reply, "content");
 		}
 	}
 	
