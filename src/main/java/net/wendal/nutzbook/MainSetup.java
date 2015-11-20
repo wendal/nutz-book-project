@@ -220,14 +220,14 @@ public class MainSetup implements Setup {
 		}
 		
 		// 临时措施,一次性运行的东西
-		for (Topic topic : dao.query(Topic.class, null)) {
-			topic.setContent(Toolkit.filteContent(topic.getContent()));
-			dao.update(topic, "content");
-		}
-		for (TopicReply reply : dao.query(TopicReply.class, null)) {
-			reply.setContent(Toolkit.filteContent(reply.getContent()));
-			dao.update(reply, "content");
-		}
+//		for (Topic topic : dao.query(Topic.class, null)) {
+//			topic.setContent(Toolkit.filteContent(topic.getContent()));
+//			dao.update(topic, "content");
+//		}
+//		for (TopicReply reply : dao.query(TopicReply.class, null)) {
+//			reply.setContent(Toolkit.filteContent(reply.getContent()));
+//			dao.update(reply, "content");
+//		}
 	}
 	
 	public void destroy(NutConfig conf) {
