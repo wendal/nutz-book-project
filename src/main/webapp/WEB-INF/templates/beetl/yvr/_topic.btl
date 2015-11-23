@@ -54,6 +54,9 @@ layout("_layout.btl",{}){
           <a href="#" onclick="send_to_phone();" title="瞬间推送到手机客户端" data-intro="瞬间推送到手机客户端,传说中的'瞬移' (我的世界乱入...)">推送到手机</a>
         </span>
         <%}%>
+        <span>
+          <a id="copy_link_btn" href="#" class="zclip" title="复制标题和地址" data-intro="可以复制标题和地址">复制</a>
+        </span>
         
         <!-- 有点丑,先禁用了 -->
           <% if ( 1 != 1) {%>
@@ -515,4 +518,12 @@ function send_to_phone() {
 		}
 	});
 }
+$(function() {
+	$("#copy_link_btn").zclip({
+		copy:function() {
+			return "${obj.topic.title} " + location.href;
+		},
+		path : '${cdnbase}${base}/rs/js/ZeroClipboard.swf'
+	});
+});
 </script>

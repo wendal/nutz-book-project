@@ -58,6 +58,7 @@ var ctxPath = "${ctxPath}";
 <script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
 <script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
 <script src="${cdnbase}${base}/rs/js/intro.js?v=1.1.1"></script>
+<script src="${cdnbase}${base}/rs/js/jquery.zclip.js?v=0.2.2"></script>
 
 
   <% if (null != obj.topic!) { %>
