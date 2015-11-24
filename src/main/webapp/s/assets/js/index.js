@@ -12,7 +12,13 @@ $(function() {
         data = {'data': data};
       }
     }
-    $.post(url, data, function (j) {
+    $.ajax({
+	"url" : url,
+	'data': data,
+	'type' : 'post',
+	'contentType' : 'text/plain',
+	"dataType" : "json",
+	success : function (j) {
       $("#result").html("");
       $("#progress").html("");
       if (j.ok) {
@@ -27,7 +33,7 @@ $(function() {
         $("#result").append($('<div class="alert alert-error">Oops</div>')).append($("<p></p>").text("ERROR: " + j.msg));
       }
       $("#txt_button").attr('disabled',false);
-    } , "json");
+    }});;
   });
 
   function FileDragHover(e) {
