@@ -26,6 +26,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.nutz.plugins.cache.dao.CachedNutDaoExecutor;
 import org.quartz.Scheduler;
 import org.zbus.mq.server.MqServer;
 import org.zbus.rpc.RpcProcessor;
@@ -37,6 +38,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.BeanHasPK;
@@ -62,6 +64,7 @@ public class MainSetup implements Setup {
 	
 	@SuppressWarnings("unchecked")
 	public void init(NutConfig nc) {
+		CachedNutDaoExecutor.DEBUG = true;
 		// 检查环境
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
@@ -226,6 +229,9 @@ public class MainSetup implements Setup {
 //			reply.setContent(Toolkit.filteContent(reply.getContent()));
 //			dao.update(reply, "content");
 //		}
+
+		
+		dao.query(Role.class, null);
 	}
 	
 	public void destroy(NutConfig conf) {
