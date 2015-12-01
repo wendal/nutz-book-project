@@ -24,7 +24,7 @@ import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.demo.APIResult;
 import net.wendal.nutzbook.util.Markdowns;
 
-public class SimpleTest extends Assert {
+public class SimpleTest extends TestBase {
 
 	@Test
 	public void test_string_array() {
