@@ -216,7 +216,6 @@ public class YvrService implements RedisKey {
 		if (topic.getTags() != null) {
 			for (String tag : topic.getTags()) {
 				pipe.zadd(RKEY_TOPIC_TAG+tag.toLowerCase().trim(), reply.getCreateTime().getTime(), topicId);
-				pipe.zincrby(RKEY_TOPIC_TAG_COUNT, 1, tag.toLowerCase().trim());
 			}
 		}
 		pipe.hset(RKEY_REPLY_LAST, topicId, reply.getId());
