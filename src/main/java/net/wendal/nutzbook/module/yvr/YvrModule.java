@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -43,6 +44,7 @@ import org.nutz.mvc.annotation.ReqHeader;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.mvc.view.ServerRedirectView;
 
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -114,8 +116,24 @@ public class YvrModule extends BaseModule {
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		if (type == null)
 			type = TopicType.ask;
-		long now = System.currentTimeMillis();
 		String zkey = RKEY_TOPIC_UPDATE + type;
+		return _query_topic_by_zset(zkey, pager, userId, type, null);
+	}
+	
+	@At({ "/tag/?", "/tag/?/?" })
+	@GET
+	@Ok("beetl:/yvr/index.btl")
+	@Aop("redis")
+	public Object tag(String tagName, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+		if (Strings.isBlank(tagName))
+			return new ServerRedirectView("/yvr/list");
+		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
+		String zkey = RKEY_TOPIC_TAG + tagName.toLowerCase().trim();
+		return _query_topic_by_zset(zkey, pager, userId, null, tagName);
+	}
+	
+	protected Object _query_topic_by_zset(String zkey, Pager pager, int userId, TopicType topicType, String tagName) {
+		long now = System.currentTimeMillis();
 		Long count = jedis().zcount(zkey, 0, now);
 		List<Topic> list = new ArrayList<Topic>();
 		if (count != null && count.intValue() != 0) {
@@ -128,10 +146,11 @@ public class YvrModule extends BaseModule {
 				list.add(topic);
 			}
 		}
-		return _process_query_list(pager, list, userId, type);
+		return _process_query_list(pager, list, userId, topicType, tagName);
 	}
+	
 
-	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType type) {
+	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType topicType, String tagName) {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		for (Topic topic : list) {
 			yvrService.fillTopic(topic, authors);
@@ -150,7 +169,8 @@ public class YvrModule extends BaseModule {
 		NutMap re = new NutMap();
 		re.put("list", list);
 		re.put("pager", pager);
-		re.put("type", type);
+		re.put("type", topicType);
+		re.put("tag", tagName);
 		re.put("types", TopicType.values());
 		/**
 		 * var page_start = current_page - 2 > 0 ? current_page - 2 : 1; var
@@ -277,9 +297,10 @@ public class YvrModule extends BaseModule {
 		}
 		Pager pager = dao.createPager(1, 30);
 		pager.setRecordCount(list.size());
-		return _process_query_list(pager, list, userId, TopicType.ask);
+		return _process_query_list(pager, list, userId, TopicType.ask, null);
 	}
 
+	@RequiresPermissions("topic:index:rebuild")
 	@At("/search/rebuild")
 	public void rebuild() throws IOException {
 		topicSearchService.rebuild();

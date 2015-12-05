@@ -4,12 +4,8 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
-
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.module.BaseModule;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
@@ -21,17 +17,25 @@ import org.nutz.http.Http;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.module.BaseModule;
 
 @At("/yvr/admin")
 @IocBean
 public class YvrAdminModule extends BaseModule{
 
+	@POST
 	@RequiresPermissions("topic:update")
 	@At
 	@Aop("redis")
@@ -60,6 +64,15 @@ public class YvrAdminModule extends BaseModule{
 				}
 			}
 		}
+	}
+	
+	@POST
+	@RequiresPermissions("topic:update:tags")
+	@At("/update/tags")
+	@Aop("redis")
+	@Ok("json")
+	public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags) {
+		return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags)));
 	}
 	
 	@Ok("json")

@@ -1,10 +1,7 @@
 package net.wendal.nutzbook.bean.yvr;
 
 import java.util.List;
-
-import net.wendal.nutzbook.bean.BasePojo;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.util.Toolkit;
+import java.util.Set;
 
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
@@ -14,6 +11,11 @@ import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
+import org.nutz.json.Json;
+
+import net.wendal.nutzbook.bean.BasePojo;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.util.Toolkit;
 
 @Table("t_topic")
 public class Topic extends BasePojo {
@@ -37,7 +39,7 @@ public class Topic extends BasePojo {
 	
 	@Column
 	@ColDefine(width=128)
-	protected List<String> tags;
+	protected Set<String> tags;
 	
 	@Column("u_id")
 	protected int userId;
@@ -97,11 +99,11 @@ public class Topic extends BasePojo {
 		this.content = content;
 	}
 
-	public List<String> getTags() {
+	public Set<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(Set<String> tags) {
 		this.tags = tags;
 	}
 
@@ -196,10 +198,12 @@ private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOExcept
     dos.writeBoolean(top);
     dos.writeBoolean(good);
     dos.writeBoolean(lock);
+    dos.writeUTF(tags==null?"[]":Json.toJson(tags));
     dos.writeLong(createTime == null ? 0 : createTime.getTime());
     dos.writeLong(updateTime == null ? 0 : updateTime.getTime());
 
 }
+@SuppressWarnings("unchecked")
 private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException{
     java.io.DataInputStream dis = new java.io.DataInputStream(in);
     String _tmp = null;
@@ -211,6 +215,7 @@ private void readObject(java.io.ObjectInputStream in) throws java.io.IOException
     top = dis.readBoolean();
     good = dis.readBoolean();
     lock = dis.readBoolean();
+    tags = Json.fromJson(Set.class, dis.readUTF());
     createTime = new java.util.Date(dis.readLong());
     updateTime = new java.util.Date(dis.readLong());
 

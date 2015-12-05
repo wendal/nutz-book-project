@@ -7,6 +7,7 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
+import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 
 import net.wendal.nutzbook.bean.CResult;
@@ -43,6 +45,7 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.RedisKey;
 import net.wendal.nutzbook.util.Toolkit;
+import redis.clients.jedis.Pipeline;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
@@ -95,6 +98,8 @@ public class YvrService implements RedisKey {
 	}
 	
 	protected UserProfile _cacheFetch(Map<Integer, UserProfile> authors, int userId) {
+		if (authors == null)
+			return null;
 		UserProfile author = authors.get(userId);
 		if (author == null) {
 			author = dao.fetch(UserProfile.class, userId);
@@ -154,6 +159,7 @@ public class YvrService implements RedisKey {
 		topic.setTitle(Strings.escapeHtml(topic.getTitle().trim()));
 		topic.setUserId(userId);
 		topic.setTop(false);
+		topic.setTags(new HashSet<>());
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		topic.setContent(Toolkit.filteContent(topic.getContent()));
@@ -185,7 +191,7 @@ public class YvrService implements RedisKey {
 		if (cnt.length() < 2 || cnt.length() > 10000) {
 			return _fail("内容太长或太短了");
 		}
-		final Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
+		final Topic topic = daoNoContent.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
 		if (topic == null) {
 			return _fail("主题不存在");
 		}
@@ -193,14 +199,19 @@ public class YvrService implements RedisKey {
 		reply.setUserId(userId);
 		reply.setContent(Toolkit.filteContent(reply.getContent()));
 		dao.insert(reply);
-		// 更新topic的时间戳, 然后根据返回值确定是否需要从t:noreply中删除该topic
-		Long re = jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);
-		if (re != null && re.intValue() != 1) {
-			jedis().zrem(RKEY_TOPIC_NOREPLY, topicId);
+		// 更新topic的时间戳
+		Pipeline pipe = jedis().pipelined();
+		pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);
+		pipe.zrem(RKEY_TOPIC_NOREPLY, topicId);
+		if (topic.getTags() != null) {
+			for (String tag : topic.getTags()) {
+				pipe.zadd(RKEY_TOPIC_TAG+tag, reply.getCreateTime().getTime(), topicId);
+			}
 		}
-		jedis().hset(RKEY_REPLY_LAST, topicId, reply.getId());
-		jedis().zincrby(RKEY_REPLY_COUNT, 1, topicId);
-		jedis().zincrby(RKEY_USER_SCORE, 10, ""+userId);
+		pipe.hset(RKEY_REPLY_LAST, topicId, reply.getId());
+		pipe.zincrby(RKEY_REPLY_COUNT, 1, topicId);
+		pipe.zincrby(RKEY_USER_SCORE, 10, ""+userId);
+		pipe.sync();
 		
 
 		// 通知页面刷新
@@ -355,5 +366,39 @@ public class YvrService implements RedisKey {
 				break;
 		}
 		return ats;
+	}
+	
+
+	@Aop("redis")
+	public boolean updateTags(String topicId, @Param("tags")Set<String> tags) {
+		if (Strings.isBlank(topicId) || tags == null) {
+			return false;
+		}
+		Topic topic = daoNoContent.fetch(Topic.class, topicId);
+		if (topic == null)
+			return false;
+		Set<String> oldTags = topic.getTags();
+		if (oldTags == null)
+			oldTags = new HashSet<>();
+		log.debugf("update from '%s' to '%s'", oldTags, tags);
+		topic.setTags(tags);
+		dao.update(topic, "tags");
+		Set<String> newTags = new HashSet<>(tags);
+		newTags.removeAll(oldTags);
+		Set<String> removeTags = new HashSet<>(oldTags);;
+		removeTags.remove(tags);
+		fillTopic(topic, null);
+		Date lastReplyTime = topic.getCreateTime();
+		if (topic.getLastComment() != null)
+			lastReplyTime = topic.getLastComment().getCreateTime();
+		Pipeline pipe = jedis().pipelined();
+		for (String tag : removeTags) {
+			pipe.zrem(RKEY_TOPIC_TAG+tag.toLowerCase().trim(), topic.getId());
+		}
+		for (String tag : newTags) {
+			pipe.zadd(RKEY_TOPIC_TAG+tag.toLowerCase().trim(), lastReplyTime.getTime(), topic.getId());
+		}
+		pipe.sync();
+		return true;
 	}
 }

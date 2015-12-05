@@ -77,6 +77,16 @@ layout("_layout.btl",{}){
 		</span>
           <% } %>
       </div>
+      
+      <div class="changes">
+      	<% if (null != obj.topic.tags){%>
+      		<span>
+      		标签:</span>
+      		<%for(_tag in obj.topic.tags) {%>
+      		<a data-pjax href='${ctxPath}/yvr/tag/${_tag}' property="item" typeof="WebPage">${_tag}</a>
+      		<%}%>
+      	<%}%>
+      </div>
       <% if (null != obj.current_user!) { %>
       <div id="manage_topic">
       </div>
