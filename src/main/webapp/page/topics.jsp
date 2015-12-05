@@ -27,6 +27,7 @@
 						<th>#</th>
 						<th>名称</th>
 						<th>类型</th>
+						<th>标签</th>
 						<th>操作</th>
 					</tr>
 				</thead>
@@ -54,11 +55,14 @@
 				for (var i = 0; i < data.list.length; i++) {
 					var topic = data.list[i];
 					var topic_id = "\"" + topic.id + "\"";
-					console.log(topic);
+					//console.log(topic);
+					if (topic.tags == undefined)
+						topic.tags = "";
 					var tmp = "<tr>";
 					tmp += "<td>" + topic.id + "</td>";
 					tmp += "<td>" + topic.title + "</td>";
 					tmp += "<td>" + topic.type + "</td>";
+					tmp += "<td>" + topic.tags + "</td>";
 					tmp += "<td>";
 					
 					if (topic.top) {
@@ -74,6 +78,7 @@
 					}
 					tmp	+= " <button onclick='topic_update_type(" + topic_id + ");' class='btn btn-default'>修改类型</button> ";
 					tmp += " <button onclick='topic_delete(" + topic_id + ");' class='btn btn-default'>删除</button> ";
+					tmp += " <button onclick='topic_update_tags(" + topic_id + ");' class='btn btn-default'>修改标签</button> ";
 					tmp += "</td>";
 					tmp += "</tr>";
 					list_html += tmp;
@@ -92,6 +97,7 @@
 		var param = {id:tid, "opt":tp};
 		param[tp] = val;
 		$.ajax({
+			method:"POST",
 			url : base + "/yvr/admin/update",
 			data : param,
 			dataType : "json",
@@ -110,8 +116,23 @@
 		var t = prompt("真的要删除吗?");
 		if (t == "y") {
 			$.ajax({
+				method:"POST",
 				url : base + "/yvr/admin/delete",
 				data : {id:tid},
+				dataType : "json",
+				success : function(data) {
+					topic_reload();
+				}
+			});
+		}
+	}
+	function topic_update_tags(tid) {
+		var t = prompt("请输入新标签");
+		if (t) {
+			$.ajax({
+				method:"POST",
+				url : base + "/yvr/admin/update/tags",
+				data : {"id":tid, "tags":t},
 				dataType : "json",
 				success : function(data) {
 					topic_reload();
