@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +58,8 @@ import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
 
 @IocBean(create = "init")
 @At("/yvr")
@@ -209,12 +212,23 @@ public class YvrModule extends BaseModule {
 			topic.setUserId(1);
 		topic.setAuthor(fetch_userprofile(topic.getUserId()));
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
+		//-------------------------------------
+		// 修正userId及读取每个reply的ups
+		Pipeline pipe = jedis().pipelined();
+		List<Response<Set<String>>> upsList = new ArrayList<>();
 		for (TopicReply reply : topic.getReplies()) {
 			if (reply.getUserId() == 0)
 				reply.setUserId(1);
-			dao.fetchLinks(reply, null);
-			reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
+			Response<Set<String>> resp = pipe.zrange(RKEY_REPLY_LIKE + reply.getId(), 0, Long.MAX_VALUE);
+			upsList.add(resp);
 		}
+		pipe.sync();
+		dao.fetchLinks(topic.getReplies(), null);
+		Iterator<Response<Set<String>>> it = upsList.iterator();
+		for (TopicReply reply : topic.getReplies()) {
+			reply.setUps(it.next().get());
+		}
+		//------------------------------------
 		NutMap re = new NutMap();
 		re.put("topic", topic);
 
