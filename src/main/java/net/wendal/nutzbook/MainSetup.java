@@ -1,22 +1,14 @@
 package net.wendal.nutzbook;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
-import org.apache.velocity.app.Velocity;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
 import org.nutz.dao.FieldFilter;
-import org.nutz.dao.Sqls;
-import org.nutz.dao.entity.Record;
-import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.zbus.ZBusFactory;
@@ -42,8 +34,6 @@ import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.demo.BeanHasPK;
-import net.wendal.nutzbook.bean.demo.StoreHouseOfShopProd;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
@@ -63,10 +53,7 @@ public class MainSetup implements Setup {
 	
 	private static final Log log = Logs.get();
 	
-	@SuppressWarnings("unchecked")
 	public void init(NutConfig nc) {
-		
-		
 		// 检查环境
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
@@ -81,16 +68,6 @@ public class MainSetup implements Setup {
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
 		Dao dao = ioc.get(Dao.class);
-		
-
-		Sql sql = Sqls.create("select o.*, u.* from t_oauth_user o left join t_user u on o.u_id = u.id limit 1");
-		sql.setCallback(Sqls.callback.records());
-		dao.execute(sql);
-		for (Record re : sql.getList(Record.class)) {
-			System.out.println(re);
-			System.out.println(re.toEntity(dao.getEntity(User.class)));
-			System.out.println(re.toEntity(dao.getEntity(OAuthUser.class)));
-		}
 		
 		// 为全部标注了@Table的bean建表
 		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
@@ -201,37 +178,11 @@ public class MainSetup implements Setup {
 		// 启动socketio相关的服务
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
-		
-		// 这里只是很无聊的演示一下将一个map声明在ioc里面
-		// 这不是一个"好"的idea
-		Map<String, Object> map = ioc.get(Map.class, "mapit");
-		System.out.println(map.size());
-		System.out.println(map.keySet());
-		System.out.println(map);
 
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
-
-		// 测试@PK
-		dao.create(BeanHasPK.class, true);
-		dao.fetchx(BeanHasPK.class, "abc", "wendal");
-		
-		dao.create(StoreHouseOfShopProd.class, true);
-		dao.fetchx(BeanHasPK.class, 1, 2);
-		
-		try {
-			InputStream ins = getClass().getClassLoader().getResourceAsStream("velocity.properties");
-			Properties props = new Properties();
-			props.load(ins);
-			ins.close();
-			Velocity.setApplicationAttribute("javax.servlet.ServletContext", nc.getServletContext());
-			Velocity.init(props);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 	
 	public void destroy(NutConfig conf) {

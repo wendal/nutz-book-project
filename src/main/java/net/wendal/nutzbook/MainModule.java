@@ -1,8 +1,5 @@
 package net.wendal.nutzbook;
 
-import jetbrick.template.web.nutz.JetTemplateViewMaker;
-import net.wendal.nutzbook.beetl.BeetlViewMaker2;
-
 import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.ChainBy;
 import org.nutz.mvc.annotation.Fail;
@@ -14,7 +11,8 @@ import org.nutz.mvc.annotation.SessionBy;
 import org.nutz.mvc.annotation.SetupBy;
 import org.nutz.mvc.annotation.Views;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
-import org.nutz.plugins.view.velocity.VelocityViewMaker;
+
+import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 
 @SetupBy(value=MainSetup.class)
 @IocBy(type=ComboIocProvider.class, args={"*js", "ioc/",
@@ -28,7 +26,7 @@ import org.nutz.plugins.view.velocity.VelocityViewMaker;
 @Ok("json:full")
 @Fail("jsp:jsp.500")
 @Localization(value="msg/", defaultLocalizationKey="zh-CN")
-@Views({JetTemplateViewMaker.class, BeetlViewMaker2.class, VelocityViewMaker.class})
+@Views({BeetlViewMaker2.class})
 @SessionBy(ShiroSessionProvider.class)
 public class MainModule {
 }
