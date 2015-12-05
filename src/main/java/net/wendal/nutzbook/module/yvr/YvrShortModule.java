@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,11 +29,14 @@ import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Scope;
 import org.nutz.mvc.View;
 import org.nutz.mvc.adaptor.VoidAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
@@ -79,7 +83,7 @@ public class YvrShortModule extends BaseModule {
 
 	@At("/api/create/txt")
 	@AdaptBy(type = VoidAdaptor.class)
-	public Object createTxt(HttpServletRequest req) throws IOException {
+	public Object createTxt(HttpServletRequest req, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException {
 		int fileSize = req.getContentLength();
 		if (fileSize < 1)
 			return Helper._fail("err.data_emtry");
@@ -88,16 +92,19 @@ public class YvrShortModule extends BaseModule {
 		String re = Helper._ok(write(req.getInputStream(), "txt:"));
 		String title = req.getParameter("title");
 		if (!Strings.isBlank(title) && title.trim().length() < 100) {
+			title += "_"+R.UU16().substring(0, 8);
 			String code = (String) Json.fromJsonAsMap(Object.class, re).get("code");
 			Topic topic = new Topic();
 			topic.setTitle(title.trim());
-			topic.setContent(String.format("[%s]\n短点链接: https://nutz.cn/s/c/%s", code, code));
+			String cnt = Streams.readAndClose(new InputStreamReader((InputStream) read(code, null)));
+			cnt = cnt.length() > 50000 ? cnt.substring(0, 50000) : cnt;
+			topic.setContent(String.format("[查看完整内容](%s/s/c/%s)\r\n\r\n```%s```",req.getContextPath(), code, cnt));
 			topic.setType(TopicType.shortit);
 			try {
-				CResult resp = yvrService.add(topic, dao.fetch(User.class, "guest").getId());
+				CResult resp = yvrService.add(topic, userId > 0 ? userId : dao.fetch(User.class, "guest").getId());
 				if (resp.isOk()) {
 					String topicId = resp.as(String.class);
-					return Json.toJson(new NutMap().setv("ok", true).setv("url", "https://nutz.cn/yvr/t/" + topicId));
+					return Json.toJson(new NutMap().setv("ok", true).setv("url", req.getContextPath() + "/yvr/t/" + topicId));
 				}
 			} catch (Exception e) {
 			}
@@ -132,8 +139,10 @@ public class YvrShortModule extends BaseModule {
 		File f = new File(root + "/" + idPath(id));
 		if (!f.exists())
 			return HttpStatusView.HTTP_404;
-		resp.setHeader("Content-Length", "" + f.length());
-		resp.setContentType("text/plain; charset=utf8");
+		if (resp != null) {
+			resp.setHeader("Content-Length", "" + f.length());
+			resp.setContentType("text/plain; charset=utf8");
+		}
 		return new FileInputStream(f);
 	}
 
