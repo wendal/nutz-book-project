@@ -79,12 +79,14 @@ layout("_layout.btl",{}){
       </div>
       
       <div class="changes">
-      	<% if (null != obj.topic.tags && obj.topic.tags.~size > 0){%>
-      		<span>
+      		<span id="TopicTagSpan">
       		标签:</span>
+      	<% if (null != obj.topic.tags && obj.topic.tags.~size > 0){%>
       		<%for(_tag in obj.topic.tags) {%>
-      		<a data-pjax href='${ctxPath}/yvr/tag/${_tag}' property="item" typeof="WebPage">${_tag}</a>
+      		<a data-pjax href='${ctxPath}/yvr/tag/${_tag}' property="item" typeof="WebPage" class="topic_tag">${_tag}</a>
       		<%}%>
+      	<%} else {%>
+      		无
       	<%}%>
       </div>
       <% if (null != obj.current_user!) { %>
@@ -534,6 +536,23 @@ $(function() {
 			return "${obj.topic.title} " + location.href;
 		},
 		path : '${cdnbase}${base}/rs/js/ZeroClipboard.swf'
+	});
+	$("#TopicTagSpan").editInPlace({
+		method : "POST",
+    	url: "${base}/yvr/admin/update/tags",
+    	textarea_rows : 5,
+    	text_size:100,
+		bg_over: "none",
+		bg_out: "none",
+    	field_type: "textarea",
+		value_required: "true",
+		params : "id=${obj.topic.id}",
+		success: function(data){
+			location.reload();
+		},
+		error: function(e){
+			layer.alert("当前仅管理员可以修改");
+		}
 	});
 });
 </script>

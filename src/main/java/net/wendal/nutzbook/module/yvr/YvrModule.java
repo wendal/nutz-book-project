@@ -195,6 +195,8 @@ public class YvrModule extends BaseModule {
 			re.put("top_topics", yvrService.fetchTop());
 		else
 			re.put("top_topics", new ArrayList<>());
+		
+		re.put("top_tags", yvrService.fetchTopTags());
 		return re;
 	}
 

@@ -26,6 +26,8 @@ public interface RedisKey {
 	String RKEY_TOPIC_SEXY = "t:sexy";
 	
 	String RKEY_TOPIC_TAG = "t:tag:";
+	String RKEY_TOPIC_TAG_COUNT = "t:tag_count";
+	String RKEY_TOPIC_TAG_UPDATE = "t:tag_update";
 	
 	String RKEY_U2F_REQ = "u2f:req";
 	String RKEY_U2F_AUTH = "u2f:auth";

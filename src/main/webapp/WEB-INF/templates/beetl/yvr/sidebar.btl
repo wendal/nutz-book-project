@@ -201,6 +201,21 @@ $(function(){
     </div>
   </div>
   <% } %>
+  
+  <% if ( null != obj.top_tags! && obj.top_tags.~size > 0) { %>
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>热门标签</span>
+    </div>
+    <div class='inner'>
+      <ul class="unstyled">
+      	<%for(_tag in obj.top_tags) {%>
+      		<a data-pjax href='${ctxPath}/yvr/tag/${_tag.name}' property="item" typeof="WebPage" class="topic_tag">${_tag.name}(${_tag.count})</a>
+      	<%}%>
+      </ul>
+    </div>
+  </div>
+  <% } %>
 
   <div class='panel'>
     <div class='header'>

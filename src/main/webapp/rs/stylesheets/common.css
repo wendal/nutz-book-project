@@ -61,3 +61,14 @@ textarea {
 input, textarea {
     background: hsla(0, 0%, 0%, 0);
 }
+
+a.topic_tag {
+	display:inline-block;
+	padding:0 8px;
+	color:#017e66;
+	background-color:#E7F2ED;
+	height:24px;
+	line-height:24px;
+	font-weight:400;
+	text-align:center
+}

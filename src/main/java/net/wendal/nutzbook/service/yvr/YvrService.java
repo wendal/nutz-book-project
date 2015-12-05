@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,11 +42,13 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicTag;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.RedisKey;
 import net.wendal.nutzbook.util.Toolkit;
 import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
@@ -212,7 +215,8 @@ public class YvrService implements RedisKey {
 		pipe.zrem(RKEY_TOPIC_NOREPLY, topicId);
 		if (topic.getTags() != null) {
 			for (String tag : topic.getTags()) {
-				pipe.zadd(RKEY_TOPIC_TAG+tag, reply.getCreateTime().getTime(), topicId);
+				pipe.zadd(RKEY_TOPIC_TAG+tag.toLowerCase().trim(), reply.getCreateTime().getTime(), topicId);
+				pipe.zincrby(RKEY_TOPIC_TAG_COUNT, 1, tag.toLowerCase().trim());
 			}
 		}
 		pipe.hset(RKEY_REPLY_LAST, topicId, reply.getId());
@@ -401,9 +405,11 @@ public class YvrService implements RedisKey {
 		Pipeline pipe = jedis().pipelined();
 		for (String tag : removeTags) {
 			pipe.zrem(RKEY_TOPIC_TAG+tag.toLowerCase().trim(), topic.getId());
+			pipe.zincrby(RKEY_TOPIC_TAG_COUNT, -1, tag.toLowerCase().trim());
 		}
 		for (String tag : newTags) {
 			pipe.zadd(RKEY_TOPIC_TAG+tag.toLowerCase().trim(), lastReplyTime.getTime(), topic.getId());
+			pipe.zincrby(RKEY_TOPIC_TAG_COUNT, 1, tag.toLowerCase().trim());
 		}
 		pipe.sync();
 		return true;
@@ -421,5 +427,23 @@ public class YvrService implements RedisKey {
 			list.add(topic);
 		}
 		return list;
+	}
+	
+	@Aop("redis")
+	public List<TopicTag> fetchTopTags() {
+		Set<String> names = jedis().zrevrangeByScore(RKEY_TOPIC_TAG_COUNT, Long.MAX_VALUE, 0, 0, 10);
+		List<TopicTag> tags = new ArrayList<>();
+		List<Response<Double>> tmps = new ArrayList<>();
+		Pipeline pipe = jedis().pipelined();
+		for (String name: names) {
+			tmps.add(pipe.zscore(RKEY_TOPIC_TAG_COUNT, name));
+			tags.add(new TopicTag(name, 0));
+		}
+		pipe.sync();
+		Iterator<TopicTag> it = tags.iterator();
+		for (Response<Double> response : tmps) {
+			it.next().setCount(response.get().intValue());
+		}
+		return tags;
 	}
 }

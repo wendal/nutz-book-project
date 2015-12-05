@@ -82,8 +82,8 @@ public class YvrAdminModule extends BaseModule{
 	@At("/update/tags")
 	@Aop("redis")
 	@Ok("json")
-	public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags) {
-		return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags)));
+	public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags, @Param("update_value")String[] tags2) {
+		return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags != null ? tags : tags2)));
 	}
 	
 	@Ok("json")
