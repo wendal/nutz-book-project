@@ -79,7 +79,7 @@ layout("_layout.btl",{}){
       </div>
       
       <div class="changes">
-      	<% if (null != obj.topic.tags){%>
+      	<% if (null != obj.topic.tags && obj.topic.tags.~size > 0){%>
       		<span>
       		标签:</span>
       		<%for(_tag in obj.topic.tags) {%>
