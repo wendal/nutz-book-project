@@ -49,6 +49,17 @@ public class YvrAdminModule extends BaseModule{
 			return;
 		Daos.ext(dao, FieldFilter.create(Topic.class, opt, true)).update(topic);
 		
+		if ("top".equals(opt)) {
+			if (topic.isTop()) {
+				jedis().zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
+				jedis().zadd(RKEY_TOPIC_TOP, System.currentTimeMillis(), topic.getId());
+			}else {
+				jedis().zrem(RKEY_TOPIC_TOP, topic.getId());
+				jedis().zadd(RKEY_TOPIC_UPDATE+old.getType(), System.currentTimeMillis(), topic.getId());
+			}
+			return;
+		}
+		
 		// 检查一下是不是修改了type
 		if (topic.getType() != null && old.getType() != null && !topic.getType().equals(old.getType())) {
 			Double old_d = jedis().zscore(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());

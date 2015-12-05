@@ -22,7 +22,7 @@ layout("_layout.btl",{}){
     <% if (obj.list.~size > 0) { %>
     <div class="inner no-padding">
       	<%
-      	layout("list.btl", {"obj":obj, "topics":obj.list}){};
+      	layout("list.btl", {"obj":obj, "topics":obj.list, "top_topics":obj.top_topics}){};
 		%>
     </div>
     <% } else { %>

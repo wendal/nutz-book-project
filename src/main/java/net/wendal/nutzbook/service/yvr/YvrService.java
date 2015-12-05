@@ -201,7 +201,11 @@ public class YvrService implements RedisKey {
 		dao.insert(reply);
 		// 更新topic的时间戳
 		Pipeline pipe = jedis().pipelined();
-		pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);
+		if (topic.isTop()) {
+			pipe.zadd(RKEY_TOPIC_TOP, reply.getCreateTime().getTime(), topicId);
+		} else {
+			pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);
+		}
 		pipe.zrem(RKEY_TOPIC_NOREPLY, topicId);
 		if (topic.getTags() != null) {
 			for (String tag : topic.getTags()) {
@@ -400,5 +404,19 @@ public class YvrService implements RedisKey {
 		}
 		pipe.sync();
 		return true;
+	}
+	
+	@Aop("redis")
+	public List<Topic> fetchTop() {
+		List<Topic> list = new ArrayList<>();
+		Map<Integer, UserProfile> authors = new HashMap<>();
+		for(String id :jedis().zrange(RKEY_TOPIC_TOP, 0, Long.MAX_VALUE)) {
+			Topic topic = daoNoContent.fetch(Topic.class, id);
+			if (topic == null)
+				continue;
+			fillTopic(topic, authors);
+			list.add(topic);
+		}
+		return list;
 	}
 }

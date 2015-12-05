@@ -117,7 +117,7 @@ public class YvrModule extends BaseModule {
 		if (type == null)
 			type = TopicType.ask;
 		String zkey = RKEY_TOPIC_UPDATE + type;
-		return _query_topic_by_zset(zkey, pager, userId, type, null);
+		return _query_topic_by_zset(zkey, pager, userId, type, null, true);
 	}
 	
 	@At({ "/tag/?", "/tag/?/?" })
@@ -129,10 +129,10 @@ public class YvrModule extends BaseModule {
 			return new ServerRedirectView("/yvr/list");
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		String zkey = RKEY_TOPIC_TAG + tagName.toLowerCase().trim();
-		return _query_topic_by_zset(zkey, pager, userId, null, tagName);
+		return _query_topic_by_zset(zkey, pager, userId, null, tagName, false);
 	}
 	
-	protected Object _query_topic_by_zset(String zkey, Pager pager, int userId, TopicType topicType, String tagName) {
+	protected NutMap _query_topic_by_zset(String zkey, Pager pager, int userId, TopicType topicType, String tagName, boolean addTop) {
 		long now = System.currentTimeMillis();
 		Long count = jedis().zcount(zkey, 0, now);
 		List<Topic> list = new ArrayList<Topic>();
@@ -146,11 +146,11 @@ public class YvrModule extends BaseModule {
 				list.add(topic);
 			}
 		}
-		return _process_query_list(pager, list, userId, topicType, tagName);
+		return _process_query_list(pager, list, userId, topicType, tagName, addTop);
 	}
 	
 
-	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType topicType, String tagName) {
+	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType topicType, String tagName, boolean addTop) {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		for (Topic topic : list) {
 			yvrService.fillTopic(topic, authors);
@@ -188,6 +188,10 @@ public class YvrModule extends BaseModule {
 		// 添加未回复的列表
 		if (!no_replies.isEmpty())
 			re.put("no_reply_topics", no_replies);
+		if (addTop)
+			re.put("top_topics", yvrService.fetchTop());
+		else
+			re.put("top_topics", new ArrayList<>());
 		return re;
 	}
 
@@ -297,7 +301,7 @@ public class YvrModule extends BaseModule {
 		}
 		Pager pager = dao.createPager(1, 30);
 		pager.setRecordCount(list.size());
-		return _process_query_list(pager, list, userId, TopicType.ask, null);
+		return _process_query_list(pager, list, userId, TopicType.ask, null, false);
 	}
 
 	@RequiresPermissions("topic:index:rebuild")
