@@ -430,7 +430,7 @@ public class YvrService implements RedisKey {
 	
 	@Aop("redis")
 	public List<TopicTag> fetchTopTags() {
-		Set<String> names = jedis().zrevrangeByScore(RKEY_TOPIC_TAG_COUNT, Long.MAX_VALUE, 0, 0, 10);
+		Set<String> names = jedis().zrevrangeByScore(RKEY_TOPIC_TAG_COUNT, Long.MAX_VALUE, 0, 0, 15);
 		List<TopicTag> tags = new ArrayList<>();
 		List<Response<Double>> tmps = new ArrayList<>();
 		Pipeline pipe = jedis().pipelined();

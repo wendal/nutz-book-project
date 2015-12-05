@@ -263,6 +263,7 @@ public class YvrModule extends BaseModule {
 			visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
 //		}
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
+		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId()));
 		return re;
 	}
 
