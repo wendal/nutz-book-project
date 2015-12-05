@@ -169,13 +169,16 @@ public class YvrService implements RedisKey {
 		} catch (Exception e) {
 		}
 		// 如果是ask类型,把帖子加入到 "未回复"列表
+		Pipeline pipe = jedis().pipelined();
 		if (TopicType.ask.equals(topic.getType())) {
-			jedis().zadd(RKEY_TOPIC_NOREPLY, System.currentTimeMillis(), topic.getId());
+			pipe.zadd(RKEY_TOPIC_NOREPLY, System.currentTimeMillis(), topic.getId());
 		}
-		jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), System.currentTimeMillis(), topic.getId());
-		jedis().zincrby(RKEY_USER_SCORE, 100, ""+userId);
+		pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), System.currentTimeMillis(), topic.getId());
+		pipe.zincrby(RKEY_USER_SCORE, 100, ""+userId);
+		pipe.sync();
 		for (Integer watcherId : globalWatcherIds) {
-			pushUser(watcherId, "新帖:" + topic.getTitle(), topic.getId());
+			if (watcherId != userId)
+				pushUser(watcherId, "新帖:" + topic.getTitle(), topic.getId());
 		}
 		return _ok(topic.getId());
 	}
