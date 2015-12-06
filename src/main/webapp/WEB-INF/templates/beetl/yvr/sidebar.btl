@@ -33,7 +33,7 @@
     <% } %>
   </div>
   
-  <% if (null == obj.current_user!) { %>
+  <% if (null == obj.current_user! && null == obj.topic!) { %>
   <div class="panel">
     <div class='header'>
       <span class='col_fade'>其他登陆方式</span>
