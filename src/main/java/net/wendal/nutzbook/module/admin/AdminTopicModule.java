@@ -23,7 +23,7 @@ public class AdminTopicModule {
 
 	@At
 	@Ok("fm:templates.admin.topic.list")
-	@RequiresPermissions(value = { "topic:view", "topic:updata" }, logical = Logical.OR)
+	@RequiresPermissions(value = { "topic:view", "topic:update" }, logical = Logical.OR)
 	public Pagination list(@Param(value = "pageNumber", df = "1") int pageNumber) {
 		return topicService.getListByPager(pageNumber);
 	}
