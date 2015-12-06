@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>上游GM</title>
+<title>yvr's Control Panel</title>
 </head>
 <frameset rows="72,*" frameborder="0" border="0" framespacing="0">
 	<frame src="top.rk" name="topFrame" noresize="noresize" id="leftFrame"/>

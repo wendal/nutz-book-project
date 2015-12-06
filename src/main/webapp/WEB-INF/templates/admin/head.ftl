@@ -5,7 +5,7 @@
 <link href="${base}/res/common/css/jquery.treeview.css" rel="stylesheet" type="text/css"/>
 <link href="${base}/res/common/css/jquery.ui.css" rel="stylesheet" type="text/css"/>
 <link href="${base}/res/common/css/base.css" rel="stylesheet" type="text/css"/>
-<script src="${base}/res/common/js/jquery.js?20160305" type="text/javascript"></script>
+<script src="${base}/rs/js/jquery.js" type="text/javascript"></script>
 <script src="${base}/res/common/js/jquery-ui-1.10.4.min.js" type="text/javascript"></script>
 <script src="${base}/res/common/js/jquery.ext.js" type="text/javascript"></script>
 <script src="${base}/res/common/js/pony.js" type="text/javascript"></script>
