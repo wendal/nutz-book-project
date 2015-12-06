@@ -26,17 +26,17 @@ public class FrameAct {
 
 	// 系统配置
 	@At("/user_pwd_main")
-	@Ok("fm:templates.admin.account.frame.user_pwd_main")
+	@Ok("fm:templates.admin.account.frame.main")
 	public void gamePwdMain() {
 	}
 
 	@At("/user_pwd_left")
-	@Ok("fm:templates.admin.account.frame.user_pwd_left")
+	@Ok("fm:templates.admin.account.frame.left")
 	public void gamePwdLeft() {
 	}
 
 	@At("/user_pwd_right")
-	@Ok("fm:templates.admin.account.frame.user_pwd_right")
+	@Ok("fm:templates.admin.account.frame.right")
 	public void gamePwdRight() {
 	}
 

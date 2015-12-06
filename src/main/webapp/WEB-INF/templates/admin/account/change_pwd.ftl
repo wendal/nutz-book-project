@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title></title>
-<#include "/template/admin/head.html"/>
+<#include "/templates/admin/head.ftl"/>
 <script type="text/javascript">
 	$().ready(function() {
 	    $("#jvForm").validate({
