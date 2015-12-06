@@ -64,7 +64,7 @@ public class AdminLoginModule extends BaseModule {
 		subject.logout();
 	}
 
-	@At
+	@At({"/", "/index"})
 	@Ok("fm:templates.front.login.index")
 	@RequiresGuest
 	public void index() {

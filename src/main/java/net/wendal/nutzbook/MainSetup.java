@@ -33,6 +33,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.Permission;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -77,6 +78,7 @@ public class MainSetup implements Setup {
 		Daos.migration(dao, UserProfile.class, true, false);
 		Daos.migration(dao, TopicReply.class, true, false);
 		Daos.migration(dao, OAuthUser.class, true, false);
+		Daos.migration(dao, Permission.class, true, false);
 		
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
