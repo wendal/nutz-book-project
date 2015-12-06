@@ -67,6 +67,9 @@ public class AdminLoginModule extends BaseModule {
 	@At({"/", "/index"})
 	@Ok("fm:templates.front.login.index")
 	@RequiresGuest
-	public void index() {
+	public Object index() {
+		if (SecurityUtils.getSubject().isAuthenticated())
+			return new ServerRedirectView("/admin/main.rk");
+		return null;
 	}
 }
