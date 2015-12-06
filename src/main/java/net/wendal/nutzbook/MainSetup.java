@@ -11,6 +11,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.FieldFilter;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
+import org.nutz.integration.shiro.NutShiro;
 import org.nutz.integration.zbus.ZBusFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -54,6 +55,7 @@ public class MainSetup implements Setup {
 	private static final Log log = Logs.get();
 	
 	public void init(NutConfig nc) {
+		NutShiro.DefaultLoginURL="/admin/logout";
 		// 检查环境
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");

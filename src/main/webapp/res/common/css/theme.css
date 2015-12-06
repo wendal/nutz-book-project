@@ -1,0 +1,143 @@
+input{ padding:0; margin:0;}
+/*数据录入和修改样式*/
+.pn-ftable{background-color:#fff;}
+.pn-flabel{background-color:#c6e3ee;text-align:right;padding-right:3px; color:#000;}
+.pn-flabel-h{height:27px;}
+.pn-fcontent{background-color:#dbedf4;padding-left:5px;}
+.pn-fbutton{background-color:#c6e3ee;text-align:center;}
+.pn-fhelp{color:#747474;padding:3px 0px;}
+.pn-frequired{color:red}
+.pn-fruler{background:url(../img/theme/ruler.gif) repeat-x 1px 6px;}
+/*数据列表样式*/
+.pn-ltable{margin:1px auto auto auto; background:url(../img/theme/boxTitleBG.jpg) no-repeat;}
+.pn-lthead{ height:27px;}
+.pn-lthead th{height:27px; color:#3566a9; border-right:1px solid #fff;}
+.pn-ltbody{}
+.pn-ltbody .intd{text-indent:5px;}
+.pn-ltbody tr{height:27px;}
+.pn-ltbody td{height:27px; border-right:1px solid #fff; border-bottom:1px solid #fff;}
+
+/*数据列表鼠标经过样式*/
+.pn-lhover{background-color:#F2F2F2;}
+.pn-lselected{background-color:#d9e8fb;}
+/*数据列表没有数据样式*/
+.pn-lnoresult{padding:10px;border:#b4cfcf 1px solid;text-align:center;color:red;font-weight:bold;}
+/*数据列表批量操作样式*/
+.pn-lbopt{margin-top:2px;padding:5px;border:#b4cfcf 1px solid;}
+/*数据列表操作链接样式*/
+.pn-lopt{text-align:center;}
+a.pn-opt{text-decoration:underline;}
+a.pn-opt:link {color: #2366A8;}
+a.pn-opt:visited {color: #2366A8;}
+a.pn-opt:hover{color: #2366A8;}
+a.pn-opt:active {color: #2366A8;}
+/*分页样式*/
+.pn-sp{margin-top:3px;padding:1px 0;height:50px;}
+/*树的样式*/
+.pn-tree{font-size:12px;}
+.pn-tree *{word-break:keep-all;white-space:nowrap;}
+.pn-tree img{vertical-align:middle;}
+.pn-tree-hover{background-color:#F5F5F5;}
+.pn-tree-selected{background-color:#DDECEF;}
+.pn-tree-checkbox{vertical-align:middle;}
+
+/*按钮的样式*/
+.del-button/*删除*/{background:url(../img/theme/shanchu.jpg) no-repeat; width:58px; height:20px; line-height:20px; text-indent:18px; color:#666666; border:0 none; cursor:pointer;}
+.fzbq-button/*复制标签*/{background:url(../img/theme/fzbq.jpg) no-repeat; width:82px; height:20px; line-height:20px; text-indent:18px; color:#666666; border:0 none; cursor:pointer;}
+.bcplxx-button/*保存排列顺序*/{background:url(../img/theme/bcplxx.jpg) no-repeat; width:114px; height:20px; line-height:20px; text-indent:18px; color:#666666; border:0 none; cursor:pointer;}
+.save-order{background:url(../img/theme/baocunguding.jpg) no-repeat; width:91px; height:20px; border:0 none;text-indent:18px; color:#666666; cursor:pointer;}
+.content_copy{background:url(../img/theme/fuzhi.jpg) no-repeat; width:67px; height:20px; border:0 none;text-indent:18px; color:#666666; cursor:pointer;}
+.content_refer{background:url(../img/theme/yingyong.jpg) no-repeat; width:67px; height:20px; border:0 none;text-indent:18px; color:#666666; cursor:pointer;}
+.pfzgl{background:url(../img/theme/pfzgl.jpg) no-repeat; width:100px; height:18px; border:0 none;text-indent:18px; color:#666666; cursor:pointer;}
+.save-field{background:url(../img/theme/save-button.png) no-repeat; width:125px; height:24px; border:0 none;text-indent:20px; color:#666666; cursor:pointer;}
+.save-content/*保存内容*/{background:url(../img/theme/bcplxx.jpg) no-repeat; width:114px; height:20px; border:0 none;text-indent:20px; color:#666666; cursor:pointer;}
+.return-button/*返回列表*/{background:url(../img/theme/fhlb.jpg) no-repeat; width:80px; height:18px; color:#00325d; text-indent:18px; line-height:18px; border:0 none; cursor:pointer;}
+.preview-button/*预览*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.upload-button/*上传*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.cut-button/*裁剪*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.submit{background: url(../img/theme/cz.jpg) no-repeat; width:52px; height:18px; line-height:18px; border:0 none; cursor:pointer; color:#01335e; text-indent:18px; cursor:pointer;}
+.submit11{background: url(../img/theme/tijiao.jpg) no-repeat; width:65px; height:20px; border:0 none; cursor:pointer; color:#666665; text-indent:18px; cursor:pointer;}
+.tijiao2{background: url(../img/theme/tijiao2.jpg) no-repeat; width:52px; height:18px; line-height:18px; border:0 none; cursor:pointer; color:#01335e; text-indent:18px; cursor:pointer;}
+.reset/*重置*/{background: url(../img/theme/cz.jpg) no-repeat; width:52px; height:18px; line-height:18px; border:0 none; cursor:pointer; color:#01335e; text-indent:18px; cursor:pointer;}
+.generate-static{ background:url(../img/theme/shengchengjingtaiye.jpg) no-repeat; width:102px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.create-template{background:url(../img/theme/button.png) no-repeat -11px -43px; width:81px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.create-file/*创建文件*/{background:url(../img/theme/cjwj.jpg) no-repeat; width:80px; height:18px; color:#00325d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.upload-file{background:url(../img/theme/button.png) no-repeat -113px -43px; width:81px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.query{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#022e59; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.front-view/*前台预览*/{background:url(../img/theme/qtyl.jpg) no-repeat; width:100px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.add/*添加*/{background:url(../img/theme/tianjia.jpg) no-repeat; width:52px; height:18px; color:#00325d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.create-new/*新建*/{background:url(../img/theme/xinjian.jpg) no-repeat; width:52px; height:18px; color:#01335e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.check{background:url(../img/theme/shenhe.jpg) no-repeat; width:66px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.edit/*修改*/{background:url(../img/theme/xiugai.jpg) no-repeat; width:67px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.reject{background:url(../img/theme/tuihui.jpg) no-repeat; width:67px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.pre-page/*上一页*/{background:url(../img/theme/syy.gif) no-repeat; width:60px; height:16px; color:#666666; line-height:16px; text-indent:10px; border:0 none; cursor:pointer;}
+.next-page/*下一页*/{text-align:left;background:url(../img/theme/xyy.gif) no-repeat; width:60px; height:16px; color:#666666; line-height:16px; border:0 none; cursor:pointer;}
+.last-page/*尾页*/{text-align:left;background:url(../img/theme/wy.gif) no-repeat; width:55px; height:16px; color:#666666; line-height:16px; border:0 none; cursor:pointer;}
+.first-page/*首页*/{background:url(../img/theme/sy.gif) no-repeat; width:55px; height:16px; color:#666666; line-height:16px; text-indent:12px; border:0 none; cursor:pointer;}
+.go/*转*/{background:url(../img/theme/go.gif) no-repeat; width:15px; height:16px; color:#666666; text-indent:18px; border:0 none; cursor:pointer;}
+.cancel/*取消*/{background:url(../img/theme/quxiao.jpg) no-repeat; width:52px; height:18px; color:#01335e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.vice-channel/*副栏目*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.add-picture{background:url(../img/theme/button.png) no-repeat -87px -314px; width:106px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.setting/*设置*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px;text-align:center; border:0 none; cursor:pointer;}
+.export/*导出*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.import/*导入*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.save-default/*保存系统默认字段*/{background:url(../img/theme/bcxtmrzd.jpg) no-repeat; width:135px; height:20px; border:0 none;text-indent:20px; color:#666666; cursor:pointer;}
+.recycle/*还原*/{background:url(../img/theme/huanyuan.jpg) no-repeat; width:58px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.generate-index/*生成索引*/{background:url(../img/theme/cjwj.jpg) no-repeat; width:80px; height:18px; color:#01335e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+
+.base-setting/*基本设置*/{background:url(../img/theme/jbsz.jpg) no-repeat; width:76px; height:18px; color:#13456d; line-height:18px; text-indent:16px; border:0 none; cursor:pointer;}
+.initialize{background:url(../img/theme/button.png) no-repeat -100px -441px; width:69px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.generate-index-page/*生成首页HTML*/{background:url(../img/theme/scsy.jpg) no-repeat; width:115px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.sys-setting/*系统设置*/{background:url(../img/theme/xtsz.jpg) no-repeat; width:90px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.login-setting/*登录设置*/{background:url(../img/theme/dlsz.jpg) no-repeat; width:81px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.member-setting/*会员设置*/{background:url(../img/theme/hysz.jpg) no-repeat; width:84px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.memberzhuce-setting/*会员注册模型*/{background:url(../img/theme/hyzcmx.jpg) no-repeat; width:115px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.mark-setting/*水印设置*/{background:url(../img/theme/sysz.jpg); width:81px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+
+.jk-setting/*接口设置*/{background:url(../img/theme/hysz.jpg) no-repeat; width:84px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.qt-setting/*其他配置*/{background:url(../img/theme/qtpz.jpg) no-repeat; width:80px; height:18px; color:#15466e; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+
+.generate-channel-page/*生成栏目页HTML*/{background:url(../img/theme/scsx.jpg) no-repeat; width:115px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.start-acqu/*开始采集*/{background:url(../img/theme/kscj.jpg) no-repeat; width:80px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.channel-right{background:url(../img/theme/button.png) no-repeat -103px -591px; width:81px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.del-index-page/*删除首页HTML*/{background:url(../img/theme/scsx.jpg) no-repeat; width:115px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.generate-content-page/*生成内容页HTML*/{background:url(../img/theme/scsx.jpg) no-repeat; width:115px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.browse/*浏览*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#666666; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.file-button{height:24px;opacity:0;filter:alpha(opacity=0);position:absolute;right:5px;top:-5px; *left:0; *top:5px;}
+.file-button-other{height:24px;opacity:0;filter:alpha(opacity=0);position:absolute;right:78px;top:0px;}
+.send-message/*发送站内信*/{background:url(../img/theme/fsznx.jpg) no-repeat; width:108px; height:18px; color:#00325d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.forward/*转发*/{background:url(../img/theme/shenhe.jpg) no-repeat; width:66px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.inbox/*收件箱管理*/{background:url(../img/theme/sjxgl.jpg) no-repeat; width:102px; height:18px; color:#00325d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.sendbox/*发件箱管理*/{background:url(../img/theme/fjxgl.jpg) no-repeat; width:102px; height:18px; color:#00325d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.trash/*垃圾箱管理*/{background:url(../img/theme/ljxgl.jpg) no-repeat; width:89px; height:18px; color:#00325d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.reply/*回复*/{background:url(../img/theme/shenhe.jpg) no-repeat; width:66px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.delete-complete/*彻底删除*/{background:url(../img/theme/scgx.jpg) no-repeat; width:100px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+
+.editor-style{background:url(../img/theme/eidtorbg.jpg) repeat-x;height:38px;line-height:38px;}
+.editor-bbg{background:url(../img/theme/tb-bg.jpg) no-repeat; width:464px;height:38px;}
+
+.pushButton/*推送*/{background:url(../img/theme/tuisong.jpg) no-repeat; width:68px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.cancellation-audit/*取消审核*/{background:url(../img/theme/scgx.jpg) no-repeat; width:100px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.firewall-setting/*网站防火墙*/{background:url(../img/theme/wlfhqpz.jpg) no-repeat; width:120px; height:18px; color:#13456d; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.sharing/*共享*/{background:url(../img/theme/button.png) no-repeat -127px -472px; width:60px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.delete-sharing/*删除共享*/{background:url(../img/theme/scgx.jpg) no-repeat; width:100px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.remove-member/*移除成员*/{background:url(../img/theme/button.png) no-repeat -101px -796px; width:81px; height:24px; color:#666666; line-height:24px; text-indent:18px; border:0 none; cursor:pointer;}
+.delete-all-failure-attachment/*删除所有失效附件*/{background:url(../img/theme/scsysxfj.jpg) no-repeat; width:130px; height:18px; color:#022e59; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.flag-attachment/*标志原有附件有效*/{background:url(../img/theme/bzyyfjyx.jpg) no-repeat; width:130px; height:18px; color:#022e59; line-height:18px; text-indent:18px; border:0 none; cursor:pointer;}
+.backup/*备份*/{background:url(../img/theme/shenhe.jpg) no-repeat; width:66px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.recovery/*恢复*/{background:url(../img/theme/xiugai.jpg) no-repeat; width:67px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.download/*下载*/{background:url(../img/theme/xiazai.jpg) no-repeat; width:58px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.select-file/*选择文件*/{background:url(../img/theme/xzwj.jpg) no-repeat; width:100px; height:20px; color:#666666; line-height:20px; text-indent:18px; border:0 none; cursor:pointer;}
+.content_move/*移动*/{ background-image: url(../img/theme/yidong.jpg); width:66px; height:20px; line-height:20px; text-indent:25px; border:0; color:#666666; cursor:pointer;}
+.add_item/*新增投票项*/{ background-image: url(../img/theme/zjtctm.jpg); width:110px; height:18px; line-height:18px; text-indent:18px;border:0;}
+.add_subTopic/*增加调查题目*/{ background-image: url(../img/theme/zjtctm.jpg); width:110px; height:18px; line-height:18px; text-indent:18px;border:0;}
+.up/*上移*/{ background-image: url(../img/theme/shangyi.jpg); width:58px; height:18px; line-height:18px; text-indent:18px; border:0;}
+.up_disabled{ background-image: url(../img/theme/shangyi.jpg); width:58px; height:18px; line-height:18px; text-indent:18px; border:0;}
+.down/*下移*/{ background-image: url(../img/theme/xiayi.jpg); width:58px; height:18px; line-height:18px; text-indent:18px; border:0;}
+.down_disabled{ background-image: url(../img/theme/xiayi.jpg); width:58px; height:18px; line-height:18px; text-indent:18px; border:0;}
+.add_folder{background:url(../img/theme/button.png) no-repeat -11px -111px; width:59px; height:24px; color:#666666; line-height:24px; text-indent:8px; border:0 none; cursor:pointer;}
+.finish{ background-image: url(../img/theme/finish.png); width:86px; height:24px; line-height:24px; text-indent:24px; border:0;cursor: pointer;}
+.design{ background-image: url(../img/theme/design.png); width:95px; height:24px; line-height:24px; text-indent:24px; border:0;cursor: pointer;}
+.add-step{ background-image: url(../img/theme/add-step.png); width:86px; height:24px; line-height:24px; text-indent:24px; border:0;cursor: pointer;}
+.depart/*部门*/{background:url(../img/theme/menu_search.jpg) no-repeat; width:52px; height:19px; color:#022e59; line-height:19px; text-align:center; border:0 none; cursor:pointer;}
+.parent-depart{ background-image: url(../img/theme/parent-depart.png); width:115px; height:24px; line-height:24px; text-indent:24px; border:0;cursor: pointer;}

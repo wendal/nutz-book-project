@@ -41,8 +41,7 @@ public class AuthorityServiceImpl implements AuthorityService {
 		final Set<String> roles = new HashSet<String>();
 		for (Class<?> klass : Scans.me().scanPackage(pkg)) {
 			for (Method method : klass.getMethods()) {
-				RequiresPermissions rp = method
-						.getAnnotation(RequiresPermissions.class);
+				RequiresPermissions rp = method.getAnnotation(RequiresPermissions.class);
 				if (rp != null && rp.value() != null) {
 					for (String permission : rp.value()) {
 						if (permission != null && !permission.endsWith("*"))
@@ -59,17 +58,15 @@ public class AuthorityServiceImpl implements AuthorityService {
 		}
 		log.debugf("found %d permission", permissions.size());
 		log.debugf("found %d role", roles.size());
-		
+
 		// 把全部权限查出来一一检查
 		dao.each(Permission.class, null, new Each<Permission>() {
-			public void invoke(int index, Permission ele, int length)
-					throws ExitLoop, ContinueLoop, LoopException {
+			public void invoke(int index, Permission ele, int length) throws ExitLoop, ContinueLoop, LoopException {
 				permissions.remove(ele.getName());
 			}
 		});
 		dao.each(Role.class, null, new Each<Role>() {
-			public void invoke(int index, Role ele, int length)
-					throws ExitLoop, ContinueLoop, LoopException {
+			public void invoke(int index, Role ele, int length) throws ExitLoop, ContinueLoop, LoopException {
 				roles.remove(ele.getName());
 			}
 		});
@@ -80,7 +77,7 @@ public class AuthorityServiceImpl implements AuthorityService {
 			addRole(role);
 		}
 	}
-	
+
 	public void checkBasicRoles(User admin) {
 		// 检查一下admin的权限
 		Role adminRole = dao.fetch(Role.class, "admin");

@@ -1,0 +1,140 @@
+@charset "utf-8";
+
+/* ---------- Dialog ---------- */
+
+.dialogOverlay {
+	width: 100%;
+	height: 100%;
+	display: none;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	z-index: 99;
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.50;
+	opacity: 0.50;
+	zoom: 1;
+	background: url(../images/base_overlay_bg.png);
+}
+
+* html .dialogOverlay {
+	position: absolute;
+	top: 0;
+}
+
+.baseDialog {
+	padding: 5px;
+	display: none;
+	position: fixed;
+	top: 25%;
+	left: 50%;
+	z-index: 100;
+	overflow: hidden;
+}
+
+* html .baseDialog {
+	position: absolute;
+	top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(25 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+}
+
+.baseDialog .dialogWrap {
+	width: 1000px;
+	height: 1000px;
+	position: absolute;
+	z-index: -1;
+	left: 0;
+	top: 0;
+	filter: alpha(opacity = 15);
+	-moz-opacity: 0.15;
+	opacity: 0.15;
+	background-color: #000000;
+}
+
+.baseDialog .dialogMain {
+	border: 1px solid #779cb0;
+	background: url(../images/base_x_bg.gif) 0px -120px #ffffff repeat-x;
+}
+
+.baseDialog .dialogTitle {
+	height: 40px;
+	line-height: 40px;
+	clear: both;
+	padding-left: 10px;
+	color: #666666;
+	font-weight: bold;
+	cursor: move;
+	background: url(../images/base_x_bg.gif) 0px 0px repeat-x;
+}
+
+.baseDialog .dialogClose {
+	width: 25px;
+	height: 19px;
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	cursor: pointer;
+	background: url(../images/base_button.gif) -180px 0px no-repeat;
+}
+
+.baseDialog .dialogClose:hover {
+	background-position: -240px 0px;
+}
+
+.baseDialog .dialogContent {
+	line-height: 30px;
+	clear: both;
+	margin: 40px 50px;
+}
+
+.baseDialog .dialogwarnIcon {
+	padding-left: 30px;
+	background: url(../images/base_icon.gif) 0px -540px no-repeat;
+}
+
+.baseDialog .dialogsuccessIcon {
+	padding-left: 30px;
+	background: url(../images/base_icon.gif) 0px -740px no-repeat;
+}
+
+.baseDialog .dialogerrorIcon {
+	padding-left: 30px;
+	background: url(../images/base_icon.gif) 0px -940px no-repeat;
+}
+
+.baseDialog .dialogButtonArea {
+	height: 34px;
+	padding-top: 6px;
+	clear: both;
+	text-align: center;
+	background: url(../images/base_x_bg.gif) 0px -60px repeat-x;
+}
+
+.baseDialog .dialogButtonArea input {
+	margin: 0px 10px;
+}
+
+.baseDialog .dialogButtonArea .formButton {
+	width: 70px;
+	height: 28px;
+	line-height: 28px;
+	text-align: center;
+	outline: none;
+	cursor: pointer;
+	color: #000000;
+	font-size: 12px;
+	border: none;
+	background: url(../images/base_button.gif) 0px 0px no-repeat;
+}
+
+.baseDialog .dialogButtonArea .formButton:hover {
+	color: #ff9900;
+	background: url(../images/base_button.gif) -90px 0px no-repeat;
+}
+
+.baseDialog .dialogIframe {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	z-index: -1;
+	filter: Alpha(Opacity = 0);
+}

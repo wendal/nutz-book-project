@@ -1,0 +1,35 @@
+@charset "utf-8";
+
+
+/* ---------- Error ---------- */
+
+div.wrap {
+	float: left;
+	position: relative;
+	left: 50%;
+}
+
+div.error {
+	float: left;
+	margin-top: 120px;
+	position: relative;
+	right: 50%;
+	border: 2px solid #f2f2f2;
+	background: url(../images/error.gif) 0px bottom repeat-x;
+}
+
+div.error dl {
+	padding: 10px 60px;
+	border: 1px solid #d7d7d7;
+}
+
+div.error dt {
+	line-height: 30px;
+	color: #fe6200;
+	font-size: 14px;
+	font-family: "Microsoft YaHei";
+}
+
+div.error dd {
+	line-height: 24px;
+}
