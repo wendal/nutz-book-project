@@ -75,6 +75,7 @@ public class AdminPermissionModule {
 
 	}
 
+	@SuppressWarnings("unused")
 	@At
 	@Ok("json")
 	@RequiresPermissions({ "permission:delete" })

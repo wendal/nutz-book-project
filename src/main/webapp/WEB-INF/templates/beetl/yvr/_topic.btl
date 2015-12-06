@@ -2,16 +2,7 @@
 <%
 layout("_layout.btl",{}){
 %>
-<div id='sidebar'>
-  <div class='panel'>
-    <div class='header'>
-      <span class='col_fade'>作者</span>
-    </div>
-    <div class='inner' data-intro="Ta还有什么帖子?点一下就知道了">
-    	<% layout("user/card.btl", {"user": obj.topic.author}){};%>
-    </div>
-  </div>
-</div>
+<%layout("sidebar.btl", {}){}%>
 
 <div id='content'>
   <div class='panel'>

@@ -181,13 +181,12 @@ $(function(){
   
   <% } %>
 
-  <% if ( null != obj.no_reply_topics!) { %>
+  <% if ( null != obj.no_reply_topics! && obj.no_reply_topics.~size > 0) { %>
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>无人回复的话题</span>
     </div>
     <div class='inner'>
-      <% if (obj.no_reply_topics.~size > 0) { %>
       <ul class="unstyled">
       	<%
       	for(topic in obj.no_reply_topics) {
@@ -195,9 +194,6 @@ $(function(){
       	}
       	%>
       </ul>
-      <% } else { %>
-      <p>无</p>
-      <% } %>
     </div>
   </div>
   <% } %>
@@ -212,6 +208,25 @@ $(function(){
       	<%for(_tag in obj.top_tags) {%>
       		<a data-pjax href='${ctxPath}/yvr/tag/${_tag.name}' property="item" typeof="WebPage" class="topic_tag">${_tag.name}(${_tag.count})</a>
       	<%}%>
+      </ul>
+    </div>
+  </div>
+  <% } %>
+  
+  <% if ( null != obj.recent_topics! && obj.recent_topics.~size > 0) { %>
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>作者最近发表的帖子</span>
+    </div>
+    <div class='inner'>
+      <ul class="unstyled">
+      	<%
+      	for(_topic in obj.recent_topics) {
+      		if ( null != obj.topic! && obj.topic.id != _topic.id){
+      			layout('small.btl', { "topic" : _topic }){};
+      		}
+      	}
+      	%>
       </ul>
     </div>
   </div>
