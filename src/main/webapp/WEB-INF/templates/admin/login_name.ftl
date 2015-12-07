@@ -24,7 +24,7 @@ function check_name(){
 			var ok = data.ok;
 			if(ok)
 			{
-				$('#name_msg').html('可以使用次名字').show();
+				$('#name_msg').html('可以使用此名字').show();
 			}else{
 				$('#name_msg').html('此名字已被占用');
 			}

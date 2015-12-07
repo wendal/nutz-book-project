@@ -10,7 +10,7 @@ var ioc = {
 		type : "freemarker.template.Configuration"
 	},
 	freeMarkerConfigurer : {
-		type : "org.nutz.plugins.view.freemarker.FreeMarkerConfigurer",
+		type : "net.wendal.nutzbook.freemarker.NutzbookFreeMarkerConfigurer",
 		events : {
 			create : 'init'
 		},

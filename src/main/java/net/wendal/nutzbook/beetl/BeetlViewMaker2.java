@@ -9,14 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.beetl.ext.nutz.BeetlView;
 import org.beetl.ext.nutz.BeetlViewMaker;
 import org.nutz.ioc.Ioc;
-import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Stopwatch;
-import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
+
+import net.wendal.nutzbook.util.Toolkit;
 
 public class BeetlViewMaker2 extends BeetlViewMaker {
 	
@@ -38,17 +37,8 @@ public class BeetlViewMaker2 extends BeetlViewMaker {
 			share = new NutMap();
 			groupTemplate.setSharedVars(share);
 		}
-		Ioc ioc = Mvcs.getIoc();
-		share.put("ioc", ioc);
-		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
-		share.put("conf", conf.toMap());
-
-		if (!conf.getBoolean("cdn.enable", false) || Strings.isBlank(conf.get("cdn.urlbase"))) {
-			share.put("cdnbase", "");
-		} else {
-			share.put("cdnbase", conf.get("cdn.urlbase"));
-			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
-		}
+		NutMap re = Toolkit.getTemplateShareVars();
+		share.putAll(re);
 	}
 	
 	@Override
