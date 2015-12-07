@@ -87,7 +87,7 @@ public class SysLogService implements Runnable, MessageHandler {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -2);
 		for (int i = 0; i < 38; i++) {
-			Dao dao = Daos.ext(this.dao, String.format("%d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)));
+			Dao dao = Daos.ext(this.dao, String.format("%d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1));
 			dao.create(SysLog.class, false);
 			cal.add(Calendar.MONTH, 1);
 		}
