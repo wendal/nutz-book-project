@@ -2,6 +2,7 @@ package net.wendal.nutzbook.module.yvr;
 
 import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,10 +10,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -44,6 +45,9 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.module.yvr.api.YvrApi;
 import net.wendal.nutzbook.mvc.AccessTokenFilter;
+import net.wendal.nutzbook.service.RedisDao;
+import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
+import net.wendal.nutzbook.service.yvr.TopicSearchService;
 import net.wendal.nutzbook.util.Markdowns;
 
 /**
@@ -67,6 +71,12 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
+	
+	@Inject
+	protected RedisDao redisDao;
+	
+	@Inject
+	protected TopicSearchService topicSearchService;
 
 	/**
 	 * 分页获取帖子列表
@@ -79,9 +89,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
 	 *
-	 * @apiParam {int} 		[page=1] 页数,默认为1
-	 * @apiParam {String} 	[tab=ask] 分类
-	 * @apiParam {int} 		[limit=10] 分页
+	 * @apiParam {int} 		[page=1]	页数,默认为1
+	 * @apiParam {String} 	[tab]		分类
+	 * @apiParam {String} 	[tag]		标签
+	 * @apiParam {String} 	[search]	查询条件
+	 * @apiParam {int} 		[limit=10]	分页
 	 * @apiParam {boolean} 	[mdrender=true] 是否渲染Markdown
 	 *
 	 * @apiSuccess {Object[]} data 帖子列表数据
@@ -92,6 +104,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
 	 * @apiSuccess {boolean} data.top 	是否置顶
 	 * @apiSuccess {boolean} data.good 	是否为精华帖
+	 * @apiSuccess {String[]} data.tags 标签
 	 * @apiSuccess {int}	data.reply_count 总回复数量
 	 * @apiSuccess {int}	data.visit_count 总浏览数量
 	 * @apiSuccess {Object} data.author 作者信息
@@ -102,24 +115,43 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@GET
 	@At
 	@Aop("redis")
-	public Object topics(@Param("page")int page, @Param("tab")String type,
+	public Object topics(@Param("page")int page, 
+			@Param("tab")String type,
+			@Param("tag")String tag,
+			@Param("search")String search,
 			@Param("limit")int limit, @Param("mdrender")String mdrender) {
 		if (page < 1)
 			page = 1;
 		if (limit < 0 || limit > pageSize)
 			limit = pageSize;
 		Pager pager = dao.createPager(page, limit);
-		if (type == null)
-			type = "ask";
-		else if ("all".equals(type))
-			type = "ask";
+		
 		HashMap<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		Set<String> ids = jedis().zrevrangeByScore(RKEY_TOPIC_UPDATE + type, System.currentTimeMillis(), 0, pager.getOffset(), pager.getPageSize());
-		for (String id : ids) {
-			Topic topic = dao.fetch(Topic.class, id);
-			if (topic == null)
-				continue;
+		List<Topic> topics = new ArrayList<>();
+		if (!Strings.isBlank(tag)) {
+			topics = redisDao.queryByZset(Topic.class, RKEY_TOPIC_TAG_UPDATE + type, pager);
+		} else if (!Strings.isBlank(search)) {
+			try {
+				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), false);
+				for (LuceneSearchResult result : results) {
+					Topic topic = dao.fetch(Topic.class, result.getId());
+					if (topic == null)
+						continue;
+					topics.add(topic);
+				}
+				pager.setRecordCount(list.size());
+			} catch (IOException | ParseException e) {
+				e.printStackTrace();
+			}
+		} else {
+			if (type == null)
+				type = "ask";
+			else if ("all".equals(type))
+				type = "ask";
+			topics = redisDao.queryByZset(Topic.class, RKEY_TOPIC_UPDATE + type, pager);
+		}
+		for (Topic topic : topics) {
 			list.add(_topic(topic, authors, mdrender));
 		}
 		return _map("data", list);
@@ -141,6 +173,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
 	 * @apiSuccess {boolean} data.top 			是否置顶
 	 * @apiSuccess {boolean} data.good 			是否为精华帖
+	 * @apiSuccess {String[]} data.tags 		标签
 	 * @apiSuccess {int}	data.reply_count 	总回复数量
 	 * @apiSuccess {int}	data.visit_count 	总浏览数量
 	 * @apiSuccess {Object} data.author 		作者信息
@@ -454,6 +487,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		tp.put("id", topic.getId());
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
 		tp.put("tab", topic.getType().toString());
+		tp.put("tags", topic.getTags());
 		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
 		tp.put("title", StringEscapeUtils.unescapeHtml(topic.getTitle()));
 		if (topic.getLastComment() != null)

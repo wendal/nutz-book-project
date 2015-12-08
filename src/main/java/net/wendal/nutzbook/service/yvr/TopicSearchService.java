@@ -113,7 +113,7 @@ public class TopicSearchService {
 		luceneIndex.writer.commit();
 	}
 
-	public List<LuceneSearchResult> search(String keyword) throws IOException, ParseException {
+	public List<LuceneSearchResult> search(String keyword, boolean highlight) throws IOException, ParseException {
 		IndexReader reader = luceneIndex.reader();
 		try {
 			IndexSearcher searcher = new IndexSearcher(reader);
@@ -132,15 +132,20 @@ public class TopicSearchService {
 				// 当查询不到高亮信息时，返回内容为Null
 				//String highContent = fvh.getBestFragment(fq, reader, sd.doc, "content", 100);
 				//System.out.println("highContent-->" + highContent);
-				String highTitle = fvh.getBestFragment(fq, reader, sd.doc, "title", 100);
-				String id = searcher.doc(sd.doc).get("id");
-				if (highTitle == null) {
-					Document doc = searcher.doc(sd.doc);
-					/**
-					 * 如果高亮内容为null，那么表示标题没有需要高亮的内容，那么赋值为原有标题
-					 */
-					highTitle = doc.get("title");
+				String highTitle = null;
+				if (highlight) {
+					fvh.getBestFragment(fq, reader, sd.doc, "title", 100);
+					if (highTitle == null) {
+						Document doc = searcher.doc(sd.doc);
+						/**
+						 * 如果高亮内容为null，那么表示标题没有需要高亮的内容，那么赋值为原有标题
+						 */
+						highTitle = doc.get("title");
+					}
+				} else {
+					highTitle = searcher.doc(sd.doc).get("title");
 				}
+				String id = searcher.doc(sd.doc).get("id");
 				searchResults.add(new LuceneSearchResult(id, highTitle));
 			}
 			return searchResults;

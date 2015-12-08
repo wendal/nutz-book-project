@@ -16,6 +16,8 @@ public interface YvrApi {
     @GET
     @At
     Object topics(@Param("page")int page, @Param("tab")String type,
+    			  @Param("tag")String tag,
+    			  @Param("search")String search,
                   @Param("limit")int limit, @Param("mdrender")String mdrender);
 
     @GET
