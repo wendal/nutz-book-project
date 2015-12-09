@@ -1,5 +1,5 @@
-<#import "layout/main.ftl" as layout>
-<@layout.admin2Layout title="后台管理系统" admin_menu_level_1="公告板" >
+<#import "../layout/main.ftl" as layout>
+<@layout.admin2Layout title="后台管理系统" admin_menu_level_1="${msg['admin_menu.yvr.level_one']}" admin_menu_level_2="${msg['admin_menu.yvr.expstatic']}" >
 
 
               <div class="widget">

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.module.admin2;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -39,4 +40,12 @@ public class Admin2Module {
 	public Context page2(String _page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		return Lang.context().set("me", dao.fetch(UserProfile.class, userId));
 	}
+	
+	@At("/user/logout")
+	@Ok(">>:/admin2/user/login")
+	public void logout() {
+		SecurityUtils.getSubject().logout();
+	}
+	
+	
 }
