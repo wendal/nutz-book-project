@@ -17,7 +17,10 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.nutz.integration.shiro.NutShiro;
+import org.nutz.ioc.Ioc;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
@@ -207,5 +210,24 @@ public class Toolkit {
 				e.printStackTrace();// 不可能吧
 			}
 		return cnt;
+	}
+	
+	/**
+	 * 模板引擎共用的变量
+	 */
+	
+	public static NutMap getTemplateShareVars() {
+		NutMap share = new NutMap();
+		Ioc ioc = Mvcs.getIoc();
+		share.put("ioc", ioc);
+		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
+		share.put("conf", conf.toMap());
+
+		if (!conf.getBoolean("cdn.enable", false) || Strings.isBlank(conf.get("cdn.urlbase"))) {
+			share.put("cdnbase", "");
+		} else {
+			share.put("cdnbase", conf.get("cdn.urlbase"));
+		}
+		return share;
 	}
 }

@@ -55,6 +55,7 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.PushService;
+import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
@@ -76,6 +77,9 @@ public class YvrModule extends BaseModule {
 
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
+	
+	@Inject
+	protected RedisDao redisDao;
 
 	@At({ "/", "/index" })
 	@Ok("->:/yvr/list")
@@ -136,19 +140,7 @@ public class YvrModule extends BaseModule {
 	}
 	
 	protected NutMap _query_topic_by_zset(String zkey, Pager pager, int userId, TopicType topicType, String tagName, boolean addTop) {
-		long now = System.currentTimeMillis();
-		Long count = jedis().zcount(zkey, 0, now);
-		List<Topic> list = new ArrayList<Topic>();
-		if (count != null && count.intValue() != 0) {
-			pager.setRecordCount(count.intValue());
-			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0, pager.getOffset(), pager.getPageSize());
-			for (String id : ids) {
-				Topic topic = yvrService.daoNoContent().fetch(Topic.class, id);
-				if (topic == null)
-					continue;
-				list.add(topic);
-			}
-		}
+		List<Topic> list = redisDao.queryByZset(Topic.class, zkey, pager);
 		return _process_query_list(pager, list, userId, topicType, tagName, addTop);
 	}
 	
@@ -308,7 +300,7 @@ public class YvrModule extends BaseModule {
 	public Object search(@Param("q") String keys, @Attr(scope = Scope.SESSION, value = "me") int userId) throws Exception {
 		if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
-		List<LuceneSearchResult> results = topicSearchService.search(keys);
+		List<LuceneSearchResult> results = topicSearchService.search(keys, true);
 		List<Topic> list = new ArrayList<Topic>();
 		for (LuceneSearchResult result : results) {
 			Topic topic = dao.fetch(Topic.class, result.getId());

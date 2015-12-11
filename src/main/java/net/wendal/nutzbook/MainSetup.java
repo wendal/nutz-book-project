@@ -17,6 +17,7 @@ import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
@@ -37,6 +38,7 @@ import net.wendal.nutzbook.bean.Permission;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.beetl.MarkdownFunction;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
@@ -186,6 +188,9 @@ public class MainSetup implements Setup {
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
+		if (conf.getBoolean("cdn.enable", false) && !Strings.isBlank(conf.get("cdn.urlbase"))) {
+			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
+		}
 		Markdowns.cache = cacheManager.getCache("markdown");
 	}
 	

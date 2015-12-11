@@ -64,7 +64,7 @@ public class FaceBuilder<T> implements InvocationHandler {
 
     public static void main(String[] args) {
         YvrApi api = new FaceBuilder<YvrApi>(YvrApi.class).setEndpoint("https://nutz.cn").build();
-        Object obj = api.topics(1, "ask", 20, "true");
+        Object obj = api.topics(1, "ask", null, null, 20, "true");
         obj = api.checkAccessToken("ABC");
         System.out.println(obj);
     }
