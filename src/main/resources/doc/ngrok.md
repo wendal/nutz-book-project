@@ -8,10 +8,6 @@
 
 3. 严禁部署大流量应用
 
-4. 不允许部署长期运行的项目, 不保证域名地址的不变
-
-5. 访问权限每周更新一次, 初定每周六傍晚
-
 ### 下载链接
 
 ** 注意: 已单独部署为域名 wendal.cn **
@@ -40,8 +36,8 @@ Version                       1.7/1.7
 Forwarding                    http://wendal.ngrok.wendal.cn:9080 -> 127.0.0.1:8080
 Forwarding                    https://wendal.ngrok.wendal.cn:9080 -> 127.0.0.1:8080
 Web Interface                 127.0.0.1:4040
-# Conn                        6
-Avg Conn Time                 30758.59ms
+# Conn                        0
+Avg Conn Time                 1.59ms
 
 
 

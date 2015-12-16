@@ -10,6 +10,8 @@ import freemarker.template.SimpleHash;
 import freemarker.template.TemplateModelException;
 import net.wendal.nutzbook.util.Toolkit;
 
+import java.util.Map;
+
 public class NutzbookFreeMarkerConfigurer extends FreeMarkerConfigurer {
 
 	public NutzbookFreeMarkerConfigurer() {
@@ -25,5 +27,8 @@ public class NutzbookFreeMarkerConfigurer extends FreeMarkerConfigurer {
 		}
 	}
 
-	
+	@Override
+	public void setTags(Map<String, Object> map) {
+		super.setTags(map);
+	}
 }
