@@ -152,7 +152,7 @@ public class YvrModule extends BaseModule {
 		}
 		
 		// 查一下未回复的帖子, 最近的5条的就好了
-		Set<String> no_replies_ids = jedis().zrangeByScore(RKEY_TOPIC_NOREPLY, 0, Long.MAX_VALUE, 0, 5);
+		Set<String> no_replies_ids = jedis().zrevrangeByScore(RKEY_TOPIC_NOREPLY, 0, Long.MAX_VALUE, 0, 5);
 		List<Topic> no_replies = new ArrayList<Topic>();
 		for (String topicId : no_replies_ids) {
 			Topic tmp = yvrService.daoNoContent().fetch(Topic.class, topicId);
