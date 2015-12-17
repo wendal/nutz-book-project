@@ -418,7 +418,7 @@ public class YvrService implements RedisKey {
 	public List<Topic> fetchTop() {
 		List<Topic> list = new ArrayList<>();
 		Map<Integer, UserProfile> authors = new HashMap<>();
-		for(String id :jedis().zrevrangeByScore(RKEY_TOPIC_TOP, 0, Long.MAX_VALUE)) {
+		for(String id :jedis().zrevrangeByScore(RKEY_TOPIC_TOP, Long.MAX_VALUE, 0)) {
 			Topic topic = daoNoContent.fetch(Topic.class, id);
 			if (topic == null)
 				continue;
