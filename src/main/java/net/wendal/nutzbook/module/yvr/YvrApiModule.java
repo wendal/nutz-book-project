@@ -151,7 +151,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 				type = "ask";
 			topics = redisDao.queryByZset(Topic.class, RKEY_TOPIC_UPDATE + type, pager);
 		}
-		if (page == 1) {
+		if (page == 1 && "ask".equals(type)) {
 			for (Topic topic : yvrService.fetchTop()) {
 				list.add(_topic(topic, authors, mdrender));
 			}
