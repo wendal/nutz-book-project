@@ -32,7 +32,7 @@ import org.nutz.plugins.view.freemarker.FreemarkerView;
  *         2015年11月23日 下午14:18:45 <br />
  *         http://www.rekoe.com QQ:5382211
  */
-@IocBean
+@IocBean(create = "init")
 @At("/admin")
 public class AdminLoginModule extends BaseModule {
 

@@ -23,6 +23,9 @@
 		
 		<input name="user[3].name" value="ABC_Name_3"></br>
 		<input name="user[3].id" value="3"></br>
+
+		<input name="user[3].roles[0].name" value="ABC_Name_3"></br>
+		<input name="user[3].roles[0].id" value="3"></br>
 		
 		<input type="submit">
 	</form>
