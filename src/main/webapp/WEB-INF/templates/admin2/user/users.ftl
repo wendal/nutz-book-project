@@ -27,6 +27,7 @@
                             <th>用户名</th>
                             <th>昵称</th>
                             <th>邮箱</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -123,7 +124,13 @@
                 {"data":"userId"},
                 {"data":"loginname"},
                 {"data":"nickname"},
-                {"data":"email"}
+                {"data":"email"},
+                {
+                    "data" : "userId",
+                    "render" : function(data) {
+                        return "<button>"+"修改"+"</button>";
+                    }
+                }
             ],
             "language": {
                 search: "搜索"

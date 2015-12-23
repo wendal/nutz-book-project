@@ -14,29 +14,29 @@ layout("_layout.btl",{title:'添加新帖子'}){
     <div class='inner post'>
         <form id='create_topic_form' action='#' method='post'>
           <fieldset>
-            <span class="tab-selector">选择版块：</span>
-            <select name="type" id="tab-value" data-intro="请根据内容正确的选择板块">
-              <% for (ttype in obj.types) {%>
-              <option value="${ttype}" >${ttype.display}</option>
-              <% } %>
-            </select>
             <span id="topic_create_warn">
             	<strong><p/>标题,用一句话概括帖子的内容,禁止使用'有问题求教/救命'之类的无意义语句. <p/>
             	请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点。<p/>
             	内容支持 Markdown 语法, 使用菜单栏的代码块标注代码,会有代码高亮,不要上传代码的截图!!<p/>
             	请完整描述问题,提供尽可能多的信息,包括但不限于版本号,系统环境,场景等</strong>
             </span>
-            <textarea autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上" 
-            	data-intro="标题很重要,请用一句话概括帖子的内容,切勿使用'有问题求教'之类的无意义语句"></textarea>
+            <span class="tab-selector">选择版块：</span>
+            <select name="type" id="tab-value" data-intro="请根据内容正确的选择板块">
+              <% for (ttype in obj.types) {%>
+              <option value="${ttype}" >${ttype.display}</option>
+              <% } %>
+            </select>
+            <input autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上"
+            	data-intro="标题很重要,请用一句话概括帖子的内容,切勿使用'有问题求教'之类的无意义语句"
+            	id="add_topic_title"></input>
 
             <div class='markdown_editor in_editor'>
               <div class='markdown_in_editor'>
-                <textarea class='editor' name='content' rows='20' placeholder='文章支持 Markdown 语法, 请注意标记代码'
-                	>内容支持 Markdown 语法, 使用菜单栏的代码块标注代码,不要上传代码的截图!!</textarea>
+                <textarea class='editor' name='content' rows='20' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
 
                 <div class='editor_buttons'>
                   <input id="topic_submit" type="submit" class='span-primary submit_btn' data-loading-text="提交中" value="提交"
-                  data-intro="请详细描述遇到的问题,相关的版本号,场景,切勿仅提供一个截图"
+                  data-intro="请详细描述遇到的问题,相关的版本号,场景!!"
                   data-position="top">
                 </div>
               </div>
@@ -74,7 +74,6 @@ layout("_layout.btl",{title:'添加新帖子'}){
     	});
     	return false;
     });
-      
   })();
 </script>
 <%} %>

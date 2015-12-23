@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
+import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -110,6 +111,13 @@ public class DemoModule {
 	@At("/re/view3")
 	@Ok("re:jsp:jsp.home")
 	public String test_re_view() {
+		return null;
+	}
+	
+	@At("/re/view4")
+	@Ok("re:jsp:jsp.demo.re_view2")
+	public String test_re_view2(ViewModel vm) {
+		vm.put("num", R.UU32());
 		return null;
 	}
 	
