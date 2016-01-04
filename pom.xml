@@ -226,7 +226,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-views</artifactId>
-			<version>1.b.53</version>
+			<version>1.r.54.r2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>

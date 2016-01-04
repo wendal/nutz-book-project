@@ -10,7 +10,7 @@ var ioc = {
 		type : "freemarker.template.Configuration"
 	},
 	freeMarkerConfigurer : {
-		type : "net.wendal.nutzbook.freemarker.NutzbookFreeMarkerConfigurer",
+		type : "org.nutz.plugins.view.freemarker.FreeMarkerConfigurer",
 		events : {
 			create : 'init'
 		},
@@ -18,6 +18,27 @@ var ioc = {
 			tags : {
 				'shiro' : {
 					refer : 'shiroTags'
+				},
+				'perm_chow' : {
+					refer : 'permissionShiro'
+				},
+				'cms_perm' : {
+					refer : 'permission'
+				},
+				'currentTime' : {
+					refer : 'currentTime'
+				},
+				'timeFormat' : {
+					refer : 'timeFormat'
+				},
+				'ioc' : {
+					refer : '$ioc'
+				},
+				'conf' : {
+					java : '$conf.toMap()'
+				},
+				'cdnbase' : {
+					java : "$conf.get('cdn.urlbase')"
 				}
 			}
 		},
@@ -46,46 +67,10 @@ var ioc = {
 	timeFormat : {
 		type : "net.wendal.nutzbook.freemarker.TimeFormatDirective"
 	},
-	permissionShiroDirective : {
-		type : "org.nutz.plugins.view.freemarker.FreemarkerDirective",
-		args : [ "perm_chow", {
-			refer : "permissionShiro"
-		} ]
-	},
-	permissionDirective : {
-		type : "org.nutz.plugins.view.freemarker.FreemarkerDirective",
-		args : [ "cms_perm", {
-			refer : "permission"
-		} ]
-	},
-	currentTimeDirective : {
-		type : "org.nutz.plugins.view.freemarker.FreemarkerDirective",
-		args : [ "currentTime", {
-			refer : "currentTime"
-		} ]
-	},
-	timeFormatDirective : {
-		type : "org.nutz.plugins.view.freemarker.FreemarkerDirective",
-		args : [ "timeFormat", {
-			refer : "timeFormat"
-		} ]
-	},
 	freemarkerDirectiveFactory : {
 		type : "org.nutz.plugins.view.freemarker.FreemarkerDirectiveFactory",
-		events : {
-			create : 'init'
-		},
 		fields : {
 			freemarker : 'custom/freemarker.properties',
-		},
-		args : [ {
-			refer : "permissionDirective"
-		}, {
-			refer : "timeFormatDirective"
-		}, {
-			refer : "currentTimeDirective"
-		}, {
-			refer : "permissionShiroDirective"
-		} ]
+		}
 	}
 };
