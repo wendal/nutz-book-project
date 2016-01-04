@@ -20,7 +20,8 @@ import org.nutz.plugins.view.freemarker.FreemarkerViewMaker;
 										   "*anno", "net.wendal.nutzbook",
 										   "*tx",
 										   "*org.nutz.integration.quartz.QuartzIocLoader",// 关联Quartz
-										   "*org.nutz.integration.zbus.ZBusIocLoader", "net.wendal.nutzbook"
+										   "*org.nutz.integration.zbus.ZBusIocLoader", "net.wendal.nutzbook", 
+										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader"
 										   })
 @Modules(scanPackage=true)
 @ChainBy(args="mvc/nutzbook-mvc-chain.js")
