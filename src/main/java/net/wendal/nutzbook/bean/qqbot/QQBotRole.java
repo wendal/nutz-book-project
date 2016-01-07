@@ -9,7 +9,8 @@ import org.nutz.dao.entity.annotation.*;
  */
 @Table("t_qqbot_role")
 public class QQBotRole extends BasePojo {
-    @Id
+    private static final long serialVersionUID = -6181843480105526784L;
+	@Id
     public int id;
     @Name
     @Column("nm")

@@ -22,9 +22,11 @@ public class DefaultQQBotExecutor implements QQBotExecutor {
 
     private static final Log log = Logs.get();
 
-    public String execute(QQBotMessage message, QQBotRole role) throws Exception {
+    @SuppressWarnings("unchecked")
+	public String execute(QQBotMessage message, QQBotRole role) throws Exception {
         if (Strings.isBlank(message.Message))
             return "";
+        log.debug(message.toString());
         if ("class".equals(role.matchType)) {
             Class<? extends QQBotExecutor> klass = (Class<? extends QQBotExecutor>) Class.forName(role.matchValue);
             if (klass.getAnnotation(IocBean.class) != null)
