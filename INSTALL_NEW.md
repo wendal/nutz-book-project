@@ -52,6 +52,12 @@ tmpfs on /dev/shm type tmpfs (rw)
 none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
 ```
 
+关联/data到/opt
+
+```
+rm -fr /data
+ln -s /opt /data
+```
 
 ## 安装git(可选,为了下载github上的最新源码)
 
