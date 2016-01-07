@@ -10,6 +10,17 @@ http://nutzbook.wendal.net
 非常欢迎大家自行部署, 请查阅[部署指南](INSTALL.md)
 
 
+## 在线演示地址
+
+论坛系统(即Nutz社区的官网) https://nutz.cn
+
+管理后台  https://nutz.cn/home
+
+## 截图
+
+![首页截图](index_page.jpg)
+
+
 ## 当前已经实现或正在实现的功能
 
 * 基本的增删改查,MVC各种用法及文件上传
@@ -42,11 +53,3 @@ eclipse依然可以直接导入本项目
 ## 依赖的jar包下载
 
 http://nutzbook.wendal.net/jars/
-
-## 在线演示地址
-
-论坛系统(即Nutz社区的官网) https://nutz.cn
-
-管理后台  https://nutz.cn/home
-
-配置: 阿里云, 2G RAM, 缓存, https, 七牛云存储CDN, jpush及socketio均启用
