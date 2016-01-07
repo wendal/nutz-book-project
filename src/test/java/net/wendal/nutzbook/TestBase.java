@@ -8,6 +8,7 @@ import org.nutz.ioc.IocLoader;
 import org.nutz.ioc.impl.NutIoc;
 import org.nutz.ioc.loader.combo.ComboIocLoader;
 import org.nutz.mvc.annotation.IocBy;
+import static org.mockito.Mockito.*;
 
 public class TestBase extends Assert {
 
