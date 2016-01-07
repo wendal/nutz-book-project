@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.nutz.aop.interceptor.async.Async;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.random.R;
@@ -132,5 +133,12 @@ public class DemoModule {
 	public void test_path(String path, HttpServletRequest req) {
 		System.out.println(path);
 		System.out.println(req.getRequestURI());
+	}
+	
+	@At("/async/test1")
+	@Async
+	@Ok("void")
+	public void test_async() {
+		new Throwable().printStackTrace();
 	}
 }

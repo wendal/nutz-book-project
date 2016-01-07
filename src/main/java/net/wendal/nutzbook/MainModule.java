@@ -21,7 +21,8 @@ import org.nutz.plugins.view.freemarker.FreemarkerViewMaker;
 										   "*tx",
 										   "*org.nutz.integration.quartz.QuartzIocLoader",// 关联Quartz
 										   "*org.nutz.integration.zbus.ZBusIocLoader", "net.wendal.nutzbook", 
-										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader"
+										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader",
+										   "*org.nutz.aop.interceptor.async.AsyncAopIocLoader"
 										   })
 @Modules(scanPackage=true)
 @ChainBy(args="mvc/nutzbook-mvc-chain.js")
