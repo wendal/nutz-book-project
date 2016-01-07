@@ -14,6 +14,7 @@ PS: 通过docker部署的话无需上述软件
 * [通过maven进行简易启动(mysql)](INSTALL_MAVEN.md)
 * [通过maven生成war](INSTALL_WAR.md)
 * [通过docker启动](INSTALL_DOCKER.md)
+* [裸服务器部署详解](INSTALL_NEW.md)
 
 ### 常见问题
 
