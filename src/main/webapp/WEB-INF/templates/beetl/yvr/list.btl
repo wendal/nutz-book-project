@@ -18,8 +18,10 @@ for(topic in topics){
   var ppath = "";
   if (obj.type != null) {
   	ppath = "list/" + obj.type;
-  } else {
+  } else if (obj.type != null) {
   	ppath = "tag/" + obj.tag;
+  } else {
+  	ppath = "list/ask";
   }
   %>
     <% if ( obj.current_page == 1) { %>
