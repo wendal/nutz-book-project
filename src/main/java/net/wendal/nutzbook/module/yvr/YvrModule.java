@@ -121,9 +121,7 @@ public class YvrModule extends BaseModule {
 	@Aop("redis")
 	public Object list(TopicType type, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
-		if (type == null)
-			type = TopicType.ask;
-		String zkey = RKEY_TOPIC_UPDATE + type;
+		String zkey = RKEY_TOPIC_UPDATE + (type == null ? "all" : type);
 		return _query_topic_by_zset(zkey, pager, userId, type, null, true);
 	}
 	

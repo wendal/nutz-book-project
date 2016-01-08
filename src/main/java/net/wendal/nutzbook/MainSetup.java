@@ -1,27 +1,9 @@
 package net.wendal.nutzbook;
 
-import freemarker.template.Configuration;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.Log4JLoggerFactory;
-
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
-
-import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.OAuthUser;
-import net.wendal.nutzbook.bean.Permission;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.beetl.MarkdownFunction;
-import net.wendal.nutzbook.service.AuthorityService;
-import net.wendal.nutzbook.service.RedisService;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.socketio.SocketioService;
-import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.util.Markdowns;
 
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
@@ -48,10 +30,29 @@ import org.zbus.mq.server.MqServer;
 import org.zbus.rpc.RpcProcessor;
 import org.zbus.rpc.mq.Service;
 
+import com.alibaba.druid.pool.DruidPooledConnection;
+
+import freemarker.template.Configuration;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Log4JLoggerFactory;
+import net.sf.ehcache.CacheManager;
+import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.Permission;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.beetl.MarkdownFunction;
+import net.wendal.nutzbook.service.AuthorityService;
+import net.wendal.nutzbook.service.RedisService;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.service.socketio.SocketioService;
+import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.util.Markdowns;
+import net.wendal.nutzbook.util.RedisKey;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
-import com.alibaba.druid.pool.DruidPooledConnection;
+import redis.clients.jedis.Tuple;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -189,6 +190,18 @@ public class MainSetup implements Setup {
 				log.debug("redis say : " + re);
 				re = jedis.get("_nutzbook_test_key");
 				log.debug("redis say : " + re);
+
+				
+				// 因为新增了"全部"帖子的页面,所以需要修正数据
+				
+				//Pipeline pipe = jedis.pipelined();
+				for (TopicType type : TopicType.values()) {
+					String key = RedisKey.RKEY_TOPIC_UPDATE + type.name();
+					for (Tuple t : jedis.zrangeByScoreWithScores(key, 0, System.currentTimeMillis())) {
+						jedis.zadd(RedisKey.RKEY_TOPIC_UPDATE_ALL, t.getScore(), t.getElement());
+					}
+				}
+				//pipe.sync();
 			} finally {
 			}
 
@@ -208,6 +221,7 @@ public class MainSetup implements Setup {
 			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
 		}
 		Markdowns.cache = cacheManager.getCache("markdown");
+		
 	}
 
 	public void destroy(NutConfig conf) {

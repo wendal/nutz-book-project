@@ -17,6 +17,7 @@ public interface RedisKey {
 	// 帖子相关
 	String RKEY_TOPIC_VISIT = "t:visit";
 	String RKEY_TOPIC_UPDATE = "t:update:";
+	String RKEY_TOPIC_UPDATE_ALL = "t:update:all";
 	String RKEY_TOPIC_TOP = "t:top";
 	String RKEY_TOPIC_NOREPLY = "t:noreply";
 	String RKEY_REPLY_LIKE = "t:like:";

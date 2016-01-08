@@ -57,7 +57,7 @@ public class YvrSeoModule extends BaseModule {
 	public String rss() throws IOException, FeedException {
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setFeedType("rss_2.0");
-		String urlbase = conf.get("website.urlbase", "https://nutz.cn");
+		String urlbase = websiteUrlBase;
 		feed.setLink(urlbase);
 		feed.setTitle(conf.get("website.title", "Nutz社区"));
 		feed.setDescription(conf.get("website.description", "一个有爱的社区"));

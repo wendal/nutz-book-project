@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 public @interface Async {
 
 	boolean enable() default true;
-	String es() default "";
-	int poolsize() default -1;
+	//String es() default "";
+	//int poolsize() default -1;
 }

@@ -10,11 +10,13 @@ layout("_layout.btl",{}){
     <div class="header">
       <ol class='breadcrumb' vocab="http://schema.org/" typeof="BreadcrumbList">
         <li property="itemListElement" typeof="ListItem">
-          <a data-pjax href='${ctxPath}/yvr/list' property="item" typeof="WebPage"><span property="name">主页</span></a><span class='divider'>/</span>
+          <a data-pjax href='${ctxPath}/yvr/list' property="item" typeof="WebPage"
+          	 class="topic-tab ${(null == obj.type && null == obj.tag)? 'current-tab' : '' }"><span property="name">全部</span></a><span class='divider'>/</span>
         </li>
       <% for (topic_type in obj.types) {%>
         <li property="itemListElement" typeof="ListItem">
-		  <a data-pjax href="${ctxPath}/yvr/list/${topic_type}" property="item" typeof="WebPage" class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}</a>
+		  <a data-pjax href="${ctxPath}/yvr/list/${topic_type}" property="item" typeof="WebPage" 
+		  	 class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}</a>
 	    </li>
 	  <% } %>
 	  </ol>

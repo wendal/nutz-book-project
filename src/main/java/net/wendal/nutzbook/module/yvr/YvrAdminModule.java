@@ -52,9 +52,11 @@ public class YvrAdminModule extends BaseModule{
 		if ("top".equals(opt)) {
 			if (topic.isTop()) {
 				jedis().zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
+				jedis().zrem(RKEY_TOPIC_UPDATE_ALL, topic.getId());
 				jedis().zadd(RKEY_TOPIC_TOP, System.currentTimeMillis(), topic.getId());
 			}else {
 				jedis().zrem(RKEY_TOPIC_TOP, topic.getId());
+				jedis().zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
 				jedis().zadd(RKEY_TOPIC_UPDATE+old.getType(), System.currentTimeMillis(), topic.getId());
 			}
 			return;

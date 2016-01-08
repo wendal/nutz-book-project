@@ -10,6 +10,16 @@ import org.nutz.ioc.meta.IocValue;
 public class AsyncAopIocLoader implements IocLoader{
 	
 	protected String name = "$aop_async";
+	
+	protected int size;
+	
+	public AsyncAopIocLoader(){
+		size = 32;
+	}
+	
+	public AsyncAopIocLoader(int size) {
+		this.size = size;
+	}
 
 	public String[] getName() {
 		return new String[]{name};
@@ -21,7 +31,7 @@ public class AsyncAopIocLoader implements IocLoader{
 		IocObject iobj = new IocObject();
 		iobj.setType(AsyncAopConfigure.class);
 		IocValue ival = new IocValue();
-		ival.setValue(32);
+		ival.setValue(size);
 		iobj.addArg(ival);
 		IocEventSet events = new IocEventSet();
 		events.setDepose("close");

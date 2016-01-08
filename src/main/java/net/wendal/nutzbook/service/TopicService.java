@@ -28,6 +28,7 @@ public class TopicService extends IdNameEntityService<Topic> implements RedisKey
 		Topic topic = dao().fetch(getEntityClass(), id);
 		jedis().zrem(RKEY_TOPIC_NOREPLY, id);
 		jedis().zrem(RKEY_TOPIC_UPDATE + topic.getType(), id);
+		jedis().zrem(RKEY_TOPIC_UPDATE_ALL, id);
 		return dao().delete(getEntityClass(), id);
 	}
 
