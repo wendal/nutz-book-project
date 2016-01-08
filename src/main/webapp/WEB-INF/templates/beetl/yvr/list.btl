@@ -21,7 +21,7 @@ for(topic in topics){
   } else if (obj.type != null) {
   	ppath = "tag/" + obj.tag;
   } else {
-  	ppath = "list/ask";
+  	ppath = "list/all";
   }
   %>
     <% if ( obj.current_page == 1) { %>

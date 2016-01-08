@@ -119,10 +119,10 @@ public class YvrModule extends BaseModule {
 	@GET
 	@Ok("beetl:/yvr/index.btl")
 	@Aop("redis")
-	public Object list(TopicType type, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object list(String type, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		String zkey = RKEY_TOPIC_UPDATE + (type == null ? "all" : type);
-		return _query_topic_by_zset(zkey, pager, userId, type, null, true);
+		return _query_topic_by_zset(zkey, pager, userId, (type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, true);
 	}
 	
 	@At({ "/tag/?", "/tag/?/?" })
