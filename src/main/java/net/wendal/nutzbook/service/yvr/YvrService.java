@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,6 +110,11 @@ public class YvrService implements RedisKey {
 			authors.put(userId, author);
 		}
 		return author;
+	}
+	
+	@Aop("redis")
+	public String accessToken(String loginname) {
+		return jedis().hget(RKEY_USER_ACCESSTOKEN, loginname);
 	}
 	
 	@Aop("redis")
@@ -446,5 +452,24 @@ public class YvrService implements RedisKey {
 			it.next().setCount(response.get().intValue());
 		}
 		return tags;
+	}
+	
+	@Aop("redis")
+	public boolean checkNonce(String nonce) {
+		try {
+			UUID uuid = UUID.fromString(nonce);
+			if (System.currentTimeMillis() - uuid.timestamp() > 10*60*1000) {
+				return false;
+			}
+			String key = "at:nonce:"+nonce;
+			Long re = jedis().setnx(key, "");
+			if (re == 0) {
+				return false;
+			}
+			jedis().expire(key, 10*60);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }
