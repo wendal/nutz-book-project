@@ -36,17 +36,22 @@ public class AccessTokenFilter implements ActionFilter {
 			String loginname = req.getHeader("Api-Loginname");
 			String nonce = req.getHeader("Api-Nonce");
 			String key = req.getHeader("Api-Key");
-			if (Strings.isBlank(loginname) || Strings.isBlank(nonce) || Strings.isBlank(key)) {
+			String time = req.getHeader("Api-Time");
+			if (Strings.isBlank(loginname) || Strings.isBlank(nonce) || Strings.isBlank(key) || Strings.isBlank(time)) {
 				return BaseModule.HTTP_403;
 			}
-			if (!yvrService.checkNonce(nonce)){
+			if (!yvrService.checkNonce(nonce, time)){
 				return BaseModule.HTTP_403;
 			}
 			at = yvrService.accessToken(loginname);
 			if (Strings.isBlank(at)) {
 				return BaseModule.HTTP_403;
 			}
-			String _key = Lang.sha1(Strings.join(",", at, loginname, nonce));
+			String tmp = Strings.join(",", at, loginname, nonce, time);
+			String _key = Lang.sha1(tmp);
+			log.debug("tmp="+tmp);
+			log.debug("_key=" + _key);
+			log.debug(" key=" + key);
 			if (!_key.equals(key)) {
 				return BaseModule.HTTP_403;
 			}

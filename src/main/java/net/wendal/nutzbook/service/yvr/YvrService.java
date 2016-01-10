@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -455,10 +454,10 @@ public class YvrService implements RedisKey {
 	}
 	
 	@Aop("redis")
-	public boolean checkNonce(String nonce) {
+	public boolean checkNonce(String nonce, String time) {
 		try {
-			UUID uuid = UUID.fromString(nonce);
-			if (System.currentTimeMillis() - uuid.timestamp() > 10*60*1000) {
+			long t = Long.parseLong(time);
+			if (System.currentTimeMillis() - t > 10*60*1000) {
 				return false;
 			}
 			String key = "at:nonce:"+nonce;
@@ -469,6 +468,7 @@ public class YvrService implements RedisKey {
 			jedis().expire(key, 10*60);
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
