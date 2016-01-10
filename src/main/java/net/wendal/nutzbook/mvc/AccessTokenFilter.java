@@ -9,6 +9,8 @@ import net.wendal.nutzbook.service.yvr.YvrService;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
@@ -20,6 +22,8 @@ import org.nutz.mvc.View;
  */
 public class AccessTokenFilter implements ActionFilter {
 	
+	private static final Log log = Logs.get();
+	
 	YvrService yvrService;
 
 	public View match(ActionContext ac) {
@@ -28,6 +32,7 @@ public class AccessTokenFilter implements ActionFilter {
 		HttpServletRequest req = ac.getRequest();
 		String at = req.getParameter("accesstoken");
 		if (req.getHeader("Api-Version") != null) {
+			log.debug("api version = " + req.getHeader("Api-Version"));
 			String loginname = req.getHeader("Api-Loginname");
 			String nonce = req.getHeader("Api-Nonce");
 			String key = req.getHeader("Api-Key");
@@ -45,6 +50,7 @@ public class AccessTokenFilter implements ActionFilter {
 			if (!_key.equals(key)) {
 				return BaseModule.HTTP_403;
 			}
+			log.debug("api access token check ok");
 		} 
 		else if (Strings.isBlank(at)) { // TODO 移除这种兼容性,改成必须用nonce加密
 			return BaseModule.HTTP_403;
