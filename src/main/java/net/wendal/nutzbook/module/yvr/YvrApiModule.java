@@ -253,11 +253,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	}
 
 	/**
-	 * @api {get} /yvr/api/v1/user/:id 获取用户信息
+	 * @api {get} /yvr/api/v1/user/:loginname 获取用户信息
 	 *
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
-	 * @apiParam {String} id 用户id
+	 * @apiParam {String} loginname 用户id
 	 *
 	 * @apiSuccess {Object} data 用户数据
 	 * @apiSuccess {String} data.loginname 	用户登陆名称
