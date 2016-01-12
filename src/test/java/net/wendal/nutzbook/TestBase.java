@@ -8,6 +8,9 @@ import org.nutz.ioc.IocLoader;
 import org.nutz.ioc.impl.NutIoc;
 import org.nutz.ioc.loader.combo.ComboIocLoader;
 import org.nutz.mvc.annotation.IocBy;
+
+import net.sf.ehcache.CacheManager;
+
 import static org.mockito.Mockito.*;
 
 public class TestBase extends Assert {
@@ -16,6 +19,7 @@ public class TestBase extends Assert {
 	
 	@Before
 	public void before() throws Exception {
+		CacheManager.getInstance();
 		IocBy iocBy = MainModule.class.getAnnotation(IocBy.class);
 		IocLoader loader = new ComboIocLoader(iocBy.args());
 		ioc = new NutIoc(loader);

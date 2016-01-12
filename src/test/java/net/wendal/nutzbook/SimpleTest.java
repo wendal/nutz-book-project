@@ -1,5 +1,6 @@
 package net.wendal.nutzbook;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+
 import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -9,9 +10,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.wendal.nutzbook.bean.admin.DataTableColumn;
-import net.wendal.nutzbook.bean.qqbot.QQBotMessage;
-import net.wendal.nutzbook.bean.qqbot.QQBotRole;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,10 +30,6 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.json.Json;
 import org.nutz.lang.Mirror;
 import org.nutz.lang.util.NutMap;
-
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.demo.APIResult;
-import net.wendal.nutzbook.util.Markdowns;
 import org.nutz.lang.util.NutType;
 import org.nutz.mapl.Mapl;
 import org.nutz.mvc.Mvcs;
@@ -37,11 +37,12 @@ import org.nutz.mvc.adaptor.ParamExtractor;
 import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
-import javax.servlet.http.HttpServletRequest;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.admin.DataTableColumn;
+import net.wendal.nutzbook.bean.demo.APIResult;
+import net.wendal.nutzbook.bean.qqbot.QQBotMessage;
+import net.wendal.nutzbook.bean.qqbot.QQBotRole;
+import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
 
@@ -209,4 +210,17 @@ public class SimpleTest extends TestBase {
 	public void test_mirror_get_fields() {
 		System.out.println(Arrays.toString(Mirror.me(NutDao.class).getFields()));
 	}
+	
+//	@Test
+//	public void test_1000_sql() {
+//		Dao dao = ioc.get(Dao.class);
+//		
+//		Stopwatch sw = Stopwatch.begin();
+//		//dao.query("car_config", null);
+//		List<CarConfig> list = dao.query(CarConfig.class, null, dao.createPager(1, 3000));
+//		sw.stop();
+//		System.out.println(sw);
+//		System.out.println(list.size());
+//		System.out.println(list.get(1).CAR_BRAND);
+//	}
 }
