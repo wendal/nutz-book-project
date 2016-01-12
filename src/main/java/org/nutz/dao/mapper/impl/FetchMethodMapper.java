@@ -7,16 +7,16 @@ import org.nutz.dao.mapper.MethodMapper;
 
 public class FetchMethodMapper extends MethodMapper {
 
-	public FetchMethodMapper(Dao dao, Method method) {
-		super(dao, method);
+	public FetchMethodMapper(Dao dao, Method method, String pName) {
+		super(dao, method, pName);
 	}
 
 	public String prefix() {
-		return "fetchBy";
+		return "fetch";
 	}
 
 	public Object exec(Object[] args) {
-		return dao.fetch(returnType, makeCnd(args));
+		return dao.fetch(pojoType, makeCnd(args));
 	}
 
 }

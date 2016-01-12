@@ -6,30 +6,35 @@ import java.util.List;
 
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.Strings;
 import org.nutz.lang.util.MethodParamNamesScaner;
 
 public abstract class MethodMapper {
 
 	protected Method method;
-	
+
 	protected Dao dao;
-	
-	protected Class<?> returnType;
-	
+
 	protected List<String> paramNames;
 
-	public MethodMapper(Dao dao, Method method) {
+	protected Class<?> pojoType;
+
+	protected String pName;
+
+	public MethodMapper(Dao dao, Method method, String pName) {
 		super();
 		this.dao = dao;
 		this.method = method;
-		this.returnType = method.getReturnType();
-		if (List.class.isAssignableFrom(this.returnType)) {
-			this.returnType = (Class<?>) Mirror.me(method.getGenericReturnType()).getGenericsType(0);
+		this.pojoType = method.getReturnType();
+		this.pName = pName;
+		if (List.class.isAssignableFrom(this.pojoType)) {
+			this.pojoType = (Class<?>) Mirror.me(method.getGenericReturnType()).getGenericsType(0);
 		}
 		paramNames = mName();
 	}
-	
+
 	protected List<String> mName() {
 		List<String> paramNames = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
@@ -44,12 +49,26 @@ public abstract class MethodMapper {
 		}
 		if (sb.length() > 0)
 			paramNames.add(sb.toString());
-		if (paramNames.isEmpty() && method.getParameterTypes().length != 0) {
+
+		if (paramNames.size() > 1) {
+			if (paramNames.get(1).equals("by")) {
+				try {
+					pojoType = Lang.loadClass(pName + "." + Strings.upperFirst(paramNames.get(0)));
+				} catch (ClassNotFoundException e) {
+					throw Lang.wrapThrow(e);
+				}
+				paramNames.remove(0);
+			}
+		}
+		if (paramNames.size() > 0 && paramNames.get(0).equals("by")) {
+			paramNames.remove(0);
+		}
+		if (paramNames.isEmpty()) {
 			paramNames = MethodParamNamesScaner.getParamNames(method);
 		}
 		return paramNames;
 	}
-	
+
 	public Cnd makeCnd(Object[] args) {
 		Cnd cnd = Cnd.NEW();
 		for (int i = 0; i < args.length; i++) {
@@ -59,6 +78,6 @@ public abstract class MethodMapper {
 	}
 
 	public abstract Object exec(Object[] args);
-	
+
 	public abstract String prefix();
 }

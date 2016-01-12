@@ -12,8 +12,8 @@ public class SimpleMapperTest extends TestBase {
 
 	@Test
 	public void testMap() {
-		// UserMapper 只是个接口
-		UserMapper us = SimpleMapper.map(ioc.get(Dao.class), UserMapper.class);
+		// UserDao 只是个接口
+		UserDao us = SimpleMapper.map(ioc.get(Dao.class), User.class.getPackage().getName(), UserDao.class);
 		
 		User user = us.fetchById(1);
 		assertNotNull(user);
@@ -21,6 +21,12 @@ public class SimpleMapperTest extends TestBase {
 		List<User> list = us.queryByName("admin");
 		assertNotNull(list);
 		assertTrue(list.size() > 0);
+
+		assertEquals(user.getName(), us.fetchBy(1).getName());
+		assertEquals(user.getName(), us.fetchUserById(1).getName());
+		
+		
+		assertNotNull(us.fetchRoleById(1));
 	}
 
 }
