@@ -27,6 +27,8 @@ public class SimpleMapperTest extends TestBase {
 		
 		
 		assertNotNull(us.fetchRoleById(1));
+		
+		assertTrue(us.count(User.class) > 0);
 	}
 
 }

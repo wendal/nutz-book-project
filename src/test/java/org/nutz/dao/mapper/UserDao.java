@@ -2,10 +2,12 @@ package org.nutz.dao.mapper;
 
 import java.util.List;
 
+import org.nutz.dao.Dao;
+
 import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
 
-public interface UserDao {
+public interface UserDao extends Dao {
 
 	User fetchById(int id);
 	
