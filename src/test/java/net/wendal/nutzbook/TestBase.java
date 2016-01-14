@@ -11,8 +11,6 @@ import org.nutz.mvc.annotation.IocBy;
 
 import net.sf.ehcache.CacheManager;
 
-import static org.mockito.Mockito.*;
-
 public class TestBase extends Assert {
 
 	protected Ioc ioc;
