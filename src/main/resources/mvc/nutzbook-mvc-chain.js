@@ -2,6 +2,7 @@ var chain={
 	"default" : {
 		"ps" : [
 		      "net.wendal.nutzbook.mvc.LogTimeProcessor",
+		      "net.wendal.nutzbook.mvc.DailyUniqueUsersProcessor",
 		      "org.nutz.mvc.impl.processor.UpdateRequestAttributesProcessor",
 		      "org.nutz.mvc.impl.processor.EncodingProcessor",
 		      "org.nutz.mvc.impl.processor.ModuleProcessor",

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -230,4 +232,31 @@ public class Toolkit {
 		}
 		return share;
 	}
+	
+	//----------------------------------------------------------------------------
+	// 通过定时任务更新
+	protected static String _today_yyyyMMdd;
+	protected static String _today_yyyyMMddHH;
+	
+	public static void updateTodayString() {
+		_today_yyyyMMdd = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(new Date());
+		_today_yyyyMMddHH = new SimpleDateFormat("yyyyMMddHH", Locale.CHINA).format(new Date());
+	}
+	/**
+	 * 获取当前日期,方法的值通过定时任务进行更新
+	 */
+	public static String today_yyyyMMdd() {
+		if (_today_yyyyMMdd == null)
+			updateTodayString();
+		return _today_yyyyMMdd;
+	}
+	/**
+	 * 获取当前日期及小时数,方法的值通过定时任务进行更新
+	 */
+	public static String today_yyyyMMddHH() {
+		if (_today_yyyyMMddHH == null)
+			updateTodayString();
+		return _today_yyyyMMddHH;
+	}
+	//----------------------------------------------------------------------------
 }

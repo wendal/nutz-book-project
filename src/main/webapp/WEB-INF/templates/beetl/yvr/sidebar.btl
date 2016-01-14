@@ -273,6 +273,10 @@ $(function(){
 		<li>
 			<a href='#' onclick="cs_qrcode();">跨屏二维码</a>
 		</li>
+        <div class="sep10"></div>
+        <li>
+        	<a href='${ctxPath}/apidocs/'>网站Open API</a>
+        </li>
       </ol>
     </div>
   </div>

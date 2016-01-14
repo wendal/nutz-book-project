@@ -34,4 +34,7 @@ public interface RedisKey {
 	String RKEY_U2F_AUTH = "u2f:auth";
 
 	String RKEY_QQBOT_BIND_REQ = "qqbot:bind:request:";
+
+	String RKEY_ONLINE_DAY = "online:day:";
+	String RKEY_ONLINE_HOUR = "online:hour:";
 }

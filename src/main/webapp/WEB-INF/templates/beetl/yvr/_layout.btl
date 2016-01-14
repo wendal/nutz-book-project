@@ -121,7 +121,6 @@ var ctxPath = "${ctxPath}";
         </li>
         <% } %>
         <li><a href='${conf["website.fornew.url"]}'>新手入门</a></li>
-        <li><a href='${ctxPath}/apidocs/'>API</a></li>
         <li><a href='${ctxPath}/yvr/links/about.html'>关于</a></li>
         
         <li><a href='#' id='guide_btn' onclick="startGuide();">操作向导</a></li>
