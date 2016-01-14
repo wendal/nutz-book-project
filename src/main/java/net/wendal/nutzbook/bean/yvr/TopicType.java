@@ -8,7 +8,8 @@ public enum TopicType {
 	shortit("短点"), 
 	nb("灌水"), 
 	job("招聘"),
-	special("专题");
+//	special("专题")
+	;
 	
 	public String display;
 	
