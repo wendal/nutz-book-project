@@ -20,6 +20,7 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Scope;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
@@ -102,6 +103,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiSuccess {String} data.tab 	类型
 	 * @apiSuccess {String} data.content 内容
 	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
+	 * @apiSuccess {String} [data.last_reply_at_forread] 最后回复的相对时间,例如 10 Mins.
 	 * @apiSuccess {boolean} data.top 	是否置顶
 	 * @apiSuccess {boolean} data.good 	是否为精华帖
 	 * @apiSuccess {String[]} data.tags 标签
@@ -176,6 +178,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiSuccess {String} data.tab 			类型
 	 * @apiSuccess {String} data.content 		内容
 	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
+	 * @apiSuccess {String} [data.last_reply_at_forread] 最后回复的相对时间,例如 10 Mins.
 	 * @apiSuccess {boolean} data.top 			是否置顶
 	 * @apiSuccess {boolean} data.good 			是否为精华帖
 	 * @apiSuccess {String[]} data.tags 		标签
@@ -220,6 +223,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 			re.put("content", "false".equals(mdrender) ? reply.getContent() : Markdowns.toHtml(reply.getContent(), urlbase));
 			re.put("ups", new ArrayList<String>(reply.getUps()));
 			re.put("create_at", _time(reply.getCreateTime()));
+			re.put("create_at_forread", _time_forread(reply.getCreateTime()));
 			replies.add(re);
 		}
 
@@ -271,6 +275,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiSuccess {String} data.recent_replies.title 帖子标题
 	 *
 	 * @apiSuccess {String} data.create_at  注册时间
+	 * @apiSuccess {String} data.create_at_forread  注册的相对时间
 	 *
 	 * @apiError 404 The <code>id</code> of the User was not found.
 	 *
@@ -295,6 +300,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 				"recent_topics", recent_topics,
 				"recent_replies", recent_replies,
 				"create_at", _time(user.getCreateTime()),
+				"create_at_forread", _time_forread(user.getCreateTime()),
 				"score", yvrService.getUserScore(user.getId())));
 	}
 
@@ -485,6 +491,10 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(date);
 	}
+	
+	public String _time_forread(Date date) {
+		return Times.formatForRead(date);
+	}
 
 	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
 		yvrService.fillTopic(topic, authors);
@@ -495,13 +505,16 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		tp.put("tags", topic.getTags());
 		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
 		tp.put("title", StringEscapeUtils.unescapeHtml(topic.getTitle()));
-		if (topic.getLastComment() != null)
+		if (topic.getLastComment() != null) {
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));
+			tp.put("last_reply_at_forread", _time_forread(topic.getLastComment().getCreateTime()));
+		}
 		tp.put("good", topic.isGood());
 		tp.put("top", topic.isTop());
 		tp.put("reply_count", topic.getReplyCount());
 		tp.put("visit_count", topic.getVisitCount());
 		tp.put("create_at", _time(topic.getCreateTime()));
+		tp.put("create_at_forread", _time_forread(topic.getCreateTime()));
 		UserProfile profile = topic.getAuthor();
 		if (profile != null) {
 			profile.setScore(yvrService.getUserScore(topic.getUserId()));
