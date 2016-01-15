@@ -182,7 +182,8 @@ public class YvrService implements RedisKey {
 			pipe.zadd(RKEY_TOPIC_NOREPLY, System.currentTimeMillis(), topic.getId());
 		}
 		pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), System.currentTimeMillis(), topic.getId());
-		pipe.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
+		if (topic.getType() != TopicType.shortit)
+			pipe.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
 		pipe.zincrby(RKEY_USER_SCORE, 100, ""+userId);
 		pipe.sync();
 		for (Integer watcherId : globalWatcherIds) {
