@@ -1,23 +1,20 @@
 package net.wendal.nutzbook.service;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.nutz.integration.zbus.ZBusProducer;
-import org.nutz.integration.zbus.annotation.ZBusConsumer;
+import org.nutz.aop.interceptor.async.Async;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.zbus.net.core.Session;
-import org.zbus.net.http.Message;
-import org.zbus.net.http.Message.MessageHandler;
-
-import com.google.gson.JsonSyntaxException;
 
 import cn.jpush.api.JPushClient;
-import cn.jpush.api.common.resp.APIConnectionException;
-import cn.jpush.api.common.resp.APIRequestException;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Options;
 import cn.jpush.api.push.model.Platform;
@@ -32,20 +29,18 @@ import cn.jpush.api.push.model.notification.Notification;
  * @author wendal
  *
  */
-@ZBusConsumer(mq="jpush")
-@IocBean
-public class PushService implements MessageHandler {
+@IocBean(create="init")
+public class PushService {
 	
 	private static final Log log = Logs.get();
 	
 	@Inject
 	protected JPushClient jpush;
 	
-	@Inject("java:$conf.getBoolean('jpush.enable', true)")
-	protected boolean enable;
+	protected Map<String, JPushClient> jpushs;
 	
-	@Inject("java:$zbus.getProducer('jpush')")
-	protected ZBusProducer jPushProducer;
+	@Inject
+	protected PropertiesProxy conf;
 	
 	public void alert(int userId, String alert, Map<String, String> extras) {
 		AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
@@ -56,7 +51,7 @@ public class PushService implements MessageHandler {
 		builder.setNotification(notif);
 		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
-		jPushProducer.async(builder.build().toString()); // 发送到总线,等待对应的服务处理
+		send(builder.build());
 	}
 	
 	public void message(int userId, String message, Map<String, String> extras) {
@@ -68,21 +63,45 @@ public class PushService implements MessageHandler {
 		builder.setNotification(notif);
 		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
-		jPushProducer.async(builder.build().toString()); // 发送到总线,等待对应的服务处理
+		send(builder.build());
 	}
 	
-	@Override
-	public void handle(Message msg, Session sess) throws IOException {
-		if (!enable)
-			return;
-		String body = msg.getBodyString();
-		log.debug("body = " + body);
+	@Async
+	public void send(PushPayload payload) {
 		try {
-			PushResult re = jpush.sendPush(body);
+			PushResult re = jpush.sendPush(payload);
 			log.debugf("jpush result=%s", re);
-		} catch (APIConnectionException | APIRequestException | JsonSyntaxException | IllegalArgumentException e) {
+		} catch (Exception e) {
 			log.debug("send jpush fail", e);
 		}
+		
+		// 第三方客户端的推送账户
+		for (Entry<String, JPushClient> en : jpushs.entrySet()) {
+			try {
+				PushResult re = en.getValue().sendPush(payload);
+				log.debugf("%s result=%s", en.getKey(), re);
+			} catch (Exception e) {
+				log.debugf("send %s fail", en.getKey(), e);
+			}
+		}
 	}
-
+	
+	public void init() {
+		jpushs = new LinkedHashMap<>();
+		// 支持10个够了吧
+		for (int i = 1; i < 11; i++) {
+			String prefix = "jpush"+i;
+			boolean enable = conf.getBoolean(prefix+".enable", false);
+			if (!enable)
+				continue;
+			String masterSecret = conf.get(prefix+".masterSecret");
+			String appKey = conf.get(prefix+".appKey");
+			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
+				log.warn(prefix+".enable=true, but masterSecret/appKey is NULL or emtry");
+				continue;
+			}
+			JPushClient jpush = new JPushClient(masterSecret, appKey);
+			jpushs.put(prefix, jpush);
+		}
+	}
 }
