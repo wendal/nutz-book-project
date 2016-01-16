@@ -1,19 +1,12 @@
 package net.wendal.nutzbook;
 
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.HashMap;
-import java.util.List;
 
-import org.nutz.dao.Chain;
-import org.nutz.dao.Cnd;
-import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
-import org.nutz.dao.FieldFilter;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
-import org.nutz.integration.zbus.ZBusFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
@@ -26,33 +19,19 @@ import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
-import org.zbus.mq.server.MqServer;
-import org.zbus.rpc.RpcProcessor;
-import org.zbus.rpc.mq.Service;
-
-import com.alibaba.druid.pool.DruidPooledConnection;
 
 import freemarker.template.Configuration;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
-import net.wendal.nutzbook.bean.OAuthUser;
-import net.wendal.nutzbook.bean.Permission;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.beetl.MarkdownFunction;
 import net.wendal.nutzbook.service.AuthorityService;
-import net.wendal.nutzbook.service.RedisService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Markdowns;
-import net.wendal.nutzbook.util.RedisKey;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Tuple;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -71,9 +50,6 @@ public class MainSetup implements Setup {
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
 		}
-		if (System.getProperty("ehcache.disk.store.dir") == null) {
-			log.info("You shall set up environment variable [ehcache.disk.store.dir], which using at ehcache.xml =>>  -Dehcache.disk.store.dir=/tmp");
-		}
 
 		// netty的东西,强制让它使用log4j记录日志. 因为环境中存在slf4j,它会自动选用,导致log4j配置日志级别失效
 		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
@@ -91,30 +67,10 @@ public class MainSetup implements Setup {
 		Dao dao = ioc.get(Dao.class);
 
 		// 为全部标注了@Table的bean建表
-		Daos.createTablesInPackage(dao, "net.wendal.nutzbook", false);
-		// 修正表结构
-		Daos.migration(dao, UserProfile.class, true, false);
-		Daos.migration(dao, TopicReply.class, true, false);
-		Daos.migration(dao, OAuthUser.class, true, false);
-		Daos.migration(dao, Permission.class, true, false);
+		Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
 
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
-
-		// 启动zbus######################
-		// 启动内置zbus服务器
-		if (conf.getBoolean("zbus.server.embed.enable", true)) {
-			ioc.get(MqServer.class);
-		}
-		// 启动RPC服务端
-		if (conf.getBoolean("zbus.rpc.service.enable", true)) {
-			RpcProcessor rpcProcessor = ioc.get(RpcProcessor.class);
-			ZBusFactory.buildServices(rpcProcessor, ioc, getClass().getPackage().getName());
-			ioc.get(Service.class, "rpcService"); // 注意, Service与服务器连接是异步操作
-		}
-		// 启动 生产者/消费者
-		ioc.get(ZBusFactory.class, "zbus");
-		// END zbus ######################
 
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
@@ -134,23 +90,6 @@ public class MainSetup implements Setup {
 			profile.setNickname("游客");
 			dao.update(profile, "nickname");
 		}
-		// 修正没有设置loginname的UserProfile
-		List<UserProfile> profiles = Daos.ext(dao, FieldFilter.create(UserProfile.class, "userId")).query(UserProfile.class, Cnd.where("loginname", "=", null));
-		for (UserProfile profile : profiles) {
-			User user = dao.fetch(User.class, profile.getUserId());
-			if (user == null)
-				dao.delete(UserProfile.class, profile.getUserId());
-			else {
-				dao.update(UserProfile.class, Chain.make("loginname", user.getName()), Cnd.where("userId", "=", user.getId()));
-				if (profile.getCreateTime() == null || profile.getUpdateAt() == null) {
-					if (profile.getCreateTime() == null)
-						profile.setCreateTime(user.getCreateTime());
-					if (profile.getUpdateTime() == null)
-						profile.setUpdateTime(user.getUpdateTime());
-					dao.update(profile, "createTime|updateTime");
-				}
-			}
-		}
 
 		// 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
 		ioc.get(NutQuartzCronJobFactory.class);
@@ -168,48 +107,6 @@ public class MainSetup implements Setup {
 		// 启用FastClass执行入口方法
 		Mvcs.disableFastClassInvoker = false;
 
-		// 测试一下能不能拿到原生连接对象
-		dao.run(new ConnCallback() {
-			public void invoke(Connection conn) throws Exception {
-				if (conn instanceof DruidPooledConnection) {
-					conn = ((DruidPooledConnection) conn).getConnection();
-				}
-				if (conn instanceof com.alibaba.druid.proxy.jdbc.ConnectionProxyImpl) {
-					conn = ((com.alibaba.druid.proxy.jdbc.ConnectionProxyImpl) conn).getConnectionRaw();
-				}
-				log.debug("Source Connection Class=" + conn.getClass().getName());
-			}
-		});
-
-		// 测试Redis是否正常
-		if (conf.getBoolean("redis.enable", false)) {
-			// redis测试
-			JedisPool jedisPool = ioc.get(JedisPool.class);
-			try (Jedis jedis = jedisPool.getResource()) {
-				String re = jedis.set("_nutzbook_test_key", "http://nutzbook.wendal.net");
-				log.debug("redis say : " + re);
-				re = jedis.get("_nutzbook_test_key");
-				log.debug("redis say : " + re);
-
-				
-				// 因为新增了"全部"帖子的页面,所以需要修正数据
-				
-				//Pipeline pipe = jedis.pipelined();
-				for (TopicType type : TopicType.values()) {
-					String key = RedisKey.RKEY_TOPIC_UPDATE + type.name();
-					for (Tuple t : jedis.zrangeByScoreWithScores(key, 0, System.currentTimeMillis())) {
-						jedis.zadd(RedisKey.RKEY_TOPIC_UPDATE_ALL, t.getScore(), t.getElement());
-					}
-				}
-				//pipe.sync();
-			} finally {
-			}
-
-			RedisService redis = ioc.get(RedisService.class);
-			redis.set("hi", "wendal");
-			log.debug("redis say again : " + redis.get("hi"));
-		}
-
 		// 启动socketio相关的服务
 		if (conf.getBoolean("socketio.enable", false))
 			ioc.get(SocketioService.class);
@@ -217,10 +114,10 @@ public class MainSetup implements Setup {
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
+		Markdowns.cache = cacheManager.getCache("markdown");
 		if (conf.getBoolean("cdn.enable", false) && !Strings.isBlank(conf.get("cdn.urlbase"))) {
 			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
 		}
-		Markdowns.cache = cacheManager.getCache("markdown");
 		
 	}
 

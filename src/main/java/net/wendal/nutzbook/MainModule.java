@@ -1,7 +1,5 @@
 package net.wendal.nutzbook;
 
-import net.wendal.nutzbook.beetl.BeetlViewMaker2;
-
 import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.ChainBy;
 import org.nutz.mvc.annotation.Fail;
@@ -15,12 +13,13 @@ import org.nutz.mvc.annotation.Views;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
 import org.nutz.plugins.view.freemarker.FreemarkerViewMaker;
 
+import net.wendal.nutzbook.beetl.BeetlViewMaker2;
+
 @SetupBy(value=MainSetup.class)
 @IocBy(type=ComboIocProvider.class, args={"*js", "ioc/",
 										   "*anno", "net.wendal.nutzbook",
 										   "*tx",
 										   "*org.nutz.integration.quartz.QuartzIocLoader",// 关联Quartz
-										   "*org.nutz.integration.zbus.ZBusIocLoader", "net.wendal.nutzbook", 
 										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader",
 										   "*org.nutz.aop.interceptor.async.AsyncAopIocLoader"
 										   })

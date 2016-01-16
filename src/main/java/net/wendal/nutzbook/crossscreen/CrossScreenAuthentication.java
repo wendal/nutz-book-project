@@ -50,10 +50,10 @@ public class CrossScreenAuthentication extends FormAuthenticationFilter {
 					if (sysLogService == null) {
 						try {
 							sysLogService = Mvcs.ctx().getDefaultIoc().get(SysLogService.class);
-							sysLogService.async(SysLog.c("method", "用户登陆", null, uid, "用户通过跨屏二维码登陆"));
 						} catch (Throwable e) {
 						}
 					}
+					sysLogService.async(SysLog.c("method", "用户登陆", null, uid, "用户通过跨屏二维码登陆"));
 				}
 				resp.sendRedirect(map.getString("url"));
 				return false;

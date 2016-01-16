@@ -38,9 +38,11 @@ layout("_layout.btl",{}){
           ${obj.topic.visitCount} 次浏览
         </span>
         <% if (null != obj.current_user!) { %>
+        <!--
         <span id="watch_btn">
           <a href="#" onclick="watch_me();" title="有新回复时自动刷新页面" data-intro="有新回复时自动刷新页面,这样就不必手动刷新">自动刷新</a>
         </span>
+        -->
         <span id="send_to_phone_btn">
           <a href="#" onclick="send_to_phone();" title="瞬间推送到手机客户端" data-intro="瞬间推送到手机客户端,传说中的'瞬移' (我的世界乱入...)">推送到手机</a>
         </span>

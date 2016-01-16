@@ -1,8 +1,6 @@
 package net.wendal.nutzbook.service;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -13,6 +11,8 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+
+import com.gexin.rp.sdk.http.IGtPush;
 
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
@@ -39,10 +39,21 @@ public class PushService {
 	
 	protected Map<String, JPushClient> jpushs;
 	
+	protected Map<String, IGtPush> gtpushs;
+	
 	@Inject
 	protected PropertiesProxy conf;
 	
 	public void alert(int userId, String alert, Map<String, String> extras) {
+		alertJpush(userId, alert, extras);
+		alertGtPush(userId, alert, extras);
+	}
+	
+	public void message(int userId, String message, Map<String, String> extras) {
+		messageJpush(userId, message, extras);
+	}
+	
+	public void alertJpush(int userId, String alert, Map<String, String> extras) {
 		AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
 		IosNotification ios = IosNotification.newBuilder().setAlert(alert).addExtras(extras).build();
 		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
@@ -51,10 +62,14 @@ public class PushService {
 		builder.setNotification(notif);
 		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
-		send(builder.build());
+		sendJPush(builder.build());
 	}
 	
-	public void message(int userId, String message, Map<String, String> extras) {
+	public void alertGtPush(int userId, String alert, Map<String, String> extras) {
+		
+	}
+	
+	public void messageJpush(int userId, String message, Map<String, String> extras) {
 		AndroidNotification android = AndroidNotification.newBuilder().setAlert("").setTitle(message).addExtras(extras).build();
 		IosNotification ios = IosNotification.newBuilder().setAlert("").addExtras(extras).build();
 		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
@@ -63,26 +78,24 @@ public class PushService {
 		builder.setNotification(notif);
 		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
-		send(builder.build());
+		sendJPush(builder.build());
 	}
 	
-	@Async
-	public void send(PushPayload payload) {
+	@Async 
+	public void doJpush(String name, JPushClient jpush, PushPayload payload) {
 		try {
 			PushResult re = jpush.sendPush(payload);
-			log.debugf("jpush result=%s", re);
+			log.debugf("%s result=%s", name, re);
 		} catch (Exception e) {
-			log.debug("send jpush fail", e);
+			log.debugf("send %s fail", name, e);
 		}
-		
+	}
+	
+	public void sendJPush(PushPayload payload) {
+		doJpush("jpush", jpush, payload);
 		// 第三方客户端的推送账户
 		for (Entry<String, JPushClient> en : jpushs.entrySet()) {
-			try {
-				PushResult re = en.getValue().sendPush(payload);
-				log.debugf("%s result=%s", en.getKey(), re);
-			} catch (Exception e) {
-				log.debugf("send %s fail", en.getKey(), e);
-			}
+			doJpush(en.getKey(), en.getValue(), payload);
 		}
 	}
 	
@@ -102,6 +115,22 @@ public class PushService {
 			}
 			JPushClient jpush = new JPushClient(masterSecret, appKey);
 			jpushs.put(prefix, jpush);
+		}
+		
+		gtpushs = new LinkedHashMap<>();
+		for (int i = 1; i < 11; i++) {
+			String prefix = "gtpush"+i;
+			boolean enable = conf.getBoolean(prefix+".enable", false);
+			if (!enable)
+				continue;
+			String masterSecret = conf.get(prefix+".masterSecret");
+			String appKey = conf.get(prefix+".appKey");
+			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
+				log.warn(prefix+".enable=true, but masterSecret/appKey is NULL or emtry");
+				continue;
+			}
+			IGtPush gtpush = new IGtPush(appKey, masterSecret);
+			gtpushs.put(prefix, gtpush);
 		}
 	}
 }

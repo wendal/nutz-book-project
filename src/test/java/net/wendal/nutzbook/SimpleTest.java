@@ -223,4 +223,10 @@ public class SimpleTest extends TestBase {
 //		System.out.println(list.size());
 //		System.out.println(list.get(1).CAR_BRAND);
 //	}
+	
+	@Test
+	public void test_cast_short_array() {
+		String strs = "4, 7, 0, 303, 350, 0, 303, 350, 0, 303, 350";
+		System.out.println(Json.toJson(Json.fromJson(short[].class, "[" + strs + "]")));
+	}
 }

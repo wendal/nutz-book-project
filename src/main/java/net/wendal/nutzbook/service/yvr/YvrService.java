@@ -23,7 +23,6 @@ import org.nutz.dao.FieldFilter;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
-import org.nutz.integration.zbus.ZBusProducer;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -66,10 +65,6 @@ public class YvrService implements RedisKey {
 	
 	@Inject
 	protected PushService pushService;
-	
-	// TODO 改成发布-订阅模式
-	@Inject("java:$zbus.getProducer('topic-watch')")
-	protected ZBusProducer topicWatchProducer;
 
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
@@ -230,10 +225,6 @@ public class YvrService implements RedisKey {
 		pipe.zincrby(RKEY_REPLY_COUNT, 1, topicId);
 		pipe.zincrby(RKEY_USER_SCORE, 10, ""+userId);
 		pipe.sync();
-		
-
-		// 通知页面刷新
-		topicWatchProducer.async(topicId);
 		
 		String replyAuthorName = dao.fetch(User.class, userId).getName();
 		// 通知原本的作者
