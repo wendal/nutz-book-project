@@ -169,7 +169,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiGroup Topic
 	 * @apiVersion 1.0.0
 	 *
-	 * @apiParam {String}	id 					帖子id
+	 * @apiParam {String}	id 					帖子id,也可以作为参数传递
 	 * @apiParam {boolean} 	[mdrender=true] 	是否渲染Markdown
 	 *
 	 * @apiSuccess {Object[]} data 				帖子数据
@@ -203,8 +203,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 */
 	@Aop("redis")
 	@GET
-	@At("/topic/?")
-	public Object topic(String id,@Param("mdrender")String mdrender) {
+	@At({"/topic/?", "/topic"})
+	public Object topic(@Param("id")String id,@Param("mdrender")String mdrender) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (id == null) {
 			return HttpStatusView.HTTP_404;
@@ -261,7 +261,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 *
 	 * @apiGroup User
 	 * @apiVersion 1.0.0
-	 * @apiParam {String} loginname 用户id
+	 * @apiParam {String} loginname 用户登录名,也可以作为参数传递
 	 *
 	 * @apiSuccess {Object} data 用户数据
 	 * @apiSuccess {String} data.loginname 	用户登陆名称
@@ -280,9 +280,9 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	 * @apiError 404 The <code>id</code> of the User was not found.
 	 *
 	 */
-	@At("/user/?")
+	@At({"/user/?", "/user"})
 	@GET
-	public Object user(String loginname) {
+	public Object user(@Param("loginname")String loginname) {
 		User user = dao.fetch(User.class, loginname);
 		if (user == null)
 			return HTTP_404;
