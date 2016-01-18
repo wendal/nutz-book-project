@@ -1,45 +1,34 @@
 package org.nutz.aop.interceptor.async;
 
-import org.nutz.ioc.IocLoader;
-import org.nutz.ioc.IocLoading;
-import org.nutz.ioc.ObjectLoadException;
-import org.nutz.ioc.meta.IocEventSet;
-import org.nutz.ioc.meta.IocObject;
-import org.nutz.ioc.meta.IocValue;
+import java.lang.reflect.Method;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class AsyncAopIocLoader implements IocLoader{
-	
-	protected String name = "$aop_async";
+import org.nutz.aop.MethodInterceptor;
+import org.nutz.aop.SimpleAopMaker;
+
+public class AsyncAopIocLoader extends SimpleAopMaker<Async>{
 	
 	protected int size;
 	
+	protected ExecutorService es;
+	
 	public AsyncAopIocLoader(){
-		size = 32;
+		this(32);
 	}
 	
 	public AsyncAopIocLoader(int size) {
 		this.size = size;
+		es = Executors.newFixedThreadPool(size);
+		System.out.println("self=" + getName()[0]);
 	}
-
-	public String[] getName() {
-		return new String[]{name};
+	
+	public MethodInterceptor makeIt(Async async, Method method) {
+		return new AsyncMethodInterceptor(method, async, es);
 	}
-
-	public IocObject load(IocLoading loading, String name) throws ObjectLoadException {
-		if (!has(name))
-			return null;
-		IocObject iobj = new IocObject();
-		iobj.setType(AsyncAopConfigure.class);
-		IocValue ival = new IocValue();
-		ival.setValue(size);
-		iobj.addArg(ival);
-		IocEventSet events = new IocEventSet();
-		events.setDepose("close");
-		iobj.setEvents(events);
-		return iobj;
-	}
-
-	public boolean has(String name) {
-		return this.name.equals(name);
+	
+	public void depose() throws Exception {
+		if (es != null)
+			es.shutdownNow();
 	}
 }

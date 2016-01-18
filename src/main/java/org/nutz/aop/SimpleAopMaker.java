@@ -1,4 +1,4 @@
-package net.wendal.nutzbook.aop;
+package org.nutz.aop;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -11,6 +11,7 @@ import org.nutz.aop.matcher.SimpleMethodMatcher;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.IocLoader;
 import org.nutz.ioc.IocLoading;
+import org.nutz.ioc.Iocs;
 import org.nutz.ioc.ObjectLoadException;
 import org.nutz.ioc.aop.config.AopConfigration;
 import org.nutz.ioc.aop.config.InterceptorPair;
@@ -83,7 +84,7 @@ public abstract class SimpleAopMaker<T extends Annotation> implements IocLoader,
 	}
 
 	public IocObject load(IocLoading loading, String name) throws ObjectLoadException {
-		IocObject iobj = new IocObject();
+		IocObject iobj = Iocs.wrap(this);
 		iobj.setType(getClass());
 		IocEventSet events = new IocEventSet();
 		events.setDepose("depose");
@@ -94,7 +95,7 @@ public abstract class SimpleAopMaker<T extends Annotation> implements IocLoader,
 	}
 
 	public boolean has(String name) {
-		return _name().equals(name);
+		return ("$aop_"+_name()).equals(name);
 	}
 	
 	public void init() throws Exception {}
