@@ -24,7 +24,7 @@ var ioc = {
 	        }
 	    },
 		dao : {
-			type : "org.nutz.dao.impl.NutDaoExt",
+			type : "org.nutz.dao.impl.NutDao",
 			args : [{refer:"dataSource"}],
 			fields : {
 				executor : {refer:"cacheExecutor"}
