@@ -19,7 +19,7 @@ import org.nutz.ioc.meta.IocObject;
 import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 
-public abstract class SimpleAopConfigurer<T extends Annotation> implements IocLoader, AopConfigration {
+public abstract class SimpleAopMaker<T extends Annotation> implements IocLoader, AopConfigration {
 
 	protected Class<T> annoClass;
 
@@ -32,29 +32,39 @@ public abstract class SimpleAopConfigurer<T extends Annotation> implements IocLo
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public SimpleAopConfigurer() {
+	public SimpleAopMaker() {
 		annoClass = (Class<T>) (Class)Mirror.getTypeParam(getClass(), 0);
 	}
 
 	public abstract MethodInterceptor makeIt(T t, Method method);
-
-	@Override
-	public List<InterceptorPair> getInterceptorPairList(Ioc ioc, Class<?> klass) {
-		if (klass.isInterface()
+	
+	public boolean checkMethod(Method method) {
+		int mod = method.getModifiers();
+        if (mod == 0 || Modifier.isStatic(mod) || Modifier.isPrivate(mod) 
+                || Modifier.isFinal(mod)
+                || Modifier.isAbstract(mod))
+            return false;
+        return true;
+	}
+	
+	public boolean checkClass(Class<?> klass) {
+		return !(klass.isInterface()
 	            || klass.isArray()
 	            || klass.isEnum()
 	            || klass.isPrimitive()
 	            || klass.isMemberClass()
 	            || klass.isAnnotation()
-	            || klass.isAnonymousClass())
+	            || klass.isAnonymousClass());
+	}
+
+	@Override
+	public List<InterceptorPair> getInterceptorPairList(Ioc ioc, Class<?> klass) {
+		if (!checkClass(klass))
 			return null;
 		List<InterceptorPair> list = new ArrayList<>();
 		for (Method method : klass.getDeclaredMethods()) {
-			int mod = method.getModifiers();
-            if (mod == 0 || Modifier.isStatic(mod) || Modifier.isPrivate(mod) 
-                    || Modifier.isFinal(mod)
-                    || Modifier.isAbstract(mod))
-                continue;
+			if (!checkMethod(method))
+				continue;
 			T t = method.getAnnotation(_anno());
 			if (t != null) {
 				MethodInterceptor mi = makeIt(t, method);
