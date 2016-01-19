@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p %C{2} (%F:%L) - %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="debug">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+    <Logger name="org.apache.commons.beanutils" level="info"/>
+    <Logger name="org.quartz.core.QuartzSchedulerThread" level="info"/>
+    <Logger name="org.apache.shiro.web" level="info"/>
+    <Logger name="net.sf.ehcache.statistics" level="info"/>
+    <Logger name="io.netty.util.internal" level="info"/>
+    <Logger name="net.sf.ehcache.store.disk.Segment" level="info"/>
+    <Logger name="com.corundumstudio.socketio" level="info"/>
+    <Logger name="org.apache.shiro.mgt.DefaultSecurityManager" level="info"/>
+    <Logger name="org.apache.shiro.web.servlet.SimpleCookie" level="info"/>
+    <Logger name="org.apache.log4j.xml" level="debug"/>
+  </Loggers>
+</Configuration>
