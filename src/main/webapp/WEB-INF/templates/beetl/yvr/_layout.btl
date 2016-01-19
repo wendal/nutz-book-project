@@ -156,7 +156,7 @@ var ctxPath = "${ctxPath}";
       ,
       <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
       ,
-      <a class='dark' href='http://www.qiniu.com/'><img src="${cdnbase}${base}/rs/images/qiniu-transparent.png" style="width: 50%; height: 50%"/></a>
+      <a class='dark' href='http://www.qiniu.com/'><img src="${cdnbase}${base}/rs/images/qiniu-transparent.png" style="width: 10%; height: 10%"/></a>
       | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
       |
