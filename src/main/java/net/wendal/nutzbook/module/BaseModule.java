@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.module;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +13,8 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.mvc.view.RawView;
+import org.nutz.mvc.view.ViewWrapper;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -93,5 +96,12 @@ public abstract class BaseModule implements RedisKey {
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> _list(T ... args) {
 		return Arrays.asList(args);
+	}
+	
+	public static View _download(File f) {
+		return new ViewWrapper(new RawView("stream"), f);
+	}
+	public static View _download(String f) {
+		return new ViewWrapper(new RawView("stream"), new File(f));
 	}
 }
