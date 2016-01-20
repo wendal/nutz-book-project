@@ -12,13 +12,9 @@ import org.nutz.lang.Lang;
 public class AsyncMethodInterceptor implements MethodInterceptor {
 	
 	protected ExecutorService es;
-	protected Method method;
-	protected Async async;
 	protected boolean hasFuture;
 	
 	public AsyncMethodInterceptor(Method method, Async async, ExecutorService es) {
-		this.method = method;
-		this.async = async;
 		this.es = es;
 		hasFuture = Future.class.isAssignableFrom(method.getReturnType());
 	}
