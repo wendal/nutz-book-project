@@ -2,6 +2,7 @@ package net.wendal.nutzbook.module;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.stream.NullInputStream;
@@ -151,14 +153,15 @@ public class OauthModule extends BaseModule {
 
 	public void init() throws Exception {
 		SocialAuthConfig config = new SocialAuthConfig();
-		File devConfig = Files.findFile("oauth_consumer.properties_dev"); // 开发期所使用的配置文件
+		InputStream devConfig = getClass().getClassLoader().getResourceAsStream("oauth_consumer.properties_dev"); // 开发期所使用的配置文件
 		if (devConfig == null)
-			devConfig = Files.findFile("oauth_consumer.properties"); // 真实环境所使用的配置文件
+			devConfig = getClass().getClassLoader().getResourceAsStream("oauth_consumer.properties"); // 真实环境所使用的配置文件
 		if (devConfig == null)
 			config.load(new NullInputStream());
 		else {
 			log.info("Using " + devConfig);
-			config.load(new FileInputStream(devConfig));
+			config.load(devConfig);
+			Streams.safeClose(devConfig);
 		}
 		this.config = config;
 	}
