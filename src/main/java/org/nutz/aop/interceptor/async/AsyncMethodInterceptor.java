@@ -20,6 +20,7 @@ public class AsyncMethodInterceptor implements MethodInterceptor {
 		this.method = method;
 		this.async = async;
 		this.es = es;
+		hasFuture = Future.class.isAssignableFrom(method.getReturnType());
 	}
 
 	public void filter(final InterceptorChain chain) throws Throwable {
@@ -37,6 +38,7 @@ class _async_task implements Callable<Object> {
 	
 	public _async_task(InterceptorChain chain, boolean hasFuture) {
 		this.chain = chain;
+		this.hasFuture = hasFuture;
 	}
 
 	@SuppressWarnings("unchecked")
