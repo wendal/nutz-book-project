@@ -21,15 +21,12 @@ import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
 
 import freemarker.template.Configuration;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.Log4JLoggerFactory;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.beetl.MarkdownFunction;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.socketio.SocketioService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Markdowns;
 
@@ -50,9 +47,6 @@ public class MainSetup implements Setup {
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
 		}
-
-		// netty的东西,强制让它使用log4j记录日志. 因为环境中存在slf4j,它会自动选用,导致log4j配置日志级别失效
-		InternalLoggerFactory.setDefaultFactory(new Log4JLoggerFactory());
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
@@ -106,10 +100,6 @@ public class MainSetup implements Setup {
 
 		// 启用FastClass执行入口方法
 		Mvcs.disableFastClassInvoker = false;
-
-		// 启动socketio相关的服务
-		if (conf.getBoolean("socketio.enable", false))
-			ioc.get(SocketioService.class);
 
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)

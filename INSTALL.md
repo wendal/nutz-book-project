@@ -33,12 +33,9 @@ PS: 通过docker部署的话无需上述软件
 * custom/jpush.properties -- JPush推送服务的配置信息
 * custom/email.properties -- 邮件服务的配置信息
 * custom/redis.properties -- redis服务器配置信息
-* custom/secken.properties -- 洋葱安全登录APP的配置信息,依赖socketio
 * custom/shortit.properties -- "短点"的配置信息
-* custom/socketio.properties -- SocketIO的服务器端配置信息
 * custom/topic.properties -- 论坛数据配置
 * custom/website.properties -- 网站信息配置
-* custom/zbus.properties -- ZBus消息总线服务的配置信息
 
 ## 自定义的基本步骤
 

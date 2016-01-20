@@ -140,11 +140,6 @@
 			<version>2.7.3</version>
 		</dependency>
 		<dependency>
-			<groupId>com.corundumstudio.socketio</groupId>
-			<artifactId>netty-socketio</artifactId>
-			<version>1.7.6</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-email</artifactId>
 			<version>1.4</version>
@@ -290,11 +285,6 @@
 			<version>4.9.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.nutz</groupId>
-			<artifactId>nutz-plugins-secken</artifactId>
-			<version>1.b.52.r2</version>
-		</dependency>
-		<dependency>
 			<groupId>cn.jpush.api</groupId>
 			<artifactId>jpush-client</artifactId>
 			<version>3.2.7</version>
@@ -320,11 +310,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.yubico</groupId>
-			<artifactId>u2flib-server-core</artifactId>
-			<version>0.15.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-qrcode</artifactId>
 			<version>1.b.53</version>
@@ -338,11 +323,6 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nutz</groupId>
-			<artifactId>nutz-plugins-sqltpl</artifactId>
-			<version>1.b.53.r2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.gexin.platform</groupId>

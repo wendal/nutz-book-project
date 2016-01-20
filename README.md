@@ -15,6 +15,8 @@ http://nutzbook.wendal.net
 论坛系统(即Nutz社区的官网) https://nutz.cn
 
 管理后台  https://nutz.cn/home
+管理后台2  https://nutz.cn/admin
+管理后台3 https://nutz.cn/admin2
 
 ## 截图
 
@@ -30,15 +32,19 @@ http://nutzbook.wendal.net
 * Shiro集成及权限管理
 * Ehcache及DaoCache集成
 * redis 集成(配置及拦截器应用)
-* socketio 集成及demo聊天工具
-* jetbrick模板集成
 * beetl模板集成及应用
 * 二维码生成及跨屏登陆
 * 声明式系统日志
 * 基于socialauth的Oauth登陆(客户端,非服务器端实现)
 * 集成极光推送(jpush)
+
+## 曾经集成,但已经移除的功能
+
 * U2F绑定与登陆
 * zbus集成(RPC及MQ)
+* jetbrick模板集成
+* socketio 集成及demo聊天工具
+* 洋葱登录
 
 ## 关于目录结构变化
 
