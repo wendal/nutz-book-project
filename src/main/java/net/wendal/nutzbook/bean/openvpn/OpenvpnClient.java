@@ -2,6 +2,7 @@ package net.wendal.nutzbook.bean.openvpn;
 
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Table;
 
 import net.wendal.nutzbook.bean.BasePojo;
@@ -13,7 +14,7 @@ public class OpenvpnClient extends BasePojo {
 
 	@Id
 	protected int id;
-	@Column
+	@Name
 	protected String ip;
 	@Column
 	protected String macid;
@@ -25,6 +26,7 @@ public class OpenvpnClient extends BasePojo {
 	protected String file;
 	@Column("stat")
 	protected int status;
+	
 	public int getId() {
 		return id;
 	}

@@ -114,7 +114,7 @@
               <li><a href="${adminbase}/sysc/status.html">系统状态</a></li>
               <li><a href="${adminbase}/sysc/druid.html">Druid监控</a></li>
             </ul>
-          </li>   
+          </li>
           <li class="has_sub <#if admin_menu_level_1 == "${msg['admin_menu.yvr.level_one']}">open</#if>">
           	<a href="#">
           		<i class="fa fa-list-alt"></i> ${msg['admin_menu.yvr.level_one']}  <span class="pull-right"><i class="fa fa-chevron-right"></i></span>
@@ -125,7 +125,15 @@
               <li><a href="${adminbase}/yvr/configure.html">论坛配置</a></li>
               <li><a href="${adminbase}/yvr/expstatic.html">静态化</a></li>
             </ul>
-          </li> 
+          </li>
+          <li class="has_sub <#if admin_menu_level_1 == "${msg['admin_menu.openvpn.level_one']}">open</#if>">
+          	<a href="#">
+          		<i class="fa fa-list-alt"></i> ${msg['admin_menu.openvpn.level_one']}  <span class="pull-right"><i class="fa fa-chevron-right"></i></span>
+          	</a>
+            <ul>
+              <li><a href="${adminbase}/openvpn/clients.html">客户端配置管理</a></li>
+            </ul>
+          </li>
         </ul>
     </div>
 

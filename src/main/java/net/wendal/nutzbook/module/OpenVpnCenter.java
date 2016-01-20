@@ -1,18 +1,30 @@
 package net.wendal.nutzbook.module;
 
+import java.io.File;
+import java.io.FileInputStream;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.Context;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Scope;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.upload.TempFile;
 
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.openvpn.OpenvpnClient;
@@ -26,12 +38,52 @@ public class OpenVpnCenter extends BaseModule {
 	
 	@Inject("java:$conf.get('openvpn.godkey')")
 	protected String godkey;
+	
+	@Inject("java:$conf.get('openvpn.dir')")
+	protected String dir;
 
 	@At({"/", "/index"})
 	//@RequiresPermissions("openvpn:index")
+	@RequiresRoles("admin")
+	@RequiresUser
 	@Ok("ftl:/templates/admin2/openvpn/clients")
 	public Context index(@Attr(value="me", scope=Scope.SESSION)int userId){
 		return Lang.context().set("me", dao.fetch(UserProfile.class, userId));
+	}
+	
+	@RequiresRoles("admin")
+	@RequiresUser
+	@At
+	@AdaptBy(type=WhaleAdaptor.class)
+	public void upload(@Param("file")TempFile tmp, @Param("platform")String platform) throws Exception {
+		if (tmp == null)
+			return;
+		if (tmp.getFile().length() == 0) {
+			tmp.getFile().delete();
+			return;
+		}
+		if (Strings.isBlank(platform))
+			platform = "win32";
+		TarArchiveInputStream ins = new TarArchiveInputStream(new FileInputStream(tmp.getFile()));
+		TarArchiveEntry en = null;
+		while (null != (en = ins.getNextTarEntry())) {
+			String name = en.getName();
+			byte[] buf = new byte[ins.available()];
+			ins.read(buf);
+			File f = new File(dir, name);
+			Files.write(f, buf);
+			String ip = Files.getMajorName(f).replace('_', '.');
+			if (dao.count(OpenvpnClient.class, Cnd.where("ip", "=", ip)) == 0) {
+				OpenvpnClient cnf = new OpenvpnClient();
+				cnf.setIp(ip);
+				cnf.setFile(f.getAbsolutePath());
+				cnf.setStatus(0);
+				cnf.setPlatform(platform);
+				dao.insert(cnf);
+			}
+		}
+		tmp.getFile().delete();
+		ins.close();
 	}
 	
 	@At
