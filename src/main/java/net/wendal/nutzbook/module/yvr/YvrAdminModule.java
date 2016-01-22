@@ -30,6 +30,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
+import redis.clients.jedis.Pipeline;
 
 @At("/yvr/admin")
 @IocBean
@@ -50,15 +51,17 @@ public class YvrAdminModule extends BaseModule{
 		Daos.ext(dao, FieldFilter.create(Topic.class, opt, true)).update(topic);
 		
 		if ("top".equals(opt)) {
+			Pipeline pipe = jedis().pipelined();
 			if (topic.isTop()) {
-				jedis().zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
-				jedis().zrem(RKEY_TOPIC_UPDATE_ALL, topic.getId());
-				jedis().zadd(RKEY_TOPIC_TOP, System.currentTimeMillis(), topic.getId());
+				pipe.zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
+				pipe.zrem(RKEY_TOPIC_UPDATE_ALL, topic.getId());
+				pipe.zadd(RKEY_TOPIC_TOP, System.currentTimeMillis(), topic.getId());
 			}else {
-				jedis().zrem(RKEY_TOPIC_TOP, topic.getId());
-				jedis().zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
-				jedis().zadd(RKEY_TOPIC_UPDATE+old.getType(), System.currentTimeMillis(), topic.getId());
+				pipe.zrem(RKEY_TOPIC_TOP, topic.getId());
+				pipe.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
+				pipe.zadd(RKEY_TOPIC_UPDATE+old.getType(), System.currentTimeMillis(), topic.getId());
 			}
+			pipe.sync();
 			return;
 		}
 		

@@ -33,17 +33,6 @@
     </div>
     <% } %>
   </div>
-  
-  <% if (null != obj.current_user!) { %>
-  <div class="panel">
-    <div class='inner'>
-      <a href='${ctxPath}/yvr/add' id='create_topic_btn'>
-        <span class='span-success'>发布话题</span>
-      </a>
-    </div>
-  </div>
-  
-  <% } %>
 
   <% if ( null != obj.no_reply_topics! && obj.no_reply_topics.~size > 0) { %>
   <div class='panel'>
