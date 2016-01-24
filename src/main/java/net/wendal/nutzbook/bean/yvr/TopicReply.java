@@ -14,8 +14,10 @@ import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.TableMeta;
 
 @Table("t_topic_reply")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class TopicReply extends BasePojo {
 
 	private static final long serialVersionUID = 5165667887317040294L;
@@ -34,7 +36,7 @@ public class TopicReply extends BasePojo {
 	protected int userId;
 	
 	@Column("cnt")
-	@ColDefine(width=20000)
+	@ColDefine(width=15000)
 	protected String content;
 	
 	@One(target=UserProfile.class, field="userId")

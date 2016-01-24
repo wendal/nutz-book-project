@@ -11,6 +11,7 @@ import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.TableMeta;
 import org.nutz.json.Json;
 
 import net.wendal.nutzbook.bean.BasePojo;
@@ -18,6 +19,7 @@ import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Table("t_topic")
+@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Topic extends BasePojo {
 
 	private static final long serialVersionUID = -8090885594965549361L;
@@ -34,7 +36,7 @@ public class Topic extends BasePojo {
 	protected TopicType type;
 	
 	@Column("cnt")
-	@ColDefine(width=20000)
+	@ColDefine(width=15000)
 	protected String content;
 	
 	@Column
