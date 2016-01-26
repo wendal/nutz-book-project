@@ -67,7 +67,7 @@ public class PushService {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
-		Options options = Options.newBuilder().setApnsProduction(false).build();
+		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
 		sendJPush(builder.build());
 	}
@@ -83,7 +83,7 @@ public class PushService {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_" + userId));
 		builder.setNotification(notif);
-		Options options = Options.newBuilder().setApnsProduction(false).build();
+		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
 		sendJPush(builder.build());
 	}
