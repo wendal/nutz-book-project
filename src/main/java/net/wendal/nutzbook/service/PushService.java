@@ -1,19 +1,5 @@
 package net.wendal.nutzbook.service;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.nutz.aop.interceptor.async.Async;
-import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
-import org.nutz.log.Log;
-import org.nutz.log.Logs;
-
-import com.gexin.rp.sdk.http.IGtPush;
-
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Options;
@@ -23,6 +9,18 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
+import com.gexin.rp.sdk.http.IGtPush;
+import org.nutz.aop.interceptor.async.Async;
+import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 推送服务,当前用jpush实现
@@ -31,7 +29,16 @@ import cn.jpush.api.push.model.notification.Notification;
  */
 @IocBean(create="init")
 public class PushService {
-	
+
+	/**
+	 * 通知类型: 帖子被回复
+	 */
+	public static int PUSH_TYPE_REPLY = 0;
+	/**
+	 * 通知类型: 被at
+	 */
+	public static int PUSH_TYPE_AT = 1;
+
 	private static final Log log = Logs.get();
 	
 	@Inject
@@ -60,7 +67,7 @@ public class PushService {
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
 		builder.setAudience(Audience.alias("u_"+ userId));
 		builder.setNotification(notif);
-		Options options = Options.newBuilder().setApnsProduction(true).build();
+		Options options = Options.newBuilder().setApnsProduction(false).build();
 		builder.setOptions(options);
 		sendJPush(builder.build());
 	}
@@ -74,9 +81,9 @@ public class PushService {
 		IosNotification ios = IosNotification.newBuilder().setAlert("").addExtras(extras).build();
 		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
-		builder.setAudience(Audience.alias("u_"+ userId));
+		builder.setAudience(Audience.alias("u_" + userId));
 		builder.setNotification(notif);
-		Options options = Options.newBuilder().setApnsProduction(true).build();
+		Options options = Options.newBuilder().setApnsProduction(false).build();
 		builder.setOptions(options);
 		sendJPush(builder.build());
 	}
