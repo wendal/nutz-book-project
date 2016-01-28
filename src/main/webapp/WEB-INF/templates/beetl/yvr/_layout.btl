@@ -123,11 +123,9 @@ var ctxPath = "${ctxPath}";
         
         <li><a href='#' id='guide_btn' onclick="startGuide();">操作向导</a></li>
         <% if ( null != obj.current_user!) { %>
-        <li><a href='${ctxPath}/yvr/add' rel="nofollow" >发新贴</a></li>
         <li><a href='${ctxPath}/yvr/u/${obj.current_user.loginname!}'>${obj.current_user.nickname!, escape}</a></li>
         <li><a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow">退出</a></li>
         <% } else { %>
-        <li><a href='#' onclick="f_signup();">注册</a></li>
         <li><a href='#' onclick="f_signin();">登录</a></li>
         <% } %>
       </ul>
