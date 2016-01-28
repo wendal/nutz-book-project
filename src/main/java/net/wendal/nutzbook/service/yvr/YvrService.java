@@ -1,22 +1,15 @@
 package net.wendal.nutzbook.service.yvr;
 
-import static net.wendal.nutzbook.bean.CResult._fail;
-import static net.wendal.nutzbook.bean.CResult._ok;
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicTag;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.service.PushService;
+import net.wendal.nutzbook.util.RedisKey;
+import net.wendal.nutzbook.util.Toolkit;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.FieldFilter;
@@ -35,19 +28,18 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
-
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicTag;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.service.PushService;
-import net.wendal.nutzbook.util.RedisKey;
-import net.wendal.nutzbook.util.Toolkit;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static net.wendal.nutzbook.bean.CResult._fail;
+import static net.wendal.nutzbook.bean.CResult._ok;
+import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
@@ -162,7 +154,7 @@ public class YvrService implements RedisKey {
 		topic.setTitle(Strings.escapeHtml(topic.getTitle().trim()));
 		topic.setUserId(userId);
 		topic.setTop(false);
-		topic.setTags(new HashSet<>());
+		topic.setTags(new HashSet<String>());
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		topic.setContent(Toolkit.filteContent(topic.getContent()));
@@ -181,9 +173,15 @@ public class YvrService implements RedisKey {
 			pipe.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
 		pipe.zincrby(RKEY_USER_SCORE, 100, ""+userId);
 		pipe.sync();
+		String replyAuthorName = dao.fetch(User.class, userId).getName();
 		for (Integer watcherId : globalWatcherIds) {
 			if (watcherId != userId)
-				pushUser(watcherId, "新帖:" + topic.getTitle(), topic.getId());
+				pushUser(watcherId,
+						"新帖:" + topic.getTitle(),
+						topic.getId(),
+						replyAuthorName,
+						topic.getTitle(),
+						PushService.PUSH_TYPE_REPLY);
 		}
 		return _ok(topic.getId());
 	}
@@ -230,7 +228,12 @@ public class YvrService implements RedisKey {
 		// 通知原本的作者
 		if (topic.getUserId() != userId) {
 			String alert = replyAuthorName + "回复了您的帖子";
-			pushUser(topic.getUserId(), alert, topicId);
+			pushUser(topic.getUserId(),
+					alert,
+					topicId,
+					replyAuthorName,
+					topic.getTitle(),
+					PushService.PUSH_TYPE_REPLY);
 		}
 
 		Set<String> ats = findAt(cnt, 5);
@@ -243,7 +246,12 @@ public class YvrService implements RedisKey {
 			if (userId == user.getId())
 				continue; // 自己@自己, 忽略
 			String alert = replyAuthorName + "在帖子回复中@了你";
-			pushUser(user.getId(), alert, topicId);
+			pushUser(user.getId(),
+					alert,
+					topicId,
+					replyAuthorName,
+					topic.getTitle(),
+					PushService.PUSH_TYPE_AT);
 		}
 		return _ok(reply.getId());
 	}
@@ -266,9 +274,13 @@ public class YvrService implements RedisKey {
 		}
 	}
 	
-	protected void pushUser(int userId, String alert, String topic_id) {
+	protected void pushUser(int userId, String alert, String topic_id, String post_user, String topic_title, int type) {
 		Map<String, String> extras = new HashMap<String, String>();
 		extras.put("topic_id", topic_id);
+		extras.put("post_user", post_user);
+		extras.put("topic_title",topic_title);
+		// 通知类型
+		extras.put("type", type+"");
 		pushService.alert(userId, alert, extras);
 	}
 	
