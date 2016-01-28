@@ -49,7 +49,7 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.3.5.v20151012</version>
+				<version>9.3.7.v20160115</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -365,6 +365,11 @@
 <!-- 			<artifactId>spring-aop</artifactId> -->
 <!-- 			<version>4.2.4.RELEASE</version> -->
 <!-- 		</dependency> -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.190</version>
+		</dependency>
 	</dependencies>
 	<version>2.6.0</version>
 </project>
