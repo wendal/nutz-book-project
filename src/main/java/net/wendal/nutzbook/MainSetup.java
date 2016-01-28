@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
@@ -14,7 +16,6 @@ import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
@@ -98,9 +99,6 @@ public class MainSetup implements Setup {
 		log.debug("Ehcache CacheManager = " + cacheManager);
 		// CachedNutDaoExecutor.DEBUG = true;
 
-		// 启用FastClass执行入口方法
-		Mvcs.disableFastClassInvoker = false;
-
 		// 设置Markdown缓存
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
@@ -109,6 +107,18 @@ public class MainSetup implements Setup {
 			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
 		}
 		
+		if (dao.meta().isMySql()) {
+			String schema = dao.execute(Sqls.fetchString("SELECT DATABASE()")).getString();
+			
+			// 检查所有非日志表,如果表引擎是MyISAM,切换到InnoDB
+			Sql sql = Sqls.queryString("SELECT TABLE_NAME FROM information_schema.TABLES where TABLE_SCHEMA = @schema and engine = 'MyISAM'");
+			sql.params().set("schema", schema);
+			for (String tableName : dao.execute(sql).getObject(String[].class)) {
+				if (tableName.startsWith("t_syslog"))
+					continue;
+				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
+			}
+		}
 	}
 
 	public void destroy(NutConfig conf) {
