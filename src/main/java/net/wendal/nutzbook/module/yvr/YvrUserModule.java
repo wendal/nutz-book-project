@@ -85,8 +85,8 @@ public class YvrUserModule extends BaseModule {
 				re.put("access_token", yvrService.accessToken(me));
 			}
 		}
-		re.put("recent_topics", yvrService.getRecentTopics(user.getId()));
-		re.put("recent_replies", yvrService.getRecentReplyTopics(user.getId()));
+		re.put("recent_topics", yvrService.getRecentTopics(user.getId(), dao.createPager(1, 5)));
+		re.put("recent_replies", yvrService.getRecentReplyTopics(user.getId(), dao.createPager(1, 5)));
 		return re;
 	}
 	

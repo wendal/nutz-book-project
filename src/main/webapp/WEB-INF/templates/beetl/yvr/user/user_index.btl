@@ -60,7 +60,7 @@
     <% if ( null != obj.recent_topics ) { %>
     <% layout("../list.btl", {"topics":obj.recent_topics}){}; %>
     <div class='cell more'>
-      <a class='dark' href="#">查看更多»</a>
+      <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/topic">查看更多»</a>
     </div>
     <% } else { %>
     <div class='inner'>
@@ -77,7 +77,7 @@
     <% if ( null != obj.recent_replies ) { %>
     <% layout("../list.btl", {"topics":obj.recent_replies}){}; %>
     <div class='cell more'>
-      <a class='dark' href="#">查看更多»</a>
+      <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/reply">查看更多»</a>
     </div>
     <% } else { %>
     <div class='inner'>

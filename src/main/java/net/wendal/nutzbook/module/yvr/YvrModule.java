@@ -48,6 +48,7 @@ import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.ServerRedirectView;
 
 import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -122,32 +123,54 @@ public class YvrModule extends BaseModule {
 	@At({ "/list/?", "/list/?/?", "/list" })
 	@GET
 	@Ok("beetl:/yvr/index.btl")
-	@Aop("redis")
 	public Object list(String type, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		String zkey = RKEY_TOPIC_UPDATE + (type == null ? "all" : type);
-		return _query_topic_by_zset(zkey, pager, userId, (type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, true);
+		return _query_topic_by_zset(zkey, pager, userId, (type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, true, "list/" + (type == null ? "all" : type));
+	}
+	
+	@At({ "/list/u/?/?", "/list/u/?/?/?" })
+	@GET
+	@Ok("beetl:/yvr/index.btl")
+	public Object list(String loginname, String type, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
+		List<Topic> list = null;
+		User user = dao.fetch(User.class, loginname);
+		if (user == null)
+			return HTTP_404;
+		if ("topic".equals(type)) {
+			list = yvrService.getRecentTopics(user.getId(), pager);
+		} else {
+			list = yvrService.getRecentReplyTopics(user.getId(), pager);
+		}
+		return _process_query_list(pager, list, userId, null, null, false, "list/u/" + loginname + "/" + type);
 	}
 	
 	@At({ "/tag/?", "/tag/?/?" })
 	@GET
 	@Ok("beetl:/yvr/index.btl")
-	@Aop("redis")
 	public Object tag(String tagName, int page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
 		if (Strings.isBlank(tagName))
 			return new ServerRedirectView("/yvr/list");
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		String zkey = RKEY_TOPIC_TAG + tagName.toLowerCase().trim();
-		return _query_topic_by_zset(zkey, pager, userId, null, tagName, false);
+		return _query_topic_by_zset(zkey, pager, userId, null, tagName, false, "tag/" + tagName);
 	}
 	
-	protected NutMap _query_topic_by_zset(String zkey, Pager pager, int userId, TopicType topicType, String tagName, boolean addTop) {
+	protected NutMap _query_topic_by_zset(String zkey, Pager pager, 
+										int userId, TopicType topicType, 
+										String tagName, boolean addTop,
+										String ppath) {
 		List<Topic> list = redisDao.queryByZset(Topic.class, zkey, pager);
-		return _process_query_list(pager, list, userId, topicType, tagName, addTop);
+		return _process_query_list(pager, list, userId, topicType, tagName, addTop, ppath);
 	}
 	
 
-	protected NutMap _process_query_list(Pager pager, List<Topic> list, int userId, TopicType topicType, String tagName, boolean addTop) {
+	@Aop("redis")
+	protected NutMap _process_query_list(Pager pager, List<Topic> list, 
+										int userId, TopicType topicType, 
+										String tagName, boolean addTop,
+										String ppath) {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		for (Topic topic : list) {
 			yvrService.fillTopic(topic, authors);
@@ -169,6 +192,7 @@ public class YvrModule extends BaseModule {
 		re.put("type", topicType);
 		re.put("tag", tagName);
 		re.put("types", TopicType.values());
+		re.put("ppath", ppath);
 		/**
 		 * var page_start = current_page - 2 > 0 ? current_page - 2 : 1; var
 		 * page_end = page_start + 4 >= pages ? pages : page_start + 4;
@@ -258,7 +282,7 @@ public class YvrModule extends BaseModule {
 			visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
 //		}
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
-		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId()));
+		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId(), dao.createPager(1, 5)));
 		//re.put("top_tags", yvrService.fetchTopTags());
 		return re;
 	}
@@ -314,7 +338,7 @@ public class YvrModule extends BaseModule {
 		}
 		Pager pager = dao.createPager(1, 30);
 		pager.setRecordCount(list.size());
-		return _process_query_list(pager, list, userId, TopicType.ask, null, false);
+		return _process_query_list(pager, list, userId, TopicType.ask, null, false, "/list/all");
 	}
 
 	@RequiresPermissions("topic:index:rebuild")

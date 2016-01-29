@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -295,8 +296,8 @@ public class YvrService implements RedisKey {
 		pushService.alert(userId, alert, extras);
 	}
 	
-	public List<Topic> getRecentTopics(int userId) {
-		List<Topic> recent_topics = dao.query(Topic.class, Cnd.where("userId", "=", userId).desc("createTime"), dao.createPager(1, 5));
+	public List<Topic> getRecentTopics(int userId, Pager pager) {
+		List<Topic> recent_topics = dao.query(Topic.class, Cnd.where("userId", "=", userId).desc("createTime"), pager);
 
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		if (!recent_topics.isEmpty()) {
@@ -304,15 +305,20 @@ public class YvrService implements RedisKey {
 				fillTopic(topic, authors);
 			}
 		}
+		pager.setRecordCount(dao.count(Topic.class, Cnd.where("userId", "=", userId)));
 		return recent_topics;
 		
 	}
 	
-	public List<Topic> getRecentReplyTopics(int userId) {
+	public List<Topic> getRecentReplyTopics(int userId, Pager pager) {
 
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
-		Sql sql = Sqls.queryString("select DISTINCT topicId from t_topic_reply $cnd").setEntity(dao.getEntity(TopicReply.class)).setVar("cnd", Cnd.where("userId", "=", userId).desc("createTime"));
-		sql.setPager(dao.createPager(1, 5));
+		Cnd cnd = Cnd.where("userId", "=", userId);
+		cnd.desc("createTime");
+		
+		Sql sql = Sqls.queryString("select DISTINCT topicId from t_topic_reply $cnd").setEntity(dao.getEntity(TopicReply.class)).setVar("cnd", cnd);
+		pager.setRecordCount(dao.execute(Sqls.fetchInt("select count(DISTINCT topicId) from t_topic_reply $cnd").setEntity(dao.getEntity(TopicReply.class)).setVar("cnd", cnd)).getInt());
+		sql.setPager(pager);
 		String[] replies_topic_ids = dao.execute(sql).getObject(String[].class);
 		List<Topic> recent_replies = new ArrayList<Topic>();
 		for (String topic_id : replies_topic_ids) {

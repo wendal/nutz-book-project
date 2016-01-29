@@ -14,20 +14,10 @@ for(topic in topics){
 
 <div class='pagination' current_page='${obj.current_page}'>
   <ul>
-  <%
-  var ppath = "";
-  if (obj.type != null) {
-  	ppath = "list/" + obj.type;
-  } else if (obj.type != null) {
-  	ppath = "tag/" + obj.tag;
-  } else {
-  	ppath = "list/all";
-  }
-  %>
     <% if ( obj.current_page == 1) { %>
     <li class='disabled'><a>«</a></li>
     <% } else { %>
-    <li><a data-pjax href="${ctxPath}/yvr/${ppath}">«</a></li>
+    <li><a data-pjax href="${ctxPath}/yvr/${obj.ppath}">«</a></li>
     <% } %>
 
     <% if ( obj.page_start > 1) { %>
@@ -38,7 +28,7 @@ for(topic in topics){
     <% if (i == obj.current_page) { %>
     <li class='disabled'><a>${i}</a></li>
     <% } else { %>
-    <li><a data-pjax href='${ctxPath}/yvr/${ppath}/${i}'>${i}</a></li>
+    <li><a data-pjax href='${ctxPath}/yvr/${obj.ppath}/${i}'>${i}</a></li>
     <% } %>
     <% } %>
 
@@ -49,7 +39,7 @@ for(topic in topics){
     <% if (obj.current_page == obj.pages) { %>
     <li class='disabled'><a>»</a></li>
     <% } else { %>
-    <li><a data-pjax href='${ctxPath}/yvr/${ppath}/${obj.pages}'>»</a></li>
+    <li><a data-pjax href='${ctxPath}/yvr/${obj.ppath}/${obj.pages}'>»</a></li>
     <% } %>
   </ul>
 </div>

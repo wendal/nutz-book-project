@@ -293,11 +293,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 			return HTTP_404;
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<NutMap> recent_topics = new ArrayList<NutMap>();
-		for (Topic topic : yvrService.getRecentTopics(user.getId())) {
+		for (Topic topic : yvrService.getRecentTopics(user.getId(), dao.createPager(1, 5))) {
 			recent_topics.add(_topic(topic, authors, null));
 		}
 		List<NutMap> recent_replies = new ArrayList<NutMap>();
-		for (Topic topic : yvrService.getRecentReplyTopics(user.getId())) {
+		for (Topic topic : yvrService.getRecentReplyTopics(user.getId(), dao.createPager(1, 5))) {
 			recent_replies.add(_topic(topic, authors, null));
 		}
 		return _map("data", _map("loginname", loginname,
