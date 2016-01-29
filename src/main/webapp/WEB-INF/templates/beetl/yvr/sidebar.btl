@@ -85,7 +85,7 @@
       <ul class="unstyled">
       	<%
       	for(_topic in obj.recent_topics) {
-      		if ( null != obj.topic! && obj.topic.id != _topic.id){
+      		if ( null == obj.topic! || obj.topic.id != _topic.id){
       			layout('small.btl', { "topic" : _topic }){};
       		}
       	}

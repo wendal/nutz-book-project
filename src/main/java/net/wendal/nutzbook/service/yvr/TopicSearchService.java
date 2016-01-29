@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.lucene.LuceneIndex;
+import net.wendal.nutzbook.service.BigContentService;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -49,6 +50,9 @@ public class TopicSearchService {
 	private String indexDir;
 
 	protected LuceneIndex luceneIndex;
+	
+	@Inject
+	protected BigContentService bigContentService;
 
 	public void add(Topic topic) {
 		if (topic == null)
@@ -108,6 +112,7 @@ public class TopicSearchService {
 		String[] topicIds = sql.getObject(String[].class);
 		for (String topicId : topicIds) {
 			Topic topic = dao.fetch(Topic.class, topicId);
+			bigContentService.fill(topic);
 			add(topic);
 		}
 		luceneIndex.writer.commit();
