@@ -166,10 +166,12 @@ public class YvrService implements RedisKey {
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		topic.setContent(Toolkit.filteContent(topic.getContent()));
+		String oldContent = topic.getContent();
 		topic.setContentId(bigContentService.put(topic.getContent()));
 		topic.setContent(null);
 		dao.insert(topic);
 		try {
+			topic.setContent(oldContent);
 			topicSearchService.add(topic);
 		} catch (Exception e) {
 		}
