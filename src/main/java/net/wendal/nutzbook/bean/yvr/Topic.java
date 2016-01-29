@@ -11,64 +11,64 @@ import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
-import org.nutz.dao.entity.annotation.TableMeta;
-import org.nutz.json.Json;
 
 import net.wendal.nutzbook.bean.BasePojo;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Table("t_topic")
-@TableMeta("{'mysql-charset':'utf8mb4'}")
 public class Topic extends BasePojo {
 
 	private static final long serialVersionUID = -8090885594965549361L;
 
 	@Name
-	@Prev(els=@EL("$me.uuid()"))
+	@Prev(els = @EL("$me.uuid()") )
 	protected String id;
-	
+
 	@Column
-	@ColDefine(width=512)
+	@ColDefine(width = 512)
 	protected String title;
-	
+
 	@Column("tp")
 	protected TopicType type;
-	
+
 	@Column("cnt")
-	@ColDefine(width=15000)
+	@ColDefine(width = 15000)
 	protected String content;
-	
+
+	@Column("cid")
+	protected String contentId;
+
 	@Column
-	@ColDefine(width=128)
+	@ColDefine(width = 128)
 	protected Set<String> tags;
-	
+
 	@Column("u_id")
 	protected int userId;
-	
+
 	@Column("c_top")
 	protected boolean top;
-	
+
 	@Column("c_good")
 	protected boolean good;
-	
+
 	@Column("c_lock")
 	protected boolean lock;
-	
+
 	// 浏览总数
 	protected transient long visitCount;
-	
+
 	// 回复总数
 	protected transient long replyCount;
-	
+
 	protected TopicReply lastComment;
-	
-	@Many(target=TopicReply.class, field = "topicId")
+
+	@Many(target = TopicReply.class, field = "topicId")
 	protected List<TopicReply> replies;
-	
-	@One(target=UserProfile.class, field="userId")
+
+	@One(target = UserProfile.class, field = "userId")
 	protected UserProfile author;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -128,7 +128,7 @@ public class Topic extends BasePojo {
 	public List<TopicReply> getReplies() {
 		return replies;
 	}
-	
+
 	public void setReplies(List<TopicReply> replies) {
 		this.replies = replies;
 	}
@@ -136,7 +136,7 @@ public class Topic extends BasePojo {
 	public UserProfile getAuthor() {
 		return author;
 	}
-	
+
 	public void setAuthor(UserProfile author) {
 		this.author = author;
 	}
@@ -148,11 +148,11 @@ public class Topic extends BasePojo {
 	public void setLastComment(TopicReply lastComment) {
 		this.lastComment = lastComment;
 	}
-	
+
 	public String getCreateAt() {
 		return Toolkit.createAt(createTime);
 	}
-	
+
 	public String getUpdateAt() {
 		return Toolkit.createAt(updateTime);
 	}
@@ -188,39 +188,12 @@ public class Topic extends BasePojo {
 	public void setReplyCount(long replyCount) {
 		this.replyCount = replyCount;
 	}
-	
-//--SerializationBuilder
-private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
-    java.io.DataOutputStream dos = new java.io.DataOutputStream(out);
-    dos.writeUTF(id==null?"":id);
-    dos.writeUTF(title==null?"":title);
-    dos.writeUTF(type==null?"":type.name());
-    dos.writeUTF(content==null?"":content);
-    dos.writeInt(userId);
-    dos.writeBoolean(top);
-    dos.writeBoolean(good);
-    dos.writeBoolean(lock);
-    dos.writeUTF(tags==null?"[]":Json.toJson(tags));
-    dos.writeLong(createTime == null ? 0 : createTime.getTime());
-    dos.writeLong(updateTime == null ? 0 : updateTime.getTime());
 
-}
-@SuppressWarnings("unchecked")
-private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException{
-    java.io.DataInputStream dis = new java.io.DataInputStream(in);
-    String _tmp = null;
-    id = dis.readUTF();
-    title = dis.readUTF();
-    _tmp = dis.readUTF(); if (_tmp.length()>0) type=net.wendal.nutzbook.bean.yvr.TopicType.valueOf(_tmp);
-    content = dis.readUTF();
-    userId = dis.readInt();
-    top = dis.readBoolean();
-    good = dis.readBoolean();
-    lock = dis.readBoolean();
-    tags = Json.fromJson(Set.class, dis.readUTF());
-    createTime = new java.util.Date(dis.readLong());
-    updateTime = new java.util.Date(dis.readLong());
+	public String getContentId() {
+		return contentId;
+	}
 
-}
-//SerializationBuilder--
+	public void setContentId(String contentId) {
+		this.contentId = contentId;
+	}
 }

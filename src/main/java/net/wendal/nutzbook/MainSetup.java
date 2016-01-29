@@ -25,8 +25,11 @@ import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.beetl.MarkdownFunction;
 import net.wendal.nutzbook.service.AuthorityService;
+import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Markdowns;
@@ -63,6 +66,25 @@ public class MainSetup implements Setup {
 
 		// 为全部标注了@Table的bean建表
 		Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
+		Daos.migration(dao, Topic.class, true, false);
+		Daos.migration(dao, TopicReply.class, true, false);
+		
+		// 迁移Topic和TopicReply的数据到BigContent
+		BigContentService bcs = ioc.get(BigContentService.class);
+		for (String topicId : dao.execute(Sqls.queryString("select id from t_topic where cid is null")).getObject(String[].class)) {
+			Topic topic = dao.fetch(Topic.class, topicId);
+			String cid = bcs.put(topic.getContent());
+			topic.setContentId(cid);
+			topic.setContent(null);
+			dao.update(topic, "(content|contentId)");
+		}
+		for (String topicId : dao.execute(Sqls.queryString("select id from t_topic_reply where cid is null")).getObject(String[].class)) {
+			TopicReply reply = dao.fetch(TopicReply.class, topicId);
+			String cid = bcs.put(reply.getContent());
+			reply.setContentId(cid);
+			reply.setContent(null);
+			dao.update(reply, "(content|contentId)");
+		}
 
 		// 获取配置对象
 		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");

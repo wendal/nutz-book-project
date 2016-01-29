@@ -17,16 +17,18 @@ layout("_layout.btl",{title:'添加新帖子'}){
             <span id="topic_create_warn">
             	<strong><p/>标题,用一句话概括帖子的内容,禁止使用'有问题求教/救命'之类的无意义语句. <p/>
             	请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点。<p/>
-            	内容支持 Markdown 语法, 使用菜单栏的代码块标注代码,会有代码高亮,不要上传代码的截图!!<p/>
+            	内容支持 Markdown 语法, <span style="color: red;">使用菜单栏的代码块标注代码,会有代码高亮</span>,不要上传代码的截图!!<p/>
             	请完整描述问题,提供尽可能多的信息,包括但不限于版本号,系统环境,场景等</strong>
             </span>
+            <p/>
             <span class="tab-selector">选择版块：</span>
             <select name="type" id="tab-value" data-intro="请根据内容正确的选择板块">
               <% for (ttype in obj.types) {%>
               <option value="${ttype}" >${ttype.display}</option>
               <% } %>
             </select>
-            <input autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上"
+            <p/>
+            <input autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 5 字以上"
             	data-intro="标题很重要,请用一句话概括帖子的内容,切勿使用'有问题求教'之类的无意义语句"
             	id="add_topic_title"></input>
 

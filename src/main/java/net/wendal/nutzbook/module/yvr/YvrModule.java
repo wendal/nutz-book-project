@@ -54,6 +54,7 @@ import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.mvc.CsrfActionFilter;
+import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.service.UserService;
@@ -80,6 +81,9 @@ public class YvrModule extends BaseModule {
 	
 	@Inject
 	protected RedisDao redisDao;
+	
+	@Inject
+	protected BigContentService bigContentService;
 
 	@At({ "/", "/index" })
 	@Ok("->:/yvr/list")
@@ -153,7 +157,7 @@ public class YvrModule extends BaseModule {
 		Set<String> no_replies_ids = jedis().zrevrangeByScore(RKEY_TOPIC_NOREPLY, Long.MAX_VALUE, 0, 0, 5);
 		List<Topic> no_replies = new ArrayList<Topic>();
 		for (String topicId : no_replies_ids) {
-			Topic tmp = yvrService.daoNoContent().fetch(Topic.class, topicId);
+			Topic tmp = dao.fetch(Topic.class, topicId);
 			if (tmp != null) {
 				no_replies.add(tmp);
 			}
@@ -220,6 +224,7 @@ public class YvrModule extends BaseModule {
 		for (TopicReply reply : topic.getReplies()) {
 			reply.setUps(it.next().get());
 		}
+		bigContentService.fill(topic);
 		//------------------------------------
 		NutMap re = new NutMap();
 		re.put("topic", topic);

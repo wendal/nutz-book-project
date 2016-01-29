@@ -46,6 +46,7 @@ import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.module.yvr.api.YvrApi;
 import net.wendal.nutzbook.mvc.AccessTokenFilter;
+import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
@@ -78,6 +79,9 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	
 	@Inject
 	protected TopicSearchService topicSearchService;
+	
+	@Inject
+	protected BigContentService bigContentService;
 
 	/**
 	 * 分页获取帖子列表
@@ -220,7 +224,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 			re.put("id", reply.getId());
 			re.put("author", _author(reply.getAuthor()));
 
-			re.put("content", "false".equals(mdrender) ? reply.getContent() : Markdowns.toHtml(reply.getContent(), urlbase));
+			String cnt = bigContentService.getString(reply.getContentId());
+			re.put("content", "false".equals(mdrender) ? cnt : Markdowns.toHtml(cnt, urlbase));
 			re.put("ups", new ArrayList<String>(reply.getUps()));
 			re.put("create_at", _time(reply.getCreateTime()));
 			re.put("create_at_forread", _time_forread(reply.getCreateTime()));
@@ -498,6 +503,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 
 	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
 		yvrService.fillTopic(topic, authors);
+		bigContentService.fill(topic);
 		NutMap tp = new NutMap();
 		tp.put("id", topic.getId());
 		tp.put("author_id", ""+topic.getAuthor().getUserId());

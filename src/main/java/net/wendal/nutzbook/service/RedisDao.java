@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.nutz.dao.Dao;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -23,6 +24,9 @@ public class RedisDao {
 	
 	@Inject
 	protected YvrService yvrService;
+	
+	@Inject
+	protected Dao dao;
 
 	@Aop("redis")
 	public <T> List<T> queryByZset(Class<T> klass, String zkey, Pager pager) {
@@ -33,7 +37,7 @@ public class RedisDao {
 			pager.setRecordCount(count.intValue());
 			Set<String> ids = jedis().zrevrangeByScore(zkey, now, 0, pager.getOffset(), pager.getPageSize());
 			for (String id : ids) {
-				T t = yvrService.daoNoContent().fetch(klass, id);
+				T t = dao.fetch(klass, id);
 				if (t == null)
 					continue;
 				list.add(t);

@@ -1,21 +1,26 @@
 package net.wendal.nutzbook.service.yvr;
 
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicTag;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.service.PushService;
-import net.wendal.nutzbook.util.RedisKey;
-import net.wendal.nutzbook.util.Toolkit;
+import static net.wendal.nutzbook.bean.CResult._fail;
+import static net.wendal.nutzbook.bean.CResult._ok;
+import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
-import org.nutz.dao.FieldFilter;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
-import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -28,18 +33,20 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
+
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicTag;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.service.BigContentService;
+import net.wendal.nutzbook.service.PushService;
+import net.wendal.nutzbook.util.RedisKey;
+import net.wendal.nutzbook.util.Toolkit;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static net.wendal.nutzbook.bean.CResult._fail;
-import static net.wendal.nutzbook.bean.CResult._ok;
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey {
@@ -49,14 +56,14 @@ public class YvrService implements RedisKey {
 	@Inject 
 	protected Dao dao;
 	
-	// 用于查询Topic和TopicReply时不查询content属性
-	protected Dao daoNoContent;
-	
 	@Inject
 	protected TopicSearchService topicSearchService;
 	
 	@Inject
 	protected PushService pushService;
+	
+	@Inject
+	protected BigContentService bigContentService;
 
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
@@ -75,7 +82,7 @@ public class YvrService implements RedisKey {
 		topic.setReplyCount(reply_count == null ? 0 : reply_count.intValue());
 		if (topic.getReplyCount() > 0) {
 			String replyId = jedis().hget(RKEY_REPLY_LAST, topic.getId());
-			TopicReply reply = daoNoContent.fetch(TopicReply.class, replyId);
+			TopicReply reply = dao.fetch(TopicReply.class, replyId);
 			if (reply != null) {
 				if (reply.getUserId() == 0)
 					reply.setUserId(1);
@@ -142,7 +149,7 @@ public class YvrService implements RedisKey {
 		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 100 || topic.getTitle().length() < 5) {
 			return _fail("标题长度不合法");
 		}
-		if (Strings.isBlank(topic.getContent()) || topic.getContent().length() > 20000) {
+		if (Strings.isBlank(topic.getContent())) {
 			return _fail("内容不合法");
 		}
 		if (topic.getTags() != null && topic.getTags().size() > 10) {
@@ -158,6 +165,8 @@ public class YvrService implements RedisKey {
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		topic.setContent(Toolkit.filteContent(topic.getContent()));
+		topic.setContentId(bigContentService.put(topic.getContent()));
+		topic.setContent(null);
 		dao.insert(topic);
 		try {
 			topicSearchService.add(topic);
@@ -197,13 +206,15 @@ public class YvrService implements RedisKey {
 		if (cnt.length() < 2 || cnt.length() > 10000) {
 			return _fail("内容太长或太短了");
 		}
-		final Topic topic = daoNoContent.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
+		final Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
 		if (topic == null) {
 			return _fail("主题不存在");
 		}
 		reply.setTopicId(topicId);
 		reply.setUserId(userId);
 		reply.setContent(Toolkit.filteContent(reply.getContent()));
+		reply.setContentId(bigContentService.put(reply.getContent()));
+		reply.setContent(null);
 		dao.insert(reply);
 		// 更新topic的时间戳
 		Pipeline pipe = jedis().pipelined();
@@ -285,7 +296,7 @@ public class YvrService implements RedisKey {
 	}
 	
 	public List<Topic> getRecentTopics(int userId) {
-		List<Topic> recent_topics = daoNoContent().query(Topic.class, Cnd.where("userId", "=", userId).desc("createTime"), dao.createPager(1, 5));
+		List<Topic> recent_topics = dao.query(Topic.class, Cnd.where("userId", "=", userId).desc("createTime"), dao.createPager(1, 5));
 
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		if (!recent_topics.isEmpty()) {
@@ -349,12 +360,7 @@ public class YvrService implements RedisKey {
 		return re;
 	}
 	
-	public Dao daoNoContent() {
-		return daoNoContent;
-	}
-	
 	public void init() {
-		daoNoContent = Daos.ext(dao, FieldFilter.locked(Topic.class, "content").set(TopicReply.class, null, "content", false));
 		if (topicGlobalWatchers != null) {
 			for (String username : Strings.splitIgnoreBlank(topicGlobalWatchers)) {
 				User user = dao.fetch(User.class, username);
@@ -395,7 +401,7 @@ public class YvrService implements RedisKey {
 		if (Strings.isBlank(topicId) || tags == null) {
 			return false;
 		}
-		Topic topic = daoNoContent.fetch(Topic.class, topicId);
+		Topic topic = dao.fetch(Topic.class, topicId);
 		if (topic == null)
 			return false;
 		Set<String> oldTags = topic.getTags();
@@ -430,7 +436,7 @@ public class YvrService implements RedisKey {
 		List<Topic> list = new ArrayList<>();
 		Map<Integer, UserProfile> authors = new HashMap<>();
 		for(String id :jedis().zrevrangeByScore(RKEY_TOPIC_TOP, Long.MAX_VALUE, 0)) {
-			Topic topic = daoNoContent.fetch(Topic.class, id);
+			Topic topic = dao.fetch(Topic.class, id);
 			if (topic == null)
 				continue;
 			fillTopic(topic, authors);
