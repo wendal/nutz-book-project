@@ -1,5 +1,17 @@
 package net.wendal.nutzbook.service;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.nutz.aop.interceptor.async.Async;
+import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Strings;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
+
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Options;
@@ -9,18 +21,6 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
-import com.gexin.rp.sdk.http.IGtPush;
-import org.nutz.aop.interceptor.async.Async;
-import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
-import org.nutz.log.Log;
-import org.nutz.log.Logs;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * 推送服务,当前用jpush实现
@@ -46,7 +46,7 @@ public class PushService {
 	
 	protected Map<String, JPushClient> jpushs;
 	
-	protected Map<String, IGtPush> gtpushs;
+	//protected Map<String, IGtPush> gtpushs;
 	
 	@Inject
 	protected PropertiesProxy conf;
@@ -124,20 +124,20 @@ public class PushService {
 			jpushs.put(prefix, jpush);
 		}
 		
-		gtpushs = new LinkedHashMap<>();
-		for (int i = 1; i < 11; i++) {
-			String prefix = "gtpush"+i;
-			boolean enable = conf.getBoolean(prefix+".enable", false);
-			if (!enable)
-				continue;
-			String masterSecret = conf.get(prefix+".masterSecret");
-			String appKey = conf.get(prefix+".appKey");
-			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
-				log.warn(prefix+".enable=true, but masterSecret/appKey is NULL or emtry");
-				continue;
-			}
-			IGtPush gtpush = new IGtPush(appKey, masterSecret);
-			gtpushs.put(prefix, gtpush);
-		}
+//		gtpushs = new LinkedHashMap<>();
+//		for (int i = 1; i < 11; i++) {
+//			String prefix = "gtpush"+i;
+//			boolean enable = conf.getBoolean(prefix+".enable", false);
+//			if (!enable)
+//				continue;
+//			String masterSecret = conf.get(prefix+".masterSecret");
+//			String appKey = conf.get(prefix+".appKey");
+//			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
+//				log.warn(prefix+".enable=true, but masterSecret/appKey is NULL or emtry");
+//				continue;
+//			}
+//			IGtPush gtpush = new IGtPush(appKey, masterSecret);
+//			gtpushs.put(prefix, gtpush);
+//		}
 	}
 }
