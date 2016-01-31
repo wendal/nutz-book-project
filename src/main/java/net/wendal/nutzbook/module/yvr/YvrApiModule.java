@@ -503,7 +503,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 
 	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender, boolean hasContent) {
 		yvrService.fillTopic(topic, authors);
-		bigContentService.fill(topic);
+		if (hasContent)
+			bigContentService.fill(topic);
 		NutMap tp = new NutMap();
 		tp.put("id", topic.getId());
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
