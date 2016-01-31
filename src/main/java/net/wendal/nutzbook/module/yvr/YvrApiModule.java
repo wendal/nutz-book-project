@@ -159,11 +159,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		}
 		if (page == 1 && "ask".equals(type)) {
 			for (Topic topic : yvrService.fetchTop()) {
-				list.add(_topic(topic, authors, mdrender));
+				list.add(_topic(topic, authors, mdrender, false));
 			}
 		}
 		for (Topic topic : topics) {
-			list.add(_topic(topic, authors, mdrender));
+			list.add(_topic(topic, authors, mdrender, false));
 		}
 		return _map("data", list);
 	}
@@ -213,7 +213,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		if (id == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender);
+		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender, true);
 
 		List<NutMap> replies = new ArrayList<NutMap>();
 		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
@@ -294,11 +294,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<NutMap> recent_topics = new ArrayList<NutMap>();
 		for (Topic topic : yvrService.getRecentTopics(user.getId(), dao.createPager(1, 5))) {
-			recent_topics.add(_topic(topic, authors, null));
+			recent_topics.add(_topic(topic, authors, null, false));
 		}
 		List<NutMap> recent_replies = new ArrayList<NutMap>();
 		for (Topic topic : yvrService.getRecentReplyTopics(user.getId(), dao.createPager(1, 5))) {
-			recent_replies.add(_topic(topic, authors, null));
+			recent_replies.add(_topic(topic, authors, null, false));
 		}
 		return _map("data", _map("loginname", loginname,
 				"avatar_url", _avatar_url(loginname),
@@ -501,7 +501,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		return Times.formatForRead(date);
 	}
 
-	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
+	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender, boolean hasContent) {
 		yvrService.fillTopic(topic, authors);
 		bigContentService.fill(topic);
 		NutMap tp = new NutMap();
@@ -509,7 +509,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
 		tp.put("tab", topic.getType().toString());
 		tp.put("tags", topic.getTags());
-		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
+		if (hasContent)
+			tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
 		tp.put("title", StringEscapeUtils.unescapeHtml(topic.getTitle()));
 		if (topic.getLastComment() != null) {
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));
