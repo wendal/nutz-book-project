@@ -1,7 +1,6 @@
 package net.wendal.nutzbook;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -14,6 +13,7 @@ import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
@@ -44,7 +44,6 @@ public class MainSetup implements Setup {
 
 	private static final Log log = Logs.get();
 
-	@SuppressWarnings("serial")
 	public void init(NutConfig nc) {
 		NutShiro.DefaultLoginURL = "/admin/logout";
 		// 检查环境
@@ -55,12 +54,7 @@ public class MainSetup implements Setup {
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
 		// 加载freemarker自定义标签　自定义宏路径
-		ioc.get(Configuration.class).setAutoImports(new HashMap<String, String>(2) {
-			{
-				put("p", "/ftl/pony/index.ftl");
-				put("s", "/ftl/spring.ftl");
-			}
-		});
+		ioc.get(Configuration.class).setAutoImports(new NutMap().setv("p", "/ftl/pony/index.ftl").setv("s", "/ftl/spring.ftl"));
 		ioc.get(FreeMarkerConfigurer.class, "mapTags");
 		Dao dao = ioc.get(Dao.class);
 
@@ -141,6 +135,22 @@ public class MainSetup implements Setup {
 				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
 			}
 		}
+		
+//		ActionInvoker invoker = new ActionInvoker();
+//		ActionInfo ai = new ActionInfo();
+//		ai.setModuleObj(this);
+//		try {
+//			ai.setMethod(getClass().getMethod("hi", String.class));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		ai.setInputEncoding(Encoding.UTF8);
+//		ai.setOutputEncoding(Encoding.UTF8);
+//		ai.setOkView("raw");
+//		ai.setFailView("http:500");
+//		ai.setViewMakers(nc.getViewMakers());
+//		invoker.setDefaultChain(nc.getActionChainMaker().eval(nc, ai));
+//		nc.getUrlMapping().add("/jdk8/test", invoker);
 	}
 
 	public void destroy(NutConfig conf) {
@@ -156,4 +166,8 @@ public class MainSetup implements Setup {
 		} catch (Exception e) {
 		}
 	}
+	
+//	public String hi(String name) {
+//		return "hi, " + name;
+//	}
 }
