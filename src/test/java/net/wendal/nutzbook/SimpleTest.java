@@ -39,7 +39,6 @@ import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
 
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
-import net.wendal.nutzbook.bean.demo.APIResult;
 import net.wendal.nutzbook.bean.qqbot.QQBotMessage;
 import net.wendal.nutzbook.bean.qqbot.QQBotRole;
 import net.wendal.nutzbook.util.Markdowns;
@@ -95,15 +94,15 @@ public class SimpleTest extends TestBase {
 //        System.out.println("Decoder url: ["+ url + "]");
 //	}
 	
-	@Test
-	public void test_json_output() {
-		APIResult re = new APIResult();
-		re.setCode(200);
-		re.setMessage("null");
-		re.setResult(new NutMap());
-		System.out.println(Json.toJson(re));
-	}
-	
+//	@Test
+//	public void test_json_output() {
+//		APIResult re = new APIResult();
+//		re.setCode(200);
+//		re.setMessage("null");
+//		re.setResult(new NutMap());
+//		System.out.println(Json.toJson(re));
+//	}
+//	
 //	@Test
 //	public void test_jdk8_param_name() throws IOException{
 //		Map<String, List<String>> names = MethodParamNamesScaner.getParamNames(YvrModule.class);
