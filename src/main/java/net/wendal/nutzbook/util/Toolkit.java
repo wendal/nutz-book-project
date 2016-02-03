@@ -113,7 +113,7 @@ public class Toolkit {
 	}
 
 	public static int uid() {
-		int uid = 0;
+		int uid = -1;
 		Object u;
 		try {
 			u = SecurityUtils.getSubject().getPrincipal();

@@ -15,11 +15,9 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.Context;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
@@ -27,6 +25,7 @@ import org.nutz.mvc.upload.TempFile;
 
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.openvpn.OpenvpnClient;
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean(create="init")
 @At("/openvpn")
@@ -46,7 +45,8 @@ public class OpenVpnCenter extends BaseModule {
 	@RequiresRoles("admin")
 	@RequiresUser
 	@Ok("ftl:/templates/admin2/openvpn/clients")
-	public Context index(@Attr(value="me", scope=Scope.SESSION)int userId){
+	public Context index(){
+		int userId = Toolkit.uid();
 		return Lang.context().set("me", dao.fetch(UserProfile.class, userId));
 	}
 	

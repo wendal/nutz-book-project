@@ -1,10 +1,5 @@
 package net.wendal.nutzbook.module;
 
-import net.wendal.nutzbook.annotation.SLog;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.service.UserService;
-
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.aop.interceptor.ioc.TransAop;
@@ -17,11 +12,16 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+
+import net.wendal.nutzbook.annotation.SLog;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean // 声明为Ioc容器中的一个Bean
 @At("/user") // 整个模块的路径前缀
@@ -67,7 +67,8 @@ public class UserModule extends BaseModule {
 	@At
 	@Aop(TransAop.READ_COMMITTED)
 	@SLog(tag="删除用户", msg="用户id[${args[0]}]")
-	public Object delete(@Param("id")int id, @Attr("me")int me) {
+	public Object delete(@Param("id")int id) {
+		int me = Toolkit.uid();
 		if (me == id) {
 			return new NutMap().setv("ok", false).setv("msg", "不能删除当前用户!!");
 		}

@@ -22,11 +22,9 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Filters;
@@ -44,13 +42,13 @@ import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.module.yvr.api.YvrApi;
 import net.wendal.nutzbook.mvc.AccessTokenFilter;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
 import net.wendal.nutzbook.util.Markdowns;
+import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 对外公开的HTTP API, 使用http://apidocjs.com/的进行注释生成
@@ -69,7 +67,7 @@ import net.wendal.nutzbook.util.Markdowns;
 @At("/yvr/api/v1")
 @Ok("json")
 @Fail("http:500")
-public class YvrApiModule extends BaseModule implements YvrApi {
+public class YvrApiModule extends BaseModule {
 	
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
@@ -329,9 +327,10 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@At("/topics")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId, @Param("tab")String tab) {
+	public Object add(@Param("..")Topic topic, @Param("tab")String tab) {
 		if (tab != null)
 			topic.setType(TopicType.valueOf(tab));
+		int userId = Toolkit.uid();
 		CResult re = yvrService.add(topic, userId);
 		if (re.isOk()) {
 			return _map("success", true, "topic_id", re.as(String.class));
@@ -360,7 +359,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@At("/topic/?/replies")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object addReply(String topicId, @Param("..") TopicReply reply, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object addReply(String topicId, @Param("..") TopicReply reply) {
+		int userId = Toolkit.uid();
 		CResult re =  yvrService.addReply(topicId, reply, userId);
 		if (re.isOk()) {
 			return _map("success", true, "reply_id", re.as(String.class));
@@ -385,7 +385,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@POST
 	@At("/reply/?/ups")
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object replyUp(String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object replyUp(String replyId) {
+		int userId = Toolkit.uid();
 		CResult re =  yvrService.replyUp(replyId, userId);
 		if (re.isOk()) {
 			return _map("success", true, "action", re.as(String.class));
@@ -408,7 +409,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@Filters(@By(type=AccessTokenFilter.class))
 	@GET
 	@At("/message/count")
-	public Object msgCount(@Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object msgCount() {
 		return _map("data", 0);
 	}
 
@@ -436,7 +437,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@Filters(@By(type=AccessTokenFilter.class))
 	@GET
 	@At("/messages")
-	public Object getMessages(@Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object getMessages() {
 		return _map("data", _map("has_read_messages", Collections.EMPTY_LIST, "hasnot_read_messages", Collections.EMPTY_LIST));
 	}
 
@@ -453,7 +454,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@POST
 	@At("/message/mark_all")
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object markAllMessage(@Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object markAllMessage() {
 		return _map("success", true);
 	}
 	/**
@@ -473,7 +474,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@At("/images")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object images(@Param("file")TempFile tmp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws Exception {
+	public Object images(@Param("file")TempFile tmp) throws Exception {
+		int userId = Toolkit.uid();
 		return yvrService.upload(tmp, userId);
 	}
 

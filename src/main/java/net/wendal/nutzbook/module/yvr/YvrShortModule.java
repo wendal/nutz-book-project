@@ -14,12 +14,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.module.BaseModule;
-
 import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -31,17 +25,22 @@ import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.View;
 import org.nutz.mvc.adaptor.VoidAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.ServerRedirectView;
 import org.nutz.repo.Base64;
+
+import net.wendal.nutzbook.bean.CResult;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 取代原nutz.cn的短地址服务
@@ -83,7 +82,7 @@ public class YvrShortModule extends BaseModule {
 
 	@At("/api/create/txt")
 	@AdaptBy(type = VoidAdaptor.class)
-	public Object createTxt(HttpServletRequest req, @Attr(scope = Scope.SESSION, value = "me") int userId) throws IOException {
+	public Object createTxt(HttpServletRequest req) throws IOException {
 		int fileSize = req.getContentLength();
 		if (fileSize < 1)
 			return Helper._fail("err.data_emtry");
@@ -101,6 +100,7 @@ public class YvrShortModule extends BaseModule {
 			topic.setContent(String.format("[查看完整内容](%s/s/c/%s)\r\n\r\n```%s```",req.getContextPath(), code, cnt));
 			topic.setType(TopicType.shortit);
 			try {
+				int userId = Toolkit.uid();
 				CResult resp = yvrService.add(topic, userId > 0 ? userId : dao.fetch(User.class, "guest").getId());
 				if (resp.isOk()) {
 					String topicId = resp.as(String.class);

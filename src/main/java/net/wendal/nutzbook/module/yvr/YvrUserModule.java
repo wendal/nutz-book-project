@@ -8,16 +8,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import net.wendal.nutzbook.bean.OAuthUser;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
@@ -34,9 +24,7 @@ import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
@@ -45,6 +33,15 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.util.Toolkit;
 
 @At("/yvr/u")
 @IocBean(create="init")
@@ -63,7 +60,7 @@ public class YvrUserModule extends BaseModule {
 	
 	@At("/?")
 	@Ok("beetl:yvr/user/user_index.btl")
-	public Object userHome(String userName, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object userHome(String userName) {
 		User user = dao.fetch(User.class, userName);
 		if (user == null)
 			return HttpStatusView.HTTP_404;
@@ -74,7 +71,7 @@ public class YvrUserModule extends BaseModule {
 		profile.setLoginname(userName);
 		if (Strings.isBlank(profile.getDescription()))
 			profile.setDescription(null);
-		
+		int userId = Toolkit.uid();
 		re.put("c_user", profile);
 		if (userId > 0) {
 			UserProfile me = fetch_userprofile(userId);
@@ -94,7 +91,8 @@ public class YvrUserModule extends BaseModule {
 	@POST
 	@RequiresUser
 	@At("/me/reset/token")
-	public void resetAccessToken(@Attr(scope = Scope.SESSION, value = "me")int userId) {
+	public void resetAccessToken() {
+		int userId = Toolkit.uid();
 		User user = dao.fetch(User.class, userId);
 		if (user != null)
 			yvrService.resetAccessToken(user.getName());
@@ -242,7 +240,8 @@ public class YvrUserModule extends BaseModule {
 	@At("/description")
 	@Ok("json")
 	@POST
-	public Object updateUserDt(@Attr(scope = Scope.SESSION, value = "me") int userId,@Param("update_value")String original_value,@Param("update_value")String update_value){
+	public Object updateUserDt(@Param("update_value")String original_value,@Param("update_value")String update_value){
+		int userId = Toolkit.uid();
 		UserProfile profile = fetch_userprofile(userId);
 		if (profile != null) {
 			profile.setDescription(update_value);
@@ -255,10 +254,7 @@ public class YvrUserModule extends BaseModule {
 	
 	@At("/oauth/github")
 	@Ok("->:/oauth/github")
-	public void oauth(String type, HttpServletRequest req, HttpSession session){
-		String url = req.getHeader("Rerefer");
-		if (url == null)
-			url = "/yvr/list";
+	public void oauthGithub(){
 	}
 
 	@At
