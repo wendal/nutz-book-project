@@ -1,7 +1,6 @@
 package net.wendal.nutzbook.module;
 
 import java.io.File;
-import java.io.FileInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -58,13 +57,13 @@ public class OpenVpnCenter extends BaseModule {
 	public void upload(@Param("file")TempFile tmp, @Param("platform")String platform) throws Exception {
 		if (tmp == null)
 			return;
-		if (tmp.getFile().length() == 0) {
-			tmp.getFile().delete();
+		if (tmp.getSize() == 0) {
+			tmp.delete();
 			return;
 		}
 		if (Strings.isBlank(platform))
 			platform = "win32";
-		TarArchiveInputStream ins = new TarArchiveInputStream(new FileInputStream(tmp.getFile()));
+		TarArchiveInputStream ins = new TarArchiveInputStream(tmp.getInputStream());
 		TarArchiveEntry en = null;
 		while (null != (en = ins.getNextTarEntry())) {
 			String name = en.getName();
@@ -82,7 +81,7 @@ public class OpenVpnCenter extends BaseModule {
 				dao.insert(cnf);
 			}
 		}
-		tmp.getFile().delete();
+		tmp.delete();
 		ins.close();
 	}
 	

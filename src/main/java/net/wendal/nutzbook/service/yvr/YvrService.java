@@ -351,18 +351,18 @@ public class YvrService implements RedisKey {
 		NutMap re = new NutMap();
 		if (userId < 1)
 			return re.setv("msg", "请先登陆!");
-		if (tmp == null || tmp.getFile().length() == 0) {
+		if (tmp == null || tmp.getSize() == 0) {
 			return re.setv("msg", "空文件");
 		}
-		if (tmp.getFile().length() > 5 * 1024 * 1024) {
+		if (tmp.getSize() > 5 * 1024 * 1024) {
 			return re.setv("msg", "文件太大了");
 		}
 		String id = R.UU32();
 		String path = "/" + id.substring(0, 2) + "/" + id.substring(2);
 		File f = new File(imageDir + path);
 		Files.createNewFile(f);
-		Files.copyFile(tmp.getFile(), f);
-		tmp.getFile().delete();
+		Files.write(f, tmp.getInputStream());
+		tmp.delete();
 		re.put("url", Mvcs.getServletContext().getContextPath()+"/yvr/upload" + path);
 		re.setv("success", true);
 		return re;

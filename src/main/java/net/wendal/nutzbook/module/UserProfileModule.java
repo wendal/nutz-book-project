@@ -115,7 +115,7 @@ public class UserProfileModule extends BaseModule {
 		} else {
 			UserProfile profile = get(userId);
 			try {
-				BufferedImage image = Images.read(tf.getFile());
+				BufferedImage image = Images.read(tf.getInputStream());
 				image = Images.zoomScale(image, 128, 128, Color.WHITE);
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				Images.writeJpeg(image, out, 0.8f);
