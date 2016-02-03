@@ -235,10 +235,12 @@ public class Toolkit {
 	
 	//----------------------------------------------------------------------------
 	// 通过定时任务更新
+	protected static String _today_yyyyMM;
 	protected static String _today_yyyyMMdd;
 	protected static String _today_yyyyMMddHH;
 	
 	public static void updateTodayString() {
+		_today_yyyyMM = new SimpleDateFormat("yyyyMM", Locale.CHINA).format(new Date());
 		_today_yyyyMMdd = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(new Date());
 		_today_yyyyMMddHH = new SimpleDateFormat("yyyyMMddHH", Locale.CHINA).format(new Date());
 	}
@@ -257,6 +259,11 @@ public class Toolkit {
 		if (_today_yyyyMMddHH == null)
 			updateTodayString();
 		return _today_yyyyMMddHH;
+	}
+	public static String today_yyyyMM() {
+		if (_today_yyyyMM == null)
+			updateTodayString();
+		return _today_yyyyMM;
 	}
 	//----------------------------------------------------------------------------
 }
