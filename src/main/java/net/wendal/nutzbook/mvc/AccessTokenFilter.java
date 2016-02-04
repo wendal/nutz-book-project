@@ -14,6 +14,7 @@ import org.nutz.mvc.View;
 
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
 
 /**
  * 通过请求参数中的accesstoken进行授权
@@ -64,7 +65,8 @@ public class AccessTokenFilter implements ActionFilter2 {
 		if (uid < 1) {
 			return BaseModule.HTTP_403;
 		}
-		SecurityUtils.getSubject().runAs(new SimplePrincipalCollection(uid, "nutzdao_realm"));
+		SecurityUtils.getSubject().login(new SimpleShiroToken(uid));
+		SecurityUtils.getSubject().getSession().setTimeout(60*1000);
 		return null;
 	}
 
