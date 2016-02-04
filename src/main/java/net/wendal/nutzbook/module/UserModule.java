@@ -1,5 +1,7 @@
 package net.wendal.nutzbook.module;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.aop.interceptor.ioc.TransAop;
@@ -11,16 +13,19 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
 import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
 import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean // 声明为Ioc容器中的一个Bean
@@ -131,5 +136,46 @@ public class UserModule extends BaseModule {
 	@Aop(TransAop.READ_COMMITTED)
 	public void error() {
 		throw new RuntimeException();
+	}
+	
+	@POST
+	@Ok("json")
+	@At
+	public Object login(@Param("username")String username, 
+					  @Param("password")String password,
+					  @Param("rememberMe")boolean rememberMe,
+					  @Param("captcha")String captcha) {
+		NutMap re = new NutMap().setv("ok", false);
+		// 看看有无填写验证码
+		if (Strings.isBlank(captcha)) {
+			return re.setv("msg", "必须填写验证码");
+		}
+		if (Strings.isBlank(username)) {
+			return re.setv("msg", "必须填写用户名");
+		}
+		if (Strings.isBlank(password)) {
+			return re.setv("msg", "必须填写密码");
+		}
+		// session是否有效
+		HttpSession session = Mvcs.getHttpSession(false);
+		if (session == null) {
+			return re.setv("msg", "session已过期");
+		}
+		// 比对验证码
+		String _captcha = (String) session.getAttribute(Toolkit.captcha_attr);
+		if (Strings.isBlank(_captcha) && !_captcha.equalsIgnoreCase(captcha)) {
+			return re.setv("msg", "验证码错误");
+		}
+		// 检查用户名密码
+		User user = dao.fetch(User.class, username);
+		if (user == null) {
+			return re.setv("msg", "用户不存在"); // TODO: 改成 用户名/密码不正确
+		}
+		// 比对密码
+		if (!userService.checkPassword(user, password)) {
+			return re.setv("msg", "密码错误");
+		}
+		Toolkit.doLogin(new SimpleShiroToken(user.getId()), user.getId());
+		return re.setv("ok", true);
 	}
 }

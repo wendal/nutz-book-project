@@ -3,11 +3,6 @@ package net.wendal.nutzbook.mvc;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.wendal.nutzbook.crossscreen.CrossScreenUserToken;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.yvr.YvrService;
-import net.wendal.nutzbook.util.Toolkit;
-
 import org.apache.shiro.SecurityUtils;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.lang.Lang;
@@ -17,6 +12,11 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
 import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
+
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
+import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 通过请求参数中的accesstoken进行授权
@@ -75,7 +75,7 @@ public class AccessTokenFilter implements ActionFilter {
 			return BaseModule.HTTP_403;
 		}
 		if (Toolkit.uid() < 1)
-			SecurityUtils.getSubject().login(new CrossScreenUserToken(uid));
+			SecurityUtils.getSubject().login(new SimpleShiroToken(uid));
 		session.setAttribute(NutShiro.SessionKey, uid);
 		session.setAttribute(NutShiro.SessionKey + "_at", at);
 		return null;

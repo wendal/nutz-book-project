@@ -266,4 +266,6 @@ public class Toolkit {
 		return _today_yyyyMM;
 	}
 	//----------------------------------------------------------------------------
+
+	public static byte[] csKEY = R.sg(24).next().getBytes();
 }

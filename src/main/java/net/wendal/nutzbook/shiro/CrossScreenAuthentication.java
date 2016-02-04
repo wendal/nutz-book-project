@@ -1,4 +1,4 @@
-package net.wendal.nutzbook.crossscreen;
+package net.wendal.nutzbook.shiro;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -15,6 +15,7 @@ import org.nutz.mvc.Mvcs;
 
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
 import net.wendal.nutzbook.util.Toolkit;
 
 /**
@@ -36,7 +37,7 @@ public class CrossScreenAuthentication extends FormAuthenticationFilter {
 		if ("GET".equals(req.getMethod()) && !Strings.isBlank(req.getParameter("token"))) {
 			String token = req.getParameter("token");
 			try {
-				token = Toolkit._3DES_decode(CrossScreen.csKEY, Toolkit.hexstr2bytearray(token));
+				token = Toolkit._3DES_decode(Toolkit.csKEY, Toolkit.hexstr2bytearray(token));
 				NutMap map = Json.fromJson(NutMap.class, token);
 				Long t = map.getLong("t", -1);
 				if (System.currentTimeMillis() - t > timeout*1000) {
@@ -46,7 +47,7 @@ public class CrossScreenAuthentication extends FormAuthenticationFilter {
 				Integer uid = (Integer) map.get("uid");
 				if (uid != null) {
 					// 有登陆用户
-					Toolkit.doLogin(new CrossScreenUserToken(uid), uid);
+					Toolkit.doLogin(new SimpleShiroToken(uid), uid);
 					if (sysLogService == null) {
 						try {
 							sysLogService = Mvcs.ctx().getDefaultIoc().get(SysLogService.class);

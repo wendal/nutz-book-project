@@ -59,6 +59,11 @@ public class UserService extends IdNameEntityService<User> {
 		user.setUpdateTime(new Date());
 		dao().update(user, "^(password|salt|updateTime)$");
 	}
+	
+	public boolean checkPassword(User user, String password) {
+		String face = new Sha256Hash(password, user.getSalt()).toHex();
+		return face.equalsIgnoreCase(user.getPassword());
+	}
 
 	public Pagination getListByPager(int pageNumber) {
 		Pager pager = dao().createPager(pageNumber, 20);

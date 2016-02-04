@@ -25,7 +25,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 
-import net.wendal.nutzbook.crossscreen.CrossScreen;
 import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean
@@ -56,7 +55,7 @@ public class CrossScreenModule {
 		}
 		String json = Json.toJson(map, JsonFormat.compact());
 		log.debug("token json = " + json);
-		String token = Toolkit._3DES_encode(CrossScreen.csKEY, json.getBytes());
+		String token = Toolkit._3DES_encode(Toolkit.csKEY, json.getBytes());
 		String tmp = req.getRequestURL().toString();
 		String pass = tmp.substring(0, tmp.length() - 2) + "pass";
 		String URL = pass  + "?token=" +token;

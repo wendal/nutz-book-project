@@ -1,15 +1,10 @@
 package net.wendal.nutzbook.shiro.realm;
 
-import net.wendal.nutzbook.bean.Permission;
-import net.wendal.nutzbook.bean.Role;
-import net.wendal.nutzbook.bean.User;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAccount;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -17,25 +12,15 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.ByteSource;
-import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.Mvcs;
 
-/**
- * 用NutDao来实现Shiro的Realm
- * <p/>
- * 在Web环境中通过Ioc来获取NutDao
- * 
- * @author wendal<wendal1985@gmail.com>
- *
- */
-@IocBean
-public class NutDaoRealm extends AuthorizingRealm {
+import net.wendal.nutzbook.bean.Permission;
+import net.wendal.nutzbook.bean.Role;
+import net.wendal.nutzbook.bean.User;
 
-	@Inject
+public class SimpleAuthorizingRealm extends AuthorizingRealm {
+	
 	protected Dao dao;
 
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -72,37 +57,37 @@ public class NutDaoRealm extends AuthorizingRealm {
 	}
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+		SimpleShiroToken upToken = (SimpleShiroToken) token;
 
-		User user = dao().fetch(User.class, Cnd.where("name", "=", upToken.getUsername()));
+		User user = dao().fetch(User.class, upToken.getUserId());
 		if (user == null)
 			return null;
 		if (user.isLocked())
-			throw new LockedAccountException("Account [" + upToken.getUsername() + "] is locked.");
-		SimpleAccount account = new SimpleAccount(user.getId(), user.getPassword(), getName());
-		account.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
-		return account;
+			throw new LockedAccountException("Account [" + user.getName() + "] is locked.");
+		return new SimpleAccount(user.getId(), user.getPassword(), getName());
+	}
+	
+	/**
+	 * 覆盖父类的验证,直接pass
+	 */
+	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
 	}
 
-	public NutDaoRealm() {
+	public SimpleAuthorizingRealm() {
 		this(null, null);
-		setAuthenticationTokenClass(UsernamePasswordToken.class);
 	}
 
-	public NutDaoRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
+	public SimpleAuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
 		super(cacheManager, matcher);
-		// setAuthenticationTokenClass(CaptchaUsernamePasswordToken.class);
-		setAuthenticationTokenClass(UsernamePasswordToken.class);
+		setAuthenticationTokenClass(SimpleShiroToken.class);
 	}
 
-	public NutDaoRealm(CacheManager cacheManager) {
+	public SimpleAuthorizingRealm(CacheManager cacheManager) {
 		this(cacheManager, null);
-		setAuthenticationTokenClass(UsernamePasswordToken.class);
 	}
 
-	public NutDaoRealm(CredentialsMatcher matcher) {
+	public SimpleAuthorizingRealm(CredentialsMatcher matcher) {
 		this(null, matcher);
-		setAuthenticationTokenClass(UsernamePasswordToken.class);
 	}
 
 	public Dao dao() {
@@ -116,4 +101,5 @@ public class NutDaoRealm extends AuthorizingRealm {
 	public void setDao(Dao dao) {
 		this.dao = dao;
 	}
+
 }
