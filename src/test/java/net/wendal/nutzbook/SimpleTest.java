@@ -10,10 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.beetl.core.BeetlKit;
@@ -32,15 +28,12 @@ import org.nutz.lang.Mirror;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.NutType;
 import org.nutz.mapl.Mapl;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.adaptor.ParamExtractor;
 import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
 
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
-import net.wendal.nutzbook.bean.qqbot.QQBotMessage;
-import net.wendal.nutzbook.bean.qqbot.QQBotRole;
 import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
@@ -156,21 +149,21 @@ public class SimpleTest extends TestBase {
 		System.out.println(sql);
 	}
 
-	@Test
-	public void test_eval_js() throws Exception {
-		QQBotMessage message = new QQBotMessage();
-		QQBotRole role = new QQBotRole();
-		role.executeParams = "";
-		role.executeBody = "return 1;";
-		ScriptEngineManager sem = new ScriptEngineManager();
-		ScriptEngine engine = sem.getEngineByExtension("js");
-		SimpleScriptContext ctxt = new SimpleScriptContext();
-		ctxt.setAttribute("ioc", Mvcs.getIoc(), ScriptContext.ENGINE_SCOPE);
-		ctxt.setAttribute("message", message, ScriptContext.ENGINE_SCOPE);
-		ctxt.setAttribute("role", role, ScriptContext.ENGINE_SCOPE);
-		Object result = engine.eval("function _qqbot(){"+ role.executeBody + "};_qqbot();", ctxt);
-		System.out.println(result);
-	}
+//	@Test
+//	public void test_eval_js() throws Exception {
+//		QQBotMessage message = new QQBotMessage();
+//		QQBotRole role = new QQBotRole();
+//		role.executeParams = "";
+//		role.executeBody = "return 1;";
+//		ScriptEngineManager sem = new ScriptEngineManager();
+//		ScriptEngine engine = sem.getEngineByExtension("js");
+//		SimpleScriptContext ctxt = new SimpleScriptContext();
+//		ctxt.setAttribute("ioc", Mvcs.getIoc(), ScriptContext.ENGINE_SCOPE);
+//		ctxt.setAttribute("message", message, ScriptContext.ENGINE_SCOPE);
+//		ctxt.setAttribute("role", role, ScriptContext.ENGINE_SCOPE);
+//		Object result = engine.eval("function _qqbot(){"+ role.executeBody + "};_qqbot();", ctxt);
+//		System.out.println(result);
+//	}
 
 	@Test
 	public void test_complex_prefix() throws Exception {
