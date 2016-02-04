@@ -1,29 +1,26 @@
 package net.wendal.nutzbook.mvc;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.shiro.SecurityUtils;
-import org.nutz.integration.shiro.NutShiro;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
-import org.nutz.mvc.ActionFilter;
+import org.nutz.mvc.ActionFilter2;
 import org.nutz.mvc.View;
 
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.yvr.YvrService;
-import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
-import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 通过请求参数中的accesstoken进行授权
  * @author wendal
  *
  */
-public class AccessTokenFilter implements ActionFilter {
+public class AccessTokenFilter implements ActionFilter2 {
 	
 	private static final Log log = Logs.get();
 	
@@ -63,22 +60,16 @@ public class AccessTokenFilter implements ActionFilter {
 		else if (Strings.isBlank(at)) { // TODO 移除这种兼容性,改成必须用nonce加密
 			return BaseModule.HTTP_403;
 		}
-		HttpSession session = req.getSession();
-		if (session.getAttribute(NutShiro.SessionKey + "_at") != null) {
-			String tmp = (String) session.getAttribute(NutShiro.SessionKey + "_at");
-			if (tmp.equals(at) && session.getAttribute(NutShiro.SessionKey) != null) {
-				return null;
-			}
-		}
 		int uid = yvrService.getUserByAccessToken(at);
 		if (uid < 1) {
 			return BaseModule.HTTP_403;
 		}
-		if (Toolkit.uid() < 1)
-			SecurityUtils.getSubject().login(new SimpleShiroToken(uid));
-		session.setAttribute(NutShiro.SessionKey, uid);
-		session.setAttribute(NutShiro.SessionKey + "_at", at);
+		SecurityUtils.getSubject().runAs(new SimplePrincipalCollection(uid, "nutzdao_realm"));
 		return null;
 	}
 
+	public void after(ActionContext ctx) {
+		if (SecurityUtils.getSubject().isRunAs())
+			SecurityUtils.getSubject().releaseRunAs();
+	}
 }
