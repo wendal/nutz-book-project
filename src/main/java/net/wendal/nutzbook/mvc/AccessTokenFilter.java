@@ -3,14 +3,15 @@ package net.wendal.nutzbook.mvc;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
-import org.nutz.mvc.ActionFilter2;
+import org.nutz.mvc.ActionFilter;
 import org.nutz.mvc.View;
+import org.nutz.mvc.impl.processor.AbstractProcessor;
 
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.yvr.YvrService;
@@ -21,7 +22,7 @@ import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
  * @author wendal
  *
  */
-public class AccessTokenFilter implements ActionFilter2 {
+public class AccessTokenFilter extends AbstractProcessor implements ActionFilter {
 	
 	private static final Log log = Logs.get();
 	
@@ -65,13 +66,17 @@ public class AccessTokenFilter implements ActionFilter2 {
 		if (uid < 1) {
 			return BaseModule.HTTP_403;
 		}
-		SecurityUtils.getSubject().login(new SimpleShiroToken(uid));
-		SecurityUtils.getSubject().getSession().setTimeout(60*1000);
+		SecurityUtils.getSubject().getSession().setAttribute("me", uid);
 		return null;
 	}
 
-	public void after(ActionContext ctx) {
-		if (SecurityUtils.getSubject().isRunAs())
-			SecurityUtils.getSubject().releaseRunAs();
+	public void process(ActionContext ac) throws Throwable {
+		Subject subject = SecurityUtils.getSubject();
+		Integer uid = (Integer) subject.getSession().getAttribute("me");
+		if (!subject.isAuthenticated())
+			subject.login(new SimpleShiroToken(uid));
+		doNext(ac);
+		if (!subject.isAuthenticated())
+			subject.logout();
 	}
 }
