@@ -354,7 +354,8 @@ public class YvrService implements RedisKey {
 		if (tmp == null || tmp.getSize() == 0) {
 			return re.setv("msg", "空文件");
 		}
-		if (tmp.getSize() > 5 * 1024 * 1024) {
+		if (tmp.getSize() > 10 * 1024 * 1024) {
+			tmp.delete();
 			return re.setv("msg", "文件太大了");
 		}
 		String id = R.UU32();

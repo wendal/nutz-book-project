@@ -87,11 +87,11 @@
             '<div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editorToolImageTitle" aria-hidden="true">',
                 '<div class="modal-header">',
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
-                    '<h3 id="editorToolImageTitle">图片</h3>',
+                    '<h3 id="editorToolImageTitle">图片/视频</h3>',
                 '</div>',
                 '<div class="modal-body">',
                     '<div class="upload-img">',
-                        '<div class="button">上传图片</div>',
+                        '<div class="button">上传</div>',
                         '<span class="tip">请不是单纯地上传代码截图!</span>',
                         '<div class="alert alert-error hide"></div>',
                     '</div>',
@@ -124,13 +124,13 @@
             paste: document.body,
             dnd: this.$upload[0],
             auto: true,
-            fileSingleSizeLimit: 2 * 1024 * 1024,
+            fileSingleSizeLimit: 10 * 1024 * 1024,
             //sendAsBinary: true,
-            // 只允许选择图片文件。
+            // 只允许选择图片文件和小视频
             accept: {
                 title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/*'
+                extensions: 'gif,jpg,jpeg,bmp,png,mp4,webm,ogg',
+                mimeTypes: 'image/*,video/*'
             }
         });
 
@@ -153,7 +153,12 @@
                 self.$win.modal('hide');
                 var fname = file.name;
                 fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-                self.editor.push(' !['+ fname +']('+ res.url +')');
+                var _fext = file.name.substring(file.name.lastIndexOf("."));
+                if (_fext.endsWith(".mp4") || _fext.endsWith(".webm") || _fext.endsWith(".ogg")) {
+                	self.editor.push(' ['+ fname +']('+ res.url +'?type=' + _fext + ")");
+                } else {
+                	self.editor.push(' !['+ fname +']('+ res.url +'?type='+ _fext + ')');
+                }
             }
             else{
                 self.removeFile();
@@ -171,7 +176,7 @@
             switch(type){
                 case 'Q_EXCEED_SIZE_LIMIT':
                 case 'F_EXCEED_SIZE':
-                    self.showError('文件太大了, 不能超过2M');
+                    self.showError('文件太大了, 不能超过10M');
                     break;
                 case 'Q_TYPE_DENIED':
                     self.showError('只能上传图片');
