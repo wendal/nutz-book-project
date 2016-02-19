@@ -30,12 +30,10 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && cd /tmp2 && ls -l  && cd nutz-book-project-master \
   && mvn clean package \
   && mkdir -p /usr/local/tomcat/webapps/ROOT \
-  && cp -r target/nutzbook-2.6.0/* /usr/local/tomcat/webapps/ROOT/ \
+  && cp -r target/nutzbook-2.7.0/* /usr/local/tomcat/webapps/ROOT/ \
   && find /usr/local/tomcat/webapps/ROOT/ \
   && cd / \
   && rm -fr /tmp2 usr/share/maven /usr/bin/mvn ~/.m2
-
-RUN cd / && wget http://115.28.27.32/ngrok && chmod a+x /ngrok
 
 WORKDIR $CATALINA_HOME
 

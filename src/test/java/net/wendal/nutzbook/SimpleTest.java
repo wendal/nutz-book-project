@@ -16,6 +16,13 @@ import org.beetl.core.BeetlKit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nutz.aop.ClassAgent;
+import org.nutz.aop.ClassDefiner;
+import org.nutz.aop.DefaultClassDefiner;
+import org.nutz.aop.InterceptorChain;
+import org.nutz.aop.MethodInterceptor;
+import org.nutz.aop.asm.AsmClassAgent;
+import org.nutz.aop.matcher.RegexMethodMatcher;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -34,6 +41,7 @@ import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
 
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
+import net.wendal.nutzbook.service.EmailServiceImpl;
 import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
@@ -220,5 +228,45 @@ public class SimpleTest extends TestBase {
 	public void test_cast_short_array() {
 		String strs = "4, 7, 0, 303, 350, 0, 303, 350, 0, 303, 350";
 		System.out.println(Json.toJson(Json.fromJson(short[].class, "[" + strs + "]")));
+	}
+	
+	@Test
+	public void test_sql_in() {
+		Sql sql = Sqls.create("select * from t_user where nm in (@ids)");
+		sql.setParam("ids", new String[]{"wendal", "zozoh", "pangwu86"});
+		System.out.println(sql);
+		System.out.println(sql.toPreparedStatement());
+	}
+	
+	@Test
+	public void test_sql_in2() {
+		Sql sql = Sqls.create("select * from t_user where nm in ($ids)");
+		StringBuilder sb = new StringBuilder();
+		String[] ids = new String[]{"wendal", "zozoh"};
+		for (String id : ids) {
+			sb.append("\"").append(Sqls.escapeFieldValue(id)).append("\"").append(",");
+		}
+		sql.setVar("ids", sb.substring(0, sb.length()-1));
+		System.out.println(sql);
+		System.out.println(sql.toPreparedStatement());
+	}
+	
+	@Test
+	public void aop_without_ioc() throws Exception {
+		Class<EmailServiceImpl> type = EmailServiceImpl.class;
+		ClassDefiner cd = DefaultClassDefiner.defaultOne();
+		ClassAgent agent = new AsmClassAgent();
+        agent.addInterceptor(new RegexMethodMatcher(".+"),
+                                 new MethodInterceptor() {
+									public void filter(InterceptorChain chain) throws Throwable {
+										System.out.println("before");
+										chain.doChain();
+										System.out.println("after");
+									}
+								});
+        Class<EmailServiceImpl> klass = agent.define(cd, type);
+        EmailServiceImpl es = klass.newInstance();
+        
+        es.send(null, null, null);
 	}
 }

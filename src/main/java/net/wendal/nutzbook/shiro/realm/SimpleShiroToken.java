@@ -7,14 +7,14 @@ public class SimpleShiroToken implements HostAuthenticationToken, RememberMeAuth
 
 	private static final long serialVersionUID = -1L;
 
-	protected int userId;
+	protected Object principal;
 	
 	protected boolean rememberMe;
 	
 	protected String host;
 	
 	public Object getPrincipal() {
-		return userId;
+		return principal;
 	}
 
 	public Object getCredentials() {
@@ -37,19 +37,15 @@ public class SimpleShiroToken implements HostAuthenticationToken, RememberMeAuth
 		this.rememberMe = rememberMe;
 	}
 	
-	public int getUserId() {
-		return userId;
-	}
-	
 	public SimpleShiroToken() {
 	}
 
-	public SimpleShiroToken(int userId) {
-		this.userId = userId;
+	public SimpleShiroToken(Object principal) {
+		this.principal = principal;
 	}
 
-	public SimpleShiroToken(int userId, boolean rememberMe, String host) {
-		this.userId = userId;
+	public SimpleShiroToken(Object principal, boolean rememberMe, String host) {
+		this.principal = principal;
 		this.rememberMe = rememberMe;
 		this.host = host;
 	}

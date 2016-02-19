@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.55-SNAPSHOT</version>
+			<version>1.r.55</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -366,5 +366,5 @@
 			<version>1.4.190</version>
 		</dependency>
 	</dependencies>
-	<version>2.6.0</version>
+	<version>2.7.0</version>
 </project>
