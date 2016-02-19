@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="referrer" content="always"/>
   <meta property="qc:admins" content="345615513542636" />
+  <meta name="apple-itunes-app" content="app-id=1082195150">
 <link rel="dns-prefetch" href="//hm.baidu.com"/>
 <link rel="dns-prefetch" href="//s95.cnzz.com"/>
 <%if (cdnbase != null && cdnbase != ""){%>
