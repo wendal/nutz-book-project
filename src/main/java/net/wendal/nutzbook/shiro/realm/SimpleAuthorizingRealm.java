@@ -59,7 +59,7 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		SimpleShiroToken upToken = (SimpleShiroToken) token;
 
-		User user = dao().fetch(User.class, (Integer)upToken.getPrincipal());
+		User user = dao().fetch(User.class, ((Integer)upToken.getPrincipal()).longValue());
 		if (user == null)
 			return null;
 		if (user.isLocked())
