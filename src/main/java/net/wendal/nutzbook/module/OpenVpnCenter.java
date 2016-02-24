@@ -104,6 +104,9 @@ public class OpenVpnCenter extends BaseModule {
 				log.error("ALL OpenVPN client config is USED!!");
 				return HTTP_502;
 			}
+			cnf.setMacid(macid);
+			cnf.setStatus(1);
+			dao.update(cnf, "macid|status");
 			return _download(cnf.getFile());
 		}
 		log.debug("bad key=" + key);
