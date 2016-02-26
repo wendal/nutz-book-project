@@ -135,22 +135,6 @@ public class MainSetup implements Setup {
 				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
 			}
 		}
-		
-//		ActionInvoker invoker = new ActionInvoker();
-//		ActionInfo ai = new ActionInfo();
-//		ai.setModuleObj(this);
-//		try {
-//			ai.setMethod(getClass().getMethod("hi", String.class));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		ai.setInputEncoding(Encoding.UTF8);
-//		ai.setOutputEncoding(Encoding.UTF8);
-//		ai.setOkView("raw");
-//		ai.setFailView("http:500");
-//		ai.setViewMakers(nc.getViewMakers());
-//		invoker.setDefaultChain(nc.getActionChainMaker().eval(nc, ai));
-//		nc.getUrlMapping().add("/jdk8/test", invoker);
 	}
 
 	public void destroy(NutConfig conf) {
@@ -166,8 +150,4 @@ public class MainSetup implements Setup {
 		} catch (Exception e) {
 		}
 	}
-	
-//	public String hi(String name) {
-//		return "hi, " + name;
-//	}
 }
