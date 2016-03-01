@@ -10,7 +10,7 @@ Nutz社区, 一个有爱的社区 ^_^
 
 Android官方客户端 下载地址 http://fir.im/nutzcn 当前由[@wendal](http://wendal.net)维护
 
-iOS客户端尚未发布到APP Store
+iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id1082195150) [@tuwei1992](https://github.com/TuWei1992/NutzCommunity)
 
 源码地址(2.x) https://github.com/wendal/nutzcn-ionic
 源码地址(3.x) https://github.com/wendal/NutzCN-Material-Design
