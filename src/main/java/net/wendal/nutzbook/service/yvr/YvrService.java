@@ -147,7 +147,7 @@ public class YvrService implements RedisKey {
 		if (userId < 1) {
 			return _fail("请先登录");
 		}
-		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 100 || topic.getTitle().length() < 5) {
+		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 1024 || topic.getTitle().length() < 5) {
 			return _fail("标题长度不合法");
 		}
 		if (Strings.isBlank(topic.getContent())) {
