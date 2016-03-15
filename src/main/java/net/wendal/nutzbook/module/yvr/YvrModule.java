@@ -124,7 +124,7 @@ public class YvrModule extends BaseModule {
 		int userId = Toolkit.uid();
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		String zkey = RKEY_TOPIC_UPDATE + (type == null ? "all" : type);
-		return _query_topic_by_zset(zkey, pager, userId, (type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, true, "list/" + (type == null ? "all" : type));
+		return _query_topic_by_zset(zkey, pager, userId, (type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, pager.getPageNumber() == 1, "list/" + (type == null ? "all" : type));
 	}
 	
 	@At({ "/list/u/?/?", "/list/u/?/?/?" })
