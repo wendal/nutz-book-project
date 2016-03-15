@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -112,8 +113,8 @@ public class UserProfileModule extends BaseModule {
 			msg = "空文件";
 		} else {
 			UserProfile profile = get();
-			try {
-				BufferedImage image = Images.read(tf.getInputStream());
+			try (InputStream ins = tf.getInputStream()) {
+				BufferedImage image = Images.read(ins);
 				image = Images.zoomScale(image, 128, 128, Color.WHITE);
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				Images.writeJpeg(image, out, 0.8f);
