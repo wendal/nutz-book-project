@@ -32,6 +32,7 @@ import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Markdowns;
 
 /**
@@ -135,6 +136,8 @@ public class MainSetup implements Setup {
 				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
 			}
 		}
+		
+		ioc.get(YvrService.class).updateTopicTypeCount();
 	}
 
 	public void destroy(NutConfig conf) {

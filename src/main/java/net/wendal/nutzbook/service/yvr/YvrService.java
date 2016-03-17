@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -195,6 +196,7 @@ public class YvrService implements RedisKey {
 						topic.getTitle(),
 						PushService.PUSH_TYPE_REPLY);
 		}
+		updateTopicTypeCount();
 		return _ok(topic.getId());
 	}
 
@@ -206,9 +208,6 @@ public class YvrService implements RedisKey {
 			return _fail("内容不能为空");
 		}
 		final String cnt = reply.getContent().trim();
-		if (cnt.length() < 2 || cnt.length() > 10000) {
-			return _fail("内容太长或太短了");
-		}
 		final Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
 		if (topic == null) {
 			return _fail("主题不存在");
@@ -288,6 +287,7 @@ public class YvrService implements RedisKey {
 		}
 	}
 	
+	@Async
 	protected void pushUser(int userId, String alert, String topic_id, String post_user, String topic_title, int type) {
 		Map<String, String> extras = new HashMap<String, String>();
 		extras.put("topic_id", topic_id);
@@ -489,6 +489,14 @@ public class YvrService implements RedisKey {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	@Async
+	@Aop("redis")
+	public void updateTopicTypeCount() {
+		for (TopicType tt : TopicType.values()) {
+			tt.count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 		}
 	}
 }
