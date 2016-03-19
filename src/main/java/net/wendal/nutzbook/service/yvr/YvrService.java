@@ -212,6 +212,9 @@ public class YvrService implements RedisKey {
 		if (topic == null) {
 			return _fail("主题不存在");
 		}
+		if (topic.isLock()) {
+			return _fail("该帖子已经锁定,不能回复");
+		}
 		reply.setTopicId(topicId);
 		reply.setUserId(userId);
 		reply.setContent(Toolkit.filteContent(reply.getContent()));
