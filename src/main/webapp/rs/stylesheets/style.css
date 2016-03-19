@@ -1020,7 +1020,7 @@ textarea.editor {
 }
 .reply .CodeMirror,
 .reply2_area .CodeMirror {
-  height: 160px;
+  height: 360px;
 }
 .reply .CodeMirror:-webkit-full-screen,
 .reply2_area .CodeMirror:-webkit-full-screen {

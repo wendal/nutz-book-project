@@ -34,7 +34,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
 
             <div class='markdown_editor in_editor'>
               <div class='markdown_in_editor'>
-                <textarea class='editor' name='content' rows='20' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
+                <textarea class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
 
                 <div class='editor_buttons'>
                   <input id="topic_submit" type="submit" class='span-primary submit_btn' data-loading-text="提交中" value="提交"

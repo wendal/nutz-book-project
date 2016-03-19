@@ -26,6 +26,46 @@
     };
 
     var $body = $('body');
+    
+    // 添加code粘贴
+    var ToolCode = function(){
+        var self = this;
+        this.$win = $([
+            '<div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editorToolImageTitle" aria-hidden="true">',
+                '<div class="modal-header">',
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
+                    '<h3 id="editorToolImageTitle">添加连接</h3>',
+                '</div>',
+                '<div class="modal-body">',
+                    '<form class="upload-img">',
+                        '<textarea name="code" value="" rows="10" cols="300" placeholder="贴代码" style="height: auto;width: 100%;"></textarea>',
+                    '</form>',
+                '</div>',
+                '<div class="modal-footer">',
+                    '<button class="btn btn-primary" role="save">确定</button>',
+                '</div>',
+            '</div>'
+        ].join('')).appendTo($body);
+
+        this.$win.on('click', '[role=save]', function(){
+            self.$win.find('form').submit();
+        }).on('submit', 'form', function(){
+            var $el = $(this);
+            var code = $el.find('[name=code]').val();
+            
+            self.$win.modal('hide');
+            self.editor.push('```\n'+ code +'\n```');
+
+            $el.find('[name=code]').val('');
+            return false;
+        });
+    };
+
+    ToolCode.prototype.bind = function(editor){
+        this.editor = editor;
+        this.$win.modal('show');
+    };
+    
 
     //添加连接工具
     var ToolLink = function(){
@@ -179,7 +219,7 @@
                     self.showError('文件太大了, 不能超过10M');
                     break;
                 case 'Q_TYPE_DENIED':
-                    self.showError('只能上传图片');
+                    self.showError('只能上传图片/视频');
                     break;
                 default:
                     self.showError('发生未知错误');
@@ -228,6 +268,7 @@
 
     var toolImage = new ToolImage();
     var toolLink = new ToolLink();
+    var toolCode = new ToolCode();
 
     replaceTool('image', function(editor){
         toolImage.bind(editor);
@@ -236,7 +277,7 @@
         toolLink.bind(editor);
     });
     replaceTool('code', function(editor){
-    	editor.push('\r\n```\r\n这里贴代码\r\n```\r\n');
+    	toolCode.bind(editor);
     });
 
     //当编辑器取得焦点时，绑定 toolImage；
