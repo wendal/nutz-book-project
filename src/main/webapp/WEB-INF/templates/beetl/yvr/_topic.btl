@@ -116,7 +116,9 @@ layout("_layout.btl",{}){
       <span class='col_fade'>添加回复</span>
     </div>
     <div class='inner reply'>
-    <% if (null != obj.current_user!){ %>
+    <% if (obj.topic.lock) {%>
+    	<span class='col_fade'>该帖子已被锁定,不能回复.</span>
+    <% } else if (null != obj.current_user!){ %>
       <form id='reply_form' action='#'>
 
         <div class='markdown_editor in_editor'>
