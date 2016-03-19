@@ -57,6 +57,25 @@
     <div class='header'>
       <span class='col_fade'>最近创建的话题</span>
     </div>
+    <div>
+    	<div id="cal-heatmap"></div>
+    	<script type="text/javascript">
+    		$(function(){
+    			var cal = new CalHeatMap();
+    			cal.init({
+					//itemSelector: "cal-heatmap",
+					domain: "month",
+					subDomain: "day",
+					data : "${ctxPath}/analysis/user/topic/${obj.c_user.userId}?start={{d:start}}&stop={{d:end}}",
+					start: new Date(2015, 9),
+					cellSize: 15,
+					range: 12,
+					domainLabelFormat: "%m-%Y"
+					//legend: [20, 40, 60, 80]
+				});
+    		});
+		</script>
+    </div>
     <% if ( null != obj.recent_topics ) { %>
     <% layout("../list.btl", {"topics":obj.recent_topics}){}; %>
     <div class='cell more'>
