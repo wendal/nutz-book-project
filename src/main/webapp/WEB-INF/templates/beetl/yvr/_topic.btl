@@ -50,6 +50,9 @@ layout("_layout.btl",{}){
         <span>
           <a id="copy_link_btn" href="#" class="zclip" title="复制标题和地址" data-intro="可以复制标题和地址">复制</a>
         </span>
+        <span>
+          <a id="copy_link_btn" href="#" class="zclip" title="跨设备免登陆.注意,不是给手机客户端用的" data-intro="手机扫描后可免登陆" onclick="cs_qrcode();return false; ">跨屏二维码</a>
+        </span>
         
         <!-- 有点丑,先禁用了 -->
           <% if ( 1 != 1) {%>
