@@ -12,7 +12,7 @@
       <div class='user_big_avatar' id="user_index_avatar">
         <img src="${cdnbase}${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="点击修改头像"/>
       </div>
-      <a class='dark' id="user_index_nickname"> ${obj.c_user.nickname}</a>
+      <a class='dark' id="user_index_nickname"> ${obj.c_user.nickname, escape}</a>
       <div class='user_profile'>
         <ul class='unstyled'>
           <span class='big'>${obj.c_user.score}</span> 积分

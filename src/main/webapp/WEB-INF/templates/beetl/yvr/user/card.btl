@@ -5,7 +5,7 @@
       <img src="${cdnbase}${ctxPath}/yvr/u/${user.loginname}/avatar" title="${user.loginname}"/>
     </a>
     <span class='user_nickname'>
-    	<a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.nickname}(${user.loginname})</a>
+    	<a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.nickname, escape}(${user.loginname})</a>
     </span>
 
     <div class='board clearfix'>
