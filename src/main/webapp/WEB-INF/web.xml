@@ -74,7 +74,7 @@
 		<location>/WEB-INF/jsp/500.jsp</location>
 	</error-page>
 	<session-config>
-		<!-- 一年 -->
-		<session-timeout>946080000</session-timeout>
+		<!-- 新版jetty不支持超长timeout了 -->
+		<session-timeout>35791394</session-timeout>
 	</session-config>
 </web-app>
