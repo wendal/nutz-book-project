@@ -16,6 +16,7 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
@@ -138,6 +139,8 @@ public class MainSetup implements Setup {
 		}
 		
 		ioc.get(YvrService.class).updateTopicTypeCount();
+		
+		Mvcs.disableFastClassInvoker = false;
 	}
 
 	public void destroy(NutConfig conf) {
