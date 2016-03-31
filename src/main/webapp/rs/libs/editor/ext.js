@@ -34,7 +34,7 @@
             '<div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editorToolImageTitle" aria-hidden="true">',
                 '<div class="modal-header">',
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
-                    '<h3 id="editorToolImageTitle">添加连接</h3>',
+                    '<h3 id="editorToolImageTitle">添加代码</h3>',
                 '</div>',
                 '<div class="modal-body">',
                     '<form class="upload-img">',
@@ -54,7 +54,7 @@
             var code = $el.find('[name=code]').val();
             
             self.$win.modal('hide');
-            self.editor.push('```\n'+ code +'\n```');
+            self.editor.push('\r\n\r\n```\n'+ code +'\n```\r\n');
 
             $el.find('[name=code]').val('');
             return false;
