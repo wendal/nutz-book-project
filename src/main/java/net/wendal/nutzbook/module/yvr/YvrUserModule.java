@@ -18,18 +18,22 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.meta.Email;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
@@ -237,19 +241,42 @@ public class YvrUserModule extends BaseModule {
 		return ajaxOk("发送邮件失败");
 	}
 	
-	@At("/description")
-	@Ok("json")
+	@AdaptBy(type = WhaleAdaptor.class)
+	@At("/profile/update/?")
+	@Ok("raw")
 	@POST
-	public Object updateUserDt(@Param("update_value")String original_value,@Param("update_value")String update_value){
+	public Object updateUserDt(String field, 
+	                           @Param("update_value")String original_value,
+	                           @Param("update_value")String update_value,
+	                           @Param("file") TempFile tmp) throws IOException {
 		int userId = Toolkit.uid();
 		UserProfile profile = fetch_userprofile(userId);
-		if (profile != null) {
-			profile.setDescription(update_value);
-			dao.update(profile, "description");
-		}else{
-			return original_value;
+		if (profile == null) {
+		    return original_value;
 		}
-		return profile.getDescription();
+		switch (field) {
+        case "description":
+            profile.setDescription(update_value);
+            dao.update(profile, "description");
+            return profile.getDescription();
+        case "nickname":
+            profile.setNickname(update_value);
+            dao.update(profile, "nickname");
+            return profile.getNickname();
+        case "avatar":
+            if (tmp == null)
+                return "{'ok':false}";
+            if (tmp.getSize() > 1024*1024)
+                return "{'ok':false}";
+            byte[] avatar = Streams.readBytesAndClose(tmp.getInputStream());
+            profile.setAvatar(avatar);
+            dao.update(profile, "avatar");
+            avatarCache.remove(profile.getLoginname());
+            return "{'ok':true}";
+        default:
+            break;
+        }
+		return original_value;
 	}
 	
 	@At("/oauth/github")
