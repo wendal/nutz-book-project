@@ -85,8 +85,31 @@ layout("_layout.btl",{}){
       		无
       	<%}%>
       </div>
-      <% if (null != obj.current_user!) { %>
+      <% if (shiro.hasPermit("topic:update")) { %>
       <div id="manage_topic">
+         <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.top}, 'top');">
+            <% if (obj.topic.top) { %>
+              <i class="fa fa-lg fa-star-o" title='取消置顶'></i>
+            <% } else { %>
+              <i class="fa fa-lg fa-star" title='置顶'/></i>
+            <% } %>
+          </a>
+          
+          <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.good}, 'good');">
+            <% if (obj.topic.good) { %>
+              <i class="fa fa-lg fa-heart-o" title="取消精华"></i>
+            <% } else { %>
+              <i class="fa fa-lg fa-heart" title="加精华"></i>
+            <% } %>
+          </a>
+
+          <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.lock}, 'lock');">
+            <% if (obj.topic.lock) { %>
+              <i class="fa fa-lg fa-unlock" title='取消锁定'></i>
+            <% } else { %>
+              <i class="fa fa-lg fa-lock" title='锁定(不可再回复)'/></i>
+            <% } %>
+          </a>
       </div>
       <% } %>
     </div>
@@ -553,4 +576,20 @@ $(function() {
 		}
 	});
 });
+
+	
+	
+	function topic_update(tid, val, tp) {
+		var param = {id:tid, "opt":tp};
+		param[tp] = val;
+		$.ajax({
+			method:"POST",
+			url : "${base}/yvr/admin/update",
+			data : param,
+			dataType : "json",
+			success : function(data) {
+				location.reload();
+			}
+		});
+	}
 </script>
