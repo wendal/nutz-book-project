@@ -137,7 +137,7 @@ public class YvrApiModule extends BaseModule {
 			topics = redisDao.queryByZset(Topic.class, RKEY_TOPIC_TAG_UPDATE + type, pager);
 		} else if (!Strings.isBlank(search)) {
 			try {
-				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), false);
+				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), false, 30);
 				for (LuceneSearchResult result : results) {
 					Topic topic = dao.fetch(Topic.class, result.getId());
 					if (topic == null)

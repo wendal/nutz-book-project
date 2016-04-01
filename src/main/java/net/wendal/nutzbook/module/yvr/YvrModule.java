@@ -41,6 +41,8 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.ServerRedirectView;
+import org.nutz.mvc.view.UTF8JsonView;
+import org.nutz.mvc.view.ViewWrapper;
 
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
@@ -325,11 +327,11 @@ public class YvrModule extends BaseModule {
 	@At
 	@Ok("beetl:/yvr/index.btl")
 	@Aop("redis")
-	public Object search(@Param("q") String keys) throws Exception {
-		if (Strings.isBlank(keys))
+	public Object search(@Param("q") String keys, @Param("format")String format) throws Exception {
+	    if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
-		List<LuceneSearchResult> results = topicSearchService.search(keys, true);
-		List<Topic> list = new ArrayList<Topic>();
+		List<LuceneSearchResult> results = topicSearchService.search(keys, true, "json".equals(format) ? 5 : 30);
+        List<Topic> list = new ArrayList<Topic>();
 		for (LuceneSearchResult result : results) {
 			Topic topic = dao.fetch(Topic.class, result.getId());
 			if (topic == null)
@@ -337,6 +339,9 @@ public class YvrModule extends BaseModule {
 			topic.setTitle(result.getResult());
 			list.add(topic);
 		}
+        if ("json".equals(format)) {
+            return new ViewWrapper(new UTF8JsonView(), new NutMap().setv("suggestions", list));
+        }
 		Pager pager = dao.createPager(1, 30);
 		pager.setRecordCount(list.size());
 		int userId = Toolkit.uid();

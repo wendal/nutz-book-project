@@ -54,7 +54,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
 </div>
 <script src="${cdnbase}${base}/rs/libs/editor/ext.js?v=5"></script>
 <script>
-  (function () {
+  $(function () {
     var editor = new Editor();
     editor.render($('.editor')[0]);
     $('#create_topic_form').on('submit', function (e) {
@@ -76,6 +76,25 @@ layout("_layout.btl",{title:'添加新帖子'}){
     	});
     	return false;
     });
-  })();
+    $('#title').autocomplete({
+        deferRequestBy : 200,
+    	paramName: 'q',
+    	params : {"format":"json"},
+    	serviceUrl: '${base}/yvr/search',
+    	onSelect: function (suggestion) {
+        	window.open("${base}/yvr/t/" + suggestion.data);
+    	},
+    	dataType : "json",
+    	transformResult: function(response) {
+    		if (console)
+    	    	console.warn(response);
+        	return {
+            	suggestions: $.map(response.suggestions, function(dataItem) {
+                	return { value: dataItem.title, data: dataItem.id };
+            	})
+        	};
+    	}
+	});
+  });
 </script>
 <%} %>

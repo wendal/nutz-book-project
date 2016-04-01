@@ -118,7 +118,7 @@ public class TopicSearchService {
 		luceneIndex.writer.commit();
 	}
 
-	public List<LuceneSearchResult> search(String keyword, boolean highlight) throws IOException, ParseException {
+	public List<LuceneSearchResult> search(String keyword, boolean highlight, int size) throws IOException, ParseException {
 		IndexReader reader = luceneIndex.reader();
 		try {
 			IndexSearcher searcher = new IndexSearcher(reader);
@@ -126,7 +126,7 @@ public class TopicSearchService {
 			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, new String[] { "title", "content" }, analyzer);
 			// 将关键字包装成Query对象
 			Query query = parser.parse(keyword);
-			TopDocs results = searcher.search(query, 30);
+			TopDocs results = searcher.search(query, size);
 			FragListBuilder fragListBuilder = new SimpleFragListBuilder();
 			FragmentsBuilder fragmentsBuilder = new ScoreOrderFragmentsBuilder(BaseFragmentsBuilder.COLORED_PRE_TAGS, BaseFragmentsBuilder.COLORED_POST_TAGS);
 			FastVectorHighlighter fvh = new FastVectorHighlighter(true, true, fragListBuilder, fragmentsBuilder);

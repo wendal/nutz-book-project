@@ -24,6 +24,7 @@
 <!-- style -->
 <style>
 html { overflow-y: scroll; }
+.autocomplete-suggestions { border: 1px solid #999; background: #AABBCC; overflow: auto; }
 </style>
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/libs/bootstrap/css/bootstrap.css?v=1"/>
 <link rel="stylesheet" type="text/css" href="${cdnbase}${base}/rs/stylesheets/common.css?v=1"/>
@@ -64,6 +65,7 @@ var ctxPath = "${ctxPath}";
 <script src="${cdnbase}${base}/rs/libs/jquery.editinplace.js" type="text/javascript"></script>
 <script src="${cdnbase}${base}/rs/js/d3.min.js" type="text/javascript"></script>
 <script src="${cdnbase}${base}/rs/js/cal-heatmap.min.js" type="text/javascript"></script>
+<script src="${cdnbase}${base}/rs/js/jquery.autocomplete.min.js" type="text/javascript"></script>
 
 
   <% if (null != obj.topic!) { %>
