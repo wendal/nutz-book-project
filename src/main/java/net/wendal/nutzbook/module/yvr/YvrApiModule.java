@@ -14,6 +14,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -410,7 +411,7 @@ public class YvrApiModule extends BaseModule {
 	@GET
 	@At("/message/count")
 	public Object msgCount() {
-		return _map("data", 0);
+		return _map("data", userMessageService.count(Cnd.where("receiverId", "=", Toolkit.uid()).and("unread", "=", true)));
 	}
 
 	/**
@@ -455,6 +456,7 @@ public class YvrApiModule extends BaseModule {
 	@At("/message/mark_all")
 	@Filters(@By(type=AccessTokenFilter.class))
 	public Object markAllMessage() {
+	    userMessageService.update(Chain.make("unread", false), Cnd.where("receiverId", "=", Toolkit.uid()));
 		return _map("success", true);
 	}
 	/**

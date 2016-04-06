@@ -19,6 +19,7 @@ import org.nutz.mvc.view.ViewWrapper;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.EmailService;
+import net.wendal.nutzbook.service.UserMessageService;
 import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.RedisKey;
 
@@ -33,6 +34,8 @@ public abstract class BaseModule implements RedisKey {
 	
 	@Inject("java:$conf.get('website.urlbase')")
 	protected String urlbase;
+	
+	@Inject protected UserMessageService userMessageService;
 	
 	@Inject
 	protected YvrService yvrService;

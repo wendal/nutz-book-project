@@ -132,7 +132,7 @@ public class MainSetup implements Setup {
 			Sql sql = Sqls.queryString("SELECT TABLE_NAME FROM information_schema.TABLES where TABLE_SCHEMA = @schema and engine = 'MyISAM'");
 			sql.params().set("schema", schema);
 			for (String tableName : dao.execute(sql).getObject(String[].class)) {
-				if (tableName.startsWith("t_syslog"))
+				if (tableName.startsWith("t_syslog") || tableName.startsWith("t_user_message"))
 					continue;
 				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
 			}

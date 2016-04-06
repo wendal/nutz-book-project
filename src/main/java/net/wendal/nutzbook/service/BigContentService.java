@@ -61,8 +61,12 @@ public class BigContentService {
 		topic.setContent(getString(topic.getContentId()));
 		if (topic.getReplies() != null) {
 			for (TopicReply	reply : topic.getReplies()) {
-				reply.setContent(getString(reply.getContentId()));
+				fill(reply);
 			}
 		}
+	}
+	
+	public void fill(TopicReply reply) {
+	    reply.setContent(getString(reply.getContentId()));
 	}
 }

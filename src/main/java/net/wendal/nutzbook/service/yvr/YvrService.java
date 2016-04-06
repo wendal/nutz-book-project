@@ -221,6 +221,8 @@ public class YvrService implements RedisKey {
 		reply.setContentId(bigContentService.put(reply.getContent()));
 		reply.setContent(null);
 		dao.insert(reply);
+		// 更新索引
+		topicSearchService.add(topic);
 		// 更新topic的时间戳
 		Pipeline pipe = jedis().pipelined();
 		if (topic.isTop()) {
@@ -240,36 +242,42 @@ public class YvrService implements RedisKey {
 		pipe.zincrby(RKEY_USER_SCORE, 10, ""+userId);
 		pipe.sync();
 		
-		String replyAuthorName = dao.fetch(User.class, userId).getName();
-		// 通知原本的作者
-		if (topic.getUserId() != userId) {
-			String alert = replyAuthorName + "回复了您的帖子";
-			pushUser(topic.getUserId(),
-					alert,
-					topicId,
-					replyAuthorName,
-					topic.getTitle(),
-					PushService.PUSH_TYPE_REPLY);
-		}
-
-		Set<String> ats = findAt(cnt, 5);
-		for (String at : ats) {
-			User user = dao.fetch(User.class, at);
-			if (user == null)
-				continue;
-			if (topic.getUserId() == user.getId())
-				continue; // 前面已经发过了
-			if (userId == user.getId())
-				continue; // 自己@自己, 忽略
-			String alert = replyAuthorName + "在帖子回复中@了你";
-			pushUser(user.getId(),
-					alert,
-					topicId,
-					replyAuthorName,
-					topic.getTitle(),
-					PushService.PUSH_TYPE_AT);
-		}
+		notifyUsers(topic, reply, cnt, userId);
+		
 		return _ok(reply.getId());
+	}
+	
+	@Async
+	protected void notifyUsers(Topic topic, TopicReply reply, String cnt, int userId) {
+	    String replyAuthorName = dao.fetch(User.class, userId).getName();
+        // 通知原本的作者
+        if (topic.getUserId() != userId) {
+            String alert = replyAuthorName + "回复了您的帖子";
+            pushUser(topic.getUserId(),
+                    alert,
+                    topic.getId(),
+                    replyAuthorName,
+                    topic.getTitle(),
+                    PushService.PUSH_TYPE_REPLY);
+        }
+
+        Set<String> ats = findAt(cnt, 5);
+        for (String at : ats) {
+            User user = dao.fetch(User.class, at);
+            if (user == null)
+                continue;
+            if (topic.getUserId() == user.getId())
+                continue; // 前面已经发过了
+            if (userId == user.getId())
+                continue; // 自己@自己, 忽略
+            String alert = replyAuthorName + "在帖子回复中@了你";
+            pushUser(user.getId(),
+                    alert,
+                    topic.getId(),
+                    replyAuthorName,
+                    topic.getTitle(),
+                    PushService.PUSH_TYPE_AT);
+        }
 	}
 	
 	@Aop("redis")
