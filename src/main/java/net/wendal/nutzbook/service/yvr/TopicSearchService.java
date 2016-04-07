@@ -44,7 +44,7 @@ import org.nutz.log.Logs;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 @IocBean(create = "init", depose = "close")
-public class \ {
+public class TopicSearchService {
 
 	@Inject
 	protected Dao dao;
