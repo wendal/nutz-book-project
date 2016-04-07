@@ -44,7 +44,7 @@ import org.nutz.log.Logs;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 @IocBean(create = "init", depose = "close")
-public class TopicSearchService {
+public class \ {
 
 	@Inject
 	protected Dao dao;
@@ -142,7 +142,7 @@ public class TopicSearchService {
 
 	// @RequiresPermissions("topic:index:rebuild")
 	public void rebuild() throws IOException {
-		Sql sql = Sqls.queryString("select id from t_topic");
+		Sql sql = Sqls.queryString("select id from t_topic where tp='ask'");
 		dao.execute(sql);
 		luceneIndex.writer.deleteAll();
 		String[] topicIds = sql.getObject(String[].class);
