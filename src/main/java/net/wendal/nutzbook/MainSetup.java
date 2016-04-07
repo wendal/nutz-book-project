@@ -45,6 +45,8 @@ import net.wendal.nutzbook.util.Markdowns;
 public class MainSetup implements Setup {
 
 	private static final Log log = Logs.get();
+	
+	public static PropertiesProxy conf;
 
 	public void init(NutConfig nc) {
 		NutShiro.DefaultLoginURL = "/admin/logout";
@@ -83,7 +85,7 @@ public class MainSetup implements Setup {
 		}
 
 		// 获取配置对象
-		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
+		conf = ioc.get(PropertiesProxy.class, "conf");
 
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
@@ -121,9 +123,6 @@ public class MainSetup implements Setup {
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
-		if (conf.getBoolean("cdn.enable", false) && !Strings.isBlank(conf.get("cdn.urlbase"))) {
-			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
-		}
 		
 		if (dao.meta().isMySql()) {
 			String schema = dao.execute(Sqls.fetchString("SELECT DATABASE()")).getString();
