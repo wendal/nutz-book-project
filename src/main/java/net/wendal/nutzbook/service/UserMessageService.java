@@ -5,7 +5,7 @@ import org.nutz.service.IdEntityService;
 
 import net.wendal.nutzbook.bean.msg.UserMessage;
 
-@IocBean
+@IocBean(fields={"dao"})
 public class UserMessageService extends IdEntityService<UserMessage> {
 
 }
