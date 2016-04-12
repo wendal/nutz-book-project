@@ -97,7 +97,7 @@ public class YvrShortModule extends BaseModule {
 			topic.setTitle(title.trim());
 			String cnt = Streams.readAndClose(new InputStreamReader((InputStream) read(code, null)));
 			cnt = cnt.length() > 50000 ? cnt.substring(0, 50000) : cnt;
-			topic.setContent(String.format("[查看完整内容](%s/s/c/%s)\r\n\r\n```%s```",req.getContextPath(), code, cnt));
+			topic.setContent(String.format("[查看完整内容](%s/s/c/%s)\r\n\r\n```\r\n%s\r\n```",req.getContextPath(), code, cnt));
 			topic.setType(TopicType.shortit);
 			try {
 				int userId = Toolkit.uid();

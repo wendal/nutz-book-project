@@ -12,7 +12,6 @@ import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
-import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -28,7 +27,6 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.beetl.MarkdownFunction;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.UserService;
@@ -111,7 +109,7 @@ public class MainSetup implements Setup {
 
 		// 权限系统初始化
 		AuthorityService as = ioc.get(AuthorityService.class);
-		as.initFormPackage("net.wendal.nutzbook");
+		as.initFormPackage(getClass().getPackage().getName());
 		as.checkBasicRoles(admin);
 
 		// 检查一下Ehcache CacheManager 是否正常.
