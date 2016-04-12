@@ -62,6 +62,12 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
+	@RequiresUser
+	@At("/me")
+	public Object myHome() {
+	    return userHome(dao.fetch(User.class, Toolkit.uid()).getName());
+	}
+	
 	@At("/?")
 	@Ok("beetl:yvr/user/user_index.btl")
 	public Object userHome(String userName) {
