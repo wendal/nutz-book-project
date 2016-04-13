@@ -1,15 +1,9 @@
 package net.wendal.nutzbook.module.robot;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
-import net.wendal.nutzbook.service.yvr.TopicSearchService;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -19,6 +13,11 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
+import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 /**
  * 
@@ -48,31 +47,32 @@ public class RobotModule extends BaseModule {
 	 */
 	public static final char cmd = '#';
 
+	// TODO 加上KEY认证
 	@At("/msg")
-	@Ok("void")
-	public void test(@Param("..") NutMap data, HttpServletResponse response) throws IOException, ParseException {
+	@Ok("raw")
+	public String msg(@Param("..") NutMap data, HttpServletRequest req) throws IOException, ParseException {
 		if (Strings.equals(data.getString("Event"), "ClusterIM") && data.getInt("GroupId") == groupId && Strings.startsWithChar(data.getString("Message"), cmd)) {// 是群消息而且群号正确
-			String key = data.getString("Message").substring(1);
+			String key = data.getString("Message").substring(1).trim();
 
 			if (Strings.isBlank(key)) {
-				response.getWriter().write("关键词呢?");
+				return "";
 			}
-			List<LuceneSearchResult> results = topicSearchService.search(key, true);
+			List<LuceneSearchResult> results = topicSearchService.search(key, true, 3);
 			if (results == null || results.size() == 0) {
-				response.getWriter().write("没有明白你想问什么?");
+				return "没有明白你想问什么?";
 			}
-			List<Topic> list = new ArrayList<Topic>();
 			final StringBuilder msgbBuilder = new StringBuilder("机器人自动检索结果:\r\n");
 			for (LuceneSearchResult result : results) {
 				Topic topic = dao.fetch(Topic.class, result.getId());
 				if (topic == null)
 					continue;
 				topic.setTitle(result.getResult());
-				msgbBuilder.append(topic.getTitle() + " : http://nutz.cn/yvr/t/" + topic.getId() + "\r\n");
-				list.add(topic);
+				String text = String.format("%s http://%s/yvr/t/%s\r\n", topic.getTitle(), req.getHeader("Host"), topic.getId());
+				msgbBuilder.append(text);
 			}
-			response.getWriter().write(msgbBuilder.toString());
+			return msgbBuilder.toString();
 		}
+        return "";
 	}
 
 }
