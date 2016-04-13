@@ -39,11 +39,19 @@ public class RobotModule extends BaseModule {
 
 	@Inject
 	protected TopicSearchService topicSearchService;
+	/**
+	 * 群号
+	 */
+	public static final int groupId = 68428921;
+	/**
+	 * 命令开始符号
+	 */
+	public static final char cmd = '#';
 
 	@At("/msg")
 	@Ok("void")
 	public void test(@Param("..") NutMap data, HttpServletResponse response) throws IOException, ParseException {
-		if (Strings.equals(data.getString("Event"), "ClusterIM") && data.getInt("GroupId") == 68428921 && Strings.startsWithChar(data.getString("Message"), '#')) {// 是群消息而且群号正确
+		if (Strings.equals(data.getString("Event"), "ClusterIM") && data.getInt("GroupId") == groupId && Strings.startsWithChar(data.getString("Message"), cmd)) {// 是群消息而且群号正确
 			String key = data.getString("Message").substring(1);
 
 			if (Strings.isBlank(key)) {
