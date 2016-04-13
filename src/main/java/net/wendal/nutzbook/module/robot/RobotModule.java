@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.At;
@@ -34,6 +35,7 @@ import net.wendal.nutzbook.service.yvr.TopicSearchService;
  */
 @At("robot")
 @Filters
+@IocBean
 public class RobotModule extends BaseModule {
 
 	@Inject
