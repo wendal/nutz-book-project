@@ -591,5 +591,43 @@ $(function() {
 				location.reload();
 			}
 		});
+	};
+<%if (null != obj.current_user!){%>
+var _replies_count = ${obj.topic.replies.~size};
+function _check_topic_update() {
+	$.ajax({
+		url : "${base}/yvr/t/${obj.topic.id}/check?replies="+_replies_count,
+		dataType: "json",
+		success : function(re) {
+			if (re && re.count) {
+				_replies_count = re.count;
+				if ( ! re.options.icon) {
+					re.options.icon = "${base}/rs/logo.png"
+				}
+				var n = new Notification(re.data, re.options);
+				n.onclick = function() {
+					location.reload();
+				};
+			}
+		}
+	});
+}
+$(function(){
+	if (!Notification) {
+		return;
 	}
+	if (console)
+	    console.info(Notification.permission);
+	if (Notification.permission == "denied") {
+		return;
+	}
+	if (Notification.permission !== "granted") {
+		Notification.requestPermission();
+	}
+	if (Notification.permission !== "granted") {
+		return;
+	}
+	window.setInterval(_check_topic_update, 15000);
+});
+<%}%>
 </script>
