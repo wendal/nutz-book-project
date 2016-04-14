@@ -51,18 +51,19 @@ public class RobotModule extends BaseModule {
 	@At("/msg")
 	@Ok("void")
 	public void test(@Param("..") NutMap data, HttpServletResponse response) throws IOException, ParseException {
+		String senderName = data.getString("SenderName");
 		if (Strings.equals(data.getString("Event"), "ClusterIM") && data.getInt("GroupId") == groupId && Strings.startsWithChar(data.getString("Message"), cmd)) {// 是群消息而且群号正确
 			String key = data.getString("Message").substring(1);
 
 			if (Strings.isBlank(key)) {
-				response.getWriter().write("关键词呢?");
+				response.getWriter().write("@" + senderName + "/r/n关键词呢?");
 			}
 			List<LuceneSearchResult> results = topicSearchService.search(key, true);
 			if (results == null || results.size() == 0) {
-				response.getWriter().write("没有明白你想问什么?");
+				response.getWriter().write("@" + senderName + "/r/n没有明白你想问什么?");
 			}
 			List<Topic> list = new ArrayList<Topic>();
-			final StringBuilder msgbBuilder = new StringBuilder("机器人自动检索结果:\r\n");
+			final StringBuilder msgbBuilder = new StringBuilder("@" + senderName + "/r/n 机器人自动检索结果:\r\n");
 			for (LuceneSearchResult result : results) {
 				Topic topic = dao.fetch(Topic.class, result.getId());
 				if (topic == null)
