@@ -62,6 +62,7 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
+	@Ok("beetl:yvr/user/user_index.btl")
 	@RequiresUser
 	@At("/me")
 	public Object myHome() {
