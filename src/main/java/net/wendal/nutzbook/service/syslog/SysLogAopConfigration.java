@@ -22,4 +22,11 @@ public class SysLogAopConfigration extends SimpleAopMaker<SLog> {
 		return Arrays.asList(new SysLogAopInterceptor(sysLogService, slog, method));
 	}
 
+	public String[] getName() {
+		return new String[0];
+	}
+	
+	public boolean has(String name) {
+		return false;
+	}
 }

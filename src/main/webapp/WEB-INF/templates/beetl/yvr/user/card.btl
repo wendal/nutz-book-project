@@ -4,7 +4,9 @@
     <a class='user_avatar' href="${ctxPath}/yvr/u/${user.loginname}">
       <img src="${cdnbase}${ctxPath}/yvr/u/${user.loginname}/avatar" title="${user.loginname}"/>
     </a>
-    <span class='user_name'><a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.loginname}</a></span>
+    <span class='user_nickname'>
+    	<a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.nickname, escape}(${user.loginname})</a>
+    </span>
 
     <div class='board clearfix'>
       <div class='floor'>
@@ -25,7 +27,7 @@
 <% if (null != obj.current_user! && obj.current_user.userId == user.userId) {%>
 <script type="text/javascript">
 $("#MySign").editInPlace({
-    url: "${base}/yvr/u/description",
+    url: "${base}/yvr/u/profile/update/description",
     textarea_rows : 5,
     text_size:20,
 	bg_over: "none",

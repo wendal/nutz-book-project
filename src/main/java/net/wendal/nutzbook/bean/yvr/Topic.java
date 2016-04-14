@@ -26,14 +26,14 @@ public class Topic extends BasePojo {
 	protected String id;
 
 	@Column
-	@ColDefine(width = 512)
+	@ColDefine(width = 4096)
 	protected String title;
 
 	@Column("tp")
 	protected TopicType type;
 
 	@Column("cnt")
-	@ColDefine(width = 15000)
+	@ColDefine(width = 50)
 	protected String content;
 
 	@Column("cid")

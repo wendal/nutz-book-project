@@ -7,13 +7,12 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.util.Context;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean
 @At("/admin2")
@@ -30,15 +29,19 @@ public class Admin2Module {
 	@RequiresUser
 	@At("/?")
 	@Ok("fm:templates.admin2.${pathargs[0]}")
-	public Context page(String _page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
-		return Lang.context().set("me", dao.fetch(UserProfile.class, userId));
+	public Context page(String _page) {
+		return ctx();
 	}
 	
 	@RequiresUser
 	@At("/?/?")
 	@Ok("fm:templates.admin2.${pathargs[0]}.${pathargs[1]}")
-	public Context page2(String _page, @Attr(scope = Scope.SESSION, value = "me") int userId) {
-		return Lang.context().set("me", dao.fetch(UserProfile.class, userId));
+	public Context page2(String _page) {
+		return ctx();
+	}
+	
+	public Context ctx() {
+		return Lang.context().set("me", dao.fetch(UserProfile.class, Toolkit.uid()));
 	}
 	
 	@At("/user/logout")
@@ -46,6 +49,4 @@ public class Admin2Module {
 	public void logout() {
 		SecurityUtils.getSubject().logout();
 	}
-	
-	
 }

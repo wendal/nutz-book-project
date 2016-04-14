@@ -12,6 +12,7 @@ public enum TopicType {
 	;
 	
 	public String display;
+	public Long count;
 	
 	TopicType(String display) {
 		this.display = display;
@@ -19,5 +20,9 @@ public enum TopicType {
 	
 	public String getDisplay() {
 		return display;
+	}
+	
+	public Long getCount() {
+		return count;
 	}
 }

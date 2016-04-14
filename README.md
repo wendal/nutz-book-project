@@ -23,7 +23,7 @@ http://nutzbook.wendal.net
 ![首页截图](index_page.jpg)
 
 
-## 当前已经实现或正在实现的功能
+## 主要功能
 
 * 基本的增删改查,MVC各种用法及文件上传
 * Dao关联关系(One/Many/ManyMany)
@@ -31,12 +31,12 @@ http://nutzbook.wendal.net
 * Quartz计划任务集成
 * Shiro集成及权限管理
 * Ehcache及DaoCache集成
-* redis 集成(配置及拦截器应用)
+* redis 集成
 * beetl模板集成及应用
 * 二维码生成及跨屏登陆
 * 声明式系统日志
 * 基于socialauth的Oauth登陆(客户端,非服务器端实现)
-* 集成极光推送(jpush)
+* 集成极光推送(jpush)及小米推送(xmpush)
 
 ## 曾经集成,但已经移除的功能
 

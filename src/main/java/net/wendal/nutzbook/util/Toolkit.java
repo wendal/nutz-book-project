@@ -113,7 +113,7 @@ public class Toolkit {
 	}
 
 	public static int uid() {
-		int uid = 0;
+		int uid = -1;
 		Object u;
 		try {
 			u = SecurityUtils.getSubject().getPrincipal();
@@ -235,10 +235,12 @@ public class Toolkit {
 	
 	//----------------------------------------------------------------------------
 	// 通过定时任务更新
+	protected static String _today_yyyyMM;
 	protected static String _today_yyyyMMdd;
 	protected static String _today_yyyyMMddHH;
 	
 	public static void updateTodayString() {
+		_today_yyyyMM = new SimpleDateFormat("yyyyMM", Locale.CHINA).format(new Date());
 		_today_yyyyMMdd = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(new Date());
 		_today_yyyyMMddHH = new SimpleDateFormat("yyyyMMddHH", Locale.CHINA).format(new Date());
 	}
@@ -258,5 +260,12 @@ public class Toolkit {
 			updateTodayString();
 		return _today_yyyyMMddHH;
 	}
+	public static String today_yyyyMM() {
+		if (_today_yyyyMM == null)
+			updateTodayString();
+		return _today_yyyyMM;
+	}
 	//----------------------------------------------------------------------------
+
+	public static byte[] csKEY = R.sg(24).next().getBytes();
 }

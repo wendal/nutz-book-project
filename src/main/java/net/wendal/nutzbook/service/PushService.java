@@ -12,6 +12,11 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
+import com.xiaomi.xmpush.server.Constants;
+import com.xiaomi.xmpush.server.Message;
+import com.xiaomi.xmpush.server.Result;
+import com.xiaomi.xmpush.server.Sender;
+
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Options;
@@ -46,7 +51,8 @@ public class PushService {
 	
 	protected Map<String, JPushClient> jpushs;
 	
-	//protected Map<String, IGtPush> gtpushs;
+	@Inject
+	protected Sender xmpush;
 	
 	@Inject
 	protected PropertiesProxy conf;
@@ -54,10 +60,12 @@ public class PushService {
 	public void alert(int userId, String alert, Map<String, String> extras) {
 		alertJpush(userId, alert, extras);
 		alertGtPush(userId, alert, extras);
+		alertXmPush(userId, alert, extras);
 	}
 	
 	public void message(int userId, String message, Map<String, String> extras) {
 		messageJpush(userId, message, extras);
+		messageXmPush(userId, message, extras);
 	}
 	
 	public void alertJpush(int userId, String alert, Map<String, String> extras) {
@@ -72,8 +80,22 @@ public class PushService {
 		sendJPush(builder.build());
 	}
 	
-	public void alertGtPush(int userId, String alert, Map<String, String> extras) {
-		
+	public void alertGtPush(int userId, String alert, Map<String, String> extras) {}
+	
+	public void alertXmPush(int userId, String alert, Map<String, String> extras) {
+		Message.Builder builder = new Message.Builder().title(alert).description(alert);
+		for (Entry<String, String> en : extras.entrySet()) {
+			builder.extra(en.getKey(), en.getValue());
+		}
+		sendMxPush(builder.build(), "u_"+userId);
+	}
+	
+	public void messageXmPush(int userId, String message, Map<String, String> extras) {
+		Message.Builder builder = new Message.Builder().title(message).description(message).passThrough(1).payload(message);
+		for (Entry<String, String> en : extras.entrySet()) {
+			builder.extra(en.getKey(), en.getValue());
+		}
+		sendMxPush(builder.build(), "u_"+userId);
 	}
 	
 	public void messageJpush(int userId, String message, Map<String, String> extras) {
@@ -106,6 +128,22 @@ public class PushService {
 		}
 	}
 	
+	@Async
+	public void doMxPush(Message message, String alias) {
+		sendMxPush(message, alias);
+	}
+	
+	public void sendMxPush(Message message, String alias) {
+		if (xmpush == null)
+			return;
+		try {
+			Result re = xmpush.sendToAlias(message, alias, 3);
+			log.info("xmpush result=" + re.getData());
+		} catch (Exception e) {
+			log.debugf("send to %s fail", alias, e);
+		}
+	}
+	
 	public void init() {
 		jpushs = new LinkedHashMap<>();
 		// 支持10个够了吧
@@ -124,20 +162,10 @@ public class PushService {
 			jpushs.put(prefix, jpush);
 		}
 		
-//		gtpushs = new LinkedHashMap<>();
-//		for (int i = 1; i < 11; i++) {
-//			String prefix = "gtpush"+i;
-//			boolean enable = conf.getBoolean(prefix+".enable", false);
-//			if (!enable)
-//				continue;
-//			String masterSecret = conf.get(prefix+".masterSecret");
-//			String appKey = conf.get(prefix+".appKey");
-//			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
-//				log.warn(prefix+".enable=true, but masterSecret/appKey is NULL or emtry");
-//				continue;
-//			}
-//			IGtPush gtpush = new IGtPush(appKey, masterSecret);
-//			gtpushs.put(prefix, gtpush);
-//		}
+		Constants.useOfficial();
+		if (!conf.getBoolean("xmpush.enable", false)) {
+			log.info("xmpush disabled");
+			xmpush = null;
+		}
 	}
 }

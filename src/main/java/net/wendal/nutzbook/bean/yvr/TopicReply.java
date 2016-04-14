@@ -34,7 +34,7 @@ public class TopicReply extends BasePojo {
 	protected int userId;
 
 	@Column("cnt")
-	@ColDefine(width = 15000)
+	@ColDefine(width = 50)
 	protected String content;
 
 	@Column("cid")

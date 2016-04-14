@@ -15,15 +15,14 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.RawView;
 import org.nutz.mvc.view.ViewWrapper;
 
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean
 @At("/ngrok")
@@ -38,7 +37,8 @@ public class NgrokModule extends BaseModule {
 	@RequiresUser
 	@At
 	@Ok("->:/yvr/links/ngrok")
-	public Object me(@Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object me() {
+		int userId = Toolkit.uid();
 		String token = getAuthToken(userId);
 		if (token == null) {
 			return new ViewWrapper(new RawView(null), "抱歉,当前仅允许github登陆的用户使用");
@@ -49,7 +49,8 @@ public class NgrokModule extends BaseModule {
 	@RequiresUser
 	@At("/config/download")
 	@Ok("raw:xml")
-	public Object getConfigureFile(@Attr(scope = Scope.SESSION, value = "me") int userId, HttpServletResponse resp) throws UnsupportedEncodingException {
+	public Object getConfigureFile(HttpServletResponse resp) throws UnsupportedEncodingException {
+		int userId = Toolkit.uid();
 		String token = getAuthToken(userId);
 		if (token == null) {
 			return HTTP_403;

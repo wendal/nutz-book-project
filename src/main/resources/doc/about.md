@@ -10,7 +10,7 @@ Nutz社区, 一个有爱的社区 ^_^
 
 Android官方客户端 下载地址 http://fir.im/nutzcn 当前由[@wendal](http://wendal.net)维护
 
-iOS客户端尚未发布到APP Store
+iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id1082195150) [@tuwei1992](https://github.com/TuWei1992/NutzCommunity)
 
 源码地址(2.x) https://github.com/wendal/nutzcn-ionic
 源码地址(3.x) https://github.com/wendal/NutzCN-Material-Design
@@ -25,6 +25,7 @@ iOS客户端尚未发布到APP Store
 * [查找网](http://www.chazhao.me)
 * [七牛云存储 移动时代的云存储服务商](http://www.qiniu.com/)
 * [一米阳光(大鲨鱼的个人博客)](http://www.wizzer.cn/)
+* [邓华锋](http://www.denghuafeng.com/)
 
 ### 有爱的公众号
 
@@ -45,6 +46,9 @@ iOS客户端尚未发布到APP Store
 捐款明细(不定期更新):
 
 * 2016-01-07 [淡蓝] 香港vps(高配) 1年
-
+* 2016-01-08 [张乐] 1元 -- 结余1元
+* 2016-01-08 [刘方果] 6元 -- 结余7元
+* 2016-01-08 [陈全来] 5.21元 -- 结余12.21元
+* 2016-01-22 [王江伟] 9.9元 -- 结余22.11元
 
 

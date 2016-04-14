@@ -10,16 +10,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nutz.aop.ClassAgent;
+import org.nutz.aop.ClassDefiner;
+import org.nutz.aop.DefaultClassDefiner;
+import org.nutz.aop.InterceptorChain;
+import org.nutz.aop.MethodInterceptor;
+import org.nutz.aop.asm.AsmClassAgent;
+import org.nutz.aop.matcher.RegexMethodMatcher;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -32,16 +35,13 @@ import org.nutz.lang.Mirror;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.NutType;
 import org.nutz.mapl.Mapl;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.adaptor.ParamExtractor;
 import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
 
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
-import net.wendal.nutzbook.bean.demo.APIResult;
-import net.wendal.nutzbook.bean.qqbot.QQBotMessage;
-import net.wendal.nutzbook.bean.qqbot.QQBotRole;
+import net.wendal.nutzbook.service.EmailServiceImpl;
 import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
@@ -95,15 +95,15 @@ public class SimpleTest extends TestBase {
 //        System.out.println("Decoder url: ["+ url + "]");
 //	}
 	
-	@Test
-	public void test_json_output() {
-		APIResult re = new APIResult();
-		re.setCode(200);
-		re.setMessage("null");
-		re.setResult(new NutMap());
-		System.out.println(Json.toJson(re));
-	}
-	
+//	@Test
+//	public void test_json_output() {
+//		APIResult re = new APIResult();
+//		re.setCode(200);
+//		re.setMessage("null");
+//		re.setResult(new NutMap());
+//		System.out.println(Json.toJson(re));
+//	}
+//	
 //	@Test
 //	public void test_jdk8_param_name() throws IOException{
 //		Map<String, List<String>> names = MethodParamNamesScaner.getParamNames(YvrModule.class);
@@ -157,21 +157,21 @@ public class SimpleTest extends TestBase {
 		System.out.println(sql);
 	}
 
-	@Test
-	public void test_eval_js() throws Exception {
-		QQBotMessage message = new QQBotMessage();
-		QQBotRole role = new QQBotRole();
-		role.executeParams = "";
-		role.executeBody = "return 1;";
-		ScriptEngineManager sem = new ScriptEngineManager();
-		ScriptEngine engine = sem.getEngineByExtension("js");
-		SimpleScriptContext ctxt = new SimpleScriptContext();
-		ctxt.setAttribute("ioc", Mvcs.getIoc(), ScriptContext.ENGINE_SCOPE);
-		ctxt.setAttribute("message", message, ScriptContext.ENGINE_SCOPE);
-		ctxt.setAttribute("role", role, ScriptContext.ENGINE_SCOPE);
-		Object result = engine.eval("function _qqbot(){"+ role.executeBody + "};_qqbot();", ctxt);
-		System.out.println(result);
-	}
+//	@Test
+//	public void test_eval_js() throws Exception {
+//		QQBotMessage message = new QQBotMessage();
+//		QQBotRole role = new QQBotRole();
+//		role.executeParams = "";
+//		role.executeBody = "return 1;";
+//		ScriptEngineManager sem = new ScriptEngineManager();
+//		ScriptEngine engine = sem.getEngineByExtension("js");
+//		SimpleScriptContext ctxt = new SimpleScriptContext();
+//		ctxt.setAttribute("ioc", Mvcs.getIoc(), ScriptContext.ENGINE_SCOPE);
+//		ctxt.setAttribute("message", message, ScriptContext.ENGINE_SCOPE);
+//		ctxt.setAttribute("role", role, ScriptContext.ENGINE_SCOPE);
+//		Object result = engine.eval("function _qqbot(){"+ role.executeBody + "};_qqbot();", ctxt);
+//		System.out.println(result);
+//	}
 
 	@Test
 	public void test_complex_prefix() throws Exception {
@@ -228,5 +228,45 @@ public class SimpleTest extends TestBase {
 	public void test_cast_short_array() {
 		String strs = "4, 7, 0, 303, 350, 0, 303, 350, 0, 303, 350";
 		System.out.println(Json.toJson(Json.fromJson(short[].class, "[" + strs + "]")));
+	}
+	
+	@Test
+	public void test_sql_in() {
+		Sql sql = Sqls.create("select * from t_user where nm in (@ids)");
+		sql.setParam("ids", new String[]{"wendal", "zozoh", "pangwu86"});
+		System.out.println(sql);
+		System.out.println(sql.toPreparedStatement());
+	}
+	
+	@Test
+	public void test_sql_in2() {
+		Sql sql = Sqls.create("select * from t_user where nm in ($ids)");
+		StringBuilder sb = new StringBuilder();
+		String[] ids = new String[]{"wendal", "zozoh"};
+		for (String id : ids) {
+			sb.append("\"").append(Sqls.escapeFieldValue(id)).append("\"").append(",");
+		}
+		sql.setVar("ids", sb.substring(0, sb.length()-1));
+		System.out.println(sql);
+		System.out.println(sql.toPreparedStatement());
+	}
+	
+	@Test
+	public void aop_without_ioc() throws Exception {
+		Class<EmailServiceImpl> type = EmailServiceImpl.class;
+		ClassDefiner cd = DefaultClassDefiner.defaultOne();
+		ClassAgent agent = new AsmClassAgent();
+        agent.addInterceptor(new RegexMethodMatcher(".+"),
+                                 new MethodInterceptor() {
+									public void filter(InterceptorChain chain) throws Throwable {
+										System.out.println("before");
+										chain.doChain();
+										System.out.println("after");
+									}
+								});
+        Class<EmailServiceImpl> klass = agent.define(cd, type);
+        EmailServiceImpl es = klass.newInstance();
+        
+        es.send(null, null, null);
 	}
 }

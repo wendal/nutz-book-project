@@ -37,7 +37,7 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.shiro.realm.OAuthAuthenticationToken;
+import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
 import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean(create = "init")
@@ -137,7 +137,7 @@ public class OauthModule extends BaseModule {
 	
 	// 进行Shiro登录
 	protected void doShiroLogin(int userId, String _providerId) {
-		Toolkit.doLogin(new OAuthAuthenticationToken(userId), userId);
+		Toolkit.doLogin(new SimpleShiroToken(userId), userId);
 		sysLogService.async(SysLog.c("method", "用户登陆", null, userId, "用户通过"+_providerId+" Oauth登陆"));
 	}
 	

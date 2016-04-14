@@ -5,9 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.wendal.nutzbook.crossscreen.CrossScreen;
-import net.wendal.nutzbook.util.Toolkit;
-
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -16,9 +13,7 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.view.HttpStatusView;
@@ -29,6 +24,8 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+
+import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean
 @At("/cs")
@@ -43,8 +40,7 @@ public class CrossScreenModule {
 
 	@At("/qr")
 	@Ok("raw:png")
-	public Object crossScreen(@Param("url")String url, 
-							  @Attr(value="me", scope=Scope.SESSION)Integer uid, 
+	public Object crossScreen(@Param("url")String url,
 							  HttpServletRequest req,
 							  @Param("w")int w, @Param("h")int h) {
 		if (Strings.isBlank(url)) {
@@ -53,12 +49,13 @@ public class CrossScreenModule {
 		NutMap map = new NutMap();
 		map.put("url", url);
 		map.put("t", System.currentTimeMillis());
+		Integer uid = Toolkit.uid();
 		if (uid != null) {
 			map.put("uid", uid);
 		}
 		String json = Json.toJson(map, JsonFormat.compact());
 		log.debug("token json = " + json);
-		String token = Toolkit._3DES_encode(CrossScreen.csKEY, json.getBytes());
+		String token = Toolkit._3DES_encode(Toolkit.csKEY, json.getBytes());
 		String tmp = req.getRequestURL().toString();
 		String pass = tmp.substring(0, tmp.length() - 2) + "pass";
 		String URL = pass  + "?token=" +token;

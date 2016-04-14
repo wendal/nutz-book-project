@@ -1,7 +1,6 @@
 package net.wendal.nutzbook;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -13,9 +12,10 @@ import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
-import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
@@ -27,11 +27,11 @@ import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.beetl.MarkdownFunction;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
+import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Markdowns;
 
 /**
@@ -43,8 +43,9 @@ import net.wendal.nutzbook.util.Markdowns;
 public class MainSetup implements Setup {
 
 	private static final Log log = Logs.get();
+	
+	public static PropertiesProxy conf;
 
-	@SuppressWarnings("serial")
 	public void init(NutConfig nc) {
 		NutShiro.DefaultLoginURL = "/admin/logout";
 		// 检查环境
@@ -55,12 +56,7 @@ public class MainSetup implements Setup {
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
 		// 加载freemarker自定义标签　自定义宏路径
-		ioc.get(Configuration.class).setAutoImports(new HashMap<String, String>(2) {
-			{
-				put("p", "/ftl/pony/index.ftl");
-				put("s", "/ftl/spring.ftl");
-			}
-		});
+		ioc.get(Configuration.class).setAutoImports(new NutMap().setv("p", "/ftl/pony/index.ftl").setv("s", "/ftl/spring.ftl"));
 		ioc.get(FreeMarkerConfigurer.class, "mapTags");
 		Dao dao = ioc.get(Dao.class);
 
@@ -87,7 +83,7 @@ public class MainSetup implements Setup {
 		}
 
 		// 获取配置对象
-		PropertiesProxy conf = ioc.get(PropertiesProxy.class, "conf");
+		conf = ioc.get(PropertiesProxy.class, "conf");
 
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
@@ -113,7 +109,7 @@ public class MainSetup implements Setup {
 
 		// 权限系统初始化
 		AuthorityService as = ioc.get(AuthorityService.class);
-		as.initFormPackage("net.wendal.nutzbook");
+		as.initFormPackage(getClass().getPackage().getName());
 		as.checkBasicRoles(admin);
 
 		// 检查一下Ehcache CacheManager 是否正常.
@@ -125,9 +121,6 @@ public class MainSetup implements Setup {
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
-		if (conf.getBoolean("cdn.enable", false) && !Strings.isBlank(conf.get("cdn.urlbase"))) {
-			MarkdownFunction.cdnbase = conf.get("cdn.urlbase");
-		}
 		
 		if (dao.meta().isMySql()) {
 			String schema = dao.execute(Sqls.fetchString("SELECT DATABASE()")).getString();
@@ -136,11 +129,15 @@ public class MainSetup implements Setup {
 			Sql sql = Sqls.queryString("SELECT TABLE_NAME FROM information_schema.TABLES where TABLE_SCHEMA = @schema and engine = 'MyISAM'");
 			sql.params().set("schema", schema);
 			for (String tableName : dao.execute(sql).getObject(String[].class)) {
-				if (tableName.startsWith("t_syslog"))
+				if (tableName.startsWith("t_syslog") || tableName.startsWith("t_user_message"))
 					continue;
 				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
 			}
 		}
+		
+		ioc.get(YvrService.class).updateTopicTypeCount();
+		
+		Mvcs.disableFastClassInvoker = false;
 	}
 
 	public void destroy(NutConfig conf) {

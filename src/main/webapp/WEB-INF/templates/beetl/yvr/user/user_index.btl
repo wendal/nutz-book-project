@@ -9,10 +9,10 @@
       </ul>
     </div>
     <div class='inner userinfo'>
-      <div class='user_big_avatar'>
-        <img src="${cdnbase}${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="${obj.c_user.loginname}"/>
+      <div class='user_big_avatar' id="user_index_avatar">
+        <img src="${cdnbase}${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="点击修改头像"/>
       </div>
-      <a class='dark'> ${obj.c_user.loginname}</a>
+      <a class='dark' id="user_index_nickname"> ${obj.c_user.nickname, escape}</a>
       <div class='user_profile'>
         <ul class='unstyled'>
           <span class='big'>${obj.c_user.score}</span> 积分
@@ -20,6 +20,48 @@
       </div>
       <p class='col_fade'>注册时间 ${obj.c_user.createAt}</p>
     </div>
+    <%if (null != obj.c_user! && null != obj.current_user! && obj.c_user.userId == obj.current_user.userId){%>
+	<script type="text/javascript">
+	$(function(){
+		$("#user_index_nickname").editInPlace({
+    		url: "${base}/yvr/u/profile/update/nickname",
+    		textarea_rows : 1,
+    		text_size:20,
+			g_over: "none",
+			bg_out: "none",
+    		field_type: "textarea",
+			value_required: "true",
+			success: function(data){
+				$("#user_index_nickname").html(data);
+			},
+			error: function(e){
+				if (console)
+					console.log(e);
+				layer.alert("修改昵称失败了");
+			}
+		});
+		var uploader = WebUploader.create({
+            swf: '${base}/libs/webuploader/Uploader.swf',
+            server: '${base}/yvr/u/profile/update/avatar',
+            pick: "#user_index_avatar",
+            paste: document.body,
+            //dnd: this.$upload[0],
+            auto: true,
+            fileSingleSizeLimit: 256 * 1024,
+            //sendAsBinary: true,
+            // 只允许选择图片文件
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader.on('uploadSuccess', function() {
+    		location.reload();
+		});
+	});
+	</script>
+    <%}%>
   </div>
   
   <%if (null != obj.access_token!) {%>
@@ -56,6 +98,25 @@
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>最近创建的话题</span>
+    </div>
+    <div>
+    	<div id="cal-heatmap"></div>
+    	<script type="text/javascript">
+    		$(function(){
+    			var cal = new CalHeatMap();
+    			cal.init({
+					//itemSelector: "cal-heatmap",
+					domain: "month",
+					subDomain: "day",
+					data : "${ctxPath}/analysis/user/topic/${obj.c_user.userId}?start={{d:start}}&stop={{d:end}}",
+					start: new Date(2015, 9),
+					cellSize: 15,
+					range: 12,
+					domainLabelFormat: "%m-%Y",
+					legend: [1, 2, 3, 5]
+				});
+    		});
+		</script>
     </div>
     <% if ( null != obj.recent_topics ) { %>
     <% layout("../list.btl", {"topics":obj.recent_topics}){}; %>

@@ -11,6 +11,7 @@ import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Processor;
 import org.nutz.mvc.impl.NutActionChain;
 import org.nutz.mvc.impl.processor.ActionFiltersProcessor;
+import org.nutz.mvc.impl.processor.AdaptorProcessor;
 import org.nutz.mvc.impl.processor.EncodingProcessor;
 import org.nutz.mvc.impl.processor.FailProcessor;
 import org.nutz.mvc.impl.processor.MethodInvokeProcessor;
@@ -40,6 +41,7 @@ public class MyActionChainMaker implements ActionChainMaker {
 		list.add(new EncodingProcessor());
 		list.add(new ModuleProcessor());
 		list.add(new ActionFiltersProcessor());
+		list.add(new AdaptorProcessor());
 		list.add(new MethodInvokeProcessor());
 		list.add(new ViewProcessor());
 		return list;
