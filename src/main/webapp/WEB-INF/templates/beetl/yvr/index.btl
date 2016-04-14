@@ -16,7 +16,7 @@ layout("_layout.btl",{}){
       <% for (topic_type in obj.types) {%>
         <li property="itemListElement" typeof="ListItem">
 		  <a data-pjax href="${ctxPath}/yvr/list/${topic_type}" property="item" typeof="WebPage" 
-		  	 class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}</a>
+		  	 class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}(${topic_type.count})</a>
 	    </li>
 	  <% } %>
 	  </ol>

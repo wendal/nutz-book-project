@@ -18,10 +18,10 @@ import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 @SetupBy(value=MainSetup.class)
 @IocBy(type=ComboIocProvider.class, args={"*js", "ioc/",
 										   "*anno", "net.wendal.nutzbook",
+										   "*quartz",// 关联Quartz
+										   "*async",
 										   "*tx",
-										   "*org.nutz.integration.quartz.QuartzIocLoader",// 关联Quartz
-										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader",
-										   "*org.nutz.aop.interceptor.async.AsyncAopIocLoader"
+										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader"
 										   })
 @Modules(scanPackage=true)
 @ChainBy(args="mvc/nutzbook-mvc-chain.js")

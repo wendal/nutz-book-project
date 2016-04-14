@@ -4,4 +4,5 @@ Disallow: /yvr/api/
 Disallow: /u2f/
 Disallow: /up/
 Disallow: /apidocs/
+Disallow: /analysis
 Allow: /

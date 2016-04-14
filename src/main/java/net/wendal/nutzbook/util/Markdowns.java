@@ -5,6 +5,7 @@ import static org.pegdown.FastEncoder.encode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -20,6 +21,7 @@ import org.pegdown.PegDownProcessor;
 import org.pegdown.Printer;
 import org.pegdown.ToHtmlSerializer;
 import org.pegdown.VerbatimSerializer;
+import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.ast.ExpImageNode;
 import org.pegdown.ast.RootNode;
 import org.pegdown.ast.VerbatimNode;
@@ -29,6 +31,8 @@ public class Markdowns {
 	protected static final Log log = Logs.get();
 	
 	public static Cache cache;
+	
+	public static Pattern VideoURL = Pattern.compile(".+\\.(mp4|webm|ogg)$");
 	
 	public static HashSet<String> codeNames = new HashSet<String>();
 	static {
@@ -93,7 +97,30 @@ public class Markdowns {
             		Rendering rendering = new Rendering(url, text);
                     return StringUtils.isEmpty(node.title) ? rendering : rendering.withAttribute("title", encode(node.title));
             	}
-            }, plugins).toHtml(astRoot);
+            }, plugins){
+            	protected void printLink(Rendering rendering) {
+            		super.printLink(rendering);
+            		String href = rendering.href;
+            		if (VideoURL.matcher(href).find()) {
+            			printer.print("<p/><video width=\"320\" height=\"240\" controls>");
+            			printer.print("<source");
+            			printAttribute("src", href);
+            			if (href.endsWith("mp4")) {
+            				printAttribute("type", "video/mp4");
+            			} else if (rendering.href.endsWith("webm")) {
+            				printAttribute("type", "video/webm");
+            			} else {
+            				printAttribute("type", "video/ogg");
+            			}
+            			printer.print(">");
+            			printer.print("</video>");
+            		}
+            	}
+            	
+            	public void printAttribute(String name, String value) {
+                    printer.print(' ').print(name).print('=').print('"').print(value).print('"');
+                }
+            }.toHtml(astRoot);
             if (cache != null) {
             	cache.put(new Element(key, re));
             }

@@ -14,6 +14,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.aop.Aop;
@@ -22,11 +23,9 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.util.NutMap;
-import org.nutz.mvc.Scope;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Filters;
@@ -44,13 +43,13 @@ import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.module.yvr.api.YvrApi;
 import net.wendal.nutzbook.mvc.AccessTokenFilter;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
 import net.wendal.nutzbook.util.Markdowns;
+import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 对外公开的HTTP API, 使用http://apidocjs.com/的进行注释生成
@@ -69,7 +68,7 @@ import net.wendal.nutzbook.util.Markdowns;
 @At("/yvr/api/v1")
 @Ok("json")
 @Fail("http:500")
-public class YvrApiModule extends BaseModule implements YvrApi {
+public class YvrApiModule extends BaseModule {
 	
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
@@ -139,7 +138,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 			topics = redisDao.queryByZset(Topic.class, RKEY_TOPIC_TAG_UPDATE + type, pager);
 		} else if (!Strings.isBlank(search)) {
 			try {
-				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), false);
+				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), false, 30);
 				for (LuceneSearchResult result : results) {
 					Topic topic = dao.fetch(Topic.class, result.getId());
 					if (topic == null)
@@ -159,11 +158,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		}
 		if (page == 1 && "ask".equals(type)) {
 			for (Topic topic : yvrService.fetchTop()) {
-				list.add(_topic(topic, authors, mdrender));
+				list.add(_topic(topic, authors, mdrender, false));
 			}
 		}
 		for (Topic topic : topics) {
-			list.add(_topic(topic, authors, mdrender));
+			list.add(_topic(topic, authors, mdrender, false));
 		}
 		return _map("data", list);
 	}
@@ -213,7 +212,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		if (id == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender);
+		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender, true);
 
 		List<NutMap> replies = new ArrayList<NutMap>();
 		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
@@ -294,11 +293,11 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		List<NutMap> recent_topics = new ArrayList<NutMap>();
 		for (Topic topic : yvrService.getRecentTopics(user.getId(), dao.createPager(1, 5))) {
-			recent_topics.add(_topic(topic, authors, null));
+			recent_topics.add(_topic(topic, authors, null, false));
 		}
 		List<NutMap> recent_replies = new ArrayList<NutMap>();
 		for (Topic topic : yvrService.getRecentReplyTopics(user.getId(), dao.createPager(1, 5))) {
-			recent_replies.add(_topic(topic, authors, null));
+			recent_replies.add(_topic(topic, authors, null, false));
 		}
 		return _map("data", _map("loginname", loginname,
 				"avatar_url", _avatar_url(loginname),
@@ -329,9 +328,10 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@At("/topics")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object add(@Param("..")Topic topic, @Attr(scope=Scope.SESSION, value="me")int userId, @Param("tab")String tab) {
+	public Object add(@Param("..")Topic topic, @Param("tab")String tab) {
 		if (tab != null)
 			topic.setType(TopicType.valueOf(tab));
+		int userId = Toolkit.uid();
 		CResult re = yvrService.add(topic, userId);
 		if (re.isOk()) {
 			return _map("success", true, "topic_id", re.as(String.class));
@@ -360,7 +360,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@At("/topic/?/replies")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object addReply(String topicId, @Param("..") TopicReply reply, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object addReply(String topicId, @Param("..") TopicReply reply) {
+		int userId = Toolkit.uid();
 		CResult re =  yvrService.addReply(topicId, reply, userId);
 		if (re.isOk()) {
 			return _map("success", true, "reply_id", re.as(String.class));
@@ -385,7 +386,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@POST
 	@At("/reply/?/ups")
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object replyUp(String replyId, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object replyUp(String replyId) {
+		int userId = Toolkit.uid();
 		CResult re =  yvrService.replyUp(replyId, userId);
 		if (re.isOk()) {
 			return _map("success", true, "action", re.as(String.class));
@@ -408,8 +410,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@Filters(@By(type=AccessTokenFilter.class))
 	@GET
 	@At("/message/count")
-	public Object msgCount(@Attr(scope = Scope.SESSION, value = "me") int userId) {
-		return _map("data", 0);
+	public Object msgCount() {
+		return _map("data", userMessageService.count(Cnd.where("receiverId", "=", Toolkit.uid()).and("unread", "=", true)));
 	}
 
 	/**
@@ -436,7 +438,7 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@Filters(@By(type=AccessTokenFilter.class))
 	@GET
 	@At("/messages")
-	public Object getMessages(@Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object getMessages() {
 		return _map("data", _map("has_read_messages", Collections.EMPTY_LIST, "hasnot_read_messages", Collections.EMPTY_LIST));
 	}
 
@@ -453,7 +455,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@POST
 	@At("/message/mark_all")
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object markAllMessage(@Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object markAllMessage() {
+	    userMessageService.update(Chain.make("unread", false), Cnd.where("receiverId", "=", Toolkit.uid()));
 		return _map("success", true);
 	}
 	/**
@@ -473,7 +476,8 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 	@At("/images")
 	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type=AccessTokenFilter.class))
-	public Object images(@Param("file")TempFile tmp, @Attr(scope = Scope.SESSION, value = "me") int userId) throws Exception {
+	public Object images(@Param("file")TempFile tmp) throws Exception {
+		int userId = Toolkit.uid();
 		return yvrService.upload(tmp, userId);
 	}
 
@@ -501,15 +505,17 @@ public class YvrApiModule extends BaseModule implements YvrApi {
 		return Times.formatForRead(date);
 	}
 
-	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender) {
+	public NutMap _topic(Topic topic, Map<Integer, UserProfile> authors, String mdrender, boolean hasContent) {
 		yvrService.fillTopic(topic, authors);
-		bigContentService.fill(topic);
+		if (hasContent)
+			bigContentService.fill(topic);
 		NutMap tp = new NutMap();
 		tp.put("id", topic.getId());
 		tp.put("author_id", ""+topic.getAuthor().getUserId());
 		tp.put("tab", topic.getType().toString());
 		tp.put("tags", topic.getTags());
-		tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
+		if (hasContent)
+			tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
 		tp.put("title", StringEscapeUtils.unescapeHtml(topic.getTitle()));
 		if (topic.getLastComment() != null) {
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));

@@ -122,7 +122,7 @@ public class YvrAdminModule extends BaseModule{
 		
 		// 输出列表页
 		for (TopicType tt : TopicType.values()) {
-			Long count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), 0, System.currentTimeMillis());
+			Long count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 			visitAndWrite(root, "/yvr/list/"+tt.name()+"/", dst);
 			if (count != null && count.longValue() > 0) {
 				for (int i = 0; i < count.intValue(); i++) {

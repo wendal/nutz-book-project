@@ -2,9 +2,12 @@ package net.wendal.nutzbook.service.yvr;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.lucene.LuceneIndex;
 import net.wendal.nutzbook.service.BigContentService;
 
@@ -13,6 +16,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -28,6 +32,7 @@ import org.apache.lucene.search.vectorhighlight.FragmentsBuilder;
 import org.apache.lucene.search.vectorhighlight.ScoreOrderFragmentsBuilder;
 import org.apache.lucene.search.vectorhighlight.SimpleFragListBuilder;
 import org.apache.lucene.util.Version;
+import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
@@ -54,11 +59,15 @@ public class TopicSearchService {
 	@Inject
 	protected BigContentService bigContentService;
 
+	@Async
 	public void add(Topic topic) {
+	    _add(topic);
+	}
+	protected void _add(Topic topic) {
 		if (topic == null)
 			return; // 虽然不太可能,还是预防一下吧
 		// 暂时不索引评论
-		// dao.fetchLinks(topic, "replies");
+		dao.fetchLinks(topic, "replies");
 		Document document;
 		document = new Document();
 		Field field;
@@ -89,44 +98,78 @@ public class TopicSearchService {
 		// 加入文章内容
 		fieldType = new FieldType();
 		fieldType.setIndexed(true);// 索引
-		fieldType.setStored(true);// 存储
+		fieldType.setStored(false);// 存储
 		fieldType.setStoreTermVectors(true);
 		fieldType.setTokenized(true);
 		fieldType.setStoreTermVectorPositions(true);// 存储位置
 		fieldType.setStoreTermVectorOffsets(true);// 存储偏移量
 		field = new Field("content", topic.getContent(), fieldType);
 		document.add(field);
+		
+		StringBuilder sb = new StringBuilder();
+		if (topic.getReplies() != null) {
+		    for (TopicReply reply : topic.getReplies()) {
+		        if (reply == null)
+		            continue;
+		        bigContentService.fill(reply);
+                if (reply.getContent() != null) {
+                    if (sb.length()+reply.getContent().length() > (IndexWriter.MAX_TERM_LENGTH/3)) {
+                        break;
+                    }
+                    sb.append(reply.getContent());
+                }
+            }
+		}
+		fieldType = new FieldType();
+        fieldType.setIndexed(true);// 索引
+        fieldType.setStored(false);// 存储
+        fieldType.setStoreTermVectors(true);
+        fieldType.setTokenized(true);
+        fieldType.setStoreTermVectorPositions(true);// 存储位置
+        fieldType.setStoreTermVectorOffsets(true);// 存储偏移量
+        
+        field = new Field("reply", sb.toString(), fieldType);
+        document.add(field);
 
 		try {
 			luceneIndex.writer.addDocument(document);
 		} catch (IOException e) {
 			log.debug("add to index fail : id=" + topic.getId());
-		}
+		} catch (Error e) {
+		    log.debug("add to index fail : id=" + topic.getId());
+        }
 	}
 
 	// @RequiresPermissions("topic:index:rebuild")
 	public void rebuild() throws IOException {
-		Sql sql = Sqls.queryString("select id from t_topic");
+		Sql sql = Sqls.queryString("select id from t_topic where tp='ask'");
 		dao.execute(sql);
 		luceneIndex.writer.deleteAll();
 		String[] topicIds = sql.getObject(String[].class);
 		for (String topicId : topicIds) {
 			Topic topic = dao.fetch(Topic.class, topicId);
 			bigContentService.fill(topic);
-			add(topic);
+			_add(topic);
 		}
 		luceneIndex.writer.commit();
 	}
-
-	public List<LuceneSearchResult> search(String keyword, boolean highlight) throws IOException, ParseException {
+	
+	Map<String,Float> boosts = new HashMap<>();
+	{
+	    boosts.put("title", 5.0f);
+	    boosts.put("content", 3.0f);
+	    boosts.put("reply", 2.0f);
+	}
+    String[] fields = boosts.keySet().toArray(new String[boosts.size()]);
+	public List<LuceneSearchResult> search(String keyword, boolean highlight, int size) throws IOException, ParseException {
 		IndexReader reader = luceneIndex.reader();
 		try {
 			IndexSearcher searcher = new IndexSearcher(reader);
 			Analyzer analyzer = new IKAnalyzer();
-			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, new String[] { "title", "content" }, analyzer);
+			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer, boosts);
 			// 将关键字包装成Query对象
 			Query query = parser.parse(keyword);
-			TopDocs results = searcher.search(query, 30);
+			TopDocs results = searcher.search(query, size);
 			FragListBuilder fragListBuilder = new SimpleFragListBuilder();
 			FragmentsBuilder fragmentsBuilder = new ScoreOrderFragmentsBuilder(BaseFragmentsBuilder.COLORED_PRE_TAGS, BaseFragmentsBuilder.COLORED_POST_TAGS);
 			FastVectorHighlighter fvh = new FastVectorHighlighter(true, true, fragListBuilder, fragmentsBuilder);

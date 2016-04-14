@@ -26,6 +26,46 @@
     };
 
     var $body = $('body');
+    
+    // 添加code粘贴
+    var ToolCode = function(){
+        var self = this;
+        this.$win = $([
+            '<div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editorToolImageTitle" aria-hidden="true">',
+                '<div class="modal-header">',
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
+                    '<h3 id="editorToolImageTitle">添加代码</h3>',
+                '</div>',
+                '<div class="modal-body">',
+                    '<form class="upload-img">',
+                        '<textarea name="code" value="" rows="10" cols="300" placeholder="贴代码" style="height: auto;width: 100%;"></textarea>',
+                    '</form>',
+                '</div>',
+                '<div class="modal-footer">',
+                    '<button class="btn btn-primary" role="save">确定</button>',
+                '</div>',
+            '</div>'
+        ].join('')).appendTo($body);
+
+        this.$win.on('click', '[role=save]', function(){
+            self.$win.find('form').submit();
+        }).on('submit', 'form', function(){
+            var $el = $(this);
+            var code = $el.find('[name=code]').val();
+            
+            self.$win.modal('hide');
+            self.editor.push('\r\n\r\n```\n'+ code +'\n```\r\n');
+
+            $el.find('[name=code]').val('');
+            return false;
+        });
+    };
+
+    ToolCode.prototype.bind = function(editor){
+        this.editor = editor;
+        this.$win.modal('show');
+    };
+    
 
     //添加连接工具
     var ToolLink = function(){
@@ -87,12 +127,12 @@
             '<div class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editorToolImageTitle" aria-hidden="true">',
                 '<div class="modal-header">',
                     '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>',
-                    '<h3 id="editorToolImageTitle">图片</h3>',
+                    '<h3 id="editorToolImageTitle">图片/视频,禁止上传代码截图!!!!</h3>',
                 '</div>',
                 '<div class="modal-body">',
                     '<div class="upload-img">',
-                        '<div class="button">上传图片</div>',
-                        '<span class="tip">请不是单纯地上传代码截图!</span>',
+                        '<div class="button">上传</div>',
+                        '<span class="tip">禁止上传代码截图!!!违者直接封贴!!!</span>',
                         '<div class="alert alert-error hide"></div>',
                     '</div>',
                 '</div>',
@@ -124,13 +164,13 @@
             paste: document.body,
             dnd: this.$upload[0],
             auto: true,
-            fileSingleSizeLimit: 2 * 1024 * 1024,
+            fileSingleSizeLimit: 10 * 1024 * 1024,
             //sendAsBinary: true,
-            // 只允许选择图片文件。
+            // 只允许选择图片文件和小视频
             accept: {
                 title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/*'
+                extensions: 'gif,jpg,jpeg,bmp,png,mp4,webm,ogg',
+                mimeTypes: 'image/*,video/*'
             }
         });
 
@@ -153,7 +193,12 @@
                 self.$win.modal('hide');
                 var fname = file.name;
                 fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-                self.editor.push(' !['+ fname +']('+ res.url +')');
+                var _fext = file.name.substring(file.name.lastIndexOf("."));
+                if (_fext.endsWith(".mp4") || _fext.endsWith(".webm") || _fext.endsWith(".ogg")) {
+                	self.editor.push(' ['+ fname +']('+ res.url +'?type=' + _fext + ")");
+                } else {
+                	self.editor.push(' !['+ fname +']('+ res.url +'?type='+ _fext + ')');
+                }
             }
             else{
                 self.removeFile();
@@ -171,10 +216,10 @@
             switch(type){
                 case 'Q_EXCEED_SIZE_LIMIT':
                 case 'F_EXCEED_SIZE':
-                    self.showError('文件太大了, 不能超过2M');
+                    self.showError('文件太大了, 不能超过10M');
                     break;
                 case 'Q_TYPE_DENIED':
-                    self.showError('只能上传图片');
+                    self.showError('只能上传图片/视频');
                     break;
                 default:
                     self.showError('发生未知错误');
@@ -223,6 +268,7 @@
 
     var toolImage = new ToolImage();
     var toolLink = new ToolLink();
+    var toolCode = new ToolCode();
 
     replaceTool('image', function(editor){
         toolImage.bind(editor);
@@ -231,7 +277,7 @@
         toolLink.bind(editor);
     });
     replaceTool('code', function(editor){
-    	editor.push('\r\n```\r\n这里贴代码\r\n```\r\n');
+    	toolCode.bind(editor);
     });
 
     //当编辑器取得焦点时，绑定 toolImage；

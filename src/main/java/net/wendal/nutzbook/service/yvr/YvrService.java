@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -147,7 +148,7 @@ public class YvrService implements RedisKey {
 		if (userId < 1) {
 			return _fail("请先登录");
 		}
-		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 100 || topic.getTitle().length() < 5) {
+		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 1024 || topic.getTitle().length() < 5) {
 			return _fail("标题长度不合法");
 		}
 		if (Strings.isBlank(topic.getContent())) {
@@ -195,6 +196,7 @@ public class YvrService implements RedisKey {
 						topic.getTitle(),
 						PushService.PUSH_TYPE_REPLY);
 		}
+		updateTopicTypeCount();
 		return _ok(topic.getId());
 	}
 
@@ -206,12 +208,12 @@ public class YvrService implements RedisKey {
 			return _fail("内容不能为空");
 		}
 		final String cnt = reply.getContent().trim();
-		if (cnt.length() < 2 || cnt.length() > 10000) {
-			return _fail("内容太长或太短了");
-		}
 		final Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
 		if (topic == null) {
 			return _fail("主题不存在");
+		}
+		if (topic.isLock()) {
+			return _fail("该帖子已经锁定,不能回复");
 		}
 		reply.setTopicId(topicId);
 		reply.setUserId(userId);
@@ -219,6 +221,8 @@ public class YvrService implements RedisKey {
 		reply.setContentId(bigContentService.put(reply.getContent()));
 		reply.setContent(null);
 		dao.insert(reply);
+		// 更新索引
+		topicSearchService.add(topic);
 		// 更新topic的时间戳
 		Pipeline pipe = jedis().pipelined();
 		if (topic.isTop()) {
@@ -238,36 +242,42 @@ public class YvrService implements RedisKey {
 		pipe.zincrby(RKEY_USER_SCORE, 10, ""+userId);
 		pipe.sync();
 		
-		String replyAuthorName = dao.fetch(User.class, userId).getName();
-		// 通知原本的作者
-		if (topic.getUserId() != userId) {
-			String alert = replyAuthorName + "回复了您的帖子";
-			pushUser(topic.getUserId(),
-					alert,
-					topicId,
-					replyAuthorName,
-					topic.getTitle(),
-					PushService.PUSH_TYPE_REPLY);
-		}
-
-		Set<String> ats = findAt(cnt, 5);
-		for (String at : ats) {
-			User user = dao.fetch(User.class, at);
-			if (user == null)
-				continue;
-			if (topic.getUserId() == user.getId())
-				continue; // 前面已经发过了
-			if (userId == user.getId())
-				continue; // 自己@自己, 忽略
-			String alert = replyAuthorName + "在帖子回复中@了你";
-			pushUser(user.getId(),
-					alert,
-					topicId,
-					replyAuthorName,
-					topic.getTitle(),
-					PushService.PUSH_TYPE_AT);
-		}
+		notifyUsers(topic, reply, cnt, userId);
+		
 		return _ok(reply.getId());
+	}
+	
+	@Async
+	protected void notifyUsers(Topic topic, TopicReply reply, String cnt, int userId) {
+	    String replyAuthorName = dao.fetch(User.class, userId).getName();
+        // 通知原本的作者
+        if (topic.getUserId() != userId) {
+            String alert = replyAuthorName + "回复了您的帖子";
+            pushUser(topic.getUserId(),
+                    alert,
+                    topic.getId(),
+                    replyAuthorName,
+                    topic.getTitle(),
+                    PushService.PUSH_TYPE_REPLY);
+        }
+
+        Set<String> ats = findAt(cnt, 5);
+        for (String at : ats) {
+            User user = dao.fetch(User.class, at);
+            if (user == null)
+                continue;
+            if (topic.getUserId() == user.getId())
+                continue; // 前面已经发过了
+            if (userId == user.getId())
+                continue; // 自己@自己, 忽略
+            String alert = replyAuthorName + "在帖子回复中@了你";
+            pushUser(user.getId(),
+                    alert,
+                    topic.getId(),
+                    replyAuthorName,
+                    topic.getTitle(),
+                    PushService.PUSH_TYPE_AT);
+        }
 	}
 	
 	@Aop("redis")
@@ -288,6 +298,7 @@ public class YvrService implements RedisKey {
 		}
 	}
 	
+	@Async
 	protected void pushUser(int userId, String alert, String topic_id, String post_user, String topic_title, int type) {
 		Map<String, String> extras = new HashMap<String, String>();
 		extras.put("topic_id", topic_id);
@@ -351,18 +362,19 @@ public class YvrService implements RedisKey {
 		NutMap re = new NutMap();
 		if (userId < 1)
 			return re.setv("msg", "请先登陆!");
-		if (tmp == null || tmp.getFile().length() == 0) {
+		if (tmp == null || tmp.getSize() == 0) {
 			return re.setv("msg", "空文件");
 		}
-		if (tmp.getFile().length() > 5 * 1024 * 1024) {
+		if (tmp.getSize() > 10 * 1024 * 1024) {
+			tmp.delete();
 			return re.setv("msg", "文件太大了");
 		}
 		String id = R.UU32();
 		String path = "/" + id.substring(0, 2) + "/" + id.substring(2);
 		File f = new File(imageDir + path);
 		Files.createNewFile(f);
-		Files.copyFile(tmp.getFile(), f);
-		tmp.getFile().delete();
+		Files.write(f, tmp.getInputStream());
+		tmp.delete();
 		re.put("url", Mvcs.getServletContext().getContextPath()+"/yvr/upload" + path);
 		re.setv("success", true);
 		return re;
@@ -488,6 +500,14 @@ public class YvrService implements RedisKey {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	@Async
+	@Aop("redis")
+	public void updateTopicTypeCount() {
+		for (TopicType tt : TopicType.values()) {
+			tt.count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package net.wendal.nutzbook.service;
 
-import org.apache.commons.mail.Email;
 import org.apache.commons.mail.HtmlEmail;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.ioc.Ioc;
@@ -38,9 +37,5 @@ public class EmailServiceImpl implements EmailService {
 		boolean re = this.send(to, subject, html);
 		if (callback != null)
 			callback.invoke(re);
-	}
-
-	public boolean isSupport(Object event) {
-		return event instanceof Email;
 	}
 }

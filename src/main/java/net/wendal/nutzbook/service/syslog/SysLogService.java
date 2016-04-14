@@ -40,12 +40,15 @@ public class SysLogService {
 	}
 	
 	public void init() {
+		checkTable();
+	}
+	
+	public void checkTable() {
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MONTH, -2);
-		for (int i = 0; i < 38; i++) {
-			Dao dao = Daos.ext(this.dao, String.format("%d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1));
-			dao.create(SysLog.class, false);
-			cal.add(Calendar.MONTH, 1);
-		}
+		Dao dao = Daos.ext(this.dao, String.format("%d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1));
+		dao.create(SysLog.class, false);
+		cal.add(Calendar.MONTH, 1);
+		dao = Daos.ext(this.dao, String.format("%d%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1));
+		dao.create(SysLog.class, false);
 	}
 }

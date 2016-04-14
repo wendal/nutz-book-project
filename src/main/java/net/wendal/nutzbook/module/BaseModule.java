@@ -19,6 +19,7 @@ import org.nutz.mvc.view.ViewWrapper;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.EmailService;
+import net.wendal.nutzbook.service.UserMessageService;
 import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.RedisKey;
 
@@ -33,6 +34,8 @@ public abstract class BaseModule implements RedisKey {
 	
 	@Inject("java:$conf.get('website.urlbase')")
 	protected String urlbase;
+	
+	@Inject protected UserMessageService userMessageService;
 	
 	@Inject
 	protected YvrService yvrService;
@@ -85,7 +88,7 @@ public abstract class BaseModule implements RedisKey {
 	public static final View HTTP_200 = new HttpStatusView(200);
 	
 	// 生成json响应的辅助方法
-	public static NutMap _map(Object...args) {
+	protected static NutMap _map(Object...args) {
 		NutMap re = new NutMap();
 		for (int i = 0; i < args.length; i+=2) {
 			re.put(args[i].toString(), args[i+1]);
@@ -94,14 +97,15 @@ public abstract class BaseModule implements RedisKey {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> _list(T ... args) {
+	protected static <T> List<T> _list(T ... args) {
 		return Arrays.asList(args);
 	}
 	
-	public static View _download(File f) {
+	protected static View _download(File f) {
 		return new ViewWrapper(new RawView("stream"), f);
 	}
-	public static View _download(String f) {
+	
+	protected static View _download(String f) {
 		return new ViewWrapper(new RawView("stream"), new File(f));
 	}
 }

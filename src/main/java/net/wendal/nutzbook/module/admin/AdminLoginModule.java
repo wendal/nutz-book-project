@@ -3,15 +3,10 @@ package net.wendal.nutzbook.module.admin;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.util.Toolkit;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.subject.Subject;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -27,6 +22,12 @@ import org.nutz.mvc.view.ViewWrapper;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.nutz.plugins.view.freemarker.FreemarkerView;
 
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
+import net.wendal.nutzbook.util.Toolkit;
+
 /**
  * @author 科技㊣²º¹³<br />
  *         2015年11月23日 下午14:18:45 <br />
@@ -39,22 +40,27 @@ public class AdminLoginModule extends BaseModule {
 	private static final String TEMPLATE_LOGIN = "templates/front/login/index";
 
 	@Inject
-	private FreeMarkerConfigurer freeMarkerConfigurer;
+	protected FreeMarkerConfigurer freeMarkerConfigurer;
+	
+	@Inject
+	protected UserService userService;
 
 	@At
 	@Filters(@By(type = AuthenticationFilter.class))
 	public View login(@Attr("loginToken") UsernamePasswordToken token, HttpSession session, HttpServletRequest req) {
 		try {
 			User user = dao.fetch(User.class, token.getUsername());
-			Toolkit.doLogin(token, user.getId());
-			return new ServerRedirectView("/admin/main.rk");
+			if (user != null && userService.checkPassword(user, new String(token.getPassword()))) {
+				Toolkit.doLogin(new SimpleShiroToken(user.getId()), user.getId());
+				return new ServerRedirectView("/admin/main.rk");
+			}
 		} catch (LockedAccountException e) {
 			return new ViewWrapper(new FreemarkerView(freeMarkerConfigurer, TEMPLATE_LOGIN), e.getMessage());
 		} catch (AuthenticationException e) {
-			return new ViewWrapper(new FreemarkerView(freeMarkerConfigurer, TEMPLATE_LOGIN), Mvcs.getMessage(req, "common.error.login.account"));
 		} catch (Exception e) {
 			return new ViewWrapper(new FreemarkerView(freeMarkerConfigurer, TEMPLATE_LOGIN), e.getMessage());
 		}
+		return new ViewWrapper(new FreemarkerView(freeMarkerConfigurer, TEMPLATE_LOGIN), Mvcs.getMessage(req, "common.error.login.account"));
 	}
 
 	@At
@@ -66,7 +72,6 @@ public class AdminLoginModule extends BaseModule {
 
 	@At({"/", "/index"})
 	@Ok("fm:templates.front.login.index")
-	@RequiresGuest
 	public Object index() {
 		if (SecurityUtils.getSubject().isAuthenticated())
 			return new ServerRedirectView("/admin/main.rk");

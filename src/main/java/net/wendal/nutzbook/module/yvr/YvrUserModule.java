@@ -8,16 +8,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import net.wendal.nutzbook.bean.OAuthUser;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
@@ -28,23 +18,34 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.meta.Email;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.nutz.mvc.Scope;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
+import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import net.wendal.nutzbook.bean.OAuthUser;
+import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.UserService;
+import net.wendal.nutzbook.util.Toolkit;
 
 @At("/yvr/u")
 @IocBean(create="init")
@@ -61,9 +62,16 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
+	@Ok("beetl:yvr/user/user_index.btl")
+	@RequiresUser
+	@At("/me")
+	public Object myHome() {
+	    return userHome(dao.fetch(User.class, Toolkit.uid()).getName());
+	}
+	
 	@At("/?")
 	@Ok("beetl:yvr/user/user_index.btl")
-	public Object userHome(String userName, @Attr(scope = Scope.SESSION, value = "me") int userId) {
+	public Object userHome(String userName) {
 		User user = dao.fetch(User.class, userName);
 		if (user == null)
 			return HttpStatusView.HTTP_404;
@@ -74,7 +82,7 @@ public class YvrUserModule extends BaseModule {
 		profile.setLoginname(userName);
 		if (Strings.isBlank(profile.getDescription()))
 			profile.setDescription(null);
-		
+		int userId = Toolkit.uid();
 		re.put("c_user", profile);
 		if (userId > 0) {
 			UserProfile me = fetch_userprofile(userId);
@@ -94,7 +102,8 @@ public class YvrUserModule extends BaseModule {
 	@POST
 	@RequiresUser
 	@At("/me/reset/token")
-	public void resetAccessToken(@Attr(scope = Scope.SESSION, value = "me")int userId) {
+	public void resetAccessToken() {
+		int userId = Toolkit.uid();
 		User user = dao.fetch(User.class, userId);
 		if (user != null)
 			yvrService.resetAccessToken(user.getName());
@@ -239,26 +248,47 @@ public class YvrUserModule extends BaseModule {
 		return ajaxOk("发送邮件失败");
 	}
 	
-	@At("/description")
-	@Ok("json")
+	@AdaptBy(type = WhaleAdaptor.class)
+	@At("/profile/update/?")
+	@Ok("raw")
 	@POST
-	public Object updateUserDt(@Attr(scope = Scope.SESSION, value = "me") int userId,@Param("update_value")String original_value,@Param("update_value")String update_value){
+	public Object updateUserDt(String field, 
+	                           @Param("update_value")String original_value,
+	                           @Param("update_value")String update_value,
+	                           @Param("file") TempFile tmp) throws IOException {
+		int userId = Toolkit.uid();
 		UserProfile profile = fetch_userprofile(userId);
-		if (profile != null) {
-			profile.setDescription(update_value);
-			dao.update(profile, "description");
-		}else{
-			return original_value;
+		if (profile == null) {
+		    return original_value;
 		}
-		return profile.getDescription();
+		switch (field) {
+        case "description":
+            profile.setDescription(update_value);
+            dao.update(profile, "description");
+            return profile.getDescription();
+        case "nickname":
+            profile.setNickname(update_value);
+            dao.update(profile, "nickname");
+            return profile.getNickname();
+        case "avatar":
+            if (tmp == null)
+                return "{'ok':false}";
+            if (tmp.getSize() > 1024*1024)
+                return "{'ok':false}";
+            byte[] avatar = Streams.readBytesAndClose(tmp.getInputStream());
+            profile.setAvatar(avatar);
+            dao.update(profile, "avatar");
+            avatarCache.remove(profile.getLoginname());
+            return "{'ok':true}";
+        default:
+            break;
+        }
+		return original_value;
 	}
 	
 	@At("/oauth/github")
 	@Ok("->:/oauth/github")
-	public void oauth(String type, HttpServletRequest req, HttpSession session){
-		String url = req.getHeader("Rerefer");
-		if (url == null)
-			url = "/yvr/list";
+	public void oauthGithub(){
 	}
 
 	@At

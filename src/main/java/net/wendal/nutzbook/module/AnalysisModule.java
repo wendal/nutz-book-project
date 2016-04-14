@@ -1,5 +1,13 @@
 package net.wendal.nutzbook.module;
 
+import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+
+import java.util.Date;
+import java.util.List;
+
+import org.nutz.dao.Cnd;
+import org.nutz.dao.FieldFilter;
+import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -8,8 +16,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
-
+import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.util.Toolkit;
 
 @IocBean
@@ -42,5 +49,21 @@ public class AnalysisModule extends BaseModule {
 	@At("/user/history/between")
 	public Object userOnlineDayHistoryBetween(@Param("start")String start, @Param("end")String end) {
 		return null;
+	}
+	
+	@At("/user/topic/?")
+	public Object userTopic(int uid, 
+			@Param(value="start", dfmt="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")Date start, 
+			@Param(value="end", dfmt="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")Date end) {
+		NutMap map = new NutMap();
+		if (start == null)
+			start = new Date(System.currentTimeMillis() - 365L*86400*1000);
+		if (end == null)
+			end = new Date();
+		List<Topic> list = Daos.ext(dao, FieldFilter.create(Topic.class, "createTime")).query(Topic.class, Cnd.where("userId", "=", uid).and("createTime", "between", new Object[]{start, end}));
+		for (Topic topic : list) {
+			map.put(""+(topic.getCreateTime().getTime() / 1000), 1);
+		}
+		return map;
 	}
 }
