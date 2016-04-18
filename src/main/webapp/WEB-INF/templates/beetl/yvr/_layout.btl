@@ -313,5 +313,6 @@ $(function() {
 });
 </script>
 <% } %>
+<script id='spay-script' src='https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=7af02c41-b1f0-4239-a365-16d6d26e2993'></script>
 </body>
 </html>
