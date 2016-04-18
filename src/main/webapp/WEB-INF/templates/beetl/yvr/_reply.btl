@@ -10,7 +10,7 @@
     </a>
 
     <div class='user_info'>
-      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.loginname!}</a>
+      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${user.nickname, escape}(${user.loginname})</a>
       <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
     </div>
     <!-- user_action -->
