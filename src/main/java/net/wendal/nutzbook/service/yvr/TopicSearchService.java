@@ -8,6 +8,8 @@ import java.util.Map;
 
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicTag;
+import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.lucene.LuceneIndex;
 import net.wendal.nutzbook.service.BigContentService;
 
@@ -66,6 +68,8 @@ public class TopicSearchService {
 	protected void _add(Topic topic) {
 		if (topic == null)
 			return; // 虽然不太可能,还是预防一下吧
+		if (topic.getType() != TopicType.ask && topic.getType() != TopicType.share)
+		    return;
 		// 暂时不索引评论
 		dao.fetchLinks(topic, "replies");
 		Document document;
@@ -142,7 +146,7 @@ public class TopicSearchService {
 
 	// @RequiresPermissions("topic:index:rebuild")
 	public void rebuild() throws IOException {
-		Sql sql = Sqls.queryString("select id from t_topic where tp='ask'");
+		Sql sql = Sqls.queryString("select id from t_topic where tp='ask' or tp='share'");
 		dao.execute(sql);
 		luceneIndex.writer.deleteAll();
 		String[] topicIds = sql.getObject(String[].class);
