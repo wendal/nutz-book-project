@@ -104,7 +104,7 @@ var ctxPath = "${ctxPath}";
       <a class='brand' href='${ctxPath}/yvr/list'>
         <div class="nutz-logo-bar">
     		<div class="nutz-logo">
-        		<img src="${cdnbase}${base}/rs/logo/logo.png" alt="网站logo"/>
+        		<img src="${cdnbase}${base}/rs/logo/logo2.png" alt="网站logo"/>
         		<div class="logo-tail"></div>
     		</div>
     		<div class="nutz-txt">${conf["website.shortname"]}</div>

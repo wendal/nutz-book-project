@@ -40,7 +40,7 @@ PS: 通过docker部署的话无需上述软件
 ## 自定义的基本步骤
 
 1. 修改website.properties的网站信息
-2. 修改logo文件,位于src/main/resources/webapp/rs/logo/logo.png, logo.css
+2. 修改logo文件,位于src/main/resources/webapp/rs/logo/logo.png, logo2.png
 3. 配置邮箱信息email.properties
 4. 如需第三方登陆,例如github/qq,配置oauth_consumer.properties,否则请在website.properties关闭之
 
