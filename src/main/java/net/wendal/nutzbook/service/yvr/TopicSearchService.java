@@ -6,13 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
-import net.wendal.nutzbook.bean.yvr.TopicTag;
-import net.wendal.nutzbook.bean.yvr.TopicType;
-import net.wendal.nutzbook.lucene.LuceneIndex;
-import net.wendal.nutzbook.service.BigContentService;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -44,6 +37,12 @@ import org.nutz.lang.Files;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.wltea.analyzer.lucene.IKAnalyzer;
+
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.bean.yvr.TopicType;
+import net.wendal.nutzbook.lucene.LuceneIndex;
+import net.wendal.nutzbook.service.BigContentService;
 
 @IocBean(create = "init", depose = "close")
 public class TopicSearchService {

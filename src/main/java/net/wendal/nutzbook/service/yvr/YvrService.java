@@ -510,4 +510,25 @@ public class YvrService implements RedisKey {
 			tt.count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 		}
 	}
+
+    @Aop("redis")
+	public Object check(String topicId, int replies) {
+        Topic topic = dao.fetch(Topic.class, topicId);
+        if (topic == null)
+            return "";
+        Double reply_count = jedis().zscore(RKEY_REPLY_COUNT, topicId);
+        if (reply_count == null)
+            reply_count = Double.valueOf(0);
+        if (reply_count.intValue() == replies) {
+            return "";
+        }
+        String replyId = jedis().hget(RKEY_REPLY_LAST, topicId);
+        TopicReply reply = dao.fetch(TopicReply.class, replyId);
+        dao.fetchLinks(reply, null);
+
+        NutMap re = new NutMap().setv("count", reply_count.intValue());
+        re.put("data", reply.getAuthor().getNickname() + " 回复了帖子:" + topic.getTitle());
+        re.put("options", new NutMap().setv("tag", topicId));
+        return re;
+    }
 }

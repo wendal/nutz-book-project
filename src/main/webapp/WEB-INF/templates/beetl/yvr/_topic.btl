@@ -177,7 +177,11 @@ layout("_layout.btl",{}){
   $(document).ready(function () {
     // 获取所有回复者name
     var allNames = $('.reply_author').map(function (idx, ele) {
-      return $(ele).text().trim();
+      var _tmp = $(ele).text().trim();
+      if (_tmp.indexOf("(") > -1 && _tmp.indexOf(")") > _tmp.indexOf("(")){
+          return _tmp.substr(_tmp.indexOf("(")+1, _tmp.indexOf(")") - _tmp.indexOf("(") - 1);
+      }
+      return _tmp;
     }).toArray();
     allNames = _.uniq(allNames);
     // END 获取所有回复者name
@@ -612,6 +616,7 @@ function _check_topic_update() {
 		}
 	});
 }
+var ws;
 $(function(){
 	if (!Notification) {
 		return;
@@ -627,7 +632,24 @@ $(function(){
 	if (Notification.permission !== "granted") {
 		return;
 	}
-	window.setInterval(_check_topic_update, 15000);
+	try {
+		ws = new WebSocket("ws://"+window.location.host+"${base}/yvr/topic/socket");
+		ws.onmessage = function(event) {
+		    var re = JSON.parse(event.data);
+		    _replies_count = re.count;
+		    var n = new Notification(re.data, re.options);
+			n.onclick = function() {
+				location.reload();
+			};
+		};
+		window.setInterval(function(){
+			ws.send(JSON.stringify({id:'${obj.topic.id}',replies:_replies_count}));
+		}, 5000);
+	} catch (ex) {
+		if (console)
+		    console.info(ex);
+		window.setInterval(_check_topic_update, 5000);
+	}
 });
 <%}%>
 </script>

@@ -367,26 +367,9 @@ public class YvrModule extends BaseModule {
 	}
 	
     @Ok("json")
-    @Aop("redis")
     @At("/t/?/check")
     public Object check(String topicId, @Param("replies") int replies) {
-        Topic topic = dao.fetch(Topic.class, topicId);
-        if (topic == null)
-            return "";
-        Double reply_count = jedis().zscore(RKEY_REPLY_COUNT, topicId);
-        if (reply_count == null)
-            reply_count = Double.valueOf(0);
-        if (reply_count.intValue() == replies) {
-            return "";
-        }
-        String replyId = jedis().hget(RKEY_REPLY_LAST, topicId);
-        TopicReply reply = dao.fetch(TopicReply.class, replyId);
-        dao.fetchLinks(reply, null);
-
-        NutMap re = _map("count", reply_count.intValue());
-        re.put("data", reply.getAuthor().getNickname() + " 回复了帖子:" + topic.getTitle());
-        re.put("options", _map("tag", topicId));
-        return re;
+        return yvrService.check(topicId, replies);
     }
 
 	public void init() {
