@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -37,6 +38,7 @@ import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.annotation.ReqHeader;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
@@ -224,13 +226,20 @@ public class YvrModule extends BaseModule {
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.btl")
 	@Aop("redis")
-	public Object topic(String id) {
+	public Object topic(String id, @ReqHeader("If-None-Match")String _etag,  HttpServletResponse response) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
+        Double visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
+        // 检查是否匹配etag(其实就是最后回复的replay id), 如果匹配,就304呗
+        String replyId = jedis().hget(RKEY_REPLY_LAST, topic.getId());
+        if (replyId != null && replyId.equals(_etag)) {
+            return HTTP_304;
+        }
+        
 		topic.setAuthor(fetch_userprofile(topic.getUserId()));
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
 		//-------------------------------------
@@ -260,29 +269,7 @@ public class YvrModule extends BaseModule {
 			re.put("_csrf", csrf);
 			re.put("current_user", fetch_userprofile(userId));
 		}
-		Double visited = 0d;
-//		boolean flag = userId == topic.getAuthor().getUserId();
-//		if (!flag && userAgent != null && userAgent.length() < 1024) {
-//			userAgent = userAgent.toLowerCase();
-//			flag = userAgent.contains("robot") || userAgent.contains("spider") || userAgent.contains("bot.");
-//		}
-//		if (!flag) {
-//			for (TopicReply reply : topic.getReplies()) {
-//				if (reply.getAuthor().getUserId() == userId) {
-//					flag = true;
-//					break;
-//				}
-//			}
-//		}
-//		if (flag) {
-//			visited = jedis().zscore(RKEY_TOPIC_VISIT, id);
-//			if (visited == null)
-//				visited = 0d;
-//		}
-//		else {
-			visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
-//		}
-		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
+        topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId(), dao.createPager(1, 5)));
 		//re.put("top_tags", yvrService.fetchTopTags());
 		return re;
