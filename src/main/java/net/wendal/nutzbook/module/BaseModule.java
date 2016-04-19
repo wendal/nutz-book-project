@@ -85,7 +85,8 @@ public abstract class BaseModule implements RedisKey {
 	public static final View HTTP_404 = HttpStatusView.HTTP_404;
 	public static final View HTTP_500 = HttpStatusView.HTTP_500;
 	public static final View HTTP_502 = HttpStatusView.HTTP_502;
-	public static final View HTTP_200 = new HttpStatusView(200);
+    public static final View HTTP_200 = new HttpStatusView(200);
+    public static final View HTTP_304 = new HttpStatusView(304);
 	
 	// 生成json响应的辅助方法
 	protected static NutMap _map(Object...args) {
