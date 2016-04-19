@@ -633,7 +633,13 @@ $(function(){
 		return;
 	}
 	try {
-		ws = new WebSocket("ws://"+window.location.host+"${base}/yvr/topic/socket");
+		var WS_URL = window.location.host+"${base}/yvr/topic/socket"
+		if (location.protocol == 'http:') {
+			ws = new WebSocket("ws://"+WS_URL);
+		} else {
+			ws = new WebSocket("wss://"+WS_URL);
+		}
+		
 		ws.onmessage = function(event) {
 		    var re = JSON.parse(event.data);
 		    _replies_count = re.count;
