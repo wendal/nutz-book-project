@@ -317,7 +317,7 @@ $(function() {
 <script>
 $(function() {
   var hm = document.createElement("script");
-  hm.src = "https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=7af02c41-b1f0-4239-a365-16d6d26e2993";
+  hm.src = "https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=${conf["bc.appId"]}";
   hm.id = "spay-script";
   var s = document.getElementsByTagName("script")[0]; 
   s.parentNode.insertBefore(hm, s);
