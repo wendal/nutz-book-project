@@ -36,7 +36,7 @@ public class BeePayModule extends BaseModule {
         String appid = conf.get("bc.appId");
         String appSecret = conf.get("bc.appSecret");
         if (Strings.isBlank(title))
-            title = "test";
+            title = "你的订单号:"+R.UU32().substring(0, 8);
         NutMap re = new NutMap();
         re.put("out_trade_no", out_trade_no);
         re.put("amount", amount);

@@ -40,68 +40,76 @@ import org.nutz.mvc.annotation.Param;
 @IocBean
 public class RobotModule extends BaseModule {
 
-	@Inject
-	protected TopicSearchService topicSearchService;
+    @Inject
+    protected TopicSearchService topicSearchService;
 
-	@Inject
-	protected PropertiesProxy conf;
-	/**
-	 * 命令开始符号
-	 */
-	public static final char cmd = '#';
-	/**
-	 * AT模板
-	 */
-	public static final String AT_TPL = "@%s(%s)";
+    @Inject
+    protected PropertiesProxy conf;
+    /**
+     * 命令开始符号
+     */
+    public static final char cmd = '#';
+    /**
+     * AT模板
+     */
+    public static final String AT_TPL = "@%s(%s)";
 
-	// TODO 加上KEY认证
-	@At("/msg")
-	@Ok("raw")
-	public String msg(@Param("..") NutMap data, HttpServletRequest req) throws IOException, ParseException {
-		if (!Strings.equals(data.getString("Event"), "ClusterIM")) {
-			return "";
-		}
-		if (!Strings.startsWithChar(data.getString("Message"), cmd)) {
-			return "";
-		}
-		String groupId = data.getString("GroupId");
-		if (!checkGroupId(groupId)) {
-			return "";
-		}
-		String key = data.getString("Message");
-		if (key.length() == 1)
-			return "";
-		key = key.substring(1).trim();
-		if (key.length() == 0)
-			return "";
+    // TODO 加上KEY认证
+    @At("/msg")
+    @Ok("raw")
+    public String msg(@Param("..") NutMap data, HttpServletRequest req)
+            throws IOException, ParseException {
+        if (!Strings.equals(data.getString("Event"), "ClusterIM")) {
+            return "";
+        }
+        if (!Strings.startsWithChar(data.getString("Message"), cmd)) {
+            return "";
+        }
+        // String groupId = data.getString("GroupId");
+        // if (!checkGroupId(groupId)) {
+        // return "";
+        // }
+        String key = data.getString("Message");
+        if (key.length() == 1)
+            return "";
+        key = key.substring(1).trim();
+        if (key.length() == 0)
+            return "";
 
-		String at = String.format(AT_TPL, data.getString("SenderName"), data.getString("Sender"));
+        // String at = String.format(AT_TPL, data.getString("SenderName"),
+        // data.getString("Sender"));
+        String at = "";
 
-		List<LuceneSearchResult> results = topicSearchService.search(key, true, 3);
-		if (results == null || results.size() == 0) {
-			return at + " 没有相关帖子,要不发帖问问? http://" + req.getHeader("Host") + "/yvr/add";
-		}
-		final StringBuilder msgbBuilder = new StringBuilder(at + " 检索结果:\r\n");
-		for (LuceneSearchResult result : results) {
-			Topic topic = dao.fetch(Topic.class, result.getId());
-			if (topic == null)
-				continue;
-			topic.setTitle(result.getResult());
-			String text = String.format("%s http://%s/yvr/t/%s\r\n", topic.getTitle(), req.getHeader("Host"), topic.getId());
-			msgbBuilder.append(text);
-		}
-		return msgbBuilder.toString();
-	}
+        List<LuceneSearchResult> results = topicSearchService.search(key, true, 3);
+        if (results == null || results.size() == 0) {
+            return at + " 没有相关帖子,要不发帖问问? http://" + req.getHeader("Host") + "/yvr/add";
+        }
+        final StringBuilder msgbBuilder = new StringBuilder(at + " 检索结果:\r\n");
+        for (LuceneSearchResult result : results) {
+            Topic topic = dao.fetch(Topic.class, result.getId());
+            if (topic == null)
+                continue;
+            topic.setTitle(result.getResult());
+            String text = String.format("%s http://%s/yvr/t/%s\r\n",
+                                        topic.getTitle(),
+                                        req.getHeader("Host"),
+                                        topic.getId().substring(0, 6));
+            msgbBuilder.append(text);
+        }
+        msgbBuilder.append(String.format("完整查询结果: http://%s/yvr/search?q=" + key));
+        return msgbBuilder.toString();
+    }
 
-	public boolean checkGroupId(String groupId) {
-		if (groupId == null)
-			return false;
-		try {
-			groupId = groupId.trim();
-			String[] ids = conf.get("qqbot.groups").split(",");
-			return Arrays.asList(ids).contains(groupId);
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public boolean checkGroupId(String groupId) {
+        if (groupId == null)
+            return false;
+        try {
+            groupId = groupId.trim();
+            String[] ids = conf.get("qqbot.groups").split(",");
+            return Arrays.asList(ids).contains(groupId);
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
 }

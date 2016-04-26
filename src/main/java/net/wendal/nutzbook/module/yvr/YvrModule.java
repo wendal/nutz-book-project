@@ -227,7 +227,14 @@ public class YvrModule extends BaseModule {
 	@Ok("beetl:yvr/_topic.btl")
 	@Aop("redis")
 	public Object topic(String id, @ReqHeader("If-None-Match")String _etag,  HttpServletResponse response) {
-		Topic topic = dao.fetch(Topic.class, id);
+	    Topic topic;
+	    if (id.length() == 6) {
+	        topic = dao.fetch(Topic.class, Cnd.where("id", "like", id +"%"));
+	        if (topic != null)
+	            return new ServerRedirectView("/yvr/t/"+topic.getId());
+	    } else {
+	        topic = dao.fetch(Topic.class, id);
+	    }
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
