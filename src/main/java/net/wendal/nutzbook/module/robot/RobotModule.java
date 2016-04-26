@@ -98,7 +98,7 @@ public class RobotModule extends BaseModule {
                                         topic.getId().substring(0, 6));
             msgbBuilder.append(text);
         }
-        msgbBuilder.append(String.format("完整查询结果: http://%s/yvr/search?q=" + key));
+        msgbBuilder.append(String.format("完整查询结果: http://%s/yvr/search?q=%s", req.getHeader("Host"), key));
         return msgbBuilder.toString();
     }
 
