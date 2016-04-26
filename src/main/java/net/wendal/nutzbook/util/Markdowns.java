@@ -5,6 +5,7 @@ import static org.pegdown.FastEncoder.encode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.ehcache.Cache;
@@ -14,6 +15,7 @@ import org.nutz.lang.Stopwatch;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.parboiled.common.StringUtils;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -24,6 +26,8 @@ import org.pegdown.VerbatimSerializer;
 import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.ast.ExpImageNode;
 import org.pegdown.ast.RootNode;
+import org.pegdown.ast.SimpleNode;
+import org.pegdown.ast.TextNode;
 import org.pegdown.ast.VerbatimNode;
 
 public class Markdowns {
@@ -33,6 +37,7 @@ public class Markdowns {
 	public static Cache cache;
 	
 	public static Pattern VideoURL = Pattern.compile(".+\\.(mp4|webm|ogg)$");
+	public static Pattern AtUser = Pattern.compile("(@[a-zA-Z_].+[ ])");
 	
 	public static HashSet<String> codeNames = new HashSet<String>();
 	static {
@@ -120,6 +125,31 @@ public class Markdowns {
             	public void printAttribute(String name, String value) {
                     printer.print(' ').print(name).print('=').print('"').print(value).print('"');
                 }
+            	
+            	public void visit(TextNode node) {
+            	    System.out.println("node text="+node.getText());
+            	    String text = node.getText();
+            	    if (text != null && text.length() > 5) {
+            	        Matcher m = AtUser.matcher(text);
+            	        StringBuilder sb = new StringBuilder();
+            	        int start = 0;
+            	        while (m.find()) {
+            	            if (m.start()>start) {
+            	                sb.append(text.substring(start, m.start()));
+            	            }
+            	            String user = m.group().substring(1).trim();
+            	            String p = String.format("<a href='%s/yvr/u/%s'>@%s</a> ", Mvcs.getServletContext().getContextPath(), user, user);
+            	            sb.append(p);
+                            start = m.end();
+            	        }
+            	        if (text.length() > start)
+            	            sb.append(text.substring(start));
+            	        super.visit(new TextNode(sb.toString()));
+            	        return;
+            	    }
+            	    super.visit(node);
+            	}
+            	
             }.toHtml(astRoot);
             if (cache != null) {
             	cache.put(new Element(key, re));
