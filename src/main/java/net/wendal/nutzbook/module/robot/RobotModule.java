@@ -75,6 +75,8 @@ public class RobotModule extends BaseModule {
         key = key.substring(1).trim();
         if (key.length() == 0)
             return "";
+        if (key.equals("签到"))
+            return "";
 
         // String at = String.format(AT_TPL, data.getString("SenderName"),
         // data.getString("Sender"));
