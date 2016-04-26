@@ -232,6 +232,9 @@ layout("_layout.btl",{}){
       parent.find('.reply2_area').prepend(editorWrap);
       var textarea = editorWrap.find('textarea.editor');
       var user = $btn.closest('.author_content').find('.reply_author').text().trim();
+      if (user.indexOf("(") > -1 && user.indexOf(")") > user.indexOf("(")){
+          user = user.substr(user.indexOf("(")+1, user.indexOf(")") - user.indexOf("(") - 1);
+      }
       var editor = textarea.data('editor');
       editorWrap.show('fast', function () {
         var cm = editor.codemirror;
@@ -511,35 +514,6 @@ var QueryString = function () {
   } 
     return query_string;
 }();
-$(function(){
-	if (console)
-			console.log(QueryString);
-	if (QueryString.watch) {
-		if (console)
-			console.log("watch topic");
-		var twatch = io.connect('//'+window.location.hostname+ ':81/twatch', {
-        	'reconnection delay' : 2000,
-        	'force new connection' : true
-		});
-        twatch.on("login", function(data){
-        	twatch.emit("watch", "${obj.topic.id}");
-        });
-		twatch.on("reload", function(data){
-			if ($.support.pjax) {
-				$.pjax.reload('#content');
-			} else {
-        		location.reload();
-        	}
-        });
-	} else {
-		$("#watch_btn").show();
-		if (console)
-			console.log("not watch");
-	}
-});
-function watch_me() {
-	window.location.href = window.location.href + "?watch=1";
-}
 function send_to_phone() {
 	$.ajax({
 		url : "${base}/yvr/t/${obj.topic.id}/push",
