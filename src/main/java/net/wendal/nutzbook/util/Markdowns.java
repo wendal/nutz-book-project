@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.nutz.lang.Stopwatch;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -19,16 +16,18 @@ import org.nutz.mvc.Mvcs;
 import org.parboiled.common.StringUtils;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
+import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.PegDownProcessor;
 import org.pegdown.Printer;
 import org.pegdown.ToHtmlSerializer;
 import org.pegdown.VerbatimSerializer;
-import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.ast.ExpImageNode;
 import org.pegdown.ast.RootNode;
-import org.pegdown.ast.SimpleNode;
 import org.pegdown.ast.TextNode;
 import org.pegdown.ast.VerbatimNode;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 
 public class Markdowns {
 
@@ -127,7 +126,6 @@ public class Markdowns {
                 }
             	
             	public void visit(TextNode node) {
-            	    System.out.println("node text="+node.getText());
             	    String text = node.getText();
             	    if (text != null && text.length() > 5) {
             	        Matcher m = AtUser.matcher(text);

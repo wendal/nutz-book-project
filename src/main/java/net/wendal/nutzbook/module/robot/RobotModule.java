@@ -86,7 +86,7 @@ public class RobotModule extends BaseModule {
         if (results == null || results.size() == 0) {
             return at + " 没有相关帖子,要不发帖问问? http://" + req.getHeader("Host") + "/yvr/add";
         }
-        final StringBuilder msgbBuilder = new StringBuilder(at + " 检索结果:\r\n");
+        final StringBuilder msgbBuilder = new StringBuilder();
         for (LuceneSearchResult result : results) {
             Topic topic = dao.fetch(Topic.class, result.getId());
             if (topic == null)
@@ -98,7 +98,7 @@ public class RobotModule extends BaseModule {
                                         topic.getId().substring(0, 6));
             msgbBuilder.append(text);
         }
-        msgbBuilder.append(String.format("完整查询结果: http://%s/yvr/search?q=%s", req.getHeader("Host"), key));
+        msgbBuilder.append(String.format("完整结果: http://%s/yvr/search?q=%s", req.getHeader("Host"), key));
         return msgbBuilder.toString();
     }
 
