@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.55</version>
+			<version>1.r.56</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -307,7 +307,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
-			<version>1.0.18</version>
+			<version>1.0.19</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jconsole</artifactId>
