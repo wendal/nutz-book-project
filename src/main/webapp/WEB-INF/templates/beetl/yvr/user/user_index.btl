@@ -9,6 +9,9 @@
       </ul>
     </div>
     <div class='inner userinfo'>
+      <style>
+		.webuploader-pick{padding: 5px 10px 5px 10px;background-color: #ffffff;line-height: 24px;}
+      </style>
       <div class='user_big_avatar' id="user_index_avatar">
         <img src="${cdnbase}${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="点击修改头像"/>
       </div>
