@@ -7,6 +7,10 @@
 		<name>dummy</name>
 	</absolute-ordering>
 	<display-name>nutzbook</display-name>
+	<context-param>
+		<param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
+		<param-value>false</param-value>
+	</context-param>
 	<listener>
 		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
