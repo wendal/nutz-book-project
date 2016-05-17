@@ -1,6 +1,8 @@
 # nutz-book-project
 nutz-book 衍生出的project, 与nutzbook同步更新
 
+Nutz主库地址 https://github.com/nutzam/nutz 觉得不错, 来个star呗
+
 ## 主项目地址
 
 https://github.com/wendal/nutz-book
@@ -37,6 +39,7 @@ http://nutzbook.wendal.net
 * 声明式系统日志
 * 基于socialauth的Oauth登陆(客户端,非服务器端实现)
 * 集成极光推送(jpush)及小米推送(xmpush)
+* WebSocket的简单使用(页面回帖通知)
 
 ## 曾经集成,但已经移除的功能
 
