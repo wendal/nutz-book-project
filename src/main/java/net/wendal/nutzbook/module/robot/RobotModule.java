@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.module.robot;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.At;
@@ -35,7 +37,7 @@ import org.nutz.mvc.annotation.Param;
  * @time 2016年3月8日 上午10:51:26
  *
  */
-@At("robot")
+@At("/robot")
 @Filters
 @IocBean
 public class RobotModule extends BaseModule {
@@ -98,7 +100,7 @@ public class RobotModule extends BaseModule {
                                         topic.getId().substring(0, 6));
             msgbBuilder.append(text);
         }
-        msgbBuilder.append(String.format("完整结果: http://%s/yvr/search?q=%s", req.getHeader("Host"), key));
+        msgbBuilder.append(String.format("完整结果: http://%s/yvr/search?q=%s", req.getHeader("Host"), URLEncoder.encode(key, Encoding.UTF8)));
         return msgbBuilder.toString();
     }
 
