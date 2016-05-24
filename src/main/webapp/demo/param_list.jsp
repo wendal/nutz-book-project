@@ -5,6 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<script type="text/javascript" src="${base}/rs/js/jquery.js"></script>
 </head>
 <body>
 <form action="${base}/demo/param/list" method="post" enctype="application/x-www-form-urlencoded">
@@ -29,5 +30,28 @@
 		
 		<input type="submit">
 	</form>
+	
+<form action="${base}/demo/param/mydate" method="post">
+	<input name="mydate" value="2016-05-29 11:59:00">
+		<input type="submit">
+</form>
+<p/>
+<form action="${base}/demo/upload" method="post" enctype="multipart/form-data">
+	<input name="file" type="file">
+	<input type="submit">
+</form>
+<script type="text/javascript">
+function getP() {
+	$.ajax({
+		url : "${base}/demo/uploadp",
+		success : function (d) {
+			if (d)
+				console.log(d);
+		},
+		//async:false
+	});
+}
+setInterval (getP, 50);
+</script>
 </body>
 </html>
