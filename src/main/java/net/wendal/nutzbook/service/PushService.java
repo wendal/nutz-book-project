@@ -12,11 +12,6 @@ import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-import com.xiaomi.xmpush.server.Constants;
-import com.xiaomi.xmpush.server.Message;
-import com.xiaomi.xmpush.server.Result;
-import com.xiaomi.xmpush.server.Sender;
-
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Options;
@@ -27,12 +22,18 @@ import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 
+import com.xiaomi.xmpush.server.Constants;
+import com.xiaomi.xmpush.server.Message;
+import com.xiaomi.xmpush.server.Result;
+import com.xiaomi.xmpush.server.Sender;
+
 /**
  * 推送服务,当前用jpush实现
+ * 
  * @author wendal
  *
  */
-@IocBean(create="init")
+@IocBean(create = "init")
 public class PushService {
 
 	/**
@@ -45,60 +46,66 @@ public class PushService {
 	public static int PUSH_TYPE_AT = 1;
 
 	private static final Log log = Logs.get();
-	
+
 	@Inject
 	protected JPushClient jpush;
-	
+
 	protected Map<String, JPushClient> jpushs;
-	
+
 	@Inject
 	protected Sender xmpush;
-	
+
 	@Inject
 	protected PropertiesProxy conf;
-	
+
 	public void alert(int userId, String alert, Map<String, String> extras) {
-		alertJpush(userId, alert, extras);
 		alertGtPush(userId, alert, extras);
-		alertXmPush(userId, alert, extras);
 	}
-	
+
 	public void message(int userId, String message, Map<String, String> extras) {
-		messageJpush(userId, message, extras);
-		messageXmPush(userId, message, extras);
+		if (conf.getBoolean("jpush.enable", false))
+			messageJpush(userId, message, extras);
+		if (conf.getBoolean("xmpush.enable", false))
+			messageXmPush(userId, message, extras);
 	}
-	
-	public void alertJpush(int userId, String alert, Map<String, String> extras) {
+
+	private void alertJpush(int userId, String alert, Map<String, String> extras) {
 		AndroidNotification android = AndroidNotification.newBuilder().setAlert(alert).addExtras(extras).build();
 		IosNotification ios = IosNotification.newBuilder().setAlert(alert).addExtras(extras).build();
 		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
 		cn.jpush.api.push.model.PushPayload.Builder builder = PushPayload.newBuilder().setPlatform(Platform.all());
-		builder.setAudience(Audience.alias("u_"+ userId));
+		builder.setAudience(Audience.alias("u_" + userId));
 		builder.setNotification(notif);
 		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
 		sendJPush(builder.build());
 	}
-	
-	public void alertGtPush(int userId, String alert, Map<String, String> extras) {}
-	
-	public void alertXmPush(int userId, String alert, Map<String, String> extras) {
+
+	public void alertGtPush(int userId, String alert, Map<String, String> extras) {
+		if (conf.getBoolean("jpush.enable", false))
+			alertJpush(userId, alert, extras);
+		alertGtPush(userId, alert, extras);
+		if (conf.getBoolean("xmpush.enable", false))
+			alertXmPush(userId, alert, extras);
+	}
+
+	private void alertXmPush(int userId, String alert, Map<String, String> extras) {
 		Message.Builder builder = new Message.Builder().title(alert).description(alert);
 		for (Entry<String, String> en : extras.entrySet()) {
 			builder.extra(en.getKey(), en.getValue());
 		}
-		sendMxPush(builder.build(), "u_"+userId);
+		sendMxPush(builder.build(), "u_" + userId);
 	}
-	
-	public void messageXmPush(int userId, String message, Map<String, String> extras) {
+
+	private void messageXmPush(int userId, String message, Map<String, String> extras) {
 		Message.Builder builder = new Message.Builder().title(message).description(message).passThrough(1).payload(message);
 		for (Entry<String, String> en : extras.entrySet()) {
 			builder.extra(en.getKey(), en.getValue());
 		}
-		sendMxPush(builder.build(), "u_"+userId);
+		sendMxPush(builder.build(), "u_" + userId);
 	}
-	
-	public void messageJpush(int userId, String message, Map<String, String> extras) {
+
+	private void messageJpush(int userId, String message, Map<String, String> extras) {
 		AndroidNotification android = AndroidNotification.newBuilder().setAlert("").setTitle(message).addExtras(extras).build();
 		IosNotification ios = IosNotification.newBuilder().setAlert("").addExtras(extras).build();
 		Notification notif = Notification.newBuilder().addPlatformNotification(android).addPlatformNotification(ios).build();
@@ -109,31 +116,33 @@ public class PushService {
 		builder.setOptions(options);
 		sendJPush(builder.build());
 	}
-	
-	@Async 
+
+	@Async
 	public void doJpush(String name, JPushClient jpush, PushPayload payload) {
-		try {
-			PushResult re = jpush.sendPush(payload);
-			log.debugf("%s result=%s", name, re);
-		} catch (Exception e) {
-			log.debugf("send %s fail", name, e);
-		}
+		if (conf.getBoolean("jpush.enable", false))
+			try {
+				PushResult re = jpush.sendPush(payload);
+				log.debugf("%s result=%s", name, re);
+			} catch (Exception e) {
+				log.debugf("send %s fail", name, e);
+			}
 	}
-	
-	public void sendJPush(PushPayload payload) {
+
+	private void sendJPush(PushPayload payload) {
 		doJpush("jpush", jpush, payload);
 		// 第三方客户端的推送账户
 		for (Entry<String, JPushClient> en : jpushs.entrySet()) {
 			doJpush(en.getKey(), en.getValue(), payload);
 		}
 	}
-	
+
 	@Async
 	public void doMxPush(Message message, String alias) {
-		sendMxPush(message, alias);
+		if (conf.getBoolean("xmpush.enable", false))
+			sendMxPush(message, alias);
 	}
-	
-	public void sendMxPush(Message message, String alias) {
+
+	private void sendMxPush(Message message, String alias) {
 		if (xmpush == null)
 			return;
 		try {
@@ -143,25 +152,25 @@ public class PushService {
 			log.debugf("send to %s fail", alias, e);
 		}
 	}
-	
+
 	public void init() {
 		jpushs = new LinkedHashMap<>();
 		// 支持10个够了吧
 		for (int i = 1; i < 11; i++) {
-			String prefix = "jpush"+i;
-			boolean enable = conf.getBoolean(prefix+".enable", false);
+			String prefix = "jpush" + i;
+			boolean enable = conf.getBoolean(prefix + ".enable", false);
 			if (!enable)
 				continue;
-			String masterSecret = conf.get(prefix+".masterSecret");
-			String appKey = conf.get(prefix+".appKey");
+			String masterSecret = conf.get(prefix + ".masterSecret");
+			String appKey = conf.get(prefix + ".appKey");
 			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
-				log.warn(prefix+".enable=true, but masterSecret/appKey is NULL or emtry");
+				log.warn(prefix + ".enable=true, but masterSecret/appKey is NULL or emtry");
 				continue;
 			}
 			JPushClient jpush = new JPushClient(masterSecret, appKey);
 			jpushs.put(prefix, jpush);
 		}
-		
+
 		Constants.useOfficial();
 		if (!conf.getBoolean("xmpush.enable", false)) {
 			log.info("xmpush disabled");
