@@ -7,22 +7,29 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
-import net.wendal.nutzbook.service.yvr.TopicSearchService;
-
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.nutz.http.Request;
+import org.nutz.http.Request.METHOD;
+import org.nutz.http.Response;
+import org.nutz.http.Sender;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
+
+import net.wendal.nutzbook.bean.yvr.Topic;
+import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
+import net.wendal.nutzbook.service.yvr.TopicSearchService;
 
 /**
  * 
@@ -41,6 +48,8 @@ import org.nutz.mvc.annotation.Param;
 @Filters
 @IocBean
 public class RobotModule extends BaseModule {
+    
+    private static final Log log = Logs.get();
 
     @Inject
     protected TopicSearchService topicSearchService;
@@ -59,8 +68,25 @@ public class RobotModule extends BaseModule {
     // TODO 加上KEY认证
     @At("/msg")
     @Ok("raw")
+    @Fail("void")
     public String msg(@Param("..") NutMap data, HttpServletRequest req)
             throws IOException, ParseException {
+        String groupId = data.getString("GroupId");
+        if (Strings.isBlank(groupId))
+            return "";
+        String route = conf.get("qqbot.route."+groupId);
+        if (!Strings.isBlank(route)) {
+            if (!route.startsWith("http"))
+                route = "http://" + route + "/robot/msg";
+            log.debug("route to " + route);
+            Request _req = Request.create(route, METHOD.POST, data);
+            Response resp = Sender.create(_req).setTimeout(5*1000).send();
+            if (resp.isOK()) {
+                return resp.getContent();
+            }
+            log.debug("route seem not good code="+resp.getStatus());
+            return "";
+        }
         if (!Strings.equals(data.getString("Event"), "ClusterIM")) {
             return "";
         }
@@ -86,7 +112,7 @@ public class RobotModule extends BaseModule {
 
         List<LuceneSearchResult> results = topicSearchService.search(key, true, 3);
         if (results == null || results.size() == 0) {
-            return at + " 没有相关帖子,要不发帖问问? http://" + req.getHeader("Host") + "/yvr/add";
+            return at + " 发帖问问吧 http://" + req.getHeader("Host") + "/yvr/add";
         }
         final StringBuilder msgbBuilder = new StringBuilder();
         for (LuceneSearchResult result : results) {
@@ -104,6 +130,7 @@ public class RobotModule extends BaseModule {
         return msgbBuilder.toString();
     }
 
+    @Deprecated
     public boolean checkGroupId(String groupId) {
         if (groupId == null)
             return false;
