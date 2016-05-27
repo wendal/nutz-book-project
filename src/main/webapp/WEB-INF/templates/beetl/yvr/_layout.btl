@@ -44,6 +44,12 @@ html { overflow-y: scroll; }
 <script>
 var ctxPath = "${ctxPath}";
 </script>
+<script type="text/javascript" src="https://dn-bughd-web.qbox.me/bughd.min.js" crossOrigin="anonymous"></script>
+
+<script type="text/javascript">
+  window.bughd = window.bughd || function(){};
+  bughd("create",{key:"15ec0f702515ac0165a5d02393f7cc66"})
+</script>
 <script src="${cdnbase}${base}/rs/libs/jquery-2.1.4.min.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/lodash.compat.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/jquery-ujs.js?v=1"></script>
