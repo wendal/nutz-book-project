@@ -59,7 +59,10 @@ public class PushService {
 	protected PropertiesProxy conf;
 
 	public void alert(int userId, String alert, Map<String, String> extras) {
-		alertGtPush(userId, alert, extras);
+	    if (conf.getBoolean("jpush.enable", false))
+            alertJpush(userId, alert, extras);
+        if (conf.getBoolean("xmpush.enable", false))
+            alertXmPush(userId, alert, extras);
 	}
 
 	public void message(int userId, String message, Map<String, String> extras) {
@@ -79,14 +82,6 @@ public class PushService {
 		Options options = Options.newBuilder().setApnsProduction(true).build();
 		builder.setOptions(options);
 		sendJPush(builder.build());
-	}
-
-	public void alertGtPush(int userId, String alert, Map<String, String> extras) {
-		if (conf.getBoolean("jpush.enable", false))
-			alertJpush(userId, alert, extras);
-		alertGtPush(userId, alert, extras);
-		if (conf.getBoolean("xmpush.enable", false))
-			alertXmPush(userId, alert, extras);
 	}
 
 	private void alertXmPush(int userId, String alert, Map<String, String> extras) {
