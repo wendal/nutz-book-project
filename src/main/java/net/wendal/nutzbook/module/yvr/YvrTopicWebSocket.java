@@ -14,7 +14,7 @@ import org.nutz.mvc.Mvcs;
 
 import net.wendal.nutzbook.service.yvr.YvrService;
 
-@ServerEndpoint("/yvr/topic/socket")
+//@ServerEndpoint("/yvr/topic/socket")
 public class YvrTopicWebSocket {
     
     private static final Log log = Logs.get();
