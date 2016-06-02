@@ -4,17 +4,35 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.View;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.weixin.impl.BasicWxHandler;
+import org.nutz.weixin.impl.WxApi2Impl;
+import org.nutz.weixin.session.memory.MemorySessionManager;
+import org.nutz.weixin.spi.WxApi2;
+import org.nutz.weixin.spi.WxSessionManager;
 import org.nutz.weixin.util.Wxs;
 
 @At("/api/nutzam/mp")
-@IocBean
+@IocBean(create="init")
 public class WxModule extends BasicWxHandler {
+    
+    protected WxApi2 api;
+    
+    protected WxSessionManager sessionManager;
+    
+    @Inject
+    protected PropertiesProxy conf;
+    
+    public void init() {
+        configure(conf, "wxmp.");
+        api = new WxApi2Impl().configure(conf, "wxmp.");
+        sessionManager = new MemorySessionManager();
+    }
 
     /**
      * 微信入口方法
@@ -27,23 +45,5 @@ public class WxModule extends BasicWxHandler {
     @Fail("http:200")
     public View msgIn(String key, HttpServletRequest req) throws IOException {
         return Wxs.handle(this, req, key);
-    }
-    
-    // 从配置文件读取token
-    @Inject("java:$conf.get('wxmp.token')")
-    public void setToken(String token){
-        this.token = token;
-    }
-    
-    // 从配置文件读取aeskey
-    @Inject("java:$conf.get('wxmp.aes'")
-    public void setAesKey(String key){
-        this.aesKey = key;
-    }
-    
-    // 从配置文件读取appid
-    @Inject("java:$conf.get('wxmp.appid'")
-    public void setAppid(String appId){
-        this.appId = appId;
     }
 }
