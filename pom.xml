@@ -86,7 +86,7 @@
 		<repository>
 			<id>nexus-nutzcn-thirdparty</id>
 			<name>Nexus nutzcn thirdparty</name>
-			<url>http://maven.nutz.cn/</url>
+			<url>http://maven.nutz.cn/nexus/content/repositories/thirdparty</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
