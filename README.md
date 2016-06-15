@@ -3,6 +3,8 @@ nutz-book 衍生出的project, 与nutzbook同步更新
 
 Nutz主库地址 https://github.com/nutzam/nutz 觉得不错, 来个star呗
 
+[![](https://imagelayers.io/badge/wendal/nutzbook:latest.svg)](https://imagelayers.io/?images=wendal/nutzbook:latest 'Get your own badge on imagelayers.io')
+
 ## 主项目地址
 
 https://github.com/wendal/nutz-book

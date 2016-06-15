@@ -21,7 +21,7 @@ docker-compose up
 
 ```
 docker run -it --rm  -e NUTZBOOK_db.url="jdbc:mysql://192.168.1.111:3306/nutzbook" \
-	-e NUTZBOOK_redis.host=192.168.1.111 -v /dev/urandom:/dev/random wendal/nutzbook2:latest
+	-e NUTZBOOK_redis.host=192.168.1.111 -v /dev/urandom:/dev/random wendal/nutzbook:latest
 ```
 
 环境变量可参看*docker-compose.yml说明*
