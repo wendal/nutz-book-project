@@ -18,9 +18,9 @@ http://nutzbook.wendal.net
 
 论坛系统(即Nutz社区的官网) https://nutz.cn
 
-管理后台  https://nutz.cn/home
-管理后台2  https://nutz.cn/admin
-管理后台3 https://nutz.cn/admin2
+* 管理后台  https://nutz.cn/home
+* 管理后台2  https://nutz.cn/admin
+* 管理后台3 https://nutz.cn/admin2
 
 ## 截图
 
@@ -55,9 +55,9 @@ http://nutzbook.wendal.net
 
 nutzbook中的代码是eclipse结构的, 本项目最新的代码已经改为maven格式, 映射关系如下
 
-src -- src/main/java
-conf -- src/main/resources
-WebContent -- src/main/webapp
+* src -- src/main/java
+* conf -- src/main/resources
+* WebContent -- src/main/webapp
 
 eclipse依然可以直接导入本项目
 
