@@ -70,4 +70,4 @@ http://nutzbook.wendal.net/jars/
 
 MIT License或Apache License 双授权协议. -- 事实上我懒得选.
 
-极为宽松,请大胆商用,大胆闭源,本库的代码完全免费. 任选MIT/Apache协议执行即可. 若还觉得不够宽松,请发邮件给我,授权一个"WTFPL"协议给你.
+极为宽松,请大胆商用,大胆闭源,本库的代码完全免费. 任选MIT/Apache协议执行即可.
