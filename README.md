@@ -1,9 +1,10 @@
 # nutz-book-project
+
 nutz-book 衍生出的project, 与nutzbook同步更新
 
 Nutz主库地址 https://github.com/nutzam/nutz 觉得不错, 来个star呗
 
-[![](https://imagelayers.io/badge/wendal/nutzbook:latest.svg)](https://imagelayers.io/?images=wendal/nutzbook:latest 'Get your own badge on imagelayers.io')
+[![](https://imagelayers.io/badge/wendal/nutzbook:latest.svg)](https://imagelayers.io/?images=wendal/nutzbook:latest 'Get your own badge on imagelayers.io')[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
 
 ## 主项目地址
 
@@ -64,3 +65,9 @@ eclipse依然可以直接导入本项目
 ## 依赖的jar包下载
 
 http://nutzbook.wendal.net/jars/
+
+## License
+
+MIT License或Apache License 双授权协议. -- 事实上我懒得选.
+
+极为宽松,请大胆商用,大胆闭源,本库的代码完全免费. 任选MIT/Apache协议执行即可. 若还觉得不够宽松,请发邮件给我,授权一个"WTFPL"协议给你.
