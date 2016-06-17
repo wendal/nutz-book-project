@@ -15,7 +15,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
         <form id='create_topic_form' action='#' method='post'>
           <fieldset>
             <span id="topic_create_warn">
-            	<strong><p/>标题,用一句话概括帖子的内容,禁止使用'兽总/有问题求教/救命/看过来/求帮忙'之类的无意义语句. <p/>
+            	<strong><p/>标题,用一句话概括帖子的内容,<span style="color: red;">禁止使用'兽总/有问题求教/救命/看过来/求帮忙'之类的无意义语句.</span> <p/>
             	请遵循 <a href="http://nutzbook.wendal.net/introduction/askforhelp.html" target="_blank">《提问的智慧》</a>中提及的要点。<p/>
             	内容支持 Markdown 语法, <span style="color: red;">使用菜单栏的代码块标注代码,会有代码高亮</span>,禁止上传代码的截图!!<p/>
             	请完整描述问题,提供尽可能多的信息,包括但不限于版本号,系统环境,场景等</strong>
