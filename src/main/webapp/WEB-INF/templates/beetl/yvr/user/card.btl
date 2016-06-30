@@ -5,7 +5,11 @@
       <img src="${cdnbase}${ctxPath}/yvr/u/${user.loginname}/avatar" title="${user.loginname}"/>
     </a>
     <span class='user_nickname'>
-    	<a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.nickname, escape}(${user.loginname})</a>
+    	<a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.nickname, escape}<%if (user.nickname != user.loginname){%>(${user.loginname})<%}%></a>
+    	
+    	<%if ( ! strutil.contain(user.loginname, "_")){%>
+    		<a href="https://github.com/${user.loginname}"><img src="${cdnbase}${base}/rs/logo/Octocat_32.png"></a>
+    	<%}%>
     </span>
 
     <div class='board clearfix'>
