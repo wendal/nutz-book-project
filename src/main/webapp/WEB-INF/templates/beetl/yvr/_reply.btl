@@ -10,7 +10,10 @@
     </a>
 
     <div class='user_info'>
-      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.nickname, escape}(${reply.author.loginname})</a>
+      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.nickname, escape}<%if (reply.author.nickname != reply.author.loginname){%>(${reply.author.loginname})<%}%></a>
+      <%if ( ! strutil.contain(reply.author.loginname, "_")){%>
+    		<a href="https://github.com/${reply.author.loginname}"><img src="${cdnbase}${base}/rs/logo/Octocat_32.png"></a>
+      <%}%>
       <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
     </div>
     <!-- user_action -->
@@ -38,7 +41,7 @@
   <!-- reply_content -->
   <div class='reply_content from-${null == reply.author.loginname! ? 'admin' : reply.author.loginname}'>
     <div class="markdown-text">
-    ${markdown(reply.content)}
+    ${markdown(reply.content, reply.author.loginname)}
     </div>
   </div>
   <div class='clearfix'>
