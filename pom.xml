@@ -98,17 +98,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.nutz</groupId>
-			<artifactId>nutz</artifactId>
-			<version>1.r.57-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-quartz</artifactId>
 			<version>1.r.56</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>c3p0</artifactId>
 					<groupId>c3p0</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.nutz</groupId>
+					<artifactId>nutz</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -120,6 +119,10 @@
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
 					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.nutz</groupId>
+					<artifactId>nutz</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -136,6 +139,10 @@
 				<exclusion>
 					<artifactId>fst</artifactId>
 					<groupId>de.ruedigermoeller</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.nutz</groupId>
+					<artifactId>nutz</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -241,6 +248,12 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-views</artifactId>
 			<version>1.r.54.r2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.nutz</groupId>
+					<artifactId>nutz</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -394,11 +407,63 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
 			<version>1.r.57-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.nutz</groupId>
+					<artifactId>nutz</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-mipush-sdk</artifactId>
 			<version>3.0.MOD</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-web</artifactId>
+			<version>1.r.57-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty.aggregate</groupId>
+					<artifactId>jetty-all-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+					<artifactId>javax.servlet.jsp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlets</artifactId>
+			<version>9.2.17.v20160517</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-server</artifactId>
+			<version>9.2.17.v20160517</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-client</artifactId>
+			<version>9.2.17.v20160517</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>javax-websocket-server-impl</artifactId>
+			<version>9.2.17.v20160517</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz</artifactId>
+			<version>1.r.57-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<version>2.8.1</version>

@@ -58,6 +58,7 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 	<servlet>
 		<servlet-name>DruidStatView</servlet-name>
@@ -76,9 +77,21 @@
 	<error-page>
 		<error-code>500</error-code>
 		<location>/WEB-INF/jsp/500.jsp</location>
-	</error-page>
+<!-- 	</error-page> -->
+<!-- 	<error-page> -->
+<!-- 		<error-code>404</error-code> -->
+<!-- 		<location>/notfound</location> -->
+<!-- 	</error-page> -->
 	<session-config>
 		<!-- 新版jetty不支持超长timeout了 -->
 		<session-timeout>35791394</session-timeout>
 	</session-config>
+<!-- 	<servlet> -->
+<!-- 		<servlet-class>org.nutz.sigar.integration.servlet.SigarServlet</servlet-class> -->
+<!-- 		<servlet-name>sigar</servlet-name> -->
+<!-- 	</servlet> -->
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>sigar</servlet-name> -->
+<!-- 		<url-pattern>/api/sigar</url-pattern> -->
+<!-- 	</servlet-mapping> -->
 </web-app>
