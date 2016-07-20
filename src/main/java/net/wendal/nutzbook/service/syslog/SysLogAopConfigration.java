@@ -15,11 +15,11 @@ import net.wendal.nutzbook.annotation.SLog;
 @IocBean(name="$aop_syslog")
 public class SysLogAopConfigration extends SimpleAopMaker<SLog> {
 	
-	@Inject
-	protected SysLogService sysLogService;
+	@Inject("refer:$ioc")
+	protected Ioc ioc;
 	
 	public List<? extends MethodInterceptor> makeIt(SLog slog, Method method, Ioc ioc) {
-		return Arrays.asList(new SysLogAopInterceptor(sysLogService, slog, method));
+		return Arrays.asList(new SysLogAopInterceptor(ioc, slog, method));
 	}
 
 	public String[] getName() {

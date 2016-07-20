@@ -4,16 +4,17 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.wendal.nutzbook.annotation.SLog;
-import net.wendal.nutzbook.bean.SysLog;
-import net.wendal.nutzbook.util.Toolkit;
-
 import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.el.El;
+import org.nutz.ioc.Ioc;
 import org.nutz.lang.Lang;
 import org.nutz.lang.segment.CharSegment;
 import org.nutz.lang.util.Context;
+
+import net.wendal.nutzbook.annotation.SLog;
+import net.wendal.nutzbook.bean.SysLog;
+import net.wendal.nutzbook.util.Toolkit;
 
 public class SysLogAopInterceptor implements MethodInterceptor {
 	
@@ -28,8 +29,9 @@ public class SysLogAopInterceptor implements MethodInterceptor {
 	protected boolean error;
 	protected boolean async;
 	protected Map<String, El> els;
+	protected Ioc ioc;
 	
-	public SysLogAopInterceptor(SysLogService sysLogService, SLog slog, Method method) {
+	public SysLogAopInterceptor(Ioc ioc, SLog slog, Method method) {
 		this.msg = new CharSegment(slog.msg());
 		if (msg.hasKey()) {
 			els = new HashMap<String, El>();
@@ -37,7 +39,7 @@ public class SysLogAopInterceptor implements MethodInterceptor {
 				els.put(key, new El(key));
 			}
 		}
-		this.sysLogService = sysLogService;
+		this.ioc = ioc;
 		this.source = method.getDeclaringClass().getName() + "#" + method.getName();
 		this.tag = slog.tag();
 		SLog _s = method.getDeclaringClass().getAnnotation(SLog.class);
@@ -79,6 +81,8 @@ public class SysLogAopInterceptor implements MethodInterceptor {
 			_msg = msg.getOrginalString();
 		}
 		SysLog sysLog = SysLog.c(t, tag, source, Toolkit.uid(), _msg);
+		if (sysLogService == null)
+		    sysLogService = ioc.get(SysLogService.class);
 		if (async)
 			sysLogService.async(sysLog);
 		else
