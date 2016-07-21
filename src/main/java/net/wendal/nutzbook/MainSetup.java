@@ -157,19 +157,19 @@ public class MainSetup implements Setup {
 		} catch (Exception e) {
 		}
 		// 解决com.alibaba.druid.proxy.DruidDriver和com.mysql.jdbc.Driver在reload时报warning的问题
+		// 多webapp共享mysql驱动的话,以下语句删掉
 		Enumeration<Driver> en = DriverManager.getDrivers();
 		while (en.hasMoreElements()) {
             try {
                 Driver driver = en.nextElement();
-                if ("com.alibaba.druid.proxy.DruidDriver".equals(driver.getClass().getName())) {
-                    DriverManager.deregisterDriver(driver);
-                }
-                else if ("com.mysql.jdbc.Driver".equals(driver.getClass().getName())) {
+                String className = driver.getClass().getName();
+                if ("com.alibaba.druid.proxy.DruidDriver".equals(className) 
+                     || "com.mysql.jdbc.Driver".equals(className)) {
+                    log.debug("deregisterDriver: " + className);
                     DriverManager.deregisterDriver(driver);
                 }
             }
             catch (Exception e) {
-                e.printStackTrace();
             }
         }
 	}
