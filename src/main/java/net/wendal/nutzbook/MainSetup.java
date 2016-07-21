@@ -1,6 +1,10 @@
 package net.wendal.nutzbook;
 
 import java.nio.charset.Charset;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Enumeration;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -152,5 +156,21 @@ public class MainSetup implements Setup {
 			conf.getIoc().get(Scheduler.class).shutdown(true);
 		} catch (Exception e) {
 		}
+		// 解决com.alibaba.druid.proxy.DruidDriver和com.mysql.jdbc.Driver在reload时报warning的问题
+		Enumeration<Driver> en = DriverManager.getDrivers();
+		while (en.hasMoreElements()) {
+            try {
+                Driver driver = en.nextElement();
+                if ("com.alibaba.druid.proxy.DruidDriver".equals(driver.getClass().getName())) {
+                    DriverManager.deregisterDriver(driver);
+                }
+                else if ("com.mysql.jdbc.Driver".equals(driver.getClass().getName())) {
+                    DriverManager.deregisterDriver(driver);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 }
