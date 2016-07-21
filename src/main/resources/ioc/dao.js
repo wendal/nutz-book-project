@@ -6,21 +6,12 @@ var ioc = {
 			}
 		},
 	    dataSource : {
+	        factory : "$conf#make",
+	        args : ["com.alibaba.druid.pool.DruidDataSource", "db."],
 	        type : "com.alibaba.druid.pool.DruidDataSource",
 	        events : {
 	        	create : "init",
 	            depose : 'close'
-	        },
-	        fields : {
-	            url : {java:"$conf.get('db.url')"},
-	            username : {java:"$conf.get('db.username')"},
-	            password : {java:"$conf.get('db.password')"},
-	            testWhileIdle : true,
-	            validationQuery : {java:"$conf.get('db.validationQuery')"},
-	            maxActive : {java:"$conf.get('db.maxActive')"},
-	            filters : "mergeStat",
-	            connectionProperties : "druid.stat.slowSqlMillis=2000",
-	            defaultAutoCommit : false
 	        }
 	    },
 		dao : {
