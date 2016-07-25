@@ -4,7 +4,7 @@ var ioc = {
 			type : "redis.clients.jedis.JedisPoolConfig",
 			fields : {
 				testWhileIdle : true, // 空闲时测试,免得redis连接空闲时间长了断线
-				maxTotal : 100 // 一般都够了吧
+				maxTotal : {java : "$conf.getInt('redis.maxTotal', 100)"} // 一般都够了吧
 			}
 		},
 		jedisPool : {

@@ -19,5 +19,6 @@
     <Logger name="org.apache.shiro.mgt.DefaultSecurityManager" level="info"/>
     <Logger name="org.apache.shiro.web.servlet.SimpleCookie" level="info"/>
     <Logger name="org.apache.log4j.xml" level="debug"/>
+    <Logger name="org.eclipse.jetty" level="info"/>
   </Loggers>
 </Configuration>
