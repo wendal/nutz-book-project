@@ -2,11 +2,7 @@
 
 ### 使用原则
 
-1. 仅供Nutz社区的用户开发Nutz相关的项目时使用
-
-2. 严禁部署非法应用
-
-3. 严禁部署大流量应用
+供Nutz社区的用户开发Nutz相关的项目时使用
 
 ### 下载链接
 
@@ -50,6 +46,8 @@ GET /nutzbook/rs/logo.png     200 OK
 本地启动tomcat或其他web应用后, 访问对应的地址即可(替换成自己的地址哦)
 
 ```
+http://wendal.ngrok.wendal.cn/nutzbook/
+
 http://wendal.ngrok.wendal.cn:9080/nutzbook/
 ```
 
