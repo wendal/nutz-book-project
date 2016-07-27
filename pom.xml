@@ -465,6 +465,11 @@
 			<artifactId>nutz</artifactId>
 			<version>1.r.57</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-integration-dubbo</artifactId>
+			<version>1.r.58-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<version>2.9.0-SNAPSHOT</version>
 </project>

@@ -24,6 +24,8 @@ import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
 
+import com.alibaba.dubbo.config.ProtocolConfig;
+
 import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
@@ -32,6 +34,7 @@ import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
+import net.wendal.nutzbook.service.DubboWayService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.service.yvr.YvrService;
@@ -141,6 +144,15 @@ public class MainSetup implements Setup {
 		ioc.get(YvrService.class).updateTopicTypeCount();
 		
 		Mvcs.disableFastClassInvoker = false;
+		
+		// 初始化Dubbo服务
+		
+		try {
+            ioc.get(null, DubboWayService.class.getName());
+        }
+        catch (Exception e) {
+            log.debug("dubbo error", e);
+        }
 	}
 
 	public void destroy(NutConfig conf) {
@@ -171,5 +183,8 @@ public class MainSetup implements Setup {
             catch (Exception e) {
             }
         }
+		
+
+		ProtocolConfig.destroyAll();
 	}
 }
