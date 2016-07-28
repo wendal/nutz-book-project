@@ -406,7 +406,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
-			<version>1.r.57-SNAPSHOT</version>
+			<version>1.r.57</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>
@@ -422,7 +422,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-web</artifactId>
-			<version>1.r.57-SNAPSHOT</version>
+			<version>1.r.57</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.jetty.aggregate</groupId>
