@@ -1,0 +1,10 @@
+sudo: false
+language: java
+script: mvn -Dmaven.test.ship=true clean package
+jdk:
+  - oraclejdk8
+branches:
+  only:
+    - master
+before_install:
+  - export TZ=Asia/Shanghai

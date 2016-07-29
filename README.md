@@ -1,9 +1,10 @@
 # nutz-book-project
 
-nutz-book 衍生出的project, 与nutzbook同步更新
+nutz-book 衍生出的project
 
 Nutz主库地址 https://github.com/nutzam/nutz 觉得不错, 来个star呗
 
+[![Build Status](https://travis-ci.org/wendal/nutz-book-project.png?branch=master)](https://travis-ci.org/wendal/nutz-book-project)
 [![](https://imagelayers.io/badge/wendal/nutzbook:latest.svg)](https://imagelayers.io/?images=wendal/nutzbook:latest 'Get your own badge on imagelayers.io')[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
 
 ## 主项目地址
