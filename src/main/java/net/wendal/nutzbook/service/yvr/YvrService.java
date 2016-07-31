@@ -182,20 +182,21 @@ public class YvrService implements RedisKey {
 			pipe.zadd(RKEY_TOPIC_NOREPLY, System.currentTimeMillis(), topic.getId());
 		}
 		pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), System.currentTimeMillis(), topic.getId());
-		if (topic.getType() != TopicType.shortit)
+		if (topic.getType() == TopicType.ask || topic.getType() == TopicType.news) {
 			pipe.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
-		pipe.zincrby(RKEY_USER_SCORE, 100, ""+userId);
-		pipe.sync();
-		String replyAuthorName = dao.fetch(User.class, userId).getName();
-		for (Integer watcherId : globalWatcherIds) {
-			if (watcherId != userId)
+			pipe.zincrby(RKEY_USER_SCORE, 100, ""+userId);
+			String replyAuthorName = dao.fetch(User.class, userId).getName();
+			for (Integer watcherId : globalWatcherIds) {
+			    if (watcherId != userId)
 				pushUser(watcherId,
 						"新帖:" + topic.getTitle(),
 						topic.getId(),
 						replyAuthorName,
 						topic.getTitle(),
 						PushService.PUSH_TYPE_REPLY);
+			}
 		}
+        pipe.sync();
 		updateTopicTypeCount();
 		return _ok(topic.getId());
 	}
