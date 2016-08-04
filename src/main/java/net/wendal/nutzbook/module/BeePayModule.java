@@ -25,7 +25,7 @@ public class BeePayModule extends BaseModule {
     @Ok("json")
     @At
     public Object create(@Param("to")int toUserId, @Param("title")String title, @Param("amount")int amount) {
-        String out_trade_no = "bc"+System.currentTimeMillis();
+        String out_trade_no = "u"+toUserId+"z"+R.UU32().substring(0, 8);
         if (amount == 0) {
             amount = R.random(1, 100);
         }
@@ -36,13 +36,13 @@ public class BeePayModule extends BaseModule {
         String appid = conf.get("bc.appId");
         String appSecret = conf.get("bc.appSecret");
         if (Strings.isBlank(title))
-            title = "你的订单号:"+R.UU32().substring(0, 8);
+            title = "随机打赏给uid="+toUserId;
         NutMap re = new NutMap();
         re.put("out_trade_no", out_trade_no);
         re.put("amount", amount);
         re.put("title", title);
         re.put("sign", Lang.md5(appid+title+amount+out_trade_no+appSecret));
-        re.put("debug", true);
+        //re.put("debug", true);
         return _map("data", re);
     }
 }
