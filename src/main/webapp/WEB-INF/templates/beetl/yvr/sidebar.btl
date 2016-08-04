@@ -11,8 +11,8 @@
     </div>
     <div class='inner'>
       <% layout("user/card.btl", {"user":c_user}){}; %>
-      <div style="display: none;">
-      	<button onclick="pay_tip();" title="支付功能测试">随机打赏</button>
+      <div>
+      	<button onclick="pay_tip();" title="支付功能测试">随机打赏(测试)</button>
       	<script type="text/javascript">
       	function pay_tip() {
       		$.ajax({
