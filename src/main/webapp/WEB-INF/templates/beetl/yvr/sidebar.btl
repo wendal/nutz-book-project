@@ -11,23 +11,18 @@
     </div>
     <div class='inner'>
       <% layout("user/card.btl", {"user":c_user}){}; %>
-      <div>
-      	<button onclick="pay_tip();" title="支付功能测试">随机打赏(测试)</button>
-      	<script type="text/javascript">
-      	function pay_tip() {
-      		$.ajax({
-      		    url : "${base}/pay/bc/create?to=${c_user.userId}",
-      		    dataType : "json",
-      		    method : "post",
-      		    success : function(re) {
-      		    	if (re && re.data)
-      		        	BC.click(re.data);
-      		    }
-      		});
-      	};
-      	</script>
+      
+      <%if (null != c_user! && null != obj.current_user! && c_user.userId != obj.current_user.userId){%>
+      <div class='span-success'>
+      	<button onclick="pay_tips(${c_user.userId});" title="打赏">打赏几毛钱给Ta</button>
       </div>
+      <%} else if (null != obj.current_user!){%>
+      <div class='span-success'>
+      	<button onclick="pay_tips(2);" title="打赏">打赏几毛钱给帮主</button>
+      </div>
+      <%}%>
     </div>
+    
     <% } else { %>
     <div class='inner'>
       <p>${conf['website.title']}</p>

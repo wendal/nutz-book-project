@@ -330,5 +330,19 @@ $(function() {
 });
 </script>
 <a href="https://github.com/wendal/nutz-book-project"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 100;" src="${cdnbase}${base}/rs/images/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+<script type="text/javascript">
+      	function pay_tips(toUser) {
+      		$.ajax({
+      		    url : "${base}/pay/bc/create?to="+toUser,
+      		    dataType : "json",
+      		    method : "post",
+      		    success : function(re) {
+      		    	if (re && re.data)
+      		        	BC.click(re.data);
+      		    }
+      		});
+      	}
+</script>
 </body>
 </html>
