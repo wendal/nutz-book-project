@@ -35,6 +35,7 @@ import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
+import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.service.yvr.YvrService;
@@ -90,6 +91,7 @@ public class MainSetup implements Setup {
 
 		// 获取配置对象
 		conf = ioc.get(PropertiesProxy.class, "conf");
+		ioc.get(SysConfigureService.class).doReload();
 
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SysLogService.class);
