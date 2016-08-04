@@ -14,11 +14,11 @@
       
       <%if (null != c_user! && null != obj.current_user! && c_user.userId != obj.current_user.userId){%>
       <div class='span-success'>
-      	<button onclick="pay_tips(${c_user.userId});" title="打赏">打赏几毛钱给Ta</button>
+      	<button onclick="pay_tips(${c_user.userId});" title="不错,赏几毛">打赏几毛钱给Ta</button>
       </div>
       <%} else if (null != obj.current_user!){%>
       <div class='span-success'>
-      	<button onclick="pay_tips(2);" title="打赏">打赏几毛钱给帮主</button>
+      	<button onclick="pay_tips(2);" title="买老北京冰棍">打赏几毛钱给帮主</button>
       </div>
       <%}%>
     </div>
