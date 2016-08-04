@@ -29,7 +29,7 @@ public class PermissionCategoryService extends IdNameEntityService<PermissionCat
 		return list;
 	}
 
-	public void insert(PermissionCategory pc) {
-		dao().insert(pc);
+	public PermissionCategory insert(PermissionCategory pc) {
+		return dao().insert(pc);
 	}
 }

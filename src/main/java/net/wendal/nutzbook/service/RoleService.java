@@ -27,13 +27,13 @@ public class RoleService extends IdNameEntityService<Role> {
 		return dao().query(getEntityClass(), null);
 	}
 
-	public void insert(Role role) {
-		dao().insert(role);
+	public Role insert(Role role) {
+		return dao().insert(role);
 	}
 
-	public void update(Role role) {
+	public int update(Role role) {
 		FieldFilter filter = FieldFilter.create(getEntityClass(), FieldMatcher.make(null, "^(createTime|updateTime)$", true));
-		Daos.ext(dao(), filter).update(role);
+		return Daos.ext(dao(), filter).update(role);
 	}
 	
 	public void updateRoleRelation(Role role, List<net.wendal.nutzbook.bean.Permission> perms) {

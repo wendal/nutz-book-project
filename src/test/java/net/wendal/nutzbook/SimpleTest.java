@@ -1,18 +1,52 @@
 package net.wendal.nutzbook;
 import static org.mockito.Mockito.when;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.StringReader;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
 import java.net.URLDecoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.beetl.core.BeetlKit;
+import org.brickred.socialauth.Profile;
+import org.h2.result.Row;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,28 +57,78 @@ import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.aop.asm.AsmClassAgent;
 import org.nutz.aop.matcher.RegexMethodMatcher;
+import org.nutz.castor.Castors;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Condition;
+import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
+import org.nutz.dao.FieldFilter;
+import org.nutz.dao.FieldMatcher;
 import org.nutz.dao.Sqls;
+import org.nutz.dao.TableName;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.MappingField;
+import org.nutz.dao.entity.Record;
+import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.impl.NutDao;
 import org.nutz.dao.sql.Sql;
+import org.nutz.dao.sql.SqlCallback;
+import org.nutz.dao.util.Daos;
+import org.nutz.el.El;
+import org.nutz.http.Http;
+import org.nutz.http.Request;
+import org.nutz.http.Response;
+import org.nutz.http.Request.METHOD;
+import org.nutz.http.Sender;
+import org.nutz.http.sender.FilePostSender;
+import org.nutz.img.Images;
+import org.nutz.ioc.Ioc;
+import org.nutz.ioc.IocException;
+import org.nutz.ioc.ObjectLoadException;
+import org.nutz.ioc.impl.NutIoc;
+import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.ioc.loader.annotation.AnnotationIocLoader;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.json.JsonLoader;
 import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
+import org.nutz.lang.Files;
+import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.Strings;
+import org.nutz.lang.random.R;
+import org.nutz.lang.segment.CharSegment;
+import org.nutz.lang.util.Callback;
+import org.nutz.lang.util.Context;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.NutType;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mapl.Mapl;
 import org.nutz.mvc.adaptor.ParamExtractor;
 import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
+import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.upload.TempFile;
+import org.nutz.repo.Base64;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
+import com.google.zxing.BinaryBitmap;
+
+import net.wendal.nutzbook.bean.Role;
+import net.wendal.nutzbook.bean.SysLog;
+import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
+import net.wendal.nutzbook.module.yvr.YvrModule;
 import net.wendal.nutzbook.service.EmailServiceImpl;
+import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
+    
+    private static final Log log = Logs.get();
 
 	@Test
 	public void test_string_array() {
@@ -269,4 +353,393 @@ public class SimpleTest extends TestBase {
         
         es.send(null, null, null);
 	}
+	
+//	@Test
+//	public void test_mysql_create_sql() {
+//		NutDao dao = ioc.get(NutDao.class, "dao");
+//		dao.setSqlManager(new FileSqlManager("net/wendal/nutzbook"));
+//		dao.sqls().count();
+//		dao.execute(dao.sqls().create("create.sql").setVar("year", 2016));
+//		dao.execute(dao.sqls().create("create.sql2").setVar("year", 2016));
+//		
+//		dao.run(new ConnCallback() {
+//			public void invoke(Connection conn) throws Exception {
+//				// 写jdbc代码咯, 执行 select count(*) from xx where xxx = ?
+//			}
+//		});
+//	}
+	
+//	public static void main(String[] args) throws Exception {
+//		String source = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1bmlxdWVfbmFtZSI6IlpoYUJlaVBsYXRmb3JtU2VydmljZUFjY291bnQiLCJ6YjphdXRoOnNhIjp0cnVlLCJ1cm46b2F1dGg6ZXhwIjoiMTQ1ODY1ODI0NiIsInVybjpvYXV0aDppYXQiOiIxNDU4MDUzNDQ2IiwiaXNzIjoiaHR0cHM6Ly9hdXRoLnRjYy5zby8iLCJhdWQiOiJodHRwczovL3RjYy5zby8ifQ";
+//		String target = "ZLhtk4rP4cSOL26JzhCop67xIPv4Adh5zEauieVk4W9HF3IsdpXCS1wAwKOhnMyVMowxJ9NpuPAtfoiqsWzl-AQ_8iAhR6QWAcelWkKk_QZvs-0DI8XcSeFjFgKSwBjvmcs1aXNrLDUtReVx09jukjaxtv02AH_SC8wkKTkE03mnmYEfEx7mDw7QQ8ZhYunKnFRejKXjwI62bcQU5tGCjIg97QiFlEUeNK1njfyuzGUM_AFGfWk3509TU5r97h_XdzSp2I3jfLYwHJGPW3GLZJZpq9FkmUqhwC3ER2mSxGQSfInRRdKzuZWx33wXJfXWd_BI49n7UqdiXyv_HuohzA" + "==";
+//		//System.out.println(Base64.encodeToString(source.getBytes(), false));
+//		byte[] buf = org.apache.commons.codec.binary.Base64.decodeBase64(target.getBytes());
+//		System.out.println(Base64.encodeToString(buf, false));
+//		//System.out.println(new String(org.apache.commons.codec.binary.Base64.encodeBase64(buf, true)));
+//		System.out.println(new String(org.apache.commons.codec.binary.Base64.encodeBase64(buf, false)));
+//		System.out.println(target);
+//		System.out.println(Base64.encodeToString(buf, false).equals(target));
+//		System.out.println(Base64.decode(target.replace('-', '+').replace('_', '=').getBytes()));
+//		System.out.println(target.length() / 4.0);
+//	}
+	
+//	@Test
+//	public void sp_data() throws IOException {
+//		byte[] buf = Files.readBytes("abc.data");
+//		ByteArrayInputStream ins = new ByteArrayInputStream(buf);
+//		byte[] b = new byte[1];
+//		while (true) {
+//			int len = ins.read(b);
+//			if (len == -1)
+//				break;
+//			byte head = getBit(b[0], 8);
+//			if (head == 0) {
+//				System.out.print("短数据,");
+//			} else {
+//				System.out.print("长数据,");
+//				ins.read(new byte[3]); // 3字节的时间数据
+//			}
+//			byte type = getBit(b[0], 7);
+//			if (type == 0) {
+//				System.out.print("串口数据,");
+//				byte P = getBit(b[0], 6);
+//				System.out.print("端口"+P+",");
+//			} else {
+//				System.out.print("控制数据,");
+//			}
+//			
+//			ins.read(b);
+//			System.out.println(Lang.fixedHexString(b));
+//		}
+//	}
+	
+	public static byte getBit(int ID, int position) {
+	    return (byte) (ID >> (position - 1));
+	}
+	
+	@Test
+	public void test_left_join() throws Exception {
+	    Dao dao = ioc.get(Dao.class);
+        Entity<User> userEntity = dao.getEntity(User.class);
+        Entity<UserProfile> profileEntity = dao.getEntity(UserProfile.class);
+        
+        Sql sql = Sqls.create("select u.* , p.* from t_user u left join t_user_profile p on u.id = p.u_id where u.name=@name");
+        sql.params().set("name", "wendal");
+        sql.setCallback(new SqlCallback() {
+            public Object invoke(Connection conn, ResultSet rs, Sql sql) throws SQLException {
+                if (!rs.next())
+                    return null;
+                Object user = userEntity.getMirror().born();
+                Object profile = profileEntity.getMirror().born();
+                ResultSetMetaData meta = rs.getMetaData();
+                int count = meta.getColumnCount();
+                for (int i = 1; i <= count; i++) {
+                    String name = meta.getColumnLabel(i);
+                    String tableName = meta.getTableName(i);
+                    if (tableName.equals(userEntity.getTableName())) {
+                        MappingField mf = userEntity.getColumn(name);
+                        if (mf != null)
+                            mf.injectValue(user, rs, null);
+                    } else if (tableName.equals(profileEntity.getTableName())) {
+                        MappingField mf = profileEntity.getColumn(name);
+                        if (mf != null)
+                            mf.injectValue(profile, rs, null);
+                    } 
+                }
+                return new Object[]{user, profile};
+            }
+        });
+        Object[] re = dao.execute(sql).getObject(Object[].class);
+        System.out.println(Json.toJson(re));
+	}
+	
+	@Test
+	public void test_new_weizhang() {
+//	    Request req = Request.create("http://api.jisuapi.com/illegal/query", METHOD.GET);
+//        req.getParams().put("appkey", "220bc7f5d1a4393d");
+//        req.getParams().put("carorg", "beijing");
+//        req.getParams().put("lsprefix", "京");
+//        req.getParams().put("lsnum", "N582Y3");
+//        req.getParams().put("lstype", "02");
+//        //req.getParams().put("frameno", "WBA3X7103EDX98376");
+//        req.getParams().put("engineno", "11168421N55B30A");
+//        req.getParams().put("iscity", "1");
+//        Response resp = Sender.create(req).send();
+//        System.out.println(resp.getStatus());
+//        System.out.println(resp.getContent());
+	    
+//	    Request req = Request.create("http://apis.haoservice.com/weizhang/EasyQuery", METHOD.GET);
+//        req.getParams().put("key", "a7422a5d799d40b0894d91d228416e7c");
+//        req.getParams().put("plateNumber", "京N582Y3");
+//        req.getParams().put("engineNumber", "11168421N55B30A");
+//        req.getParams().put("vehicleIdNumber", "WBA3X7103EDX98376");
+//        req.getParams().put("cityName", "北京");
+//        req.getParams().put("hpzl", "02");
+//        
+//      Response resp = Sender.create(req).send();
+//      System.out.println(resp.getStatus());
+//      System.out.println(resp.getContent());
+	}
+
+    @Test
+    public void test_ioc_inject_by_setter() throws ObjectLoadException {
+        AnnotationIocLoader loader = new AnnotationIocLoader(getClass().getPackage().getName());
+        Logs.get().error(loader.load(null, "injectBySetter"));
+        ioc.get(InjectBySetter.class);
+    }
+//    @Test
+//    public void test_ioc_js() throws ObjectLoadException {
+//        Ioc ioc = new NutIoc(new JsonLoader("fuck_dao.js"));
+//        ioc.get(Dao.class);
+//        ioc.depose();
+//        
+//        System.out.println(Long.parseLong("10"));
+//    }
+    
+    @Test
+    public void test_list_filter_jdk8() {
+        Dao dao = ioc.get(Dao.class);
+        List<UserProfile> list = dao.query(UserProfile.class, null);
+        long count = list.parallelStream().filter((user)->user.isEmailChecked()).count();
+    }
+    
+//    @Test
+//    public void fir_im_version_check() {
+//        Response resp = Http.get("http://download.fir.im/4qmu", 5*1000);
+//        if (resp.isOK()) {
+//            NutMap re = Json.fromJson(NutMap.class, resp.getContent());
+//            re = re.getAs("app", NutMap.class);
+//            String token = re.getString("token");
+//            String id = re.getString("id");
+//            re = re.getAs("releases", NutMap.class).getAs("master", NutMap.class);
+//            String version = re.getString("version");
+//            String release_id = re.getString("id");
+//            //if (BuildConfig.VERSION_NAME.equals(version)) {
+//                //popText("没有新版本");
+//                //return;
+//            //}
+//            //popText("发现新版本: " + version);
+//            String tmpl = "http://download.fir.im/apps/%s/install?download_token=%s&release_id=%s";
+//            String url = String.format(tmpl, id, token, release_id);
+//            //log.info("xplay.updater url="+url);
+//            Request req = Request.create(url, Request.METHOD.GET);
+//            req.getHeader().set("User-Agent", "curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.19.1 Basic ECC zlib/1.2.3 libidn/1.18 libssh2/1.4.2");
+//            req.getHeader().set("Host", "download.fir.im");
+//            resp = Sender.create(req).setTimeout(30*1000).send();
+//            log.info("xplay.updater code="+resp.getStatus());
+//            if (resp.isOK()) {
+//                //popText("开始下载, 大小 " + resp.getHeader().getInt("Content-Length", 3*1024*1024) / 1024 + "kb");
+//                Files.write(new File("xplay.apk"), resp.getStream());
+////                if (Cmd.hasSu()) {
+////                    String cmd = "pm install -r /sdcard/xplay.apk;\nam start com.danoo.androx.xplay/.MainActivity;";
+////                    log.info("xplay.updater runAsRoot"+cmd);
+////                    Cmd.runAsRoot(cmd);
+////                } else {
+////                    activity.runOnUiThread(new Runnable() {
+////                        public void run() {
+////                            Intent install = new Intent();
+////                            install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////                            install.setAction(android.content.Intent.ACTION_VIEW);
+////                            install.setDataAndType(Uri.fromFile(new File("/sdcard/xplay.apk")),"application/vnd.android.package-archive");
+////                            activity.startActivity(install);
+////                        }
+////                    });
+////                }
+//            } else {
+//
+//            }
+//        }
+//    }
+    
+    @Test
+    public void test_el() {
+        El el = new El("'hi,'+name");
+        Context ctx = Lang.context();
+        ctx.set("name", "wendal");
+        assertEquals("hi,wendal", el.eval(ctx));
+    }
+    
+
+    @Test
+    public void test_el2() throws Exception {
+        El el = new El("sayhi(name)");
+        Context ctx = Lang.context();
+        ctx.set("name", "wendal");
+        ctx.set("sayhi", getClass().getMethod("sayhi", String.class));
+        assertEquals("hi,wendal", el.eval(ctx));
+    }
+    
+    public static String sayhi(String name) {
+        return "hi,"+name;
+    }
+
+    
+    @Test
+    public void test_fetch_count() {
+        Dao dao = ioc.get(Dao.class);
+        
+        // 删表重建
+        dao.drop("qiu_answer");
+        dao.execute(Sqls.create("create table qiu_answer (uid int, type int)"));
+        
+        
+        Sql sql = Sqls.create("select count(*) as adoptCount from qiu_answer where uid = @uid and type =1 ");
+        sql.params().set("uid", 1);
+        sql.setCallback(Sqls.callback.integer());
+        dao.execute(sql);
+        int count = sql.getNumber().intValue();
+        assertEquals(0, count);
+    }
+    
+    @Test
+    public void test_ioc_factory_create() {
+        Ioc ioc = new NutIoc(new JsonLoader(new StringReader("{abc:{factory:'net.wendal.nutzbook.SimpleTest#create'}}")));
+        ioc.get(Object.class, "abc");
+        ioc.depose();
+    }
+    
+    public static Dao create() {
+        return new NutDao();
+    }
+    
+    @Test
+    public void test_cnd_wrap() {
+        Sql sql = Sqls.create("select * from user $condition");
+        sql.setCondition(Cnd.wrap("1=1"));
+        System.out.println(sql);
+    }
+    
+    @Test
+    public void test_pojo_sql() {
+        Dao dao = ioc.get(Dao.class);
+        dao.create(PojoSql.class, true);
+        PojoSql pojo = new PojoSql();
+        pojo.setName(R.UU32());
+        pojo.setNickname(R.UU32());
+        pojo.setCt(System.currentTimeMillis());
+        dao.insert(pojo);
+        
+        assertEquals(pojo.getName(), pojo.getNickname());
+        
+        pojo.setNickname(null);
+        pojo.setAge(20);
+        pojo.setCt(0);
+        Chain chain = Chain.from(pojo, FieldMatcher.make(null, null, true, true, true, true, true, true), dao);
+        dao.update(PojoSql.class, chain, Cnd.where("id", "=", pojo.getId()));
+    }
+    
+    @Test
+    public void test_ioc_inject() throws Exception {
+        Object obj = new Object();
+        
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            Inject inject = field.getAnnotation(Inject.class);
+            if (inject != null)
+                field.set(obj, ioc.get(field.getType(), field.getName()));
+        }
+    }
+    
+    @Test
+    public void test_query() {
+        Dao dao = ioc.get(Dao.class);
+        
+        dao.create(PojoSql.class, true);
+        PojoSql pojo = new PojoSql();
+        pojo.setName(R.UU32());
+        pojo.setCt(System.currentTimeMillis());
+        dao.insert(pojo);
+        
+        List<PojoSql> list = dao.query(PojoSql.class, null);
+        System.out.println(Json.toJson(list, JsonFormat.full()));
+    }
+    
+    @Test
+    public void test_baas_table_to_pojo() {
+        System.out.println(Cnd.where("abc", "like", "a"));
+        System.out.println(Cnd.where("abc", "like", "abc"));
+    }
+    
+    final static public void main(String _就是要装逼啊啊啊啊啊_有神马不可呢 []) {
+        int slen = 4*60+47;
+        int dlen = 20;
+        int count = slen / dlen;
+        int pos = 540;
+        for (int i = 0; i < count; i++) {
+            int ss = i*dlen+3;
+            // -acodec copy -ss 00:02:00.00 -y -maxrate 6000k -bufsize 3000k -preset veryslow -t 00:00:20.00 -r 24 -vf crop=1920:1080:0:540 _1920_1080_0_540.mp4
+            String cmd = "nohup ffmpeg -i source.mp4 -y -maxrate 6000k -bufsize 3000k -preset veryfast -r 24 -ss "+String.format("%02d:%02d.00", ss/60, ss%60);
+            cmd += " -t 00:00:20.00 ";
+            System.out.println(cmd + " -vf crop=1920:1080:0:"+pos+" _f"+ss+"_1920_1080_0_"+pos+".mp4");
+            System.out.println(cmd + " -vf crop=1920:1080:1920:"+pos+" _f"+ss+"_1920_1080_1920_"+pos+".mp4");
+        }
+    }
+    
+    @Test
+    public void test_json_field_date_format() {
+        PojoSql pojo = new PojoSql();
+        pojo.setCreateTime(new Date());
+        System.out.println(Json.toJson(pojo));
+    }
+    
+    @Test
+    public void test_sql_comment() {
+        FileSqlManager manager = new FileSqlManager("sqls/");
+        Sql sql = manager.create("user.create");
+        System.out.println(sql);
+    }
+    
+    @Test
+    public void test_reg_http() {
+        String p = "^(http[s]?://[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)?(\\:[0-9]+)?)";
+        Pattern pattern = Pattern.compile(p);
+        String url = "http://github.com:8080/abc";
+        System.out.println(pattern.matcher(url).find());
+        url = "https://github.com:8080/abc";
+        System.out.println(pattern.matcher(url).find());
+        url = "http://localhost:8080/abc";
+        System.out.println(pattern.matcher(url).find());
+    }
+    
+//    @Test
+//    public void test_out_number_jpgs() throws Exception {
+//        int count = 24*6;
+//        int w = 1920;
+//        int h = 1080;
+//        Font font = Font.createFont(0, new File("D:\\msyh.ttc")).deriveFont(Font.BOLD, 200);
+//        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+//        Graphics2D g2d = image.createGraphics();
+//        g2d.setFont(font);
+//        for (int i = 0; i < count; i++) {
+//            int r = (int)(Math.random()*255);
+//            int g = (int)(Math.random()*255);
+//            int b = (int)(Math.random()*255);
+//            g2d.setColor(new Color(r, g, b));
+//            g2d.fillRect(0, 0, w, h);
+//            g2d.setColor(Color.RED);
+//            for (int j = 0; j < 2; j++) {
+//                for (int k = 0; k < 2; k++) {
+//                    g2d.drawString(""+(i+1), w/2*j+w/4-200, h/2*k+j/4-200);
+//                }
+//            }
+//            Images.write(image, new File("D:\\tmp\\"+String.format("%03d", i)+".png"));
+//        }
+//    }
+    
+    @Test
+    public void test_tomcat_jar_npe() throws MalformedURLException {
+        new URL("file:/D:/nutzbook/apache-tomcat-8.0.28/bin/bootstrap.jar");
+    }
+    
+    @Test
+    public void test_groupby() throws MalformedURLException {
+        Pattern MULTI = Pattern.compile("^([0-9]-[0-9])(_)?([0-9]+x[0-9]+)?(~.*)$");
+        String str = "2-2_1920x1080~src.mp4";
+        Matcher ma = MULTI.matcher(str);
+        if (ma.find()) {
+            System.out.println(ma.group(1));
+            //System.out.println(ma.group(2));
+            System.out.println(ma.group(3));
+        }
+        System.out.println("...........");
+    }
 }

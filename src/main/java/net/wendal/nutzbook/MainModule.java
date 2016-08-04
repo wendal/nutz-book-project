@@ -22,7 +22,7 @@ import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 										   "*async",
 										   "*tx",
 										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader",
-										   "*dubbo", "dubbo-server.xml"
+										   "*dubbo", "dubbo-server.xml" // 配置dubbo
 										   })
 @Modules(scanPackage=true)
 @ChainBy(args="mvc/nutzbook-mvc-chain.js")
@@ -31,5 +31,4 @@ import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 @Localization(value="msg/", defaultLocalizationKey="zh-CN")
 @Views({BeetlViewMaker2.class,FreemarkerViewMaker.class})
 @SessionBy(ShiroSessionProvider.class)
-public class MainModule {
-}
+public class MainModule {}

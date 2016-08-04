@@ -1,0 +1,6 @@
+/*user.create*/
+
+/*+ALL+_ROWS*/ SELECT  
+EMP_NO,EMP_NAM,DAT_IN 
+FROM BSEMPMS 
+WHERE EMP_NO=’SCOTT’

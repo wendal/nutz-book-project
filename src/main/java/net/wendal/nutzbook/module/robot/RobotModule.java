@@ -77,7 +77,7 @@ public class RobotModule extends BaseModule {
         String route = conf.get("qqbot.route."+groupId);
         if (!Strings.isBlank(route)) {
             if (!route.startsWith("http"))
-                route = "http://" + route + "/robot/msg";
+                route = "https://" + route + "/robot/msg";
             log.debug("route to " + route);
             Request _req = Request.create(route, METHOD.POST, data);
             Response resp = Sender.create(_req).setTimeout(5*1000).send();
@@ -112,7 +112,7 @@ public class RobotModule extends BaseModule {
 
         List<LuceneSearchResult> results = topicSearchService.search(key, true, 3);
         if (results == null || results.size() == 0) {
-            return at + " 发帖问问吧 http://" + req.getHeader("Host") + "/yvr/add";
+            return at + " 发帖问问吧 https://" + req.getHeader("Host") + "/yvr/add";
         }
         final StringBuilder msgbBuilder = new StringBuilder();
         for (LuceneSearchResult result : results) {
@@ -120,13 +120,13 @@ public class RobotModule extends BaseModule {
             if (topic == null)
                 continue;
             topic.setTitle(result.getResult());
-            String text = String.format("%s http://%s/yvr/t/%s\r\n",
+            String text = String.format("%s https://%s/yvr/t/%s\r\n",
                                         topic.getTitle(),
                                         req.getHeader("Host"),
                                         topic.getId().substring(0, 6));
             msgbBuilder.append(text);
         }
-        msgbBuilder.append(String.format("完整结果: http://%s/yvr/search?q=%s", req.getHeader("Host"), URLEncoder.encode(key, Encoding.UTF8)));
+        msgbBuilder.append(String.format("完整结果: https://%s/yvr/search?q=%s", req.getHeader("Host"), URLEncoder.encode(key, Encoding.UTF8)));
         return msgbBuilder.toString();
     }
 

@@ -9,6 +9,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.dubbo.DubboManager;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.Ioc;
@@ -34,7 +35,6 @@ import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
-import net.wendal.nutzbook.service.DubboWayService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.service.yvr.YvrService;
@@ -148,7 +148,7 @@ public class MainSetup implements Setup {
 		// 初始化Dubbo服务
 		
 		try {
-            ioc.get(null, DubboWayService.class.getName());
+            ioc.get(DubboManager.class);
         }
         catch (Exception e) {
             log.debug("dubbo error", e);

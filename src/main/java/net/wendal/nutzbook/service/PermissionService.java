@@ -43,16 +43,16 @@ public class PermissionService extends IdEntityService<Permission> {
 		return map;
 	}
 
-	public void insert(Permission permission) {
-		dao().insert(permission);
+	public Permission insert(Permission permission) {
+		return dao().insert(permission);
 	}
 
 	public Permission view(Long id) {
 		return fetch(id);
 	}
 
-	public void update(Permission permission) {
-		dao().update(permission);
+	public int update(Permission permission) {
+		return dao().update(permission);
 	}
 
 	public Pagination getListByPager(Integer pageNumber) {

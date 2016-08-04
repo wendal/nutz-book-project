@@ -44,6 +44,7 @@
 					<compilerArgs>
 						<arg>-parameters</arg>
 					</compilerArgs>
+					<useIncrementalCompilation>false</useIncrementalCompilation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -247,7 +248,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-views</artifactId>
-			<version>1.r.54.r2</version>
+			<version>1.r.57</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>
@@ -320,7 +321,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
-			<version>1.0.19</version>
+			<version>1.0.23</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jconsole</artifactId>
@@ -399,11 +400,6 @@
 			<version>1.6.1</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.websocket</groupId>
-			<artifactId>javax.websocket-api</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
 			<version>1.r.57</version>
@@ -463,12 +459,18 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.57</version>
+			<version>1.r.57.r3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-dubbo</artifactId>
 			<version>1.r.58-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.nutz</groupId>
+					<artifactId>nutz</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 		<groupId>com.alibaba</groupId>
