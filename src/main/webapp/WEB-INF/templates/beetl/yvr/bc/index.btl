@@ -9,6 +9,9 @@
       </ul>
     </div>
     <div class='inner'>
+    	<b>进入用户的详情页或其发起的帖子的详情页,均可打赏</b>
+    </div>
+    <div class='inner'>
     	<table class="table table-bordered">
     		<thead>
       			<tr>
@@ -48,12 +51,31 @@
     		</tbody>
     	</table>
     </div>
-    <div>
-    <button v-on:click="doReload" >刷新 当前页数{{pageNumber}}</button>
-    <button v-on:click="pageNumber=1" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
-    <button v-on:click="pageNumber--" v-if="pageNumber > 1">上一页</button>
-    <button v-on:click="pageNumber++" v-if="pageNumber < pageCount">下一页</button>
-    <button v-on:click="pageNumber=pageCount" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    <div class='inner'>
+    	<button v-on:click="doReload" >刷新 当前页数{{pageNumber}}</button>
+    	<button v-on:click="pageNumber=1" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
+    	<button v-on:click="pageNumber--" v-if="pageNumber > 1">上一页</button>
+    	<button v-on:click="pageNumber++" v-if="pageNumber < pageCount">下一页</button>
+    	<button v-on:click="pageNumber=pageCount" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    </div>
+    <div class='inner'>
+    	<b>天使轮--打赏功能启用前的支付宝打款</b>
+    	<table class="table table-bordered">
+    		<thead>
+      			<tr>
+        			<th>日期</th>
+        			<th>昵称</th>
+        			<th>金额/设备</th>
+      			</tr>
+    		</thead>
+    		<tbody>
+      			<tr class='cell' v-for="item in list2">
+      				<td>{{item[0]}}</td>
+      				<td>{{item[1]}}</td>
+      				<td>{{item[2]}}</td>
+      	  		</tr>
+      	  	</tbody>
+      	  </table>
     </div>
   </div>
 </div>
