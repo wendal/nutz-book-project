@@ -12,6 +12,7 @@ import org.nutz.mvc.annotation.SetupBy;
 import org.nutz.mvc.annotation.Views;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
 import org.nutz.plugins.view.freemarker.FreemarkerViewMaker;
+import org.nutz.plugins.view.pdf.PdfViewMaker;
 
 import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 
@@ -29,6 +30,6 @@ import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 @Ok("json:full")
 @Fail("jsp:jsp.500")
 @Localization(value="msg/", defaultLocalizationKey="zh-CN")
-@Views({BeetlViewMaker2.class,FreemarkerViewMaker.class})
+@Views({BeetlViewMaker2.class,FreemarkerViewMaker.class, PdfViewMaker.class})
 @SessionBy(ShiroSessionProvider.class)
 public class MainModule {}

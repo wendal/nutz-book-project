@@ -29,18 +29,21 @@
       	  			</td>
       	  			
       				<td>
-      					<a href="/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
+      					<a href="${base}/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
       						<img src="${cdnbase}${base}/yvr/u/{{item.toUserProfile.loginname}}/avatar" title="{{item.toUserProfile.loginname}}">
     					</a>
       					<span>{{item.toUserProfile.loginname}}</span>
       	  			</td>
       	  			<td>{{item.transaction_fee}}</td>
       	  			<td>{{item.updateTime}}</td>
-      	  			<%if (null != obj.current_user!) {%>
-      	  			<td><button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button></td>
-      	  			<%} else {%>
-      	  			<td><button">登陆后您也可以打赏Ta哦</button></td>
-      	  			<%}%>
+      	  			<td>
+      	  				<%if (null != obj.current_user!) {%>
+      	  				<button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button>
+      	  				<a href="${base}/pay/bc/download/{{item.out_trade_no}}">下载证书</a>
+      	  				<%} else {%>
+      	  				<button">登陆后您也可以打赏Ta哦</button>
+      	  				<%}%>
+      	  			</td>
       			</tr>
     		</tbody>
     	</table>

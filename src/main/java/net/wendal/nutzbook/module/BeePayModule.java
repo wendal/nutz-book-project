@@ -13,7 +13,9 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
+import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.Context;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -24,8 +26,10 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.annotation.ReqHeader;
+import org.nutz.mvc.view.HttpStatusView;
 
 import net.wendal.nutzbook.bean.BeePayment;
+import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.Toolkit;
 
@@ -156,5 +160,23 @@ public class BeePayModule extends BaseModule {
         } else {
             return false;
         }
+    }
+    
+    @Ok("pdf:pdftmpl/beepay_one.pdf")
+    @At("/download/?")
+    public Object downloadPayPdf(String out_trace_no) {
+        BeePayment payment = dao.fetch(BeePayment.class, out_trace_no);
+        if (payment == null)
+            return new HttpStatusView(404);
+        Context cnt = Lang.context();
+        dao.fetchLinks(payment, null);
+        UserProfile from = payment.getFromUserProfile();
+        UserProfile to = payment.getToUserProfile();
+        cnt.set("payment_fromUser", from.getNickname() + "(" + from.getLoginname()+")");
+        cnt.set("payment_toUser", to.getNickname() + "(" + to.getLoginname()+")");
+        cnt.set("payment_fee", String.format("%.2f", payment.getTransaction_fee()/100.0));
+        cnt.set("payment_time", Times.sDT(payment.getUpdateTime()));
+        cnt.set("filename", "nutzcn_tips_"+out_trace_no+".pdf");
+        return cnt;
     }
 }
