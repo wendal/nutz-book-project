@@ -3,6 +3,7 @@ package net.wendal.nutzbook.bean;
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Name;
+import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Table;
 import org.nutz.lang.util.NutMap;
 
@@ -18,8 +19,12 @@ public class BeePayment extends BasePojo {
     // 这两个属性是内部关联用的
     @Column("from_user")
     protected int fromUser;
+    @One(field="fromUser", target=UserProfile.class)
+    protected UserProfile fromUserProfile;
     @Column("to_user")
     protected int toUser;
+    @One(field="toUser", target=UserProfile.class)
+    protected UserProfile toUserProfile;
     @Column("cm")
     protected String commet;
     @Column("pd")
@@ -119,6 +124,24 @@ public class BeePayment extends BasePojo {
     }
     public void setToUser(int toUser) {
         this.toUser = toUser;
+    }
+    public UserProfile getFromUserProfile() {
+        return fromUserProfile;
+    }
+    public void setFromUserProfile(UserProfile fromUserProfile) {
+        this.fromUserProfile = fromUserProfile;
+    }
+    public UserProfile getToUserProfile() {
+        return toUserProfile;
+    }
+    public void setToUserProfile(UserProfile toUserProfile) {
+        this.toUserProfile = toUserProfile;
+    }
+    public boolean isPaydone() {
+        return paydone;
+    }
+    public void setPaydone(boolean paydone) {
+        this.paydone = paydone;
     }
     
     

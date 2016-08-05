@@ -1,0 +1,61 @@
+
+<% layout("../_layout.btl", {"title":"打赏主页"}){%>
+<% layout("../sidebar.btl",{"c_user":obj.current_user!}){};%>
+<div id='content'>
+  <div class='panel' id="bclist">
+    <div class='header'>
+      <ul class='breadcrumb'>
+        <li><a href='${ctxPath}/pay/bc'>{{sayhi}}</a><span class='divider'>/</span></li>
+      </ul>
+    </div>
+    <div class='inner'>
+    	<table class="table table-bordered">
+    		<thead>
+      			<tr>
+        			<th>发起者</th>
+        			<th>接受者</th>
+        			<th>金额(单位是分)</th>
+        			<th>时间</th>
+        			<th>操作</th>
+      			</tr>
+    		</thead>
+    		<tbody>
+      			<tr class='cell' v-for="item in list">
+      				<td>
+      					<a href="/yvr/u/{{item.fromUserProfile.loginname}}" class="user_avatar">
+      						<img src="${cdnbase}${base}/yvr/u/{{item.fromUserProfile.loginname}}/avatar" title="{{item.fromUserProfile.loginname}}">
+    					</a>
+      					<span>{{item.fromUserProfile.loginname}}</span>
+      	  			</td>
+      	  			
+      				<td>
+      					<a href="/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
+      						<img src="${cdnbase}${base}/yvr/u/{{item.toUserProfile.loginname}}/avatar" title="{{item.toUserProfile.loginname}}">
+    					</a>
+      					<span>{{item.toUserProfile.loginname}}</span>
+      	  			</td>
+      	  			<td>{{item.transaction_fee}}</td>
+      	  			<td>{{item.updateTime}}</td>
+      	  			<%if (null != obj.current_user!) {%>
+      	  			<td><button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button></td>
+      	  			<%} else {%>
+      	  			<td><button">登陆后您也可以打赏Ta哦</button></td>
+      	  			<%}%>
+      			</tr>
+    		</tbody>
+    	</table>
+    </div>
+    <div>
+    <button v-on:click="doReload" >刷新 当前页数{{pageNumber}}</button>
+    <button v-on:click="pageNumber=1" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
+    <button v-on:click="pageNumber--" v-if="pageNumber > 1">上一页</button>
+    <button v-on:click="pageNumber++" v-if="pageNumber < pageCount">下一页</button>
+    <button v-on:click="pageNumber=pageCount" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var base = "${base}";
+</script>
+<script src="${cdnbase}${base}/rs/js/bc/index.js" type="text/javascript"></script>
+<%}%>

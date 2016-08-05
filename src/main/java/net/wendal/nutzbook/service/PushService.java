@@ -119,7 +119,7 @@ public class PushService {
 				PushResult re = jpush.sendPush(payload);
 				log.debugf("%s result=%s", name, re);
 			} catch (Exception e) {
-				log.debugf("send %s fail", name, e);
+				log.debugf("send %s fail", name);
 			}
 	}
 

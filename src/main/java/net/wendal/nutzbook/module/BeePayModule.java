@@ -7,8 +7,6 @@ import java.util.List;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Dao;
-import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -40,30 +38,41 @@ public class BeePayModule extends BaseModule {
     @Inject
     protected PropertiesProxy conf;
     
-    @Inject
-    Dao dao;
-    
     @Inject 
     PushService pushService;
     
     @At("/")
-    @Ok("beetl:yvr/bc/list.btl")
-    public void index() {}
+    @Ok("beetl:yvr/bc/index.btl")
+    public Object index() {
+        return _map("current_user", fetch_userprofile(Toolkit.uid()));
+    }
     
     /**
      * 仅返回付款成功的记录
      */
     @At
-    @Ok("json")
-    public Object query(@Param("..")Pager pager) {
+    @Ok("json:{locked:'message_detail'}")
+    public Object query(@Param("from")int fromUser, @Param("to")int toUser, @Param("..")Pager pager) {
         if (pager.getPageNumber() < 1)
             pager.setPageNumber(1);
         if (pager.getPageSize() > 20)
             pager.setPageSize(20);
         Cnd cnd = Cnd.where("trade_success", "=", true);
+        if (fromUser > 0)
+            cnd.and("fromUser", "=", fromUser);
+        if (toUser > 0)
+            cnd.and("toUser", "=", toUser);
+        cnd.desc("createTime");
         List<BeePayment> list = dao.query(BeePayment.class, cnd, pager);
+        dao.fetchLinks(list, null);
         pager.setRecordCount(dao.count(BeePayment.class, cnd));
-        return new QueryResult(list, pager);
+        NutMap re = _map("list", list, "pager", pager);
+        if (fromUser > 0)
+            re.put("countF", dao.func(BeePayment.class, "sum", "transaction_fee", Cnd.where("trade_success", "=", true).and("fromUser", "=", fromUser)));
+        if (toUser > 0)
+            re.put("countT", dao.func(BeePayment.class, "sum", "transaction_fee", Cnd.where("trade_success", "=", true).and("toUser", "=", toUser)));
+        
+        return re;
     }
 
     @POST
@@ -147,9 +156,5 @@ public class BeePayModule extends BaseModule {
         } else {
             return false;
         }
-    }
-    
-    public static void main(String[] args) {
-        System.out.printf("%.2f", 0.987);
     }
 }
