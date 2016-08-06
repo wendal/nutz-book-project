@@ -2,7 +2,6 @@
 <%
 layout("_layout.btl",{title:'添加新帖子'}){
 %>
-<% layout("editor_sidebar.html"){} %>
 <div id='content'>
   <div class='panel'>
     <div class='header'>

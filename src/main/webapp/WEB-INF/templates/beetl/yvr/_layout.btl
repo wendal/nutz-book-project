@@ -10,11 +10,11 @@
   <meta property="qc:admins" content="345615513542636" />
   <meta name="apple-itunes-app" content="app-id=1082195150"/>
   <meta property="og:type" content="bbs"/>
-<link rel="dns-prefetch" href="//hm.baidu.com"/>
-<link rel="dns-prefetch" href="//s95.cnzz.com"/>
-<%if (cdnbase != null && cdnbase != ""){%>
-<link rel="dns-prefetch" href="${cdnbase}"/>
-<%}%>
+  <link rel="dns-prefetch" href="//hm.baidu.com"/>
+  <link rel="dns-prefetch" href="//s95.cnzz.com"/>
+  <%if (cdnbase != null && cdnbase != ""){%>
+  <link rel="dns-prefetch" href="${cdnbase}"/>
+  <%}%>
   <link title="RSS" type="application/rss+xml" rel="alternate" href="${ctxPath}/yvr/rss.xml"/>
 
   <link rel="icon" href="${cdnbase}${base}/rs/logo.png" type="image/x-icon"/>
@@ -43,12 +43,6 @@ html { overflow-y: scroll; }
 <!-- scripts -->
 <script>
 var ctxPath = "${ctxPath}";
-</script>
-<script type="text/javascript" src="https://dn-bughd-web.qbox.me/bughd.min.js" crossOrigin="anonymous"></script>
-
-<script type="text/javascript">
-  window.bughd = window.bughd || function(){};
-  bughd("create",{key:"15ec0f702515ac0165a5d02393f7cc66"})
 </script>
 <script src="${cdnbase}${base}/rs/libs/jquery-2.1.4.min.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/lodash.compat.js?v=1"></script>
@@ -85,25 +79,27 @@ var ctxPath = "${ctxPath}";
   <% } else { %>
   <title itemprop='name'>${conf['website.title']}</title>
   <% } %>
+  
   <% if (null != obj.topic! && null != obj.topic.tags! && 0 != obj.topic.tags.~size) { %>
   <meta name="Keywords" content="${obj.topic.tags, escape}"/>
   <%} else {%>
   <meta name="Keywords" content="${conf['website.keywords']}"/>
   <%}%>
+  
   <% if (null != obj.topic!) { %>
   <meta name="Description" content="${submax(obj.topic.content, 50), escape}"/>
   <% } else { %>
   <meta name="Description" content="${conf['website.long_description']}"/>
   <% } %>
   
-<script type="application/ld+json">
+  <script type="application/ld+json">
     {
       "@context": "http://schema.org",
       "@type": "Organization",
       "url": "${conf["website.urlbase"]}",
       "logo": "${conf["website.urlbase"]}/rs/logo/logo.png"
     }
-</script>
+  </script>
   
   <meta content="_csrf" name="csrf-param"/>
   <meta content="${obj._csrf!}" name="csrf-token"/>
@@ -166,8 +162,6 @@ var ctxPath = "${ctxPath}";
       | Power By 
       <a class='dark' href='https://github.com/nutzam/nutz'>Nutz</a>
       ,
-      <a class='dark' href='https://github.com/javamonkey/beetl2.0'>Beetl</a>
-      ,
       <a class='dark' href='http://www.qiniu.com/'><img src="${cdnbase}${base}/rs/images/qiniu-transparent.png" style="width: 10%; height: 10%"/></a>
       | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
@@ -218,95 +212,12 @@ var ctxPath = "${ctxPath}";
 	<a href="${ctxPath}/yvr/u/oauth/github">推荐通过github登陆</a>
 	</form>
 </div>
+<a href="https://github.com/wendal/nutz-book-project"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 100;" src="${cdnbase}${base}/rs/images/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
-<script>
-function cs_qrcode() {
-	setTimeout(function() {
-		var tmp = "<img src='${ctxPath}/cs/qr?url=" + encodeURIComponent(window.location.href) + "'>";
-    	layer.open({"title":"跨屏二维码有效期2分钟", shadeClose : true, "type":1, content:tmp, area : ['256px', '291px']}); // 256+35 = 291
-	}, 300);
-};
-function f_signup() {
-	setTimeout(function() {
-    	layer.open({"title":"一步注册", shadeClose : true, "type":1, content : $("#signup_div"), area : ['300px', '370px']});
-	}, 300);
-};
-function f_signin() {
-next_captcha();
-setTimeout(function() {
-		layer.open({"title":"登陆", shadeClose : true, "type":1, content : $("#signin_div"), area : ['300px', '370px']});
-	}, 300);
-};
-
-function do_signup() {
-	$.ajax({
-		url : "${ctxPath}/yvr/u/signup",
-		method : "POST",
-		data : $("#signup_form").serialize(),
-		dataType : "json",
-		success : function(re) {
-			if (console)
-				console.log(re);
-			layer.alert(re.msg || re.data);
-		}
-	});
-	return false;
-};
-
-function do_signin() {
-	$.ajax({
-		url : "${ctxPath}/user/login",
-		method : "POST",
-		data : $("#signin_form").serialize(),
-		dataType : "json",
-		success : function(re) {
-			if (console)
-				console.log(re);
-			if (re.ok) {
-				window.location.reload();
-			} else {
-				layer.alert(re.msg);
-			}
-		},
-		error : function(jqXHR, exception) {
-			if (jqXHR.status == 404) {
-				// 如果已经登陆过,就会404,蛋疼的shiro
-				window.location.reload();
-			}
-		}
-	});
-	return false;
-}
-
-function next_captcha() {
-	$("#captcha_img").attr("src", "${ctxPath}/captcha/next?w=120&h=48&_=" + new Date().getTime());
-}
-
-$(document).ready(function () {
-  if($.support.pjax) {
-  	$(document).pjax('a[data-pjax]', '#content', {fragment: '#content',maxCacheLength:0,timeout: 8000});
-  }
-  if (console)
-  	console.log("^_^ 在找源码?这么巧. footer就有地址哦 https://github.com/wendal/nutz-book-project");
-});
-
-function startGuide(){
-	var _intro = introJs();
-	_intro.setOptions({
-		'prevLabel':'&larr; 上一步',
-		'nextLabel':'下一步 &rarr;',
-		'skipLabel':'跳过',
-		'doneLabel':'完成',
-		//"scrollToElement":true,
-		"showProgress":true,
-		exitOnEsc : true
-		}).start();
-};
-</script>
 <% if (null != conf["website.cnzz"]) {%>
 <div style="display: none;">
 <script type="text/javascript">
-(function() {
+$(function() {
 var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_${conf["website.cnzz"]}'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D${conf["website.cnzz"]}' type='text/javascript'%3E%3C/script%3E"));
 })();
 </script>
@@ -323,29 +234,9 @@ $(function() {
 });
 </script>
 <% } %>
-<script>
-$(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=${conf["bc.appId"]}";
-  hm.id = "spay-script";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-});
-</script>
-<a href="https://github.com/wendal/nutz-book-project"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 100;" src="${cdnbase}${base}/rs/images/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
-<script type="text/javascript">
-      	function pay_tips(toUser) {
-      		$.ajax({
-      		    url : "${base}/pay/bc/create?to="+toUser,
-      		    dataType : "json",
-      		    method : "post",
-      		    success : function(re) {
-      		    	if (re && re.data)
-      		        	BC.click(re.data);
-      		    }
-      		});
-      	}
-</script>
+<script src="https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=${conf["bc.appId"]}"></script>
+<script src="${base}/asserts/js/base.js"></script>
+<script src="${base}/asserts/js/user.js"></script>
 </body>
 </html>

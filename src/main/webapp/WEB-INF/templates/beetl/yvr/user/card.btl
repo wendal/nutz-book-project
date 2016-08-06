@@ -28,25 +28,3 @@
     </span>
   </div>
 </div>
-<% if (null != obj.current_user! && obj.current_user.userId == user.userId) {%>
-<script type="text/javascript">
-$("#MySign").editInPlace({
-    url: "${base}/yvr/u/profile/update/description",
-    textarea_rows : 5,
-    text_size:20,
-	bg_over: "none",
-	bg_out: "none",
-    field_type: "textarea",
-	value_required: "true",
-	success: function(data){
-		$("#MyResume").html(data);
-	},
-	error: function(e){
-		if (console)
-			console.log(e);
-		layer.alert("修改个性签名失败了");
-	}
-});
-
-</script>
-<%}%>

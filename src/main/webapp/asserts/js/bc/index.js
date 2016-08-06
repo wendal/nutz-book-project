@@ -26,7 +26,7 @@ var bcListVue = new Vue({
 	             ]
 	},
 	methods : {
-		doReload() {
+		doReload : function() {
 			this.$http.get(base+"/pay/bc/query", {params:{pageNumber:this.pageNumber, pageSize:this.pageSize}}).then(function(resp){
 				console.log(resp.ok);
 				if (resp.ok) {
@@ -39,8 +39,12 @@ var bcListVue = new Vue({
 				}
 			});
 		},
-		do_pay(uid) {
+		do_pay: function(uid) {
 			pay_tips(uid);
+		},
+		jump(to) {
+			this.pageNumber = to;
+			doReload();
 		}
 	},
 	created: function () {

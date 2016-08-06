@@ -26,7 +26,7 @@ for(topic in topics){
 
     <% for(var i = obj.page_start; i <= obj.page_end; i++) { %>
     <% if (i == obj.current_page) { %>
-    <li class='disabled'><a>${i}</a></li>
+    <li style="color: sienna;"><a>${i}</a></li>
     <% } else { %>
     <li><a data-pjax href='${ctxPath}/yvr/${obj.ppath}/${i}'>${i}</a></li>
     <% } %>

@@ -25,14 +25,14 @@
     		<tbody>
       			<tr class='cell' v-for="item in list">
       				<td>
-      					<a href="/yvr/u/{{item.fromUserProfile.loginname}}" class="user_avatar">
+      					<a href="${ctxPath}/yvr/u/{{item.fromUserProfile.loginname}}" class="user_avatar">
       						<img src="${cdnbase}${base}/yvr/u/{{item.fromUserProfile.loginname}}/avatar" title="{{item.fromUserProfile.loginname}}">
     					</a>
       					<span>{{item.fromUserProfile.loginname}}</span>
       	  			</td>
       	  			
       				<td>
-      					<a href="${base}/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
+      					<a href="${ctxPath}/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
       						<img src="${cdnbase}${base}/yvr/u/{{item.toUserProfile.loginname}}/avatar" title="{{item.toUserProfile.loginname}}">
     					</a>
       					<span>{{item.toUserProfile.loginname}}</span>
@@ -42,7 +42,7 @@
       	  			<td>
       	  				<%if (null != obj.current_user!) {%>
       	  				<button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button>
-      	  				<a href="${base}/pay/bc/download/{{item.out_trade_no}}">下载证书</a>
+      	  				<a href="${ctxPath}/pay/bc/download/{{item.out_trade_no}}">下载证书</a>
       	  				<%} else {%>
       	  				<button">登陆后您也可以打赏Ta哦</button>
       	  				<%}%>
@@ -53,10 +53,10 @@
     </div>
     <div class='inner'>
     	<button v-on:click="doReload" >刷新 当前页数{{pageNumber}}</button>
-    	<button v-on:click="pageNumber=1" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
-    	<button v-on:click="pageNumber--" v-if="pageNumber > 1">上一页</button>
-    	<button v-on:click="pageNumber++" v-if="pageNumber < pageCount">下一页</button>
-    	<button v-on:click="pageNumber=pageCount" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    	<button v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
+    	<button v-on:click="jump(pageNumber--)" v-if="pageNumber > 1">上一页</button>
+    	<button v-on:click="jump(pageNumber++)" v-if="pageNumber < pageCount">下一页</button>
+    	<button v-on:click="jump(pageCount)" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
     </div>
     <div class='inner'>
     	<b>天使轮--打赏功能启用前的支付宝打款</b>
@@ -82,5 +82,5 @@
 <script type="text/javascript">
 var base = "${base}";
 </script>
-<script src="${cdnbase}${base}/rs/js/bc/index.js" type="text/javascript"></script>
+<script src="${base}/asserts/js/bc/index.js" type="text/javascript"></script>
 <%}%>
