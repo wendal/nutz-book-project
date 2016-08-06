@@ -111,6 +111,7 @@ public class BeePayModule extends BaseModule {
         payment.setFromUser(Toolkit.uid());
         payment.setToUser(toUserId);
         payment.setCommet(title);
+        payment.setTransaction_fee(amount);
         dao.insert(payment);
         //re.put("debug", true);
         return _map("data", re);
@@ -133,6 +134,7 @@ public class BeePayModule extends BaseModule {
         if (indb == null) {
             log.warn("BeePay: No such out_trade_no="+out_trade_no);
         } else {
+            payment.setTransaction_fee(indb.getTransaction_fee());
             payment.setFromUser(indb.getFromUser());
             payment.setToUser(indb.getToUser());
             payment.setCommet(indb.getCommet());

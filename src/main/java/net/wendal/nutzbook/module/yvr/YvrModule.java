@@ -116,6 +116,7 @@ public class YvrModule extends BaseModule {
 	@At
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
+	@AdaptBy(type=WhaleAdaptor.class)
 	public CResult add(@Param("..")Topic topic) {
 		int userId = Toolkit.uid();
 		return yvrService.add(topic, userId);
