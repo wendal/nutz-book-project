@@ -12,6 +12,13 @@
     	<b>进入用户的详情页或其发起的帖子的详情页,均可打赏</b>
     </div>
     <div class='inner'>
+    	<button class="btn" v-on:click="doReload">刷新 当前页数{{pageNumber}}</button>
+    	<button class="btn" v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
+    	<button class="btn" v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
+    	<button class="btn" v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>
+    	<button class="btn" v-on:click="jump(pageCount)" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    </div>
+    <div class='inner'>
     	<table class="table table-bordered">
     		<thead>
       			<tr>
@@ -23,7 +30,7 @@
       			</tr>
     		</thead>
     		<tbody>
-      			<tr class='cell' v-for="item in list">
+      			<tr class='cell' v-for="item in list" track-by="out_trade_no">
       				<td>
       					<a href="${ctxPath}/yvr/u/{{item.fromUserProfile.loginname}}" class="user_avatar">
       						<img src="${cdnbase}${base}/yvr/u/{{item.fromUserProfile.loginname}}/avatar" title="{{item.fromUserProfile.loginname}}">
@@ -50,13 +57,6 @@
       			</tr>
     		</tbody>
     	</table>
-    </div>
-    <div class='inner'>
-    	<button v-on:click="doReload" >刷新 当前页数{{pageNumber}}</button>
-    	<button v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
-    	<button v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
-    	<button v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>
-    	<button v-on:click="jump(pageCount)" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
     </div>
     <div class='inner'>
     	<b>天使轮--打赏功能启用前的支付宝打款</b>
