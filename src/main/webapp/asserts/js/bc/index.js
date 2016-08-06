@@ -2,7 +2,7 @@ var bcListVue = new Vue({
 	el: '#bclist',
 	data: {
 	    sayhi: '打赏主页',
-	    pageSize : 15,
+	    pageSize : 10,
 	    pageNumber : 1,
 	    pageCount : 1,
 	    //recordCount : 0,
@@ -44,7 +44,7 @@ var bcListVue = new Vue({
 		},
 		jump: function(to) {
 			this.pageNumber = to;
-			doReload();
+			this.doReload();
 		}
 	},
 	created: function () {

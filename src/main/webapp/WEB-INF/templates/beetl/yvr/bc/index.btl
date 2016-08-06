@@ -54,8 +54,8 @@
     <div class='inner'>
     	<button v-on:click="doReload" >刷新 当前页数{{pageNumber}}</button>
     	<button v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
-    	<button v-on:click="jump(pageNumber--)" v-if="pageNumber > 1">上一页</button>
-    	<button v-on:click="jump(pageNumber++)" v-if="pageNumber < pageCount">下一页</button>
+    	<button v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
+    	<button v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>
     	<button v-on:click="jump(pageCount)" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
     </div>
     <div class='inner'>
