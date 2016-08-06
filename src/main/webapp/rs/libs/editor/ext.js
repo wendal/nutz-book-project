@@ -139,97 +139,97 @@
             '</div>'
         ].join('')).appendTo($body);
 
-        this.$upload = this.$win.find('.upload-img').css({
-            height: 50,
-            padding: '60px 0',
-            textAlign: 'center',
-            border: '4px dashed#ddd'
-        });
-
-        this.$uploadBtn = this.$upload.find('.button').css({
-            width: 86,
-            height: 40,
-            margin: '0 auto'
-        });
-
-        this.$uploadTip = this.$upload.find('.tip').show();
-
-        this.file = false;
-        var _csrf = $('[name=_csrf]').val();
-
-        this.uploader = WebUploader.create({
-            swf: ctxPath + '/libs/webuploader/Uploader.swf',
-            server: ctxPath + '/yvr/upload?_csrf=' + _csrf,
-            pick: this.$uploadBtn[0],
-            paste: document.body,
-            dnd: this.$upload[0],
-            auto: true,
-            fileSingleSizeLimit: 10 * 1024 * 1024,
-            //sendAsBinary: true,
-            // 只允许选择图片文件和小视频
-            accept: {
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png,mp4,webm,ogg',
-                mimeTypes: 'image/*,video/*'
-            }
-        });
-
-        this.uploader.on('beforeFileQueued', function(file){
-            if(self.file !== false || !self.editor){
-                return false;
-            }
-            self.showFile(file);
-        });
-
-        this.uploader.on('uploadProgress', function(file, percentage){
-            // console.log(percentage);
-            self.showProgress(file, percentage * 100);
-        });
-
-        this.uploader.on('uploadSuccess', function(file, res){
-        	if (console)
-        		console.log(res);
-            if(res.success){
-                self.$win.modal('hide');
-                var fname = file.name;
-                fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
-                var _fext = file.name.substring(file.name.lastIndexOf("."));
-                if (_fext.endsWith(".mp4") || _fext.endsWith(".webm") || _fext.endsWith(".ogg")) {
-                	self.editor.push(' ['+ fname +']('+ res.url +'?type=' + _fext + ")");
-                } else {
-                	self.editor.push(' !['+ fname +']('+ res.url +'?type='+ _fext + ')');
-                }
-            }
-            else{
-                self.removeFile();
-                self.showError(res.msg || '服务器走神了，上传失败');
-            }
-        });
-
-        this.uploader.on('uploadComplete', function(file){
-            self.uploader.removeFile(file);
-            self.removeFile();
-        });
-
-        this.uploader.on('error', function(type){
-            self.removeFile();
-            switch(type){
-                case 'Q_EXCEED_SIZE_LIMIT':
-                case 'F_EXCEED_SIZE':
-                    self.showError('文件太大了, 不能超过10M');
-                    break;
-                case 'Q_TYPE_DENIED':
-                    self.showError('只能上传图片/视频');
-                    break;
-                default:
-                    self.showError('发生未知错误');
-            }
-        });
-
-        this.uploader.on('uploadError', function(){
-            self.removeFile();
-            self.showError('服务器走神了，上传失败');
-        });
+//        this.$upload = this.$win.find('.upload-img').css({
+//            height: 50,
+//            padding: '60px 0',
+//            textAlign: 'center',
+//            border: '4px dashed#ddd'
+//        });
+//
+//        this.$uploadBtn = this.$upload.find('.button').css({
+//            width: 86,
+//            height: 40,
+//            margin: '0 auto'
+//        });
+//
+//        this.$uploadTip = this.$upload.find('.tip').show();
+//
+//        this.file = false;
+//        var _csrf = $('[name=_csrf]').val();
+//
+//        this.uploader = WebUploader.create({
+//            swf: ctxPath + '/libs/webuploader/Uploader.swf',
+//            server: ctxPath + '/yvr/upload?_csrf=' + _csrf,
+//            pick: this.$uploadBtn[0],
+//            paste: document.body,
+//            dnd: this.$upload[0],
+//            auto: true,
+//            fileSingleSizeLimit: 10 * 1024 * 1024,
+//            //sendAsBinary: true,
+//            // 只允许选择图片文件和小视频
+//            accept: {
+//                title: 'Images',
+//                extensions: 'gif,jpg,jpeg,bmp,png,mp4,webm,ogg',
+//                mimeTypes: 'image/*,video/*'
+//            }
+//        });
+//
+//        this.uploader.on('beforeFileQueued', function(file){
+//            if(self.file !== false || !self.editor){
+//                return false;
+//            }
+//            self.showFile(file);
+//        });
+//
+//        this.uploader.on('uploadProgress', function(file, percentage){
+//            // console.log(percentage);
+//            self.showProgress(file, percentage * 100);
+//        });
+//
+//        this.uploader.on('uploadSuccess', function(file, res){
+//        	if (console)
+//        		console.log(res);
+//            if(res.success){
+//                self.$win.modal('hide');
+//                var fname = file.name;
+//                fname = fname.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "_");
+//                var _fext = file.name.substring(file.name.lastIndexOf("."));
+//                if (_fext.endsWith(".mp4") || _fext.endsWith(".webm") || _fext.endsWith(".ogg")) {
+//                	self.editor.push(' ['+ fname +']('+ res.url +'?type=' + _fext + ")");
+//                } else {
+//                	self.editor.push(' !['+ fname +']('+ res.url +'?type='+ _fext + ')');
+//                }
+//            }
+//            else{
+//                self.removeFile();
+//                self.showError(res.msg || '服务器走神了，上传失败');
+//            }
+//        });
+//
+//        this.uploader.on('uploadComplete', function(file){
+//            self.uploader.removeFile(file);
+//            self.removeFile();
+//        });
+//
+//        this.uploader.on('error', function(type){
+//            self.removeFile();
+//            switch(type){
+//                case 'Q_EXCEED_SIZE_LIMIT':
+//                case 'F_EXCEED_SIZE':
+//                    self.showError('文件太大了, 不能超过10M');
+//                    break;
+//                case 'Q_TYPE_DENIED':
+//                    self.showError('只能上传图片/视频');
+//                    break;
+//                default:
+//                    self.showError('发生未知错误');
+//            }
+//        });
+//
+//        this.uploader.on('uploadError', function(){
+//            self.removeFile();
+//            self.showError('服务器走神了，上传失败');
+//        });
     };
 
     ToolImage.prototype.removeFile = function(){
