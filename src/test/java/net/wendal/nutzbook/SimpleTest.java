@@ -1,26 +1,10 @@
 package net.wendal.nutzbook;
 import static org.mockito.Mockito.when;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.StringReader;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.Connection;
@@ -28,28 +12,24 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.beetl.core.BeetlKit;
-import org.brickred.socialauth.Profile;
-import org.h2.result.Row;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nutz.Nutz;
 import org.nutz.aop.ClassAgent;
 import org.nutz.aop.ClassDefiner;
 import org.nutz.aop.DefaultClassDefiner;
@@ -57,49 +37,29 @@ import org.nutz.aop.InterceptorChain;
 import org.nutz.aop.MethodInterceptor;
 import org.nutz.aop.asm.AsmClassAgent;
 import org.nutz.aop.matcher.RegexMethodMatcher;
-import org.nutz.castor.Castors;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Condition;
-import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
-import org.nutz.dao.FieldFilter;
 import org.nutz.dao.FieldMatcher;
 import org.nutz.dao.Sqls;
-import org.nutz.dao.TableName;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.MappingField;
-import org.nutz.dao.entity.Record;
 import org.nutz.dao.impl.FileSqlManager;
 import org.nutz.dao.impl.NutDao;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
-import org.nutz.dao.util.Daos;
 import org.nutz.el.El;
-import org.nutz.http.Http;
-import org.nutz.http.Request;
-import org.nutz.http.Response;
-import org.nutz.http.Request.METHOD;
-import org.nutz.http.Sender;
-import org.nutz.http.sender.FilePostSender;
-import org.nutz.img.Images;
 import org.nutz.ioc.Ioc;
-import org.nutz.ioc.IocException;
 import org.nutz.ioc.ObjectLoadException;
 import org.nutz.ioc.impl.NutIoc;
-import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.AnnotationIocLoader;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.json.JsonLoader;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
-import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
-import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
-import org.nutz.lang.segment.CharSegment;
-import org.nutz.lang.util.Callback;
 import org.nutz.lang.util.Context;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.NutType;
@@ -109,21 +69,11 @@ import org.nutz.mapl.Mapl;
 import org.nutz.mvc.adaptor.ParamExtractor;
 import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
-import org.nutz.mvc.annotation.Param;
-import org.nutz.mvc.upload.TempFile;
-import org.nutz.repo.Base64;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
-import com.google.zxing.BinaryBitmap;
-
-import net.wendal.nutzbook.bean.Role;
-import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
-import net.wendal.nutzbook.module.yvr.YvrModule;
 import net.wendal.nutzbook.service.EmailServiceImpl;
-import net.wendal.nutzbook.service.TopicService;
 import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
@@ -741,5 +691,15 @@ public class SimpleTest extends TestBase {
             System.out.println(ma.group(3));
         }
         System.out.println("...........");
+    }
+    
+    @Test
+    public void test_get_class_for_jar() throws IOException {
+        String path = Nutz.class.getName().replace('.', '/')+".class";
+        System.out.println(path);
+        Enumeration<URL> en = getClass().getClassLoader().getResources(path);
+        while (en.hasMoreElements()) {
+            System.out.println(en.nextElement());
+        }
     }
 }
