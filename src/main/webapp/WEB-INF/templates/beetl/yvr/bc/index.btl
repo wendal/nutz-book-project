@@ -12,7 +12,7 @@
     	<b>进入用户的详情页或其发起的帖子的详情页,均可打赏</b>
     </div>
     <div class='inner'>
-    	<button class="btn" v-on:click="doReload">刷新 当前页数{{pageNumber}}</button>
+    	<button class="btn" v-on:click="doReload">当前页数{{pageNumber}}</button>
     	<button class="btn" v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
     	<button class="btn" v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
     	<button class="btn" v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>
@@ -49,7 +49,11 @@
       	  			<td>
       	  				<%if (null != obj.current_user!) {%>
       	  				<button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button>
-      	  				<a href="${ctxPath}/pay/bc/download/{{item.out_trade_no}}">下载证书</a>
+      	  				证书(
+      	  				<a href="${ctxPath}/pay/bc/pdf/{{item.out_trade_no}}">下载</a>
+      	  				/
+      	  				<a href="${ctxPath}/pay/bc/pdfview/{{item.out_trade_no}}">查看</a>
+      	  				)
       	  				<%} else {%>
       	  				<button">登陆后您也可以打赏Ta哦</button>
       	  				<%}%>
