@@ -22,6 +22,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.JsonAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
@@ -165,6 +166,7 @@ public class BeePayModule extends BaseModule {
     }
     
     @Ok("pdf:pdftmpl/beepay_one.pdf")
+    @Fail("void")
     @At("/download/?")
     public Object downloadPayPdf(String out_trace_no) {
         BeePayment payment = dao.fetch(BeePayment.class, out_trace_no);
