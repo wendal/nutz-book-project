@@ -34,15 +34,15 @@
       				<td>
       					<a href="${ctxPath}/yvr/u/{{item.fromUserProfile.loginname}}" class="user_avatar">
       						<img src="${cdnbase}${base}/yvr/u/{{item.fromUserProfile.loginname}}/avatar" title="{{item.fromUserProfile.loginname}}">
+      						<span>{{item.fromUserProfile.nickname}}</span>
     					</a>
-      					<span>{{item.fromUserProfile.loginname}}</span>
       	  			</td>
       	  			
       				<td>
       					<a href="${ctxPath}/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
       						<img src="${cdnbase}${base}/yvr/u/{{item.toUserProfile.loginname}}/avatar" title="{{item.toUserProfile.loginname}}">
+      						<span>{{item.toUserProfile.nickname}}</span>
     					</a>
-      					<span>{{item.toUserProfile.loginname}}</span>
       	  			</td>
       	  			<td>{{item.transaction_fee}}</td>
       	  			<td>{{item.updateTime}}</td>
