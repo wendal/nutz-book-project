@@ -12,7 +12,7 @@
     	<b>进入用户的详情页或其发起的帖子的详情页,均可打赏</b>
     </div>
     <div class='inner'>
-    	<button class="btn" v-on:click="doReload">当前页数{{pageNumber}}</button>
+    	<button class="btn" v-on:click="doReload" disabled>当前页数{{pageNumber}}</button>
     	<button class="btn" v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
     	<button class="btn" v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
     	<button class="btn" v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>

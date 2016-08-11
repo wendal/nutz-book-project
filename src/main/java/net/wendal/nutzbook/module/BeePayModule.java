@@ -95,7 +95,6 @@ public class BeePayModule extends BaseModule {
                          @Param("title")String title, 
                          @Param("amount")int amount,
                          @ReqHeader("Referer")String referer) {
-        String out_trade_no = "u"+toUserId+"z"+R.UU32();
         if (amount == 0) {
             amount = R.random(1, 100);
         }
@@ -103,10 +102,32 @@ public class BeePayModule extends BaseModule {
             amount = 1;
         else if (amount > 100)
             amount = 100;
+        if (Strings.isBlank(title)) {
+            UserProfile profile = dao.fetch(UserProfile.class, toUserId);
+            title = String.format("打赏给%s,uid=%d", profile.getDisplayName(), toUserId);
+        }
+        return _createPay(toUserId, title, amount, referer);
+    }
+    
+    @POST
+    @RequiresUser
+    @Ok("json")
+    @At
+    public Object create2(@Param("to")int toUserId, 
+                         @Param("title")String title, 
+                         @Param("amount")int amount,
+                         @ReqHeader("Referer")String referer) {
+        if (amount < 999)
+            amount = 999;// 土豪就是任性
+        if (Strings.isBlank(title))
+            title = "土豪,任性";
+        return _createPay(toUserId, title, amount, referer);
+    }
+    
+    protected Object _createPay(int toUserId, String title, int amount, String referer) {
         String appid = conf.get("bc.appId");
         String appSecret = conf.get("bc.appSecret");
-        if (Strings.isBlank(title))
-            title = "随机打赏给uid="+toUserId;
+        String out_trade_no = "u"+toUserId+"z"+R.UU32();
         NutMap re = new NutMap();
         re.put("out_trade_no", out_trade_no);
         re.put("amount", amount);
