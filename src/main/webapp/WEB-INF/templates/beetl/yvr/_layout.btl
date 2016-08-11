@@ -127,7 +127,6 @@ var ctxPath = "${ctxPath}";
         </form>
       </div>
       <ul class='nav pull-right'>
-        <li><a href='${ctxPath}/yvr/'>首页</a></li>
         <% if (null != obj.current_user!){ %>
         <li>
         </li>
