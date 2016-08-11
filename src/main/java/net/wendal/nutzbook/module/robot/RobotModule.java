@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.nutz.http.Request;
 import org.nutz.http.Request.METHOD;
@@ -121,7 +122,7 @@ public class RobotModule extends BaseModule {
                 continue;
             topic.setTitle(result.getResult());
             String text = String.format("%s https://%s/yvr/t/%s\r\n",
-                                        topic.getTitle(),
+                                        StringEscapeUtils.unescapeHtml(topic.getTitle()),
                                         req.getHeader("Host"),
                                         topic.getId().substring(0, 6));
             msgbBuilder.append(text);

@@ -153,8 +153,8 @@ public class BeePayModule extends BaseModule {
             dao.updateIgnoreNull(payment);
             // 提醒收款人
             String payfee = String.format("%.2f", payment.getTransaction_fee()/100.0);
-            pushService.alert(payment.getToUser(), "您收到一笔打赏" + payfee+"元", new HashMap<>());
-            pushService.alert(payment.getFromUser(), "您成功打赏了" + payfee+"元", new HashMap<>());
+            pushService.alert(payment.getToUser(), "您收到一笔打赏" + payfee+"元", "From: " + payment.getFromUserProfile().getDisplayName(), new HashMap<>());
+            pushService.alert(payment.getFromUser(), "您成功打赏了" + payfee+"元", "To: " + payment.getToUserProfile().getDisplayName(), new HashMap<>());
         }
         return "success";
     }

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
@@ -189,7 +190,7 @@ public class YvrService implements RedisKey {
 			for (Integer watcherId : globalWatcherIds) {
 			    if (watcherId != userId)
 				pushUser(watcherId,
-						"新帖:" + topic.getTitle(),
+						"新帖:" + StringEscapeUtils.unescapeHtml(topic.getTitle()),
 						topic.getId(),
 						replyAuthorName,
 						topic.getTitle(),
@@ -302,13 +303,14 @@ public class YvrService implements RedisKey {
 	
 	@Async
 	protected void pushUser(int userId, String alert, String topic_id, String post_user, String topic_title, int type) {
+	    topic_title = StringEscapeUtils.unescapeHtml(topic_title);
 		Map<String, String> extras = new HashMap<String, String>();
 		extras.put("topic_id", topic_id);
 		extras.put("post_user", post_user);
-		extras.put("topic_title",topic_title);
+		extras.put("topic_title", topic_title);
 		// 通知类型
 		extras.put("type", type+"");
-		pushService.alert(userId, alert, extras);
+		pushService.alert(userId, alert, topic_title, extras);
 	}
 	
 	public List<Topic> getRecentTopics(int userId, Pager pager) {
@@ -396,11 +398,6 @@ public class YvrService implements RedisKey {
 	}
 	
 	static Pattern atPattern = Pattern.compile("@([a-zA-Z0-9\\_]{4,20}\\s)");
-	
-	public static void main(String[] args) {
-		String cnt = "@wendal @zozoh 这样可以吗?@qq_addfdf";
-		System.out.println(findAt(cnt, 100));
-	}
 	
 	public static Set<String> findAt(String cnt, int limit) {
 		Set<String> ats = new HashSet<String>();

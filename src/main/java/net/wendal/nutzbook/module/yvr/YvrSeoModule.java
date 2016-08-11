@@ -13,6 +13,7 @@ import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.util.Markdowns;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -73,7 +74,7 @@ public class YvrSeoModule extends BaseModule {
 		for (Topic topic: list) {
 			dao.fetchLinks(topic, "author");
 			entry = new SyndEntryImpl();
-            entry.setTitle(topic.getTitle());
+            entry.setTitle(StringEscapeUtils.unescapeHtml(topic.getTitle()));
             entry.setLink(urlbase + "/yvr/t/" + topic.getId());
             entry.setPublishedDate(topic.getCreateTime());
             description = new SyndContentImpl();

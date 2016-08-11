@@ -58,11 +58,11 @@ public class PushService {
 	@Inject
 	protected PropertiesProxy conf;
 
-	public void alert(int userId, String alert, Map<String, String> extras) {
+	public void alert(int userId, String alert, String description, Map<String, String> extras) {
 	    if (conf.getBoolean("jpush.enable", false))
             alertJpush(userId, alert, extras);
         if (conf.getBoolean("xmpush.enable", false))
-            alertXmPush(userId, alert, extras);
+            alertXmPush(userId, alert, description, extras);
 	}
 
 	public void message(int userId, String message, Map<String, String> extras) {
@@ -84,8 +84,8 @@ public class PushService {
 		sendJPush(builder.build());
 	}
 
-	private void alertXmPush(int userId, String alert, Map<String, String> extras) {
-		Message.Builder builder = new Message.Builder().title(alert).description(alert);
+	private void alertXmPush(int userId, String alert, String description, Map<String, String> extras) {
+		Message.Builder builder = new Message.Builder().title(alert).description(description);
 		for (Entry<String, String> en : extras.entrySet()) {
 			builder.extra(en.getKey(), en.getValue());
 		}
