@@ -230,7 +230,8 @@ public class YvrService implements RedisKey {
 			pipe.zadd(RKEY_TOPIC_TOP, reply.getCreateTime().getTime(), topicId);
 		} else {
 			pipe.zadd(RKEY_TOPIC_UPDATE + topic.getType(), reply.getCreateTime().getTime(), topicId);
-			pipe.zadd(RKEY_TOPIC_UPDATE_ALL, reply.getCreateTime().getTime(), topicId);
+			if (topic.getType() != TopicType.nb && topic.getType() != TopicType.shortit)
+			    pipe.zadd(RKEY_TOPIC_UPDATE_ALL, reply.getCreateTime().getTime(), topicId);
 		}
 		pipe.zrem(RKEY_TOPIC_NOREPLY, topicId);
 		if (topic.getTags() != null) {
