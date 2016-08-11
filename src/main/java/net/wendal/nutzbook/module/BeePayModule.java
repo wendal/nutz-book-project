@@ -172,6 +172,7 @@ public class BeePayModule extends BaseModule {
             payment.setUpdateTime(new Date());
             log.info("BeePay: update out_trade_no="+out_trade_no);
             dao.updateIgnoreNull(payment);
+            dao.fetchLinks(payment, null);
             // 提醒收款人
             String payfee = String.format("%.2f", payment.getTransaction_fee()/100.0);
             pushService.alert(payment.getToUser(), "您收到一笔打赏" + payfee+"元", "From: " + payment.getFromUserProfile().getDisplayName(), new HashMap<>());
