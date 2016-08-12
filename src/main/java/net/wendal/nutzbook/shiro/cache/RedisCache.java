@@ -35,7 +35,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
     }
     
     public RedisCache<K, V> setName(String name) {
-        this.name = "shiro:"+name;
+        this.name = name;
         this.nameByteArray = name.getBytes();
         return this;
     }
