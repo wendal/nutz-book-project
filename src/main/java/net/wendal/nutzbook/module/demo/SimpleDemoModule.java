@@ -1,7 +1,6 @@
-package net.wendal.nutzbook.module;
+package net.wendal.nutzbook.module.demo;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -15,14 +14,12 @@ import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
-import org.nutz.mvc.upload.TempFile;
-import org.nutz.mvc.upload.UploadAdaptor;
 import org.nutz.mvc.upload.Uploads;
 
 import net.wendal.nutzbook.bean.User;
 
 @At("/demo")
-public class DemoModule {
+public class SimpleDemoModule {
 
     @At("/param/mydate")
     public void mydate(@Param("..")P p) {
@@ -33,18 +30,18 @@ public class DemoModule {
         public Date mydate;
     }
     
-    @At
-    @AdaptBy(type=UploadAdaptor.class)
-    public void upload(@Param("file")TempFile tmp, @Param("file")List<TempFile> files,
-                       @Param("file")List<File> files2) throws IOException{
-        System.out.println(tmp.getFile().getAbsolutePath());
-        //if (tmp != null)
-        //    tmp.delete();
-        System.out.println(tmp);
-        System.out.println(files);
-        System.out.println(files.get(0));
-        System.out.println(files2);
-    }
+//    @At
+//    @AdaptBy(type=UploadAdaptor.class)
+//    public void upload(@Param("file")TempFile tmp, @Param("file")List<TempFile> files,
+//                       @Param("file")List<File> files2) throws IOException{
+//        System.out.println(tmp.getFile().getAbsolutePath());
+//        //if (tmp != null)
+//        //    tmp.delete();
+//        System.out.println(tmp);
+//        System.out.println(files);
+//        System.out.println(files.get(0));
+//        System.out.println(files2);
+//    }
     
     @At
     @Ok("json")
