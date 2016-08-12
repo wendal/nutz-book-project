@@ -234,8 +234,15 @@ $(function() {
 </script>
 <% } %>
 
-<script src="https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=${conf["bc.appId"]}"></script>
 <script src="${base}/asserts/js/base.js"></script>
 <script src="${base}/asserts/js/user.js"></script>
+<script>
+$(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=${conf["bc.appId"]}";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+});
+</script>
 </body>
 </html>
