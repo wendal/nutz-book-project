@@ -39,7 +39,10 @@ import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.shiro.cache.RedisCache;
+import net.wendal.nutzbook.shiro.cache.RedisCacheManager;
 import net.wendal.nutzbook.util.Markdowns;
+import redis.clients.jedis.JedisPool;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -62,6 +65,11 @@ public class MainSetup implements Setup {
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
+		
+		// 初始化RedisCacheManager
+		RedisCacheManager.pool = ioc.get(JedisPool.class);
+		RedisCache.DEBUG = true;
+		
 		// 加载freemarker自定义标签　自定义宏路径
 		ioc.get(Configuration.class).setAutoImports(new NutMap().setv("p", "/ftl/pony/index.ftl").setv("s", "/ftl/spring.ftl"));
 		ioc.get(FreeMarkerConfigurer.class, "mapTags");
