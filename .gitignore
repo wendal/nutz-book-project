@@ -21,3 +21,4 @@ dump.rdb
 WebContent/apidocs/
 .idea
 *.iml
+ehcache.disk.store.dir
