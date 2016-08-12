@@ -13,6 +13,7 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.nutz.dao.Dao;
+import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.mvc.Mvcs;
 
 import net.wendal.nutzbook.bean.Permission;

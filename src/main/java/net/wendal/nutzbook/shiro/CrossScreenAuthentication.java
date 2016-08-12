@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -15,7 +16,6 @@ import org.nutz.mvc.Mvcs;
 
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.service.syslog.SysLogService;
-import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
 import net.wendal.nutzbook.util.Toolkit;
 
 /**

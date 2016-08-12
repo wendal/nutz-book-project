@@ -63,7 +63,6 @@ import org.nutz.lang.random.R;
 import org.nutz.lang.util.Context;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.NutType;
-import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mapl.Mapl;
 import org.nutz.mvc.adaptor.ParamExtractor;
@@ -78,7 +77,7 @@ import net.wendal.nutzbook.util.Markdowns;
 
 public class SimpleTest extends TestBase {
     
-    private static final Log log = Logs.get();
+    //private static final Log log = Logs.get();
 
 	@Test
 	public void test_string_array() {
@@ -446,12 +445,12 @@ public class SimpleTest extends TestBase {
 //        System.out.println(Long.parseLong("10"));
 //    }
     
-    @Test
-    public void test_list_filter_jdk8() {
-        Dao dao = ioc.get(Dao.class);
-        List<UserProfile> list = dao.query(UserProfile.class, null);
-        long count = list.parallelStream().filter((user)->user.isEmailChecked()).count();
-    }
+//    @Test
+//    public void test_list_filter_jdk8() {
+//        Dao dao = ioc.get(Dao.class);
+//        List<UserProfile> list = dao.query(UserProfile.class, null);
+//        long count = list.parallelStream().filter((user)->user.isEmailChecked()).count();
+//    }
     
 //    @Test
 //    public void fir_im_version_check() {

@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
@@ -15,7 +16,6 @@ import org.nutz.mvc.impl.processor.AbstractProcessor;
 
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.yvr.YvrService;
-import net.wendal.nutzbook.shiro.realm.SimpleShiroToken;
 
 /**
  * 通过请求参数中的accesstoken进行授权
