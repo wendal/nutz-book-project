@@ -172,6 +172,9 @@ layout("_layout.btl",{}){
   <div class="anchor"></div>
 </div>
 <% if (null != obj.current_user!){ %>
+<script src="${cdnbase}${base}/rs/libs/markdownit.js?v=1"></script>
+<script src="${cdnbase}${base}/rs/libs/code-prettify/prettify.js?v=1"></script>
+<script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
 <script src="${base}/rs/libs/editor/ext.js?v=4"></script>
 <script>
   $(document).ready(function () {

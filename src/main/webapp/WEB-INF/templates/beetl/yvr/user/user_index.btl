@@ -35,12 +35,14 @@
       <span id="access-token-qrcode"></span>
       <script type="text/javascript">
   	  // qrcode generate
-  	  var accessToken = "${obj.access_token}";
-     new QRCode(document.getElementById("access-token-qrcode"), {
-     	text: accessToken,
-    	width: 200,
-    	height: 200,
-  	});
+  	  $(function(){
+  	    var accessToken = "${obj.access_token}";
+        new QRCode(document.getElementById("access-token-qrcode"), {
+     	  text: accessToken,
+    	  width: 200,
+    	  height: 200,
+  	    });
+  	  });
   	// END qrcode generate
 	</script>
     </div>
