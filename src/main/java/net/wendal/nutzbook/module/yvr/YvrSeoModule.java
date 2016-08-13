@@ -12,6 +12,7 @@ import java.util.List;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.util.Markdowns;
+import net.wendal.nutzbook.util.Toolkit;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.nutz.dao.Cnd;
@@ -136,6 +137,6 @@ public class YvrSeoModule extends BaseModule {
 		String cnt = Streams.readAndClose(new InputStreamReader(ins));
 		String[] tmp = cnt.split("\n", 2);
 		String title = tmp[0].trim().split(" ", 2)[1].trim();
-		return _map("title", title, "cnt", cnt);
+		return _map("title", title, "cnt", cnt, "current_user", fetch_userprofile(Toolkit.uid()));
 	}
 }
