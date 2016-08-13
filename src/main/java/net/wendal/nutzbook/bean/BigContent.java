@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.bean;
 
+import java.io.Serializable;
 import java.sql.Blob;
 
 import org.nutz.dao.entity.annotation.Column;
@@ -14,9 +15,11 @@ import org.nutz.dao.entity.annotation.TableMeta;
  */
 @Table("t_big_content")
 @TableMeta("{'mysql-charset':'utf8mb4'}")
-public class BigContent {
+public class BigContent implements Serializable {
 
-	@Name
+    private static final long serialVersionUID = 1L;
+
+    @Name
 	protected String id;
 	
 	@Column("dt")
