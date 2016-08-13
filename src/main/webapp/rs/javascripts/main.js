@@ -25,17 +25,17 @@ $(document).ready(function () {
   $('.topic_content a,.reply_content a').attr('target', '_blank');
 
   // pretty code
-  prettyPrint();
+  //prettyPrint();
 
   // data-loading-text="提交中"
-  $('.submit_btn').click(function () {
-    $(this).button('loading');
-  });
+  //$('.submit_btn').click(function () {
+  //  $(this).button('loading');
+  //});
 
   // 广告的统计信息
-  $('.sponsor_outlink').click(function () {
-    var $this = $(this);
-    var label = $this.data('label');
-    ga('send', 'event', 'banner', 'click', label, 1.00, {'nonInteraction': 1});
-  });
+  //$('.sponsor_outlink').click(function () {
+  //  var $this = $(this);
+  //  var label = $this.data('label');
+  //  ga('send', 'event', 'banner', 'click', label, 1.00, {'nonInteraction': 1});
+  //});
 });
