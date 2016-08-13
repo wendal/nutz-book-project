@@ -125,7 +125,8 @@ public class RedisCache<K, V> implements Cache<K, V> {
             return out.toByteArray();
         }
         catch (Exception e) {
-            throw Lang.wrapThrow(e);
+            e.printStackTrace();
+            return null;
         }
     }
     
@@ -136,7 +137,8 @@ public class RedisCache<K, V> implements Cache<K, V> {
             return ois.readObject();
         }
         catch (Exception e) {
-            throw Lang.wrapThrow(e);
+            e.printStackTrace();
+            return null;
         }
     }
 }
