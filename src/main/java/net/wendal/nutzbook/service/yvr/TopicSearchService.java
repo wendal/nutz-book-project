@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ansj.lucene4.AnsjAnalysis;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -36,7 +37,6 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
@@ -168,7 +168,7 @@ public class TopicSearchService {
 		IndexReader reader = luceneIndex.reader();
 		try {
 			IndexSearcher searcher = new IndexSearcher(reader);
-			Analyzer analyzer = new IKAnalyzer();
+			Analyzer analyzer = new AnsjAnalysis();
 			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer, boosts);
 			// 将关键字包装成Query对象
 			Query query = parser.parse(keyword);

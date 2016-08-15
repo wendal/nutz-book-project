@@ -111,7 +111,7 @@ public class RobotModule extends BaseModule {
         // data.getString("Sender"));
         String at = "";
 
-        List<LuceneSearchResult> results = topicSearchService.search(key, true, 3);
+        List<LuceneSearchResult> results = topicSearchService.search(key, false, 3);
         if (results == null || results.size() == 0) {
             return at + " 发帖问问吧 https://" + req.getHeader("Host") + "/yvr/add";
         }

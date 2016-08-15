@@ -96,6 +96,16 @@
 				<updatePolicy>never</updatePolicy>
 			</releases>
 		</repository>
+		<repository>
+			<id>mvn-repo</id>
+			<url>http://maven.nlpcn.org/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -285,11 +295,6 @@
 			<version>1.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>IKAnalyzer</groupId>
-			<artifactId>IKAnalyzer</artifactId>
-			<version>2012FF_hf1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
 			<version>4.9.1</version>
@@ -450,6 +455,16 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ansj</groupId>
+			<artifactId>ansj_seg</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ansj</groupId>
+			<artifactId>ansj_lucene4_plug</artifactId>
+			<version>2.0.2</version>
 		</dependency>
 	</dependencies>
 	<version>2.9.0-SNAPSHOT</version>

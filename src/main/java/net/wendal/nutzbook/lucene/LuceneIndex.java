@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
+import org.ansj.lucene4.AnsjAnalysis;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -13,7 +14,6 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
 public class LuceneIndex implements AutoCloseable, Closeable {
 	
@@ -26,7 +26,7 @@ public class LuceneIndex implements AutoCloseable, Closeable {
 		// 索引文件的保存位置
 		Directory dir = FSDirectory.open(new File(indexStorePath));
 		// 分析器
-		Analyzer analyzer = new IKAnalyzer();
+		Analyzer analyzer = new AnsjAnalysis();
 		// 配置类
 		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_4_9, analyzer);
 		iwc.setOpenMode(mode);// 创建模式 OpenMode.CREATE_OR_APPEND 添加模式

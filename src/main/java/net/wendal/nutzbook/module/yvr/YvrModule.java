@@ -325,7 +325,7 @@ public class YvrModule extends BaseModule {
 	public Object search(@Param("q") String keys, @Param("format")String format) throws Exception {
 	    if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
-		List<LuceneSearchResult> results = topicSearchService.search(keys, true, "json".equals(format) ? 5 : 30);
+		List<LuceneSearchResult> results = topicSearchService.search(keys, false, "json".equals(format) ? 5 : 30);
         List<Topic> list = new ArrayList<Topic>();
 		for (LuceneSearchResult result : results) {
 			Topic topic = dao.fetch(Topic.class, result.getId());
