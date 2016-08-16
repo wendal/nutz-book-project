@@ -98,7 +98,7 @@
 		</repository>
 		<repository>
 			<id>mvn-repo</id>
-			<url>http://maven.nlpcn.org/</url>
+			<url>http://maven.ansj.org</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>

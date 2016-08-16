@@ -47,7 +47,7 @@ public class UserSummerInfoProvider extends AbstractSysInfoProvider implements R
         re.add(map);
         
         map = new NutMap();
-        map.put("name", "昨天在线人数");
+        map.put("name", "今天在线人数");
         map.put("value", jedis().bitcount(RKEY_ONLINE_DAY + Toolkit.today_yyyyMMdd()));
         re.add(map);
         
