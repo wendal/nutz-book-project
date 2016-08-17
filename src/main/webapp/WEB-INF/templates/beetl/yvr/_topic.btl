@@ -533,6 +533,7 @@ function send_to_phone() {
 	});
 }
 $(function() {
+	prettyPrint();
 	$("#copy_link_btn").zclip({
 		copy:function() {
 			return "${obj.topic.title} " + location.href;
