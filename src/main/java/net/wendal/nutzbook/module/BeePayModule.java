@@ -96,12 +96,10 @@ public class BeePayModule extends BaseModule {
                          @Param("amount")int amount,
                          @ReqHeader("Referer")String referer) {
         if (amount == 0) {
-            amount = R.random(1, 100);
+            amount = R.random(88, 1088);
         }
-        else if (amount < 1)
-            amount = 1;
-        else if (amount > 100)
-            amount = 100;
+        else if (amount < 88)
+            amount = 188;
         if (Strings.isBlank(title)) {
             UserProfile profile = dao.fetch(UserProfile.class, toUserId);
             title = String.format("打赏给%s,uid=%d", profile.getDisplayName(), toUserId);
