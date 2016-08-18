@@ -14,6 +14,15 @@ var ioc = {
 	            depose : 'close'
 	        }
 	    },
+	    dataSource_slave : { // 为了演示主从, 真正用的话, 下面的"db."改成"db_slave."
+	        factory : "$conf#make",
+	        args : ["com.alibaba.druid.pool.DruidDataSource", "db."],
+	        type : "com.alibaba.druid.pool.DruidDataSource",
+	        events : {
+	        	create : "init",
+	            depose : 'close'
+	        }
+	    },
 		dao : {
 			type : "org.nutz.dao.impl.NutDao",
 			args : [{refer:"dataSource"}],
@@ -22,14 +31,16 @@ var ioc = {
 			}
 		},
 		cacheExecutor : {
-			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
+			//type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
+			type : "net.wendal.nutzbook.util.MasterSlaveDaoExecutor",
 			fields : {
 				cacheProvider : {refer:"cacheProvider"},
 				cachedTableNames : [ 
 				    "t_user_profile", "t_user", "t_role",
 					"t_permission", "t_role_permission", 
 					"t_topic","t_topic_reply", "t_big_content",
-					"t_oauth_user", "t_user_role" ]
+					"t_oauth_user", "t_user_role" ],
+				slave : {refer:"dataSource_slave"}
 		}
 	},
 	/*
