@@ -5,7 +5,7 @@
   <div class='panel' id="bclist">
     <div class='header'>
       <ul class='breadcrumb'>
-        <li><a href='${ctxPath}/pay/bc'>{{sayhi}}</a><span class='divider'>/</span></li>
+        <li><a href='${ctxPath}/pay/bc'>打赏主页</a><span class='divider'>/</span></li>
       </ul>
     </div>
     <div class='inner'>

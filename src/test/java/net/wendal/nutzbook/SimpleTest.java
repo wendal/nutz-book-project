@@ -701,4 +701,9 @@ public class SimpleTest extends TestBase {
             System.out.println(en.nextElement());
         }
     }
+    
+    @Test
+    public void test_ioc_var_args() throws IOException {
+        ioc.get(TestClassArray.class);
+    }
 }

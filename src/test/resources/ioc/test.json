@@ -1,0 +1,9 @@
+{
+	abc : {type:"java.lang.Object"},
+	def : {type:"java.lang.Object"},
+	ghi : {type:"java.lang.Object"},
+	testClassArray: {
+        type: 'net.wendal.nutzbook.TestClassArray',
+ 		args : [{refer: 'abc'}, {refer: 'def'}, {refer: 'ghi'}]
+    }
+}
