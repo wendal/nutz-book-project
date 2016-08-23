@@ -5,7 +5,7 @@ $(function(){
 			topicType : "ask",
 			topicTitle : "",
 			topicContent : "",
-			topicButtonTip : "我要答案"
+			topicButtonTip : "我要答案(提交)"
 		},
 		methods : {
 			topicSubmit : function() {
@@ -18,7 +18,7 @@ $(function(){
 					layer.alert("标题最多100个字符");
 					return;
 				}
-				var kvs = ["兽总", "在线等", "兽兽", "兽哥", "菜鸟", "急急", "揪心", "求帮忙", "为毛", "急需", "弱弱"]; // 这样下去我得弄个表了...
+				var kvs = ["兽总", "在线等", "兽兽", "兽哥", "菜鸟", "急急", "揪心", "求帮忙", "为毛", "急需", "弱弱", "兽懂"]; // 这样下去我得弄个表了...
 				for (var i=0;i<kvs.length;i++) {
 					if (this.topicTitle.indexOf(kvs[i]) > -1) {
 						layer.alert("标题含有禁止出现的字符["+kvs[i]+"],请修改措辞");
@@ -57,7 +57,20 @@ $(function(){
 				layer.alert("图片上传暂时禁用");
 			},
 			topicAddCode : function() {
-				this.topicContent += "\r\n```\r\n这个位置贴代码或日志,并移除这句话!前后一行都是定界符!\r\n```";
+				layer.prompt({
+					  formType: 2,
+					  value: '',
+					  title: '贴代码或日志',
+					  maxlength : 1024000
+                }, function(value, index, elem){
+					  console.log(value); //得到value
+					  if (value) {
+						  topicAddVue.topicContent += "\r\n```\r\n"+value+"\r\n```\r\n"
+					  } else {
+						  console.log("why?");
+					  }
+					  layer.close(index);
+				});
 			}
 		}
 	});

@@ -33,5 +33,5 @@ layout("_layout.btl",{title:'添加新帖子'}){
     </div>
   </div>
 </div>
-<script src="${base}/asserts/js/topic_add.js"></script>
+<script src="${base}/asserts/js/topic_add.js?v=1"></script>
 <%} %>

@@ -139,6 +139,7 @@ var ctxPath = "${ctxPath}";
       <a class='dark' href='https://github.com/wendal/nutz-book-project'>源码地址</a>
       | Power By 
       <a class='dark' href='https://github.com/nutzam/nutz'>Nutz</a>
+      
       ,
       <a class='dark' href='http://www.qiniu.com/'><img src="${cdnbase}${base}/rs/images/qiniu-transparent.png" style="width: 10%; height: 10%"/></a>
       | 
@@ -221,7 +222,7 @@ $(function() {
 <script src="${cdnbase}${base}/rs/libs/qrcode.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/javascripts/main.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/javascripts/responsive.js?v=1"></script>
-<script src="${cdnbase}${base}/rs/layer2/layer/layer.js?v=1"></script>
+<script src="${base}/asserts/js/layer/layer.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/jquery.pjax.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/js/jquery.zclip.js?v=0.2.2"></script>
 <!-- jQuery edit in place plugin -->
