@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.module;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
@@ -27,7 +28,7 @@ public class WebHookModule extends BaseModule {
 
     @AdaptBy(type=WhaleAdaptor.class)
     @At("/?/?/?")
-    public void trigger(String user, String p, String s, String token, @Param("..")NutMap params) throws IOException {
+    public void trigger(String user, String p, String s, String token, @Param("..")Map<String, Object> params) throws IOException {
         String key = "webhook."+user+"."+s;
         String _token = conf.get(key+".token");
         if (_token == null) {
