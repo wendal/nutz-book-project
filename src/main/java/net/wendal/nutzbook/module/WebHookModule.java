@@ -29,7 +29,7 @@ public class WebHookModule extends BaseModule {
     @AdaptBy(type=WhaleAdaptor.class)
     @At("/?/?/?")
     public void trigger(String user, String p, String s, String token, @Param("..")Map<String, Object> params) throws IOException {
-        String key = "webhook."+user+"."+s;
+        String key = String.format("webhook.%s.%s.%s", user, p, s);
         String _token = conf.get(key+".token");
         if (_token == null) {
             log.debug("no such token for "+ key);
