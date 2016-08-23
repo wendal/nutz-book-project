@@ -18,16 +18,17 @@ $(function(){
 					layer.alert("标题最多100个字符");
 					return;
 				}
-				var kvs = ["兽总", "在线等", "兽兽", "兽哥", "菜鸟", "急急", "揪心", "求帮忙", "为毛", "急需"]; // 这样下去我得弄个表了...
+				var kvs = ["兽总", "在线等", "兽兽", "兽哥", "菜鸟", "急急", "揪心", "求帮忙", "为毛", "急需", "弱弱"]; // 这样下去我得弄个表了...
 				for (var i=0;i<kvs.length;i++) {
 					if (this.topicTitle.indexOf(kvs[i]) > -1) {
 						layer.alert("标题含有禁止出现的字符["+kvs[i]+"],请修改措辞");
 						return;
 					}
 				}
+				this.topicTitle = this.topicTitle.replace(" 【", "[").replace("】", "]").replace("这个位置贴代码或日志,并移除这句话!前后一行都是定界符!", "");
 				this.topicContent = this.topicContent.trim();
-				if (this.topicContent.length < 1) {
-					layer.alert("内容总得写点啊");
+				if (this.topicContent.length < 10) {
+					layer.alert("起码10个字才能说清楚问题,对吗? 越详尽的内容,越快解决问题!");
 					return;
 				}
 				this.topicButtonTip = "正在提交...";
@@ -56,7 +57,7 @@ $(function(){
 				layer.alert("图片上传暂时禁用");
 			},
 			topicAddCode : function() {
-				this.topicContent += "\r\n```\r\n这个位置贴代码或日志,不要移除前后标识符\r\n```";
+				this.topicContent += "\r\n```\r\n这个位置贴代码或日志,并移除这句话!前后一行都是定界符!\r\n```";
 			}
 		}
 	});

@@ -22,7 +22,7 @@ layout("_layout.btl",{title:'添加新帖子'}){
             <p/>
             <span class="tab-selector">标题:</span>
 			<input v-model="topicTitle" autofocus="" class="span9" id="title" 
-				name="title" rows="1" placeholder="字数 10 字以上,概括问题很关键!!"
+				name="title" rows="1" placeholder="字数 10 字以上,概括问题很关键!! 认真的提问才会有好的回复!!"
 				autocomplete="off">
             <p/>
             <textarea v-model="topicContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
