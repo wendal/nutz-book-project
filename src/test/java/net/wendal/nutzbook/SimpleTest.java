@@ -2,6 +2,7 @@ package net.wendal.nutzbook;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -27,7 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.beetl.core.BeetlKit;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.nutz.Nutz;
 import org.nutz.aop.ClassAgent;
@@ -39,6 +43,7 @@ import org.nutz.aop.asm.AsmClassAgent;
 import org.nutz.aop.matcher.RegexMethodMatcher;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
 import org.nutz.dao.FieldMatcher;
 import org.nutz.dao.Sqls;
@@ -49,14 +54,22 @@ import org.nutz.dao.impl.NutDao;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
 import org.nutz.el.El;
+import org.nutz.http.Cookie;
+import org.nutz.http.Http;
+import org.nutz.http.Request;
+import org.nutz.http.Request.METHOD;
+import org.nutz.http.Response;
+import org.nutz.http.Sender;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.ObjectLoadException;
 import org.nutz.ioc.impl.NutIoc;
 import org.nutz.ioc.loader.annotation.AnnotationIocLoader;
 import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.ioc.loader.json.JsonLoader;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
@@ -72,23 +85,26 @@ import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
 import org.nutz.mvc.upload.TempFile;
 
+import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.admin.DataTableColumn;
 import net.wendal.nutzbook.service.EmailServiceImpl;
+import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Markdowns;
 
-public class SimpleTest extends TestBase {
+@RunWith(NutBookIocTestRunner.class)
+@IocBean
+public class SimpleTest extends Assert {
     
     //private static final Log log = Logs.get();
+    
+    @Inject("refer:$ioc")
+    protected Ioc ioc;
 
 	@Test
 	public void test_string_array() {
-	    Map<String, Object> params = new HashMap<String, Object>();
-	    params.put("list", new String[]{"hi"});
-	    String re = BeetlKit.render("${list.~size}", params);
-	    System.out.println(re);
-	    System.out.println(params.get("list"));
+	    System.out.println(System.getProperties());
 	}
 	
 	@Test
@@ -611,47 +627,47 @@ public class SimpleTest extends TestBase {
         System.out.println(Cnd.where("abc", "like", "abc"));
     }
     
-    final static public void main(String _就是要装逼啊啊啊啊啊_有神马不可呢 []) {
-        int slen = 4*60+47;
-        int dlen = 20;
-        int count = slen / dlen;
-        int pos = 540;
-        for (int i = 0; i < count; i++) {
-            int ss = i*dlen+3;
-            // -acodec copy -ss 00:02:00.00 -y -maxrate 6000k -bufsize 3000k -preset veryslow -t 00:00:20.00 -r 24 -vf crop=1920:1080:0:540 _1920_1080_0_540.mp4
-            String cmd = "nohup ffmpeg -i source.mp4 -y -maxrate 6000k -bufsize 3000k -preset veryfast -r 24 -ss "+String.format("%02d:%02d.00", ss/60, ss%60);
-            cmd += " -t 00:00:20.00 ";
-            System.out.println(cmd + " -vf crop=1920:1080:0:"+pos+" _f"+ss+"_1920_1080_0_"+pos+".mp4");
-            System.out.println(cmd + " -vf crop=1920:1080:1920:"+pos+" _f"+ss+"_1920_1080_1920_"+pos+".mp4");
-        }
-    }
-    
-    @Test
-    public void test_json_field_date_format() {
-        PojoSql pojo = new PojoSql();
-        pojo.setCreateTime(new Date());
-        System.out.println(Json.toJson(pojo));
-    }
-    
-    @Test
-    public void test_sql_comment() {
-        FileSqlManager manager = new FileSqlManager("sqls/");
-        Sql sql = manager.create("user.create");
-        System.out.println(sql);
-    }
-    
-    @Test
-    public void test_reg_http() {
-        String p = "^(http[s]?://[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)?(\\:[0-9]+)?)";
-        Pattern pattern = Pattern.compile(p);
-        String url = "http://github.com:8080/abc";
-        System.out.println(pattern.matcher(url).find());
-        url = "https://github.com:8080/abc";
-        System.out.println(pattern.matcher(url).find());
-        url = "http://localhost:8080/abc";
-        System.out.println(pattern.matcher(url).find());
-    }
-    
+//    final static public void main(String _就是要装逼啊啊啊啊啊_有神马不可呢 []) {
+//        int slen = 4*60+47;
+//        int dlen = 20;
+//        int count = slen / dlen;
+//        int pos = 540;
+//        for (int i = 0; i < count; i++) {
+//            int ss = i*dlen+3;
+//            // -acodec copy -ss 00:02:00.00 -y -maxrate 6000k -bufsize 3000k -preset veryslow -t 00:00:20.00 -r 24 -vf crop=1920:1080:0:540 _1920_1080_0_540.mp4
+//            String cmd = "nohup ffmpeg -i source.mp4 -y -maxrate 6000k -bufsize 3000k -preset veryfast -r 24 -ss "+String.format("%02d:%02d.00", ss/60, ss%60);
+//            cmd += " -t 00:00:20.00 ";
+//            System.out.println(cmd + " -vf crop=1920:1080:0:"+pos+" _f"+ss+"_1920_1080_0_"+pos+".mp4");
+//            System.out.println(cmd + " -vf crop=1920:1080:1920:"+pos+" _f"+ss+"_1920_1080_1920_"+pos+".mp4");
+//        }
+//    }
+//    
+//    @Test
+//    public void test_json_field_date_format() {
+//        PojoSql pojo = new PojoSql();
+//        pojo.setCreateTime(new Date());
+//        System.out.println(Json.toJson(pojo));
+//    }
+//    
+//    @Test
+//    public void test_sql_comment() {
+//        FileSqlManager manager = new FileSqlManager("sqls/");
+//        Sql sql = manager.create("user.create");
+//        System.out.println(sql);
+//    }
+//    
+//    @Test
+//    public void test_reg_http() {
+//        String p = "^(http[s]?://[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)?(\\:[0-9]+)?)";
+//        Pattern pattern = Pattern.compile(p);
+//        String url = "http://github.com:8080/abc";
+//        System.out.println(pattern.matcher(url).find());
+//        url = "https://github.com:8080/abc";
+//        System.out.println(pattern.matcher(url).find());
+//        url = "http://localhost:8080/abc";
+//        System.out.println(pattern.matcher(url).find());
+//    }
+//    
 //    @Test
 //    public void test_out_number_jpgs() throws Exception {
 //        int count = 24*6;
@@ -676,37 +692,109 @@ public class SimpleTest extends TestBase {
 //            Images.write(image, new File("D:\\tmp\\"+String.format("%03d", i)+".png"));
 //        }
 //    }
+//    
+//    @Test
+//    public void test_tomcat_jar_npe() throws MalformedURLException {
+//        new URL("file:/D:/nutzbook/apache-tomcat-8.0.28/bin/bootstrap.jar");
+//    }
+//    
+//    @Test
+//    public void test_groupby() throws MalformedURLException {
+//        Pattern MULTI = Pattern.compile("^([0-9]-[0-9])(_)?([0-9]+x[0-9]+)?(~.*)$");
+//        String str = "2-2_1920x1080~src.mp4";
+//        Matcher ma = MULTI.matcher(str);
+//        if (ma.find()) {
+//            System.out.println(ma.group(1));
+//            //System.out.println(ma.group(2));
+//            System.out.println(ma.group(3));
+//        }
+//        System.out.println("...........");
+//    }
+//    
+//    @Test
+//    public void test_get_class_for_jar() throws IOException {
+//        String path = Nutz.class.getName().replace('.', '/')+".class";
+//        System.out.println(path);
+//        Enumeration<URL> en = getClass().getClassLoader().getResources(path);
+//        while (en.hasMoreElements()) {
+//            System.out.println(en.nextElement());
+//        }
+//    }
+//    
+//    @Test
+//    public void test_ioc_var_args() throws IOException {
+//        ioc.get(TestClassArray.class);
+//    }
+//    
+//    @Test
+//    public void test_ffmpeg() throws IOException {
+//        Lang.execOutput("ffmpeg -i D:\\out.amr -y D:\\out.mp3", Encoding.CHARSET_UTF8);
+//    }
+//    
+//    @Test
+//    public void test_http_session() throws IOException {
+//        Request req;
+//        Response resp;
+//        Cookie cookie;
+//        
+//        // 开始登陆
+//        NutMap params = new NutMap("loginName", "admin").setv("loginPassword", "123456");
+//        req = Request.create("http://127.0.0.1:8080/shiro/login", METHOD.POST, params);
+//        resp = Sender.create(req).send();
+//        assertEquals(302, resp.getStatus());
+//        cookie = resp.getCookie();
+//        
+//        // 访问一下需要登陆才能访问的页面
+//        req = Request.create("http://127.0.0.1:8080/shiro/session/list", METHOD.GET);
+//        resp = Sender.create(req).setInterceptor(cookie).send();
+//        
+//        // 200代表成功, 没有被302
+//        assertEquals(200, resp.getStatus());
+//        System.out.println(resp.getContent());
+//    }
+//    
+//    public String readUtil(Reader r, String ends) throws IOException {
+//        // 缓存各种变量
+//        StringBuilder sb = new StringBuilder();
+//        int endSize = ends.length();
+//        char endChar = ends.charAt(endSize-1);
+//        char[] buf = new char[1];
+//        int len;
+//        int sbLen;
+//        while (true) {
+//            len = r.read(buf);
+//            if (len == -1)
+//                break;
+//            if (len == 0)
+//                continue;
+//            sb.append(buf[0]);
+//            sbLen = sb.length();
+//            // 如果读取到结束字符串的最后一个字符，那么匹配一下.事实上是endsWith的优化版本，避免生成大字符串
+//            if (buf[0] == endChar && sbLen > endSize) {
+//                String tmp = sb.substring(sbLen - endSize);
+//                if (tmp.equals(ends)) {
+//                    return sb.substring(0, sbLen - endSize);
+//                }
+//            }
+//        }
+//        return null;
+//    }
     
     @Test
-    public void test_tomcat_jar_npe() throws MalformedURLException {
-        new URL("file:/D:/nutzbook/apache-tomcat-8.0.28/bin/bootstrap.jar");
-    }
-    
-    @Test
-    public void test_groupby() throws MalformedURLException {
-        Pattern MULTI = Pattern.compile("^([0-9]-[0-9])(_)?([0-9]+x[0-9]+)?(~.*)$");
-        String str = "2-2_1920x1080~src.mp4";
-        Matcher ma = MULTI.matcher(str);
-        if (ma.find()) {
-            System.out.println(ma.group(1));
-            //System.out.println(ma.group(2));
-            System.out.println(ma.group(3));
+    public void test_delete_list() {
+        UserService userService = ioc.get(UserService.class);
+        String[] names = new String[]{R.UU32(), R.UU32(), R.UU32()};
+        List<User> list = new ArrayList<>();
+        for (String name : names) {
+            User user = userService.add(name, R.UU32());
+            list.add(user);
         }
-        System.out.println("...........");
+        Dao dao = ioc.get(Dao.class);
+        dao.delete(list);
     }
     
-    @Test
-    public void test_get_class_for_jar() throws IOException {
-        String path = Nutz.class.getName().replace('.', '/')+".class";
-        System.out.println(path);
-        Enumeration<URL> en = getClass().getClassLoader().getResources(path);
-        while (en.hasMoreElements()) {
-            System.out.println(en.nextElement());
-        }
-    }
-    
-    @Test
-    public void test_ioc_var_args() throws IOException {
-        ioc.get(TestClassArray.class);
+    @Before
+    public void before() {
+        CacheManager.create();
     }
 }

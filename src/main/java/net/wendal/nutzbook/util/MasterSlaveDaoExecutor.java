@@ -30,8 +30,8 @@ public class MasterSlaveDaoExecutor extends CachedNutDaoExecutor {
             super.exec(conn, st);
             return;
         }
-        if (log.isDebugEnabled())
-            log.debug("exec at slave DataSource >> " + st.toPreparedStatement());
+        //if (log.isDebugEnabled())
+        //    log.debug("exec at slave DataSource >> " + st.toPreparedStatement());
         // 重头戏开始了
         Connection _conn = null;
         try {
