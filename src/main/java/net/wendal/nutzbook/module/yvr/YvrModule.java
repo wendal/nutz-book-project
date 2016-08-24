@@ -99,7 +99,7 @@ public class YvrModule extends BaseModule {
 
 	@GET
 	@At
-	@Ok("beetl:yvr/_add.btl")
+	@Ok("beetl:yvr/_add.html")
 	public Object add(HttpSession session) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
@@ -124,7 +124,7 @@ public class YvrModule extends BaseModule {
 
 	@At({ "/list/?", "/list/?/?", "/list" })
 	@GET
-	@Ok("beetl:/yvr/index.btl")
+	@Ok("beetl:/yvr/index.html")
 	public Object list(String type, int page) {
 		int userId = Toolkit.uid();
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
@@ -134,7 +134,7 @@ public class YvrModule extends BaseModule {
 	
 	@At({ "/list/u/?/?", "/list/u/?/?/?" })
 	@GET
-	@Ok("beetl:/yvr/index.btl")
+	@Ok("beetl:/yvr/index.html")
 	public Object list(String loginname, String type, int page) {
 		int userId = Toolkit.uid();
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
@@ -152,7 +152,7 @@ public class YvrModule extends BaseModule {
 	
 	@At({ "/tag/?", "/tag/?/?" })
 	@GET
-	@Ok("beetl:/yvr/index.btl")
+	@Ok("beetl:/yvr/index.html")
 	public Object tag(String tagName, int page) {
 		int userId = Toolkit.uid();
 		if (Strings.isBlank(tagName))
@@ -225,7 +225,7 @@ public class YvrModule extends BaseModule {
 
 	@GET
 	@At("/t/?")
-	@Ok("beetl:yvr/_topic.btl")
+	@Ok("beetl:yvr/_topic.html")
 	@Aop("redis")
 	public Object topic(String id, @ReqHeader("If-None-Match")String _etag,  HttpServletResponse response) {
 	    Topic topic;
@@ -320,7 +320,7 @@ public class YvrModule extends BaseModule {
 
 	@GET
 	@At
-	@Ok("beetl:/yvr/index.btl")
+	@Ok("beetl:/yvr/index.html")
 	@Aop("redis")
 	public Object search(@Param("q") String keys, @Param("format")String format) throws Exception {
 	    if (Strings.isBlank(keys))

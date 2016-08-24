@@ -1,6 +1,6 @@
 
-<% layout("../_layout.btl", {}){%>
-<% layout("../sidebar.btl",{"c_user":obj.c_user}){};%>
+<!--# layout("../_layout.html", {}){ #-->
+<!--# layout("../sidebar.html",{"c_user":obj.c_user}){}; #-->
 <div id='content'>
   <div class='panel'>
     <div class='header'>
@@ -25,7 +25,7 @@
     </div>
   </div>
   
-  <%if (null != obj.access_token!) {%>
+  <!--#if (null != obj.access_token!) { #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>AccessToken二维码</span>
@@ -47,22 +47,22 @@
 	</script>
     </div>
   </div>
-  <%}%>
+  <!--#} #-->
   
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>最近创建的话题</span>
     </div>
-    <% if ( null != obj.recent_topics ) { %>
-    <% layout("../list.btl", {"topics":obj.recent_topics}){}; %>
+    <!--# if ( null != obj.recent_topics ) {  #-->
+    <!--# layout("../list.html", {"topics":obj.recent_topics}){};  #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/topic">查看更多»</a>
     </div>
-    <% } else { %>
+    <!--# } else {  #-->
     <div class='inner'>
       <p>无话题</p>
     </div>
-    <% } %>
+    <!--# }  #-->
   </div>
   
   
@@ -70,16 +70,16 @@
     <div class='header'>
       <span class='col_fade'>最近回复的话题</span>
     </div>
-    <% if ( null != obj.recent_replies ) { %>
-    <% layout("../list.btl", {"topics":obj.recent_replies}){}; %>
+    <!--# if ( null != obj.recent_replies ) {  #-->
+    <!--# layout("../list.html", {"topics":obj.recent_replies}){};  #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/reply">查看更多»</a>
     </div>
-    <% } else { %>
+    <!--# } else {  #-->
     <div class='inner'>
       <p>无话题</p>
     </div>
-    <% } %>
+    <!--# }  #-->
   </div>
 </div>
-<%}%>
+<!--#} #-->

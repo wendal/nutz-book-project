@@ -1,6 +1,6 @@
 
-<% layout("../_layout.btl", {"title":"打赏主页"}){%>
-<% layout("../sidebar.btl",{"c_user":obj.current_user!}){};%>
+<!--# layout("../_layout.html", {"title":"打赏主页"}){ #-->
+<!--# layout("../sidebar.html",{"c_user":obj.current_user!}){}; #-->
 <div id='content'>
   <div class='panel' id="bclist">
     <div class='header'>
@@ -47,16 +47,16 @@
       	  			<td>{{item.transaction_fee}}</td>
       	  			<td>{{item.updateTime}}</td>
       	  			<td>
-      	  				<%if (null != obj.current_user!) {%>
+      	  				<!--#if (null != obj.current_user!) { #-->
       	  				<button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button>
       	  				证书(
       	  				<a href="${ctxPath}/pay/bc/pdf/{{item.out_trade_no}}">下载</a>
       	  				/
       	  				<a href="${ctxPath}/pay/bc/pdfview/{{item.out_trade_no}}">查看</a>
       	  				)
-      	  				<%} else {%>
+      	  				<!--#} else { #-->
       	  				<button">登陆后您也可以打赏Ta哦</button>
-      	  				<%}%>
+      	  				<!--#} #-->
       	  			</td>
       			</tr>
     		</tbody>
@@ -87,4 +87,4 @@
 var base = "${base}";
 </script>
 <script src="${base}/asserts/js/bc/index.js" type="text/javascript"></script>
-<%}%>
+<!--#} #-->

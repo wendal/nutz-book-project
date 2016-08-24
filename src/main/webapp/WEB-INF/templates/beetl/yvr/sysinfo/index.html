@@ -1,6 +1,6 @@
 
-<% layout("../_layout.btl", {"title":"系统状态"}){%>
-<% layout("../sidebar.btl",{"c_user":obj.current_user!}){};%>
+<!--# layout("../_layout.html", {"title":"系统状态"}){ #-->
+<!--# layout("../sidebar.html",{"c_user":obj.current_user!}){}; #-->
 <div id='content'>
   <div class='panel' id="sysinfolist">
     <div class='header'>
@@ -37,4 +37,4 @@
 var base = "${base}";
 </script>
 <script src="${base}/asserts/js/sysinfo/index.js" type="text/javascript"></script>
-<%}%>
+<!--#} #-->

@@ -1,9 +1,8 @@
-<%DIRECTIVE DYNAMIC;%>
-<%
-layout("../_layout.btl",{}){
-%>
+<!--#
+layout("../_layout.html",{}){
+ #-->
 
-<% layout("../sidebar.btl",{"c_user":obj.current_user!}){};%>
+<!--# layout("../sidebar.html",{"c_user":obj.current_user!}){}; #-->
 
 <div id="content">
   <div class="panel">
@@ -21,4 +20,4 @@ layout("../_layout.btl",{}){
 </div>
 
 
-<%}%>
+<!--#} #-->

@@ -1,8 +1,7 @@
-<%DIRECTIVE DYNAMIC;%>
-<%
-layout("_layout.btl",{title:'添加新帖子'}){
-%>
-<% layout("editor_sidebar.html"){} %>
+<!--#
+layout("_layout.html",{title:'添加新帖子'}){
+ #-->
+<!--# layout("editor_sidebar.html"){}  #-->
 <div id='content'>
   <div class='panel'>
     <div class='header'>
@@ -15,9 +14,9 @@ layout("_layout.btl",{title:'添加新帖子'}){
         <form id='create_topic_form' action='#' method='post'>
             <span>选择版块：</span>
             <select v-module="topicType" name="type" data-intro="请根据内容正确的选择板块">
-              <% for (ttype in obj.types) {%>
+              <!--# for (ttype in obj.types) { #-->
               <option value="${ttype}" >${ttype.display}</option>
-              <% } %>
+              <!--# }  #-->
             </select>
             <p/>
             <span class="tab-selector">标题:</span>
@@ -39,4 +38,4 @@ layout("_layout.btl",{title:'添加新帖子'}){
   </div>
 </div>
 <script src="${base}/asserts/js/topic_add.js?v=2"></script>
-<%} %>
+<!--#}  #-->

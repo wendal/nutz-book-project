@@ -14,22 +14,22 @@
     </span>
   </span>
 
-  <% if (null != topic.lastComment!) {%>
+  <!--# if (null != topic.lastComment!) { #-->
   <a class='last_time pull-right' href="${ctxPath}/yvr/t/${topic.id}#${topic.lastComment.id}">
     <img class="user_small_avatar" src="${cdnbase}${ctxPath}/yvr/u/${topic.lastComment.author.loginname}/avatar">
     <span class="last_active_time">${topic.lastComment.createAt}</span>
   </a>
-  <% } %>
-  <% if (null == topic.lastComment!) {%>
+  <!--# }  #-->
+  <!--# if (null == topic.lastComment!) { #-->
     <span class='last_time pull-right'>
       <span class="last_active_time">${topic.createAt}</span>
     </span>
-  <% } %>
+  <!--# }  #-->
 
   <div class="topic_title_wrapper">
-		<%
-		layout("_top_good.btl",{"topic":topic}){};
-		%>
+		<!--#
+		layout("_top_good.html",{"topic":topic}){};
+		 #-->
     <a class='topic_title' href='${ctxPath}/yvr/t/${topic.id}' title='${topic.title}'>
       ${topic.title}
     </a>

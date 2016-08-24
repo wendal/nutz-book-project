@@ -9,7 +9,6 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
-import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;

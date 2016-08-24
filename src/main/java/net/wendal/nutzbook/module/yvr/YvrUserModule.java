@@ -62,7 +62,7 @@ public class YvrUserModule extends BaseModule {
 	@Inject
 	protected UserService userService;
 	
-	@Ok("beetl:yvr/user/user_index.btl")
+	@Ok("beetl:yvr/user/user_index.html")
 	@RequiresUser
 	@At("/me")
 	public Object myHome() {
@@ -70,7 +70,7 @@ public class YvrUserModule extends BaseModule {
 	}
 	
 	@At("/?")
-	@Ok("beetl:yvr/user/user_index.btl")
+	@Ok("beetl:yvr/user/user_index.html")
 	public Object userHome(String userName) {
 		User user = dao.fetch(User.class, userName);
 		if (user == null)

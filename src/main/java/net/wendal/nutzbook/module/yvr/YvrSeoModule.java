@@ -128,7 +128,7 @@ public class YvrSeoModule extends BaseModule {
 	 * 根据Markdown生成文档
 	 */
 	@At({"/links/?"})
-	@Ok("beetl:/yvr/website/links.btl")
+	@Ok("beetl:/yvr/website/links.html")
 	public Object page(String type) throws IOException {
 		String path = "/doc/" + type + ".md";
 		InputStream ins = getClass().getClassLoader().getResourceAsStream(path);

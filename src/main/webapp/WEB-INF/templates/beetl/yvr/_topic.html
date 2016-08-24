@@ -1,8 +1,7 @@
-<%DIRECTIVE DYNAMIC;%>
-<%
-layout("_layout.btl",{}){
-%>
-<%layout("sidebar.btl", {"c_user":obj.topic.author}){}%>
+<!--#
+layout("_layout.html",{}){
+ #-->
+<!--#layout("sidebar.html", {"c_user":obj.topic.author}){} #-->
 
 <div id='content'>
   <div class='panel'>
@@ -22,9 +21,9 @@ layout("_layout.btl",{}){
     <div style="display: none;"><img itemprop="image" src="${cdnbase}${ctxPath}/rs/logo/logo.png" alt="NutzCN Logo"/></div>
     <div class='header topic_header'>
       <span class="topic_full_title" itemprop="headline">
-        <%
-		layout("_top_good.btl",{"topic":obj.topic}){}
-		%>
+        <!--#
+		layout("_top_good.html",{"topic":obj.topic}){}
+		 #-->
 		${obj.topic.title}
       </span>
       <div class="changes">
@@ -37,7 +36,7 @@ layout("_layout.btl",{}){
         <span>
           ${obj.topic.visitCount} 次浏览
         </span>
-        <% if (null != obj.current_user!) { %>
+        <!--# if (null != obj.current_user!) {  #-->
         <!--
         <span id="watch_btn">
           <a href="#" onclick="watch_me();" title="有新回复时自动刷新页面" data-intro="有新回复时自动刷新页面,这样就不必手动刷新">自动刷新</a>
@@ -46,7 +45,7 @@ layout("_layout.btl",{}){
         <span id="send_to_phone_btn">
           <a href="#" onclick="send_to_phone();" title="瞬间推送到手机客户端" data-intro="瞬间推送到手机客户端,传说中的'瞬移' (我的世界乱入...)">推送到手机</a>
         </span>
-        <%}%>
+        <!--#} #-->
         <span>
           <a id="copy_link_btn" href="#" class="zclip" title="复制标题和地址" data-intro="可以复制标题和地址">复制</a>
         </span>
@@ -58,41 +57,41 @@ layout("_layout.btl",{}){
       <div class="changes">
       		<span id="TopicTagSpan">
       		标签:</span>
-      	<% if (null != obj.topic.tags && obj.topic.tags.~size > 0){%>
-      		<%for(_tag in obj.topic.tags) {%>
+      	<!--# if (null != obj.topic.tags && obj.topic.tags.~size > 0){ #-->
+      		<!--#for(_tag in obj.topic.tags) { #-->
       		<a data-pjax href='${ctxPath}/yvr/tag/${_tag}' property="item" typeof="WebPage" class="topic_tag">${_tag}</a>
-      		<%}%>
-      	<%} else {%>
+      		<!--#} #-->
+      	<!--#} else { #-->
       		无
-      	<%}%>
+      	<!--#} #-->
       </div>
-      <% if (shiro.hasPermit("topic:update")) { %>
+      <!--# if (shiro.hasPermit("topic:update")) {  #-->
       <div id="manage_topic">
          <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.top}, 'top');">
-            <% if (obj.topic.top) { %>
+            <!--# if (obj.topic.top) {  #-->
               <i class="fa fa-lg fa-star-o" title='取消置顶'></i>
-            <% } else { %>
+            <!--# } else {  #-->
               <i class="fa fa-lg fa-star" title='置顶'/></i>
-            <% } %>
+            <!--# }  #-->
           </a>
           
           <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.good}, 'good');">
-            <% if (obj.topic.good) { %>
+            <!--# if (obj.topic.good) {  #-->
               <i class="fa fa-lg fa-heart-o" title="取消精华"></i>
-            <% } else { %>
+            <!--# } else {  #-->
               <i class="fa fa-lg fa-heart" title="加精华"></i>
-            <% } %>
+            <!--# }  #-->
           </a>
 
           <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.lock}, 'lock');">
-            <% if (obj.topic.lock) { %>
+            <!--# if (obj.topic.lock) {  #-->
               <i class="fa fa-lg fa-unlock" title='取消锁定'></i>
-            <% } else { %>
+            <!--# } else {  #-->
               <i class="fa fa-lg fa-lock" title='锁定(不可再回复)'/></i>
-            <% } %>
+            <!--# }  #-->
           </a>
       </div>
-      <% } %>
+      <!--# }  #-->
     </div>
     <div class='inner topic'>
 
@@ -104,28 +103,28 @@ layout("_layout.btl",{}){
     </div>
     </div>
   </div>
-  <% if ( null != obj.topic.replies!) { %>
+  <!--# if ( null != obj.topic.replies!) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>${obj.topic.replies.~size} 回复</span>
     </div>
-    <%
+    <!--#
     var _i = 0;
     for (reply in obj.topic.replies) {
-    	layout("_reply.btl", {"reply":reply, "indexInCollection":_i}){};
+    	layout("_reply.html", {"reply":reply, "indexInCollection":_i}){};
     	_i = _i + 1;
     }
-    %>
+     #-->
   </div>
-  <% } %>
+  <!--# }  #-->
   <div class='panel' data-intro="回帖回帖回帖!!" data-position="top">
     <div class='header'>
       <span class='col_fade'>添加回复</span>
     </div>
     <div class='inner reply'>
-    <% if (obj.topic.lock) {%>
+    <!--# if (obj.topic.lock) { #-->
     	<span class='col_fade'>该帖子已被锁定,不能回复.</span>
-    <% } else if (null != obj.current_user!){ %>
+    <!--# } else if (null != obj.current_user!){  #-->
       <form id='reply_form' action='#'>
 
         <div class='markdown_editor in_editor'>
@@ -141,9 +140,9 @@ layout("_layout.btl",{}){
 
         <input type='hidden' name='_csrf' id="_csrf" value='${obj._csrf!}'/>
       </form>
-    <% } else {%>
+    <!--# } else { #-->
     	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
-    <% } %>
+    <!--# }  #-->
     </div>
   </div>
 </div>
@@ -152,7 +151,7 @@ layout("_layout.btl",{}){
   <div class="inner_content"></div>
   <div class="anchor"></div>
 </div>
-<% if (null != obj.current_user!){ %>
+<!--# if (null != obj.current_user!){  #-->
 <script src="${cdnbase}${base}/rs/libs/markdownit.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/code-prettify/prettify.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
@@ -368,7 +367,7 @@ layout("_layout.btl",{}){
   });
 </script>
 
-<%}%>
+<!--#} #-->
 <script type="text/javascript">
   (function(){
     var timer = null; //对话框延时定时器
@@ -473,7 +472,7 @@ layout("_layout.btl",{}){
   // END 点赞
 </script>
 
-<%} %>
+<!--#}  #-->
 
 <script>
 var QueryString = function () {
@@ -555,7 +554,7 @@ $(function() {
 			}
 		});
 	};
-<%if (null != obj.current_user!){%>
+<!--#if (null != obj.current_user!){ #-->
 var _replies_count = ${obj.topic.replies.~size};
 function _check_topic_update() {
 	$.ajax({
@@ -616,5 +615,5 @@ $(function(){
 		window.setInterval(_check_topic_update, 5000);
 	}
 });
-<%}%>
+<!--#} #-->
 </script>

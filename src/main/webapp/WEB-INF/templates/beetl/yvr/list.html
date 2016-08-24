@@ -1,0 +1,47 @@
+
+<!--#
+if ( null != top_topics!) {
+	for(topic in top_topics){
+		layout("topic_cell.html", {"topic":topic}){};
+	}
+}
+for(topic in topics){
+	layout("topic_cell.html", {"topic":topic}){};
+} #-->
+<!-- 帖子列表结束-->
+
+<!--# if ( null != obj.current_page! ) {  #-->
+
+<div class='pagination' current_page='${obj.current_page}'>
+  <ul>
+    <!--# if ( obj.current_page == 1) {  #-->
+    <li class='disabled'><a>«</a></li>
+    <!--# } else {  #-->
+    <li><a data-pjax href="${ctxPath}/yvr/${obj.ppath}">«</a></li>
+    <!--# }  #-->
+
+    <!--# if ( obj.page_start > 1) {  #-->
+    <li><a>...</a></li>
+    <!--# }  #-->
+
+    <!--# for(var i = obj.page_start; i <= obj.page_end; i++) {  #-->
+    <!--# if (i == obj.current_page) {  #-->
+    <li style="color: sienna;"><a>${i}</a></li>
+    <!--# } else {  #-->
+    <li><a data-pjax href='${ctxPath}/yvr/${obj.ppath}/${i}'>${i}</a></li>
+    <!--# }  #-->
+    <!--# }  #-->
+
+    <!--# if (obj.page_end < obj.pages ) {  #-->
+    <li><a>...</a></li>
+    <!--# }  #-->
+
+    <!--# if (obj.current_page == obj.pages) {  #-->
+    <li class='disabled'><a>»</a></li>
+    <!--# } else {  #-->
+    <li><a data-pjax href='${ctxPath}/yvr/${obj.ppath}/${obj.pages}'>»</a></li>
+    <!--# }  #-->
+  </ul>
+</div>
+
+<!--#} #-->

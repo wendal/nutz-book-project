@@ -15,7 +15,8 @@ import net.wendal.nutzbook.util.Toolkit;
 @IocBean
 public class PageModule {
 
-	@Inject Dao dao;
+	@Inject 
+	protected Dao dao;
 	
 	@At(value={"/", "/index"})
 	@Ok("->:/yvr/list")

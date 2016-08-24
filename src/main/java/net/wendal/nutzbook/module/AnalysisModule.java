@@ -27,10 +27,10 @@ import net.wendal.nutzbook.util.Toolkit;
 public class AnalysisModule extends BaseModule {
     
     @Inject
-    SysConfigureService sysConfigureService;
+    protected SysConfigureService sysConfigureService;
 
 	@At({"/", "/index"})
-	@Ok("beetl:yvr/analysis/index.btl")
+	@Ok("beetl:yvr/analysis/index.html")
 	@Aop("redis")
 	public void main() {
 	}

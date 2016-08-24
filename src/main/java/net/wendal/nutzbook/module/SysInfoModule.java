@@ -19,7 +19,7 @@ public class SysInfoModule extends BaseModule {
     protected SysInfoService sysInfoService;
 
     @At("/")
-    @Ok("beetl:yvr/sysinfo/index.btl")
+    @Ok("beetl:yvr/sysinfo/index.html")
     @Fail("http:500")
     public NutMap index(){
         NutMap re = new NutMap();

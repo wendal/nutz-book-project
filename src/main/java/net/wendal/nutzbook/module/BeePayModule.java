@@ -51,10 +51,10 @@ public class BeePayModule extends BaseModule {
     protected PropertiesProxy conf;
     
     @Inject 
-    PushService pushService;
+    protected PushService pushService;
     
     @At("/")
-    @Ok("beetl:yvr/bc/index.btl")
+    @Ok("beetl:yvr/bc/index.html")
     public Object index() {
         return _map("current_user", fetch_userprofile(Toolkit.uid()));
     }

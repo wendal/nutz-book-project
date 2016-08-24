@@ -2,8 +2,10 @@ package net.wendal.nutzbook.module;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.subject.Subject;
 import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.QueryResult;
@@ -146,8 +148,11 @@ public class UserModule extends BaseModule {
 					  @Param("rememberMe")boolean rememberMe,
 					  @Param("captcha")String captcha) {
 		NutMap re = new NutMap().setv("ok", false);
+		Subject subject = SecurityUtils.getSubject();
+		if (subject.isAuthenticated())
+		    return re.setv("ok", true);
 		// 看看有无填写验证码
-		if (Strings.isBlank(captcha)) {
+		if (Strings.isBlank(captcha) && !"guest".equals(username)) {
 			return re.setv("msg", "必须填写验证码");
 		}
 		if (Strings.isBlank(username)) {
@@ -163,7 +168,7 @@ public class UserModule extends BaseModule {
 		}
 		// 比对验证码
 		String _captcha = (String) session.getAttribute(Toolkit.captcha_attr);
-		if (Strings.isBlank(_captcha) && !_captcha.equalsIgnoreCase(captcha)) {
+		if (!"guest".equals(username) && Strings.isBlank(_captcha) && !_captcha.equalsIgnoreCase(captcha)) {
 			return re.setv("msg", "验证码错误");
 		}
 		// 检查用户名密码
@@ -176,6 +181,7 @@ public class UserModule extends BaseModule {
 			return re.setv("msg", "密码错误");
 		}
 		Toolkit.doLogin(new SimpleShiroToken(user.getId()), user.getId());
+		subject.getSession().setAttribute("me", user);
 		return re.setv("ok", true);
 	}
 }

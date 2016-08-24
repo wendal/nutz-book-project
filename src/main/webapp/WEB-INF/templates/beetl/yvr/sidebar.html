@@ -1,29 +1,28 @@
 <div id='sidebar'>
-<%DIRECTIVE DYNAMIC;%>
   <div class='panel'
-  	<%if (null != c_user! && null != obj.current_user! && c_user.userId == obj.current_user.userId){%>
+  	<!--#if (null != c_user! && null != obj.current_user! && c_user.userId == obj.current_user.userId){ #-->
   		data-intro="您的个人统计,手机客户端的accesstoken也在这里"
-  	<%}%>
+  	<!--#} #-->
   	>
-    <% if (null != c_user!) { %>
+    <!--# if (null != c_user!) {  #-->
     <div class='header'>
       <span class='col_fade'><a href="${ctxPath}/yvr/u/${c_user.loginname}">个人信息</a></span>
     </div>
     <div class='inner'>
-      <% layout("user/card.btl", {"user":c_user}){}; %>
+      <!--# layout("user/card.html", {"user":c_user}){};  #-->
       
-      <%if (null != c_user! && null != obj.current_user! && c_user.userId != obj.current_user.userId){%>
+      <!--#if (null != c_user! && null != obj.current_user! && c_user.userId != obj.current_user.userId){ #-->
       <div class='span-success'>
       	<button onclick="pay_tips(${c_user.userId});" title="不错,赏几毛">微信打赏几毛给Ta</button>
       </div>
-      <%} else if (null != obj.current_user!){%>
+      <!--#} else if (null != obj.current_user!){ #-->
       <div class='span-success'>
       	<button onclick="pay_tips(2);" title="买老北京冰棍">微信打赏几毛给帮主</button>
       </div>
-      <%}%>
+      <!--#} #-->
     </div>
     
-    <% } else { %>
+    <!--# } else {  #-->
     <div class='inner'>
       <p>${conf['website.title']}</p>
 
@@ -34,17 +33,17 @@
           </span>
         </a>
         
-      	<%if (conf['website.qq_login'] != "false"){%>
+      	<!--#if (conf['website.qq_login'] != "false"){ #-->
       	<a href='${ctxPath}/oauth/qq' id='qq_btn' data-intro="QQ登陆,我不想解释了">
       		<img src="${cdnbase}${base}/rs/images/qq_connect.png"/>
       	</a>
-      	<%}%>
+      	<!--#} #-->
       </div>
     </div>
-    <% } %>
+    <!--# }  #-->
   </div>
   
-  <% if (null != obj.current_user!) { %>
+  <!--# if (null != obj.current_user!) {  #-->
   <div class="panel">
     <div class='inner'>
       <a href='${ctxPath}/yvr/add' id='create_topic_btn'>
@@ -53,58 +52,58 @@
     </div>
   </div>
   
-  <% } %>
+  <!--# }  #-->
 
-  <% if ( null != obj.no_reply_topics! && obj.no_reply_topics.~size > 0) { %>
+  <!--# if ( null != obj.no_reply_topics! && obj.no_reply_topics.~size > 0) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>无人回复的话题</span>
     </div>
     <div class='inner'>
       <ul class="unstyled">
-      	<%
+      	<!--#
       	for(topic in obj.no_reply_topics) {
-      		layout('small.btl', { "topic" : topic }){};
+      		layout('small.html', { "topic" : topic }){};
       	}
-      	%>
+      	 #-->
       </ul>
     </div>
   </div>
-  <% } %>
+  <!--# }  #-->
   
-  <% if ( null != obj.top_tags! && obj.top_tags.~size > 0) { %>
+  <!--# if ( null != obj.top_tags! && obj.top_tags.~size > 0) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>热门标签</span>
     </div>
     <div class='inner'>
       <ul class="unstyled">
-      	<%for(_tag in obj.top_tags) {%>
+      	<!--#for(_tag in obj.top_tags) { #-->
       		<a data-pjax href='${ctxPath}/yvr/tag/${_tag.name}' property="item" typeof="WebPage" class="topic_tag">${_tag.name}(${_tag.count})</a>
-      	<%}%>
+      	<!--#} #-->
       </ul>
     </div>
   </div>
-  <% } %>
+  <!--# }  #-->
   
-  <% if ( null != obj.recent_topics! && obj.recent_topics.~size > 0) { %>
+  <!--# if ( null != obj.recent_topics! && obj.recent_topics.~size > 0) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>作者最近发表的帖子</span>
     </div>
     <div class='inner'>
       <ul class="unstyled">
-      	<%
+      	<!--#
       	for(_topic in obj.recent_topics) {
       		if ( null == obj.topic! || obj.topic.id != _topic.id){
-      			layout('small.btl', { "topic" : _topic }){};
+      			layout('small.html', { "topic" : _topic }){};
       		}
       	}
-      	%>
+      	 #-->
       </ul>
     </div>
   </div>
-  <% } %>
+  <!--# }  #-->
 
   <div class='panel'>
     <div class='header'>
@@ -112,22 +111,22 @@
     </div>
     <div class='inner'>
       <ol class="friendship-community">
-      	<%
+      	<!--#
       	var i = 0;
       	while (i < 10){
       		if (conf['website.friendship.'+i] != null){
-      	%>
+      	 #-->
         <li>
           <a href="${conf['website.friendship.'+i+'.url']}" target="_blank">${conf['website.friendship.'+i]}</a>
         </li>
         <div class="sep10"></div>
-        <%	}
+        <!--#	}
         	i++;
-        }%>
+        } #-->
       </ol>
     </div>
   </div>
-  <%if (conf['website.small_features'] != "false") {%>
+  <!--#if (conf['website.small_features'] != "false") { #-->
   <div class='panel' data-intro="小功能,有点意思" data-position="top">
     <div class='header'>
       <span class='col_fade'>小功能区</span>
@@ -150,5 +149,5 @@
       </ol>
     </div>
   </div>
-  <%}%>
+  <!--#} #-->
 </div>

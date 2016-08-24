@@ -1,6 +1,5 @@
-<%DIRECTIVE DYNAMIC;%>
 <div class='cell reply_area reply_item
-  <% if ( reply.ups.~size > 3) {%> reply_highlight <%}%>'
+  <!--# if ( reply.ups.~size > 3) { #--> reply_highlight <!--#} #-->'
   id="reply${indexInCollection+1}" reply_id="${reply.id}" reply_to_id="${reply.replyTo}">
   <a class="anchor" id="${reply.id}"></a>
 
@@ -10,20 +9,20 @@
     </a>
 
     <div class='user_info'>
-      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.nickname, escape}<%if (reply.author.nickname != reply.author.loginname){%>(${reply.author.loginname})<%}%></a>
-      <%if(null != obj.current_user! && obj.current_user.userId != reply.author.userId ){%>
+      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.nickname, escape}<!--#if (reply.author.nickname != reply.author.loginname){ #-->(${reply.author.loginname})<!--#} #--></a>
+      <!--#if(null != obj.current_user! && obj.current_user.userId != reply.author.userId ){ #-->
       <a onclick="pay_tips(${reply.author.userId})" title="微信打赏几毛钱" href="#">打赏</a>
-      <%}%>
-      <%if ( ! strutil.contain(reply.author.loginname, "_")){%>
+      <!--#} #-->
+      <!--#if ( ! strutil.contain(reply.author.loginname, "_")){ #-->
     		<a href="https://github.com/${reply.author.loginname}"><img src="${cdnbase}${base}/rs/logo/Octocat_32.png"></a>
-      <%}%>
+      <!--#} #-->
       <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
     </div>
     <!-- user_action -->
     <div class='user_action'>
       <span>
-      	<% if (null != obj.current_user!) {
-      	%>
+      	<!--# if (null != obj.current_user!) {
+      	 #-->
         <i class="fa up_btn
         
         ${ array.contain(reply.ups, ""+ obj.current_user.userId) ? 'fa-thumbs-up uped' : 'fa-thumbs-o-up' }
@@ -32,12 +31,12 @@
         <span class="up-count">
         	${reply.ups.~size > 0 ? reply.ups.~size : '' }
         </span>
-        <% } %>
+        <!--# }  #-->
       </span>
       <span>
-        <% if (null != obj.current_user!){ %>
+        <!--# if (null != obj.current_user!){  #-->
           <i class="fa fa-reply reply2_btn" title="回复"></i>
-        <% } %>
+        <!--# }  #-->
       </span>
     </div>
   </div>
@@ -49,7 +48,7 @@
   </div>
   <div class='clearfix'>
     <div class='reply2_area'>
-    <% if (null != obj.current_user!) { %>
+    <!--# if (null != obj.current_user!) {  #-->
       <form class='reply2_form' action='#' method='post'>
         <input type='hidden' name='_csrf' value='${obj._csrf!}'/>
         <input type='hidden' name='replyTo' value='${reply.id}'/>
@@ -68,7 +67,7 @@
         </div>
 
       </form>
-      <% } %>
+      <!--# }  #-->
     </div>
   </div>
 </div>
