@@ -5,7 +5,8 @@ $(function(){
 			topicType : "ask",
 			topicTitle : "",
 			topicContent : "",
-			topicButtonTip : "我要答案(提交)"
+			topicButtonTip : "我要答案(提交)",
+			suggestions : []
 		},
 		methods : {
 			topicSubmit : function() {
@@ -25,7 +26,7 @@ $(function(){
 						return;
 					}
 				}
-				this.topicTitle = this.topicTitle.replace(" 【", "[").replace("】", "]").replace("这个位置贴代码或日志,并移除这句话!前后一行都是定界符!", "");
+				this.topicTitle = this.topicTitle.replace(" 【", "[").replace("】", "]");
 				this.topicContent = this.topicContent.trim();
 				if (this.topicContent.length < 10) {
 					layer.alert("起码10个字才能说清楚问题,对吗? 越详尽的内容,越快解决问题!");
@@ -61,7 +62,8 @@ $(function(){
 					  formType: 2,
 					  value: '',
 					  title: '贴代码或日志',
-					  maxlength : 1024000
+					  maxlength : 1024000,
+					  maxWidth : 1024
                 }, function(value, index, elem){
 					  console.log(value); //得到value
 					  if (value) {
@@ -75,8 +77,11 @@ $(function(){
 		}
 	});
 
-	
+	topicAddVue.$watch("topicTitle", function(newVal, oldVal) {
+	   this.$http.get(ctxPath+"/yvr/search", {"params":{"q":newVal,"format":"json"}}).then(function(resp){
+		   if (!resp.ok)
+			   return;
+		   this.suggestions = resp.json().suggestions;
+	   });
+	});
 });
-//topicAddVue.$watch("topicTitle", function(newVal, oldVal) {
-//	console.log(newVal);
-//});

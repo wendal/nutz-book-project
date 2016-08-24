@@ -25,6 +25,11 @@ layout("_layout.btl",{title:'添加新帖子'}){
 				name="title" rows="1" placeholder="字数 10 字以上,概括问题很关键!! 认真的提问才会有好的回复!!"
 				autocomplete="off">
             <p/>
+            <div>
+            	<div class='list-group' v-for="item in suggestions">
+            		<a class="list-group-item list-group-item-action list-group-item-info" href='${ctxPath}/yvr/t/{{item.id}}' target="_blank">{{item.title}}</a>
+            	</div>
+            </div>
             <textarea v-model="topicContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
       </form>
       <button class='btn' v-on:click="topicSubmit">{{topicButtonTip}}</button>
@@ -33,5 +38,5 @@ layout("_layout.btl",{title:'添加新帖子'}){
     </div>
   </div>
 </div>
-<script src="${base}/asserts/js/topic_add.js?v=1"></script>
+<script src="${base}/asserts/js/topic_add.js?v=2"></script>
 <%} %>
