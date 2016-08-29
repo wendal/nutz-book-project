@@ -38,7 +38,7 @@ public class NgrokInfoProvider extends AbstractSysInfoProvider implements RedisK
         re.add(map);
         
 
-        Set<String> reports = jedis().zrevrangeByScore("ngrok:report", System.currentTimeMillis(), System.currentTimeMillis() - 5*60*1000);
+        Set<String> reports = jedis().zrevrangeByScore("ngrok:report", System.currentTimeMillis(), System.currentTimeMillis()/1000 - 5*60);
         if (reports.size() > 0) {
             String report = reports.iterator().next();
             NutMap tmp = Json.fromJson(NutMap.class, report);
