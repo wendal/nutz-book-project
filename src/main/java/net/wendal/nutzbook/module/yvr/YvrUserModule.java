@@ -135,9 +135,11 @@ public class YvrUserModule extends BaseModule {
 								while (-1 != (len = ins.read(buf)))
 									out.write(buf, 0, len);
 								buf = out.toByteArray();
+								user.getProfile().setAvatar(buf);
+								dao.update(user.getProfile(), "avatar");
 							}
 						} catch (IOException e) {
-							log.debug("load github avatar fail");
+							log.debug("load github avatar fail", e);
 						}
 					}
 				}
