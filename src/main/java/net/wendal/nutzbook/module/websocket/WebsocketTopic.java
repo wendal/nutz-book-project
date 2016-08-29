@@ -2,7 +2,6 @@ package net.wendal.nutzbook.module.websocket;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
