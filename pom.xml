@@ -96,16 +96,6 @@
 				<updatePolicy>never</updatePolicy>
 			</releases>
 		</repository>
-		<repository>
-			<id>mvn-repo</id>
-			<url>http://maven.ansj.org</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -459,7 +449,7 @@
 		<dependency>
 			<groupId>org.ansj</groupId>
 			<artifactId>ansj_seg</artifactId>
-			<version>5.0.1</version>
+			<version>5.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ansj</groupId>
