@@ -9,6 +9,7 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
+import org.nutz.el.opt.custom.CustomMake;
 import org.nutz.integration.dubbo.DubboManager;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
@@ -31,8 +32,10 @@ import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.msg.UserMessage;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
+import net.wendal.nutzbook.ig.RedisIdGenerator;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.SysConfigureService;
@@ -42,6 +45,7 @@ import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.shiro.cache.RedisCache;
 import net.wendal.nutzbook.shiro.cache.RedisCacheManager;
 import net.wendal.nutzbook.util.Markdowns;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
@@ -65,15 +69,26 @@ public class MainSetup implements Setup {
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
-		
+
 		// 初始化RedisCacheManager
 		RedisCacheManager.pool = ioc.get(JedisPool.class);
 		RedisCache.DEBUG = true;
-		
+
+        Dao dao = ioc.get(Dao.class);
+
+		JedisPool pool = ioc.get(JedisPool.class);
+		try (Jedis jedis = pool.getResource()) {
+            if (!jedis.exists("ig:t_user") && dao.count(User.class) > 0)
+                jedis.set("ig:t_user", ""+dao.getMaxId(User.class)+1);
+            if (!jedis.exists("ig:t_user_message") && dao.count(UserMessage.class) > 0)
+                jedis.set("ig:t_user_message", ""+dao.getMaxId(UserMessage.class)+1);
+		}
+		// 初始化redis实现的id生成器
+		CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
+
 		// 加载freemarker自定义标签　自定义宏路径
 		ioc.get(Configuration.class).setAutoImports(new NutMap().setv("p", "/ftl/pony/index.ftl").setv("s", "/ftl/spring.ftl"));
 		ioc.get(FreeMarkerConfigurer.class, "mapTags");
-		Dao dao = ioc.get(Dao.class);
 
 		// 为全部标注了@Table的bean建表
 		Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
