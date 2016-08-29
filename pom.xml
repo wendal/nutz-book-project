@@ -454,7 +454,7 @@
 		<dependency>
 			<groupId>org.ansj</groupId>
 			<artifactId>ansj_lucene4_plug</artifactId>
-			<version>2.0.2</version>
+			<version>5.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
