@@ -12,7 +12,7 @@
     });
 
     window.markdowniter = md;
-
+    Editor.toolbar = [{name:"code"}];
     var toolbar = Editor.toolbar;
     
     var replaceTool = function(name, callback){
@@ -279,6 +279,13 @@
     replaceTool('code', function(editor){
     	toolCode.bind(editor);
     });
+    for(var i=0, len=toolbar.length; i<len; i++){
+        var v = toolbar[i];
+        if(typeof(v) !== 'string' && v.name === name){
+            v.action = callback;
+            break;
+        }
+    }
 
     //当编辑器取得焦点时，绑定 toolImage；
     var createToolbar = Editor.prototype.createToolbar;
