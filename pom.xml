@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-quartz</artifactId>
-			<version>1.r.56</version>
+			<version>1.r.57</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>c3p0</artifactId>
@@ -116,7 +116,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-shiro</artifactId>
-			<version>1.r.56</version>
+			<version>1.r.57</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
@@ -136,7 +136,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-daocache</artifactId>
-			<version>1.r.56</version>
+			<version>1.r.57</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>fst</artifactId>
@@ -193,7 +193,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.38</version>
+			<version>5.1.39</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
