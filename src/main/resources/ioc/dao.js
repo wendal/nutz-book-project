@@ -73,7 +73,7 @@ var ioc = {
 			cacheManager : {
 				refer : "cacheManager"
 			},
-			serializer : {refer:"fst"}
+			//serializer : {refer:"fst"}
 		// 引用ehcache.js中定义的CacheManager
 		},
 		events : {
