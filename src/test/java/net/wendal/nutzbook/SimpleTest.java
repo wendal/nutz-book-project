@@ -1,12 +1,8 @@
 package net.wendal.nutzbook;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,14 +12,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.nutz.Nutz;
 import org.nutz.aop.ClassAgent;
 import org.nutz.aop.ClassDefiner;
 import org.nutz.aop.DefaultClassDefiner;
@@ -43,21 +36,16 @@ import org.nutz.aop.asm.AsmClassAgent;
 import org.nutz.aop.matcher.RegexMethodMatcher;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.ConnCallback;
 import org.nutz.dao.Dao;
 import org.nutz.dao.FieldMatcher;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.Entity;
 import org.nutz.dao.entity.MappingField;
-import org.nutz.dao.impl.FileSqlManager;
+import org.nutz.dao.entity.Record;
 import org.nutz.dao.impl.NutDao;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.sql.SqlCallback;
 import org.nutz.el.El;
-import org.nutz.http.Cookie;
-import org.nutz.http.Http;
-import org.nutz.http.Request;
-import org.nutz.http.Request.METHOD;
 import org.nutz.http.Response;
 import org.nutz.http.Sender;
 import org.nutz.ioc.Ioc;
@@ -69,21 +57,19 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.ioc.loader.json.JsonLoader;
 import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
-import org.nutz.lang.Encoding;
-import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.Stopwatch;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.Callback;
 import org.nutz.lang.util.Context;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.NutType;
 import org.nutz.log.Logs;
 import org.nutz.mapl.Mapl;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.adaptor.ParamExtractor;
 import org.nutz.mvc.adaptor.Params;
 import org.nutz.mvc.adaptor.injector.ObjectNaviNode;
-import org.nutz.mvc.upload.TempFile;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
@@ -101,10 +87,14 @@ public class SimpleTest extends Assert {
     
     @Inject("refer:$ioc")
     protected Ioc ioc;
+    
+    @Inject
+    protected Dao dao;
 
 	@Test
 	public void test_string_array() {
-	    System.out.println(System.getProperties());
+        System.out.println(dao.execute(Sqls.fetchRecord("select now()")).getObject(Record.class));
+        System.out.println(dao.execute(Sqls.fetchRecord("select DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')")).getObject(Record.class));
 	}
 	
 	@Test
@@ -796,5 +786,28 @@ public class SimpleTest extends Assert {
     @Before
     public void before() {
         CacheManager.create();
+    }
+    
+    @Test
+    public void t6() throws ExecutionException, InterruptedException {
+        Sender.setup(null);
+        Stopwatch sw = Stopwatch.begin();
+        int taskSize = 10000;
+        AtomicLong atom = new AtomicLong();
+        for (int i = 0; i < taskSize; i++) {
+            int t = i;
+            Sender.create("http://any.nutz.cn").send(new Callback<Response>() {
+                public void invoke(Response obj) {
+                    System.out.println("t="+t);
+                    atom.incrementAndGet();
+                    obj.getContent();
+                }
+            });
+        }
+        while (atom.get() != taskSize) {
+            Lang.quiteSleep(100);
+        }
+        sw.stop();
+        System.out.println(String.format("总用时：" + sw.toString()));
     }
 }

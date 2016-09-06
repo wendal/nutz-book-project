@@ -14,7 +14,7 @@ var ioc = {
 	            depose : 'close'
 	        }
 	    },
-	    dataSource_slave : { // 为了演示主从, 真正用的话, 下面的"db."改成"db_slave."
+	    slaveDataSource : {
 	        factory : "$conf#make",
 	        args : ["com.alibaba.druid.pool.DruidDataSource", "db."],
 	        type : "com.alibaba.druid.pool.DruidDataSource",
@@ -27,12 +27,19 @@ var ioc = {
 			type : "org.nutz.dao.impl.NutDao",
 			args : [{refer:"dataSource"}],
 			fields : {
-				executor : {refer:"cacheExecutor"}
+				executor : {refer: "cacheExecutor"},
+				runner : {refer: "daoRunner"}
+			}
+		},
+		daoRunner : {
+			type : "org.nutz.dao.impl.sql.run.NutDaoRunner",
+			fields : {
+				slaveDataSource : {refer:"slaveDataSource"}
 			}
 		},
 		cacheExecutor : {
-			//type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
-			type : "net.wendal.nutzbook.util.MasterSlaveDaoExecutor",
+			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
+			//type : "net.wendal.nutzbook.util.MasterSlaveDaoExecutor",
 			fields : {
 				cacheProvider : {refer:"cacheProvider"},
 				cachedTableNames : [ 
@@ -40,8 +47,12 @@ var ioc = {
 					"t_permission", "t_role_permission", 
 					"t_topic","t_topic_reply", "t_big_content",
 					"t_oauth_user", "t_user_role" ],
-				slave : {refer:"dataSource_slave"}
+				
+				//slave : {refer:"dataSource_slave"}
 		}
+	},
+	fst : {
+		type : "net.wendal.nutzbook.util.FstCacheSerializer"
 	},
 	/*
 	// 基于内存的简单LRU实现
@@ -61,7 +72,8 @@ var ioc = {
 		fields : {
 			cacheManager : {
 				refer : "cacheManager"
-			}
+			},
+			serializer : {refer:"fst"}
 		// 引用ehcache.js中定义的CacheManager
 		},
 		events : {

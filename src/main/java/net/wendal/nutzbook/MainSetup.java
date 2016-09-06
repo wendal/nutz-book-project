@@ -1,16 +1,19 @@
 package net.wendal.nutzbook;
 
+import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.el.opt.custom.CustomMake;
-import org.nutz.integration.dubbo.DubboManager;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.Ioc;
@@ -24,9 +27,8 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
+import org.nutz.plugins.view.pdf.PdfView;
 import org.quartz.Scheduler;
-
-import com.alibaba.dubbo.config.ProtocolConfig;
 
 import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
@@ -170,14 +172,14 @@ public class MainSetup implements Setup {
 		
 		Mvcs.disableFastClassInvoker = false;
 		
-		// 初始化Dubbo服务
-		
-		try {
-            ioc.get(DubboManager.class);
-        }
-        catch (Exception e) {
-            log.debug("dubbo error", e);
-        }
+        // 初始化Dubbo服务
+        
+//        try {
+//            ioc.get(DubboManager.class);
+//        }
+//        catch (Exception e) {
+//            log.debug("dubbo error", e);
+//        }
 	}
 
 	public void destroy(NutConfig conf) {
@@ -199,17 +201,23 @@ public class MainSetup implements Setup {
             try {
                 Driver driver = en.nextElement();
                 String className = driver.getClass().getName();
-                if ("com.alibaba.druid.proxy.DruidDriver".equals(className) 
-                     || "com.mysql.jdbc.Driver".equals(className)) {
-                    log.debug("deregisterDriver: " + className);
-                    DriverManager.deregisterDriver(driver);
-                }
+                log.debug("deregisterDriver: " + className);
+                DriverManager.deregisterDriver(driver);
             }
             catch (Exception e) {
             }
         }
-		
-
-		ProtocolConfig.destroyAll();
+        try {
+            MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+            ObjectName objectName = new ObjectName("com.alibaba.druid:type=MockDriver");
+            if (mbeanServer.isRegistered(objectName))
+                mbeanServer.unregisterMBean(objectName);
+            objectName = new ObjectName("com.alibaba.druid:type=DruidDriver");
+            if (mbeanServer.isRegistered(objectName))
+                mbeanServer.unregisterMBean(objectName);
+        } catch (Exception ex) {
+        }
+		PdfView.setDefaultFontData(new byte[1024*1024*256]);
+		//ProtocolConfig.destroyAll();
 	}
 }

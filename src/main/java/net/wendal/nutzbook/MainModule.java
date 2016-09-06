@@ -22,8 +22,7 @@ import net.wendal.nutzbook.beetl.BeetlViewMaker2;
 										   "*quartz",// 关联Quartz
 										   "*async",
 										   "*tx",
-										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader",
-										   "*dubbo", "dubbo-server.xml" // 配置dubbo
+										   "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader"
 										   })
 @Modules(scanPackage=true)
 @ChainBy(args="mvc/nutzbook-mvc-chain.js")

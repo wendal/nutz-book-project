@@ -6,25 +6,18 @@
 	<diskStore path="ehcache.disk.store.dir/yvr_cache" />
 	
 	<cache name="shiro-activeSessionCache"
-       maxElementsInMemory="1000"
-       overflowToDisk="true"
+       maxElementsInMemory="10000"
+       overflowToDisk="false"
        eternal="true"
        timeToLiveSeconds="0"
        timeToIdleSeconds="0"
-       diskPersistent="true"
+       diskPersistent="false"
        diskExpiryThreadIntervalSeconds="600"/>
        
 	<defaultCache maxElementsInMemory="10000" eternal="false"
 		timeToIdleSeconds="86400" timeToLiveSeconds="86400" overflowToDisk="false"
 		diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
 		statistics="false" />
-		
-	<cache name="yvr_avatar" maxEntriesLocalHeap="100"
-		maxEntriesLocalDisk="100000" overflowToDisk="true" diskPersistent="true"
-		diskSpoolBufferSizeMB="20" timeToIdleSeconds="0" timeToLiveSeconds="0"
-		memoryStoreEvictionPolicy="LFU"
-		eternal="true">
-	</cache>
 	
 	<cache name="markdown" maxEntriesLocalHeap="1000"
 		maxEntriesLocalDisk="1000000" overflowToDisk="true" diskPersistent="true"

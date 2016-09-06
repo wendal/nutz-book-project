@@ -9,8 +9,6 @@ import org.nutz.ioc.impl.NutIoc;
 import org.nutz.ioc.loader.combo.ComboIocLoader;
 import org.nutz.mvc.annotation.IocBy;
 
-import com.alibaba.dubbo.config.ProtocolConfig;
-
 import net.sf.ehcache.CacheManager;
 
 public class TestBase extends Assert {
@@ -33,7 +31,7 @@ public class TestBase extends Assert {
 			ioc.depose();
 		}
 		// 主动销毁dubbo的东西
-		ProtocolConfig.destroyAll();
+		//ProtocolConfig.destroyAll();
 	}
 
 	protected void _before() throws Exception {}

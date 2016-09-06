@@ -245,5 +245,5 @@ create database nutzbook default character set utf8;
 
 ```
 cd /opt/nutzcn
-mvn -Dmaven.test.skip=true clean jetty:run
+mvn -Dmaven.test.skip=true -Dlog4j2.disable.jmx=true clean jetty:run
 ```

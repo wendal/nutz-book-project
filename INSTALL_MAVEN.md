@@ -6,13 +6,13 @@
 
 ```
 chcp 65001
-set MAVEN_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dehcache.disk.store.dir=/data -Xmx1G -Xms128m"
+set MAVEN_OPTS="-Dlog4j2.disable.jmx=true -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dehcache.disk.store.dir=/data -Xmx1G -Xms128m"
 mvn jetty:run
 ```
 
 ### linux/mac
 
 ```
-export MAVEN_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dehcache.disk.store.dir=/data -Xmx1G -Xms128m"
+export MAVEN_OPTS="-Dlog4j2.disable.jmx=true -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dehcache.disk.store.dir=/data -Xmx1G -Xms128m"
 mvn jetty:run
 ```
