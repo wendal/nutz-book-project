@@ -30,7 +30,7 @@ PS: 通过docker部署的话无需上述软件
 * custom/cdn.properties -- CDN配置文件
 * custom/cron.properties -- 计划任务配置文件
 * custom/db.properties -- 数据库配置信息
-* custom/jpush.properties -- JPush推送服务的配置信息
+* custom/jpush.properties -- JPush推送/小米服务的配置信息
 * custom/email.properties -- 邮件服务的配置信息
 * custom/redis.properties -- redis服务器配置信息
 * custom/shortit.properties -- "短点"的配置信息

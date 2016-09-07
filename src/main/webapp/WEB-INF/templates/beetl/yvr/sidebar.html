@@ -6,18 +6,18 @@
   	>
     <!--# if (null != c_user!) {  #-->
     <div class='header'>
-      <span class='col_fade'><a href="${ctxPath}/yvr/u/${c_user.loginname}">个人信息</a></span>
+      <span class='col_fade'><a href="${ctxPath}/yvr/u/${c_user.loginname}" title="您的个人统计,手机客户端的accesstoken也在这里">个人信息</a></span>
     </div>
     <div class='inner'>
       <!--# layout("user/card.html", {"user":c_user}){};  #-->
       
       <!--#if (null != c_user! && null != obj.current_user! && c_user.userId != obj.current_user.userId){ #-->
       <div class='span-success'>
-      	<button onclick="pay_tips(${c_user.userId});" title="不错,赏几毛">微信打赏几毛给Ta</button>
+      	<button onclick="pay_tips(${c_user.userId});" title="不错,赏几毛">微信打赏Ta</button>
       </div>
       <!--#} else if (null != obj.current_user!){ #-->
       <div class='span-success'>
-      	<button onclick="pay_tips(2);" title="买老北京冰棍">微信打赏几毛给帮主</button>
+      	<button onclick="pay_tips(2);" title="买老北京冰棍">微信打赏帮主</button>
       </div>
       <!--#} #-->
     </div>
@@ -117,7 +117,7 @@
       		if (conf['website.friendship.'+i] != null){
       	 #-->
         <li>
-          <a href="${conf['website.friendship.'+i+'.url']}" target="_blank">${conf['website.friendship.'+i]}</a>
+          <a href="${conf['website.friendship.'+i+'.url']}"  target="_blank">${conf['website.friendship.'+i]}</a>
         </li>
         <div class="sep10"></div>
         <!--#	}
@@ -126,28 +126,12 @@
       </ol>
     </div>
   </div>
-  <!--#if (conf['website.small_features'] != "false") { #-->
-  <div class='panel' data-intro="小功能,有点意思" data-position="top">
+  <div class='panel' data-intro="客户端二维码" data-position="top">
     <div class='header'>
-      <span class='col_fade'>小功能区</span>
+      <span class='col_fade'>下载Android/ios客户端</span>
     </div>
     <div class='inner'>
-      <ol class="friendship-community">
-        <li><a href='${ctxPath}/s/'>老版本短点入口</a></li>
-        <div class="sep10"></div>
-        <li>
-        <a href="http://app.mi.com/detail/419235">客户端(Android)</a>
-        </li>
-        <div class="sep10"></div>
-        <li>
-        <a href="https://itunes.apple.com/us/app/nutz-she-qu/id1082195150?l=zh&ls=1&mt=8">客户端(ios)</a>
-        </li>
-        <div class="sep10"></div>
-        <li>
-        	<a href='${ctxPath}/apidocs/'>网站Open API</a>
-        </li>
-      </ol>
+      <img alt="android/ios客户端的下载二维码" src="${cdnbase}${base}/rs/images/qrcode_apps.png">
     </div>
   </div>
-  <!--#} #-->
 </div>
