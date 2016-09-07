@@ -17,6 +17,9 @@ import org.nutz.weixin.spi.WxApi2;
 import org.nutz.weixin.spi.WxSessionManager;
 import org.nutz.weixin.util.Wxs;
 
+import net.wendal.nutzbook.annotation.Api;
+
+@Api(name="微信", description="微信demo")
 @At("/api/nutzam/mp")
 @IocBean(create="init")
 public class WxModule extends BasicWxHandler {

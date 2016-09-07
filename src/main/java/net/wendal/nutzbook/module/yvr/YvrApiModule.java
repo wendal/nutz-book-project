@@ -36,6 +36,7 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.HttpStatusView;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -64,6 +65,7 @@ import net.wendal.nutzbook.util.Toolkit;
  * @apiParam {String} accesstoken 访问凭证
  *
  */
+@Api(name="论坛开放API", description="对外公开的HTTP API, 访问控制均基于access token")
 @IocBean(create="init")
 @At("/yvr/api/v1")
 @Ok("json")

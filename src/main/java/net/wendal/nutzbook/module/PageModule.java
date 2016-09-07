@@ -9,9 +9,11 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="页面模块", description="拦截几个首页请求")
 @IocBean
 public class PageModule {
 

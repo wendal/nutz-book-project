@@ -32,6 +32,7 @@ import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
@@ -40,6 +41,7 @@ import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="第三方登陆", description="基于SocialAuth的第三方登陆")
 @IocBean(create = "init")
 @At("/oauth")
 public class OauthModule extends BaseModule {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.adaptor.JsonAdaptor;
@@ -16,8 +17,11 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.Uploads;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.User;
 
+@Api(name="演示", description="演示各种用法")
+@IocBean
 @At("/demo")
 public class SimpleDemoModule {
 

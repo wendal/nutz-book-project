@@ -40,6 +40,7 @@ import org.nutz.trans.Trans;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -47,6 +48,7 @@ import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="论坛用户管理", description="注册, 修改头像,邮箱激活,用户详情页等信息")
 @At("/yvr/u")
 @IocBean(create="init")
 public class YvrUserModule extends BaseModule {
@@ -109,7 +111,6 @@ public class YvrUserModule extends BaseModule {
 			yvrService.resetAccessToken(user.getName());
 	}
 	
-
 	@Ok("raw:jpg")
 	@At("/?/avatar")
 	public Object userAvatar(String username, HttpServletRequest req, HttpServletResponse _resp){

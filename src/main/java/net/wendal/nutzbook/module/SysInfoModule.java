@@ -8,9 +8,11 @@ import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.service.sysinfo.SysInfoService;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="系统状态", description="读取各种系统状态")
 @IocBean
 @At("/sysinfo")
 public class SysInfoModule extends BaseModule {

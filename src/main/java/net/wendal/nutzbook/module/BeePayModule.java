@@ -36,11 +36,13 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfStamper;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.BeePayment;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="BeeCloud对接", description="对接BeeCloud的支付服务")
 @IocBean
 @At("/pay/bc")
 public class BeePayModule extends BaseModule {

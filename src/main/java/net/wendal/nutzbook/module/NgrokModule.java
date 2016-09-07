@@ -20,10 +20,12 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.RawView;
 import org.nutz.mvc.view.ViewWrapper;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="Ngrok管理", description="ngrok内网穿透服务相关的api")
 @IocBean
 @At("/ngrok")
 public class NgrokModule extends BaseModule {

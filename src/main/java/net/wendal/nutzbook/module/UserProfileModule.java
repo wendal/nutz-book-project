@@ -36,9 +36,11 @@ import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="用户配置文件", description="UserProfile的增删改查")
 @IocBean
 @At("/user/profile")
 public class UserProfileModule extends BaseModule {

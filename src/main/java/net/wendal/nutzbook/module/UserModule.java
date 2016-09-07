@@ -24,12 +24,14 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
+@Api(name="用户管理", description="传说中的增删改查")
 @IocBean // 声明为Ioc容器中的一个Bean
 @At("/user") // 整个模块的路径前缀
 @Ok("json:{locked:'password|salt',ignoreNull:true}") // 忽略password和salt属性,忽略空属性的json输出

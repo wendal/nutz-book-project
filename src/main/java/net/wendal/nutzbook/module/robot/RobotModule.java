@@ -27,6 +27,7 @@ import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
@@ -45,6 +46,7 @@ import net.wendal.nutzbook.service.yvr.TopicSearchService;
  * @time 2016年3月8日 上午10:51:26
  *
  */
+@Api(name="QQ机器人", description="QQ机器人,对接查询和请求转发")
 @At("/robot")
 @Filters
 @IocBean

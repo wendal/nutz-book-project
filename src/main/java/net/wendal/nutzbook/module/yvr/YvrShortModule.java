@@ -35,6 +35,7 @@ import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.ServerRedirectView;
 import org.nutz.repo.Base64;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.yvr.Topic;
@@ -47,6 +48,7 @@ import net.wendal.nutzbook.util.Toolkit;
  * @author wendal
  *
  */
+@Api(name="短地址服务", description="取代原nutz.cn的短地址服务")
 @At("/s")
 @IocBean(create="init")
 @Ok("raw")

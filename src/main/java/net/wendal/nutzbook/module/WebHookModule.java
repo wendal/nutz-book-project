@@ -16,6 +16,9 @@ import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Param;
 
+import net.wendal.nutzbook.annotation.Api;
+
+@Api(name="web钩子", description="例如github更新了代码,就触发一些操作")
 @IocBean
 @At("/webhook")
 public class WebHookModule extends BaseModule {

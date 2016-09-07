@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.util.Markdowns;
@@ -43,6 +44,7 @@ import com.rometools.rome.io.SyndFeedOutput;
  * @author wendal
  *
  */
+@Api(name="SEO模块", description="负责输出rss和sitemap等SEO相关的文件")
 @IocBean(create="init")
 @At("/yvr")
 @Fail("http:500")

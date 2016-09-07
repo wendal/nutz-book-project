@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import javax.servlet.http.HttpSession;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.util.Toolkit;
 
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -13,6 +14,7 @@ import org.nutz.mvc.annotation.Param;
 
 import cn.apiclub.captcha.Captcha;
 
+@Api(name="验证码", description="公共验证码")
 @IocBean
 @At("/captcha")
 public class CaptchaModule {

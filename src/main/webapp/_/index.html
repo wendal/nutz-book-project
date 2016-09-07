@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exp 入口方法调试页</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha256-ZT4HPpdCOt2lvDkXokHuhJfdOKSPFLzeAJik5U/Q+l4="
+	crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
+<style type="text/css">
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+	padding-top: 50px;
+}
+
+/*
+ * Global add-ons
+ */
+.sub-header {
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+	border: 0;
+}
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+	display: none;
+}
+
+@media ( min-width : 768px) {
+	.sidebar {
+		position: fixed;
+		top: 51px;
+		bottom: 0;
+		left: 0;
+		z-index: 1000;
+		display: block;
+		padding: 20px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		/* Scrollable contents if viewport is shorter than content. */
+		background-color: #f5f5f5;
+		border-right: 1px solid #eee;
+	}
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+	margin-right: -21px; /* 20px padding + 1px border */
+	margin-bottom: 20px;
+	margin-left: -20px;
+}
+
+.nav-sidebar>li>a {
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+.nav-sidebar>.active>a, .nav-sidebar>.active>a:hover, .nav-sidebar>.active>a:focus
+	{
+	color: #fff;
+	background-color: #428bca;
+}
+
+/*
+ * Main content
+ */
+.main {
+	padding: 20px;
+}
+
+@media ( min-width : 768px) {
+	.main {
+		padding-right: 40px;
+		padding-left: 40px;
+	}
+}
+
+.main .page-header {
+	margin-top: 0;
+}
+
+/*
+ * Placeholder dashboard ideas
+ */
+.placeholders {
+	margin-bottom: 30px;
+	text-align: center;
+}
+
+.placeholders h4 {
+	margin-bottom: 0;
+}
+
+.placeholder {
+	margin-bottom: 20px;
+}
+
+.placeholder img {
+	display: inline-block;
+	border-radius: 50%;
+}
+</style>
+</head>
+<body>
+	<div id="app">
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">入口方法调试页</a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="https://nutz.cn">NutzCN论坛</a></li>
+						<li><a href="http://nutzam.com">官网</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar" v-for="info in infos">
+						<li><a :href="'#'+info.typeName" :class="activeInfoName == info.typeName ? 'active' : '' " @click="this.activeInfoName=info.typeName">{{info.name}}</a></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<div v-for="info in infos">
+						<h2 class="sub-header"  v-bind:id="info.typeName">{{info.name}}</h2>
+						<h3 v-if="info.description" >{{info.description}}</h3>
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr class="row">
+										<th class="col-md-3">路径</th>
+										<th class="col-md-2">方法名</th>
+										<th class="col-md-3">@Ok</th>
+										<th class="col-md-2">@Fail</th>
+										<th class="col-md-3">@Filters</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="it in info.methods" class="row">
+										<td>{{it.paths.join(' ')}}</td>
+										<td><a @click="showMethod(info)">{{it.methodName}}</a></td>
+										<td>{{it.okView}}</td>
+										<td>{{it.failView}}</td>
+										<td>{{it.filters.join(' ')}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="https://cdn.jsdelivr.net/vue/2.0.0-rc.4/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/vue.resource/0.9.3/vue-resource.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery/3.1.0/jquery.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(function() {
+		var vueApp = new Vue({
+			el : "#app",
+			data : {
+				infos : {},
+				activeInfoName : ""
+			},
+			methods : {
+				doReload : function() {
+					this.$http.get("exp").then(function(resp) {
+						if (!resp.ok)
+							return;
+						var re = resp.json().data;
+						var tmp = [];
+						for ( var key in re) {
+							tmp.push(re[key]);
+						}
+						this.infos = tmp;
+					});
+				},
+				showMethod : function(info) {
+					layer.alert("暂无完成");
+				}
+			},
+			created : function() {
+				this.doReload();
+			}
+		});
+	});
+</script>
+<script src="//cdn.bootcss.com/layer/2.4/layer.min.js"></script>
+</html>
