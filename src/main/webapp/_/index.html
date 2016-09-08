@@ -144,10 +144,34 @@ body {
 						<li><a :href="'#'+info.typeName" :class="activeInfoName == info.typeName ? 'active' : '' " @click="this.activeInfoName=info.typeName">{{info.name}}</a></li>
 					</ul>
 				</div>
+
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-					<div v-for="info in infos">
-						<h2 class="sub-header"  v-bind:id="info.typeName">{{info.name}}</h2>
-						<h3 v-if="info.description" >{{info.description}}</h3>
+					<div class="row placeholders">
+						<div class="col-xs-6 col-sm-3">
+							<button type="button" @click="display_mode = 'group'" :class="display_mode != 'group' ? 'btn active': 'btn disable' ">模块分组</button>
+							<button type="button" @click="display_mode = 'bigtable'" :class="display_mode != 'bigtable' ? 'btn active': 'btn disable' ">路径总表</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3">
+							<input @input="doXXXFilter" v-model="path_filter" debounce="300" placeholder="路径过滤">
+						</div>
+						<div class="col-md-2">
+							<input @input="doXXXFilter" v-model="methodName_filter" debounce="300" placeholder="方法名过滤">
+						</div>
+						<div class="col-md-3">
+							<input @input="doXXXFilter" v-model="okView_filter" debounce="300" placeholder="ok过滤">
+						</div>
+						<div class="col-md-2">
+							<input @input="doXXXFilter" v-model="failView_filter" debounce="300" placeholder="fail过滤">
+						</div>
+						<div class="col-md-3" style="display: none;">
+							<input @input="doXXXFilter" v-model="filters_filter" debounce="300" placeholder="filters过滤">
+						</div>
+					</div>
+					<div v-for="info in infos" v-if="display_mode=='group'">
+						<h2 class="sub-header" v-bind:id="info.typeName">{{info.name}}</h2>
+						<h3 v-if="info.description">{{info.description}}</h3>
 						<div class="table-responsive">
 							<table class="table table-striped">
 								<thead>
@@ -161,6 +185,30 @@ body {
 								</thead>
 								<tbody>
 									<tr v-for="it in info.methods" class="row">
+										<td>{{it.paths.join(' ')}}</td>
+										<td><a @click="showMethod(info)">{{it.methodName}}</a></td>
+										<td>{{it.okView}}</td>
+										<td>{{it.failView}}</td>
+										<td>{{it.filters.join(' ')}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div v-if="display_mode=='bigtable'">
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr class="row">
+										<th class="col-md-3">路径</th>
+										<th class="col-md-2">方法名</th>
+										<th class="col-md-3">@Ok</th>
+										<th class="col-md-2">@Fail</th>
+										<th class="col-md-3">@Filters</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="it in listMethods()" class="row">
 										<td>{{it.paths.join(' ')}}</td>
 										<td><a @click="showMethod(info)">{{it.methodName}}</a></td>
 										<td>{{it.okView}}</td>
@@ -185,7 +233,14 @@ body {
 		var vueApp = new Vue({
 			el : "#app",
 			data : {
+				display_mode : "group",
+				path_filter : "",
+				okView_filter : "",
+				failView_filter : "",
+				methodName_filter : "",
+				filters_filter : "",
 				infos : {},
+				infos_origin : {},
 				activeInfoName : ""
 			},
 			methods : {
@@ -199,10 +254,58 @@ body {
 							tmp.push(re[key]);
 						}
 						this.infos = tmp;
+						this.infos_origin = tmp;
 					});
 				},
 				showMethod : function(info) {
 					layer.alert("暂无完成");
+				},
+				listMethods : function() {
+					var tmp = [];
+					for (var i in this.infos) {
+						for (var m in this.infos[i].methods)
+							tmp.push(this.infos[i].methods[m]);
+					}
+					//console.info(tmp);
+					//console.info(this.infos);
+					return tmp;
+				},
+				doXXXFilter : function() {
+					var old = this.infos_origin;
+					var tmp = [];
+					for (var i in old) {
+						var info = old[i];
+						var methods = [];
+						for (var m in info.methods) {
+							var method = info.methods[m];
+							var flag = false;
+							for (var n in method.paths) {
+								var path = method.paths[n];
+								if (path.indexOf(this.path_filter) != -1) {
+									flag = true;
+									break;
+								}
+							}
+							if (!flag)
+								break;
+							if (method.methodName.indexOf(this.methodName_filter) == -1)
+								break;
+							if (method.okView.indexOf(this.okView_filter) == -1)
+								break;
+							if (method.failView.indexOf(this.failView_filter) == -1)
+								break;
+							methods.push(this.copyObject(method));
+						}
+						if (methods.length > 0) {
+							info = this.copyObject(info);
+							info.methods = methods;
+							tmp.push(info);
+						}
+					}
+					this.infos = tmp;
+				},
+				copyObject : function(obj) {
+					return JSON.parse(JSON.stringify(obj));
 				}
 			},
 			created : function() {

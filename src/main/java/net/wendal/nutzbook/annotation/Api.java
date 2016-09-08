@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.wendal.nutzbook.mvc.ExpUrlMapping;
-
 /**
  * 供ExpUrlMapping读取
  * @author wendal
@@ -28,4 +26,6 @@ public @interface Api {
      * @return 描述一下这个方法大概是干啥的
      */
     String description() default "";
+    
+    ApiParam[] params() default {};
 }

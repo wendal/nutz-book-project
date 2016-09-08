@@ -1,15 +1,16 @@
 package net.wendal.nutzbook.mvc;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.json.JsonFormat;
-import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.lang.util.SimpleContext;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.ActionChainMaker;
@@ -43,9 +44,13 @@ public class ExpUrlMapping extends UrlMappingImpl {
 
     protected static String[] EMTRY = new String[0];
 
-    public void add(ActionChainMaker maker, ActionInfo ai, NutConfig config) {
-        super.add(maker, ai, config);
-        _add(maker, ai, config);
+    public void add(ActionChainMaker maker, ActionInfo ai, NutConfig nc) {
+        super.add(maker, ai, nc);
+        ExpContext ctx = new ExpContext();
+        ctx.set("maker", maker);
+        ctx.set("ai", ai);
+        ctx.set("nc", nc);
+        _add(ctx);
     }
 
     public ActionInvoker get(ActionContext ac) {
@@ -72,45 +77,19 @@ public class ExpUrlMapping extends UrlMappingImpl {
         }
     }
 
-    protected static class ExpClass {
-        String name;
-        String typeName;
-        String description;
-        String iocName;
-        String[] pathPrefixs;
-        List<ExpMethod> methods = new ArrayList<>();
+    protected static class ExpClass extends NutMap {
+        private static final long serialVersionUID = 1L;
+//        String name;
+//        String typeName;
+//        String description;
+//        String iocName;
+//        String[] pathPrefixs;
+//        List<ExpMethod> methods = new ArrayList<>();
         // TODO 是不是应该加上作者
     }
 
-    protected static class ExpMethod extends ActionInfo {
-        protected List<ExpParam> params = new ArrayList<>();
-
-        public String toJson(JsonFormat jf) {
-            NutMap map = new NutMap();
-            map.put("chainName", getChainName());
-            map.put("className", getModuleType().getName());
-            map.put("okView", getOkView());
-            map.put("failView", getFailView());
-            map.put("httpMethods", getHttpMethods());
-            map.put("lineNumber", getLineNumber());
-            map.put("paths", getPaths());
-
-            map.put("methodName", getMethod().getName());
-            if (getAdaptorInfo() != null)
-                map.put("adaptorName", getAdaptorInfo().getType().getSimpleName());
-            ObjectInfo<? extends ActionFilter>[] filters = getFilterInfos();
-            if (filters == null)
-                map.put("filters", EMTRY);
-            else {
-                List<String> filterNames = new ArrayList<>();
-                for (ObjectInfo<? extends ActionFilter> objectInfo : filters) {
-                    filterNames.add(objectInfo.getType().getSimpleName());
-                }
-                map.put("filters", filterNames);
-            }
-            map.put("params", params);
-            return Json.toJson(map, jf);
-        }
+    protected static class ExpMethod extends NutMap {
+        private static final long serialVersionUID = 1L;
     }
 
     /**
@@ -119,7 +98,8 @@ public class ExpUrlMapping extends UrlMappingImpl {
      * @author wendal
      *
      */
-    protected static class ExpParam {
+    protected static class ExpParam extends NutMap {
+        private static final long serialVersionUID = 1L;
         String paramName;
         String paramVale;
         String defaultValue;
@@ -127,38 +107,111 @@ public class ExpUrlMapping extends UrlMappingImpl {
         String className;
         String attrName;
     }
+    
+    protected static class ExpContext extends SimpleContext {
+        public NutConfig nc() {
+            return getAs(NutConfig.class, "nc");
+        }
+        public ExpClass expClass() {
+            return getAs(ExpClass.class, "expClass");
+        }
+        public ExpMethod expMethod() {
+            return getAs(ExpMethod.class, "expMethod");
+        }
+        public ActionInfo ai() {
+            return getAs(ActionInfo.class, "ai");
+        }
+    }
 
-    protected void _add(ActionChainMaker maker, ActionInfo ai, NutConfig config) {
-        ExpMethod info = new ExpMethod();
-        Lang.copyProperties(ai, info);
-        String typeName = info.getModuleType().getName();
+    @SuppressWarnings("unchecked")
+    protected ExpMethod _add(ExpContext ctx) {
+        String typeName = ctx.ai().getModuleType().getName();
         ExpClass expClass = infos.get(typeName);
         if (expClass == null) {
-            Class<?> klass = ai.getModuleType();
-            expClass = new ExpClass();
-            expClass.typeName = typeName;
-            IocBean ib = klass.getAnnotation(IocBean.class);
-            if (ib != null)
-                expClass.iocName = Strings.isBlank(ib.name()) ? Strings.lowerFirst(klass.getSimpleName())
-                                                              : ib.name();
-            else
-                expClass.iocName = "";
-            Api api = klass.getAnnotation(Api.class);
-            if (api != null) {
-                expClass.name = api.name();
-                expClass.description = api.description();
-            }
-            if (Strings.isBlank(expClass.name))
-                expClass.name = klass.getSimpleName();
-            At at = klass.getAnnotation(At.class);
-            if (at != null)
-                expClass.pathPrefixs = at.value();
-            else
-                expClass.pathPrefixs = new String[0];
-
+            expClass = makeClass(ctx.ai().getModuleType(), ctx);
             infos.put(typeName, expClass);
         }
+        ExpMethod expMethod = makeMethod(ctx);
+        List<ExpMethod> methods = expClass.getAs("methods", List.class);
+        if (methods == null) {
+            methods = new ArrayList<>();
+            expClass.put("methods", methods);
+        }
+        methods.add(expMethod);
+        return expMethod;
+    }
+    
+    protected ExpClass makeClass(Class<?> klass, ExpContext ctx) {
+        ExpClass expClass = new ExpClass();
+        expClass.put("typeName", klass.getName());
+        IocBean ib = klass.getAnnotation(IocBean.class);
+        if (ib != null)
+            expClass.put("iocName", Strings.isBlank(ib.name()) ? Strings.lowerFirst(klass.getSimpleName()) : ib.name());
+        Api api = klass.getAnnotation(Api.class);
+        if (api != null) {
+            expClass.put("name", api.name());
+            expClass.put("description", api.description());
+        }
+        if (Strings.isBlank(expClass.getString("name")))
+            expClass.put("name", klass.getSimpleName());
+        At at = klass.getAnnotation(At.class);
+        expClass.put("pathPrefixs",  at == null ? new String[0] : at.value());
+        return expClass;
+    }
+    
+    protected ExpMethod makeMethod(ExpContext ctx) {
+        ActionInfo ai = ctx.ai();
+        ExpMethod expMethod = new ExpMethod();
+        expMethod.put("chainName", ai.getChainName());
+        expMethod.put("typeName", ai.getModuleType().getName());
+        expMethod.put("okView", ai.getOkView());
+        expMethod.put("failView", ai.getFailView());
+        expMethod.put("httpMethods", ai.getHttpMethods());
+        expMethod.put("lineNumber", ai.getLineNumber());
+        expMethod.put("paths", ai.getPaths());
+
+        expMethod.put("methodName", ai.getMethod().getName());
+        if (ai.getAdaptorInfo() != null)
+            expMethod.put("adaptorName", ai.getAdaptorInfo().getType().getSimpleName());
+        ObjectInfo<? extends ActionFilter>[] filters = ai.getFilterInfos();
+        if (filters == null)
+            expMethod.put("filters", EMTRY);
+        else {
+            List<String> filterNames = new ArrayList<>();
+            for (ObjectInfo<? extends ActionFilter> objectInfo : filters) {
+                filterNames.add(objectInfo.getType().getSimpleName());
+            }
+            expMethod.put("filters", filterNames);
+        }
+        
+        expMethod.put("params", make(ai.getMethod(), expMethod, ctx));
+        return expMethod;
+    }
+    
+    protected List<ExpParam> make(Method method, ExpMethod expMethod, ExpContext ctx) {
         // TODO 还得解析参数
-        expClass.methods.add(info);
+        List<ExpParam> params = new ArrayList<>();
+        Type[] types = method.getGenericParameterTypes();
+        for (int i = 0; i < types.length; i++) {
+            ExpParam expParam = new ExpParam();
+            expParam.put("index", i); // 实际顺序
+            //expParam.put("paramName", value)
+        }
+        return params;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
