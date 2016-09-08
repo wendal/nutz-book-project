@@ -1,5 +1,7 @@
 package net.wendal.nutzbook.mvc;
 
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -8,7 +10,10 @@ import java.util.List;
 
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.JsonFormat;
+import org.nutz.lang.Mirror;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.ClassMeta;
+import org.nutz.lang.util.ClassMetaReader;
 import org.nutz.lang.util.NutMap;
 import org.nutz.lang.util.SimpleContext;
 import org.nutz.log.Log;
@@ -22,6 +27,8 @@ import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.ObjectInfo;
 import org.nutz.mvc.View;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Attr;
+import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.impl.ActionInvoker;
 import org.nutz.mvc.impl.UrlMappingImpl;
 import org.nutz.mvc.view.UTF8JsonView;
@@ -131,6 +138,7 @@ public class ExpUrlMapping extends UrlMappingImpl {
             expClass = makeClass(ctx.ai().getModuleType(), ctx);
             infos.put(typeName, expClass);
         }
+        ctx.set("expClass", expClass);
         ExpMethod expMethod = makeMethod(ctx);
         List<ExpMethod> methods = expClass.getAs("methods", List.class);
         if (methods == null) {
@@ -156,13 +164,23 @@ public class ExpUrlMapping extends UrlMappingImpl {
             expClass.put("name", klass.getSimpleName());
         At at = klass.getAnnotation(At.class);
         expClass.put("pathPrefixs",  at == null ? new String[0] : at.value());
+        InputStream ins = klass.getClassLoader().getResourceAsStream(klass.getName().replace(".", "/") + ".class");
+        if (ins != null) {
+            try {
+                ClassMeta meta = ClassMetaReader.build(ins);
+                expClass.setv("meta", meta);
+            }
+            catch (Exception e) {
+            }
+        }
         return expClass;
     }
     
     protected ExpMethod makeMethod(ExpContext ctx) {
         ActionInfo ai = ctx.ai();
         ExpMethod expMethod = new ExpMethod();
-        expMethod.put("chainName", ai.getChainName());
+        ctx.set("expMethod", expMethod);
+        expMethod.put("chainName", ai.getChainName() == null ? "default" : ai.getChainName());
         expMethod.put("typeName", ai.getModuleType().getName());
         expMethod.put("okView", ai.getOkView());
         expMethod.put("failView", ai.getFailView());
@@ -189,16 +207,50 @@ public class ExpUrlMapping extends UrlMappingImpl {
     }
     
     protected List<ExpParam> make(Method method, ExpMethod expMethod, ExpContext ctx) {
+        String metaKey = ClassMetaReader.getKey(method);
+        expMethod.put("methodId", ctx.expClass().getString("typeName") + "#" + metaKey);
+        ClassMeta meta = ctx.expClass().getAs("meta", ClassMeta.class);
+        List<String> paramNames = meta == null ? null : meta.paramNames.get(metaKey);
         // TODO 还得解析参数
         List<ExpParam> params = new ArrayList<>();
+        Annotation[][] annos = method.getParameterAnnotations();
         Type[] types = method.getGenericParameterTypes();
         for (int i = 0; i < types.length; i++) {
             ExpParam expParam = new ExpParam();
             expParam.put("index", i); // 实际顺序
-            //expParam.put("paramName", value)
+            if (paramNames != null)
+                expParam.put("paramLocalName", paramNames.get(i));
+            else
+                expParam.put("paramLocalName", "arg"+i);
+            Mirror<?> mirror = Mirror.me(types[i]);
+            expParam.put("typeName", mirror.getType().getName());
+            
+            // TODO 按不同注解可以分别处理
+            for (Annotation anno : annos[i]) {
+                if (anno instanceof Param) {
+                    Param _param = (Param)anno;
+                    expParam.put("annoParamName", _param.value());
+                    expParam.put("annoParamDefault", _param.df());
+                    expParam.put("annoParamDateFormat", _param.dfmt());
+                } else if (anno instanceof Attr) {
+                    Attr attr = (Attr)anno;
+                    expParam.put("annoAttrName", attr.value());
+                    expParam.put("annoAttrScope", attr.scope());
+                }
+            }
+            if (Strings.isBlank(expParam.getString("paramName"))) {
+                if (!Strings.isBlank(expParam.getString("annoParamName")))
+                    expParam.put("paramName", expParam.getString("annoParamName"));
+                else
+                    expParam.put("paramName", expParam.getString("paramLocalName"));
+            }
+            
+            params.add(expParam);
         }
+        //Api api = method.getAnnotation(Api.class);
         return params;
     }
+    
 }
 
 

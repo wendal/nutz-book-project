@@ -140,56 +140,84 @@ body {
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-sm-3 col-md-2 sidebar">
-					<ul class="nav nav-sidebar" v-for="info in infos">
-						<li><a :href="'#'+info.typeName" :class="activeInfoName == info.typeName ? 'active' : '' " @click="this.activeInfoName=info.typeName">{{info.name}}</a></li>
+					<ul class="nav nav-sidebar" v-for="info in infos" track-by="typeName">
+						<li><a :title="info.typeName" :href="'#'+info.typeName" class="nav-header" @click="this.activeInfoName=info.typeName">{{info.name}}</a></li>
 					</ul>
 				</div>
 
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 					<div class="row placeholders">
 						<div class="col-xs-6 col-sm-3">
-							<button type="button" @click="display_mode = 'group'" :class="display_mode != 'group' ? 'btn active': 'btn disable' ">模块分组</button>
-							<button type="button" @click="display_mode = 'bigtable'" :class="display_mode != 'bigtable' ? 'btn active': 'btn disable' ">路径总表</button>
+							<button type="button" @click="display_mode = 'group'" :class="display_mode != 'group' ? 'btn btn-info active': 'btn disable' ">模块分组</button>
+							<button type="button" @click="display_mode = 'bigtable'" :class="display_mode != 'bigtable' ? 'btn btn-info active': 'btn disable' ">路径总表</button>
+							<button type="button" @click="display_mode = 'detail'" :class="display_mode != 'detail' ? 'btn btn-info active': 'btn disable' ">详细列表</button>
+						</div>
+						<div class="col-xs-6 col-sm-3">
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_paths"><span>路径</span>
+							</div>
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_methodName"><span>方法名</span>
+							</div>
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_httpMethods"><span>Http方法</span>
+							</div>
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_okView"><span>@Ok</span>
+							</div>
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_failView"><span>@Fail</span>
+							</div>
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_filters"><span>@Filters</span>
+							</div>
+							<div class="checkbox-inline">
+								<input type="checkbox" v-model="display_ops"><span>操作</span>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-3">
-							<input @input="doXXXFilter" v-model="path_filter" debounce="300" placeholder="路径过滤">
+							<input @input="doXXXFilter" v-model="path_filter" debounce="300" placeholder="路径过滤" v-if="display_paths">
 						</div>
 						<div class="col-md-2">
-							<input @input="doXXXFilter" v-model="methodName_filter" debounce="300" placeholder="方法名过滤">
+							<input @input="doXXXFilter" v-model="methodName_filter" debounce="300" placeholder="方法名过滤" v-if="display_methodName">
 						</div>
 						<div class="col-md-3">
-							<input @input="doXXXFilter" v-model="okView_filter" debounce="300" placeholder="ok过滤">
+							<input @input="doXXXFilter" v-model="okView_filter" debounce="300" placeholder="ok过滤" v-if="display_okView">
 						</div>
 						<div class="col-md-2">
-							<input @input="doXXXFilter" v-model="failView_filter" debounce="300" placeholder="fail过滤">
+							<input @input="doXXXFilter" v-model="failView_filter" debounce="300" placeholder="fail过滤" v-if="display_failView">
 						</div>
 						<div class="col-md-3" style="display: none;">
-							<input @input="doXXXFilter" v-model="filters_filter" debounce="300" placeholder="filters过滤">
+							<input @input="doXXXFilter" v-model="filters_filter" debounce="300" placeholder="filters过滤" v-if="display_filters">
 						</div>
 					</div>
-					<div v-for="info in infos" v-if="display_mode=='group'">
-						<h2 class="sub-header" v-bind:id="info.typeName">{{info.name}}</h2>
-						<h3 v-if="info.description">{{info.description}}</h3>
+					<div v-for="info in infos" v-if="display_mode=='group'" trace-by="typeName">
+						<h2 class="sub-header" v-bind:id="info.typeName" :title="info.typeName">{{info.name}}</h2>
+						<h4 v-if="info.description">{{info.description}}</h4>
 						<div class="table-responsive">
 							<table class="table table-striped">
 								<thead>
 									<tr class="row">
-										<th class="col-md-3">路径</th>
-										<th class="col-md-2">方法名</th>
-										<th class="col-md-3">@Ok</th>
-										<th class="col-md-2">@Fail</th>
-										<th class="col-md-3">@Filters</th>
+										<th class="col-md-3" v-if="display_paths">路径</th>
+										<th class="col-md-2" v-if="display_methodName">方法名</th>
+										<th class="col-md-1" v-if="display_httpMethods">Http方法</th>
+										<th class="col-md-3" v-if="display_okView">@Ok</th>
+										<th class="col-md-2" v-if="display_failView">@Fail</th>
+										<th class="col-md-3" v-if="display_filters">@Filters</th>
+										<th class="col-md-1" v-if="display_ops">操作</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="it in info.methods" class="row">
-										<td>{{it.paths.join(' ')}}</td>
-										<td><a @click="showMethod(info)">{{it.methodName}}</a></td>
-										<td>{{it.okView}}</td>
-										<td>{{it.failView}}</td>
-										<td>{{it.filters.join(' ')}}</td>
+									<tr v-for="it in info.methods" class="row" track-by="methodId">
+										<td v-if="display_paths">{{it.paths.join(' ')}}</td>
+										<td v-if="display_methodName"><a @click="showMethod(info)">{{it.methodName}}</a></td>
+										<td v-if="display_httpMethods">{{it.httpMethods.join(',')}}</td>
+										<td v-if="display_okView">{{it.okView}}</td>
+										<td v-if="display_failView">{{it.failView}}</td>
+										<td v-if="display_filters">{{it.filters.join(' ')}}</td>
+										<td v-if="display_ops"><button class="btn btn-info" @click="showMethod(info)">调试</button></td>
 									</tr>
 								</tbody>
 							</table>
@@ -200,23 +228,66 @@ body {
 							<table class="table table-striped">
 								<thead>
 									<tr class="row">
-										<th class="col-md-3">路径</th>
-										<th class="col-md-2">方法名</th>
-										<th class="col-md-3">@Ok</th>
-										<th class="col-md-2">@Fail</th>
-										<th class="col-md-3">@Filters</th>
+										<th class="col-md-3" v-if="display_paths">路径</th>
+										<th class="col-md-2" v-if="display_methodName">方法名</th>
+										<th class="col-md-1" v-if="display_httpMethods">Http方法</th>
+										<th class="col-md-3" v-if="display_okView">@Ok</th>
+										<th class="col-md-2" v-if="display_failView">@Fail</th>
+										<th class="col-md-3" v-if="display_filters">@Filters</th>
+										<th class="col-md-1" v-if="display_ops">操作</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="it in listMethods()" class="row">
-										<td>{{it.paths.join(' ')}}</td>
-										<td><a @click="showMethod(info)">{{it.methodName}}</a></td>
-										<td>{{it.okView}}</td>
-										<td>{{it.failView}}</td>
-										<td>{{it.filters.join(' ')}}</td>
+									<tr v-for="it in listMethods()" class="row" track-by="methodId">
+										<td v-if="display_paths">{{it.paths.join(' ')}}</td>
+										<td v-if="display_methodName"><a @click="showMethod(info)">{{it.methodName}}</a></td>
+										<td v-if="display_httpMethods">{{it.httpMethods.join(',')}}</td>
+										<td v-if="display_okView">{{it.okView}}</td>
+										<td v-if="display_failView">{{it.failView}}</td>
+										<td v-if="display_filters">{{it.filters.join(' ')}}</td>
+										<td v-if="display_ops"><button class="btn btn-info" @click="showMethod(info)">调试</button></td>
 									</tr>
 								</tbody>
 							</table>
+						</div>
+					</div>
+					<div v-if="display_mode == 'detail'" v-for="info in infos" trace-by="typeName">
+						<h2 class="sub-header" v-bind:id="info.typeName" :title="info.typeName">{{info.name}}</h2>
+						<div v-for="it in info.methods">
+							<div class="pull-left">
+								<h3>{{info.name}} - {{it.methodName}}</h3>
+							</div>
+							<div class="clearfix"></div>
+							<div v-for="path in it.paths">
+								<p>
+									<code>
+										<span class="pln">{{path}}</span>
+									</code>
+								</p>
+							</div>
+							<div v-if="it.params.length &gt; 0">
+								<h4>参数</h4>
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead>
+											<tr class="row">
+												<th style="width: 30%">字段</th>
+												<th style="width: 10%">类型</th>
+												<th style="width: 70%">描述</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr v-for="param in it.params" class="row">
+												<td class="code">{{param.paramName}}</td>
+												<td>{{param.typeName}}</td>
+												<td>
+													<p>{{param.paramName}}</p>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -224,95 +295,112 @@ body {
 		</div>
 	</div>
 </body>
-<script src="https://cdn.jsdelivr.net/vue/2.0.0-rc.4/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/vue.resource/0.9.3/vue-resource.min.js"></script>
-<script src="https://cdn.jsdelivr.net/jquery/3.1.0/jquery.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/vue/2.0.0-rc.4/vue.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/vue.resource/0.9.3/vue-resource.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/jquery/3.1.0/jquery.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"
+	type="text/javascript"></script>
+<script src="//cdn.bootcss.com/layer/2.4/layer.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 	$(function() {
-		var vueApp = new Vue({
-			el : "#app",
-			data : {
-				display_mode : "group",
-				path_filter : "",
-				okView_filter : "",
-				failView_filter : "",
-				methodName_filter : "",
-				filters_filter : "",
-				infos : {},
-				infos_origin : {},
-				activeInfoName : ""
-			},
-			methods : {
-				doReload : function() {
-					this.$http.get("exp").then(function(resp) {
-						if (!resp.ok)
-							return;
-						var re = resp.json().data;
-						var tmp = [];
-						for ( var key in re) {
-							tmp.push(re[key]);
-						}
-						this.infos = tmp;
-						this.infos_origin = tmp;
-					});
-				},
-				showMethod : function(info) {
-					layer.alert("暂无完成");
-				},
-				listMethods : function() {
-					var tmp = [];
-					for (var i in this.infos) {
-						for (var m in this.infos[i].methods)
-							tmp.push(this.infos[i].methods[m]);
-					}
-					//console.info(tmp);
-					//console.info(this.infos);
-					return tmp;
-				},
-				doXXXFilter : function() {
-					var old = this.infos_origin;
-					var tmp = [];
-					for (var i in old) {
-						var info = old[i];
-						var methods = [];
-						for (var m in info.methods) {
-							var method = info.methods[m];
-							var flag = false;
-							for (var n in method.paths) {
-								var path = method.paths[n];
-								if (path.indexOf(this.path_filter) != -1) {
-									flag = true;
-									break;
+		var vueApp = new Vue(
+				{
+					el : "#app",
+					data : {
+						display_mode : "group",
+						path_filter : "",
+						okView_filter : "",
+						failView_filter : "",
+						methodName_filter : "",
+						filters_filter : "",
+						infos : {},
+						infos_origin : {},
+						activeInfoName : "",
+						display_paths : true,
+						display_methodName : true,
+						display_okView : true,
+						display_failView : true,
+						display_filters : true,
+						display_ops : true,
+						display_httpMethods : false
+					},
+					methods : {
+						doReload : function() {
+							this.$http.get("exp").then(function(resp) {
+								if (!resp.ok)
+									return;
+								var re = resp.json().data;
+								var keys = [];
+								for ( var key in re) {
+									keys.push(key);
+								}
+								keys.sort();
+								var tmp = [];
+								for ( var key in keys) {
+									tmp.push(re[keys[key]]);
+								}
+								this.infos_origin = tmp;
+								this.doXXXFilter();
+							});
+						},
+						showMethod : function(info) {
+							layer.alert("暂无完成");
+						},
+						listMethods : function() {
+							var tmp = [];
+							for ( var i in this.infos) {
+								for ( var m in this.infos[i].methods)
+									tmp.push(this.infos[i].methods[m]);
+							}
+							//console.info(tmp);
+							//console.info(this.infos);
+							return tmp;
+						},
+						doXXXFilter : function() {
+							var old = this.infos_origin;
+							var tmp = [];
+							for ( var i in old) {
+								var info = old[i];
+								var methods = [];
+								for ( var m in info.methods) {
+									var method = info.methods[m];
+									var flag = false;
+									for ( var n in method.paths) {
+										var path = method.paths[n];
+										if (path.indexOf(this.path_filter) != -1) {
+											flag = true;
+											break;
+										}
+									}
+									if (!flag)
+										break;
+									if (method.methodName
+											.indexOf(this.methodName_filter) == -1)
+										break;
+									if (method.okView
+											.indexOf(this.okView_filter) == -1)
+										break;
+									if (method.failView
+											.indexOf(this.failView_filter) == -1)
+										break;
+									methods.push(this.copyObject(method));
+								}
+								if (methods.length > 0) {
+									info = this.copyObject(info);
+									info.methods = methods;
+									tmp.push(info);
 								}
 							}
-							if (!flag)
-								break;
-							if (method.methodName.indexOf(this.methodName_filter) == -1)
-								break;
-							if (method.okView.indexOf(this.okView_filter) == -1)
-								break;
-							if (method.failView.indexOf(this.failView_filter) == -1)
-								break;
-							methods.push(this.copyObject(method));
+							this.infos = tmp;
+						},
+						copyObject : function(obj) {
+							return JSON.parse(JSON.stringify(obj));
 						}
-						if (methods.length > 0) {
-							info = this.copyObject(info);
-							info.methods = methods;
-							tmp.push(info);
-						}
+					},
+					created : function() {
+						this.doReload();
 					}
-					this.infos = tmp;
-				},
-				copyObject : function(obj) {
-					return JSON.parse(JSON.stringify(obj));
-				}
-			},
-			created : function() {
-				this.doReload();
-			}
-		});
+				});
 	});
 </script>
-<script src="//cdn.bootcss.com/layer/2.4/layer.min.js"></script>
 </html>

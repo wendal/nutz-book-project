@@ -42,7 +42,7 @@ import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.Toolkit;
 
-@Api(name="BeeCloud对接", description="对接BeeCloud的支付服务")
+@Api(name="支付服务", description="对接BeeCloud的支付服务,当前只对接了打赏")
 @IocBean
 @At("/pay/bc")
 public class BeePayModule extends BaseModule {

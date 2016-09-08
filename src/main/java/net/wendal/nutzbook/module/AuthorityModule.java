@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.wendal.nutzbook.annotation.Api;
 import net.wendal.nutzbook.bean.Permission;
 import net.wendal.nutzbook.bean.Role;
 import net.wendal.nutzbook.bean.User;
@@ -30,6 +31,7 @@ import org.nutz.mvc.annotation.Param;
  * @author wendal
  *
  */
+@Api(name="权限角色管理", description="一个用户属于多种角色,拥有多种特许权限. 每种角色拥有多种权限")
 @At("/admin/authority")
 @IocBean
 @Ok("void")//避免误写导致敏感信息泄露到服务器外
