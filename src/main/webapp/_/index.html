@@ -388,7 +388,7 @@ body {
 									   uri: {
 									       "path": location.hostname + (location.port > 0 ? (":" + location.port) : "" ) + this.content_path + it.paths[0],
 									       "scheme": {
-									           "name": "http",
+									           "name": location.protocol,
 									           "version": "V11"
 									       }
 									   }
