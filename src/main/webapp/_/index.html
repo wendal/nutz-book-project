@@ -197,7 +197,7 @@ body {
 						<h2 class="sub-header" v-bind:id="info.typeName" :title="info.typeName">{{info.name}}</h2>
 						<h4 v-if="info.description">{{info.description}}</h4>
 						<div class="table-responsive">
-							<table class="table table-striped">
+							<table class="table table-striped table-bordered">
 								<thead>
 									<tr class="row">
 										<th class="col-md-3" v-if="display_paths">路径</th>
@@ -225,7 +225,7 @@ body {
 					</div>
 					<div v-if="display_mode=='bigtable'">
 						<div class="table-responsive">
-							<table class="table table-striped">
+							<table class="table table-striped table-bordered">
 								<thead>
 									<tr class="row">
 										<th class="col-md-3" v-if="display_paths">路径</th>
@@ -268,7 +268,7 @@ body {
 							<div v-if="it.params.length &gt; 0">
 								<h4>参数</h4>
 								<div class="table-responsive">
-									<table class="table table-striped">
+									<table class="table table-striped table-bordered">
 										<thead>
 											<tr class="row">
 												<th style="width: 30%">字段</th>
