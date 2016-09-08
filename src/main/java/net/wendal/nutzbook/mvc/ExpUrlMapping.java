@@ -75,7 +75,9 @@ public class ExpUrlMapping extends UrlMappingImpl {
         public boolean invoke(ActionContext ac) {
             try {
                 ac.getResponse().setCharacterEncoding("UTF-8");
-                view.render(ac.getRequest(), ac.getResponse(), new NutMap("data", infos));
+                NutMap re = new NutMap("data", infos);
+                re.put("content_path", ac.getRequest().getContextPath());
+                view.render(ac.getRequest(), ac.getResponse(), re);
             }
             catch (Throwable e) {
                 log.debug("exp fail", e);

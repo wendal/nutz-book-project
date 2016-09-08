@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta
+name="dhc-aware-page"
+data-indicator-element-id="dhc"
+data-console-debug="true"
+>
 <title>Exp 入口方法调试页</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha256-ZT4HPpdCOt2lvDkXokHuhJfdOKSPFLzeAJik5U/Q+l4="
 	crossorigin="anonymous">
@@ -212,12 +217,12 @@ body {
 								<tbody>
 									<tr v-for="it in info.methods" class="row" track-by="methodId">
 										<td v-if="display_paths">{{it.paths.join(' ')}}</td>
-										<td v-if="display_methodName"><a @click="showMethod(info)">{{it.methodName}}</a></td>
+										<td v-if="display_methodName"><a :title="it.methodId">{{it.methodName}}</a></td>
 										<td v-if="display_httpMethods">{{it.httpMethods.join(',')}}</td>
 										<td v-if="display_okView">{{it.okView}}</td>
 										<td v-if="display_failView">{{it.failView}}</td>
 										<td v-if="display_filters">{{it.filters.join(' ')}}</td>
-										<td v-if="display_ops"><button class="btn btn-info" @click="showMethod(info)">调试</button></td>
+										<td v-if="display_ops"><button class="btn btn-info" @click="debugCall(it)">调试</button></td>
 									</tr>
 								</tbody>
 							</table>
@@ -240,12 +245,12 @@ body {
 								<tbody>
 									<tr v-for="it in listMethods()" class="row" track-by="methodId">
 										<td v-if="display_paths">{{it.paths.join(' ')}}</td>
-										<td v-if="display_methodName"><a @click="showMethod(info)">{{it.methodName}}</a></td>
+										<td v-if="display_methodName"><a :title="it.methodId">{{it.methodName}}</a></td>
 										<td v-if="display_httpMethods">{{it.httpMethods.join(',')}}</td>
 										<td v-if="display_okView">{{it.okView}}</td>
 										<td v-if="display_failView">{{it.failView}}</td>
 										<td v-if="display_filters">{{it.filters.join(' ')}}</td>
-										<td v-if="display_ops"><button class="btn btn-info" @click="showMethod(info)">调试</button></td>
+										<td v-if="display_ops"><button class="btn btn-info" @click="showMethod(it)">调试</button></td>
 									</tr>
 								</tbody>
 							</table>
@@ -322,14 +327,17 @@ body {
 						display_failView : true,
 						display_filters : true,
 						display_ops : true,
-						display_httpMethods : false
+						display_httpMethods : false,
+						content_path : ""
 					},
 					methods : {
 						doReload : function() {
 							this.$http.get("exp").then(function(resp) {
 								if (!resp.ok)
 									return;
-								var re = resp.json().data;
+								var j = resp.json();
+								this.content_path = j.content_path || "";
+								var re = j.data;
 								var keys = [];
 								for ( var key in re) {
 									keys.push(key);
@@ -343,8 +351,56 @@ body {
 								this.doXXXFilter();
 							});
 						},
-						showMethod : function(info) {
-							layer.alert("暂无完成");
+						debugCall : function(it) {
+							if (!document.getElementById("dhc")) {
+								layer.alert("未安装DHC");
+								return;
+							}
+							var bodyType = "Form";
+							var headersType = "Form";
+							var httpMethod = it.httpMethods.length > 0 ? it.httpMethods[0] : "GET";
+							if (it.adaptorName == "org.nutz.mvc.adaptor.JsonAdaptor") {
+								bodyType = "Text";
+								headersType = "Json";
+							} else if (it.adaptorName == "org.nutz.mvc.upload.UploadAdaptor") {
+								bodyType = "Form";
+								headersType = "MultiPartForm";
+							} 
+							var payload = {
+									   body: {
+									       bodyType: bodyType
+									   },
+									   description: "exp",
+									   headers: [
+									       {
+									           name:"ExpClient",
+									           value:"https://nutz.cn",
+									           enabled:true
+									       }
+									   ],
+									   headersType: headersType,
+									   method: {
+									       "link": "",
+									       "name": httpMethod,
+									       "requestBody": true
+									   },
+									   name: "exp",
+									   uri: {
+									       "path": location.hostname + ":" + location.port + this.content_path + it.paths[0],
+									       "scheme": {
+									           "name": "http",
+									           "version": "V11"
+									       }
+									   }
+									};
+							var message = {
+								      target : JSON.parse(document.getElementById("dhc").textContent).extensionId,
+								      type : "openRequest",
+								      targetTab: "exp",
+								      payloadType: "dhc",
+								      payload : payload
+								};
+							window.postMessage(message, document.origin);
 						},
 						listMethods : function() {
 							var tmp = [];
