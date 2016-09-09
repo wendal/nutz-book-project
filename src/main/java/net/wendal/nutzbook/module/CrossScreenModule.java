@@ -25,7 +25,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Api(name="跨屏登陆", description="用于跨屏免登陆")

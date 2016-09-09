@@ -8,7 +8,7 @@ import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.service.sysinfo.SysInfoService;
 import net.wendal.nutzbook.util.Toolkit;
 

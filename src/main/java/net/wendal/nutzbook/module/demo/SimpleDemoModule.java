@@ -17,7 +17,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.Uploads;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.User;
 
 @Api(name="演示", description="演示各种用法")

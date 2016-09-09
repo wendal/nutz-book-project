@@ -20,7 +20,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.RawView;
 import org.nutz.mvc.view.ViewWrapper;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.util.Toolkit;

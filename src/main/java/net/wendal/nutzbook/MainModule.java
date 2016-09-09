@@ -12,12 +12,15 @@ import org.nutz.mvc.annotation.SetupBy;
 import org.nutz.mvc.annotation.UrlMappingBy;
 import org.nutz.mvc.annotation.Views;
 import org.nutz.mvc.ioc.provider.ComboIocProvider;
+import org.nutz.plugins.apidoc.ApidocUrlMapping;
+import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
 import org.nutz.plugins.view.freemarker.FreemarkerViewMaker;
 import org.nutz.plugins.view.pdf.PdfViewMaker;
 
 import net.wendal.nutzbook.beetl.BeetlViewMaker2;
-import net.wendal.nutzbook.mvc.ExpUrlMapping;
 
+@Api(name="NutzCN论坛", description="The answer to life, the universe and everything", match=ApiMatchMode.ONLY)
 @SetupBy(value=MainSetup.class)
 @IocBy(type=ComboIocProvider.class, args={"*js", "ioc/",
 										   "*anno", "net.wendal.nutzbook",
@@ -33,5 +36,5 @@ import net.wendal.nutzbook.mvc.ExpUrlMapping;
 @Localization(value="msg/", defaultLocalizationKey="zh-CN")
 @Views({BeetlViewMaker2.class,FreemarkerViewMaker.class, PdfViewMaker.class})
 @SessionBy(ShiroSessionProvider.class)
-@UrlMappingBy(ExpUrlMapping.class)
+@UrlMappingBy(ApidocUrlMapping.class)
 public class MainModule {}

@@ -20,7 +20,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 
 @Api(name="二维码生成", description="生成二维码")
 @IocBean

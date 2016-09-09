@@ -9,7 +9,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.util.Markdowns;

@@ -32,7 +32,7 @@ import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;

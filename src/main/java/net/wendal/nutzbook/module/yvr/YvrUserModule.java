@@ -40,7 +40,7 @@ import org.nutz.trans.Trans;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;

@@ -17,7 +17,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.util.Toolkit;

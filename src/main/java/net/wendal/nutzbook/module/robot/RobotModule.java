@@ -27,7 +27,7 @@ import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
-import net.wendal.nutzbook.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
