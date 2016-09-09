@@ -250,7 +250,7 @@ body {
 										<td v-if="display_okView">{{it.okView}}</td>
 										<td v-if="display_failView">{{it.failView}}</td>
 										<td v-if="display_filters">{{it.filters.join(' ')}}</td>
-										<td v-if="display_ops"><button class="btn btn-info" @click="showMethod(it)">调试</button></td>
+										<td v-if="display_ops"><button class="btn btn-info" @click="debugCall(it)">调试</button></td>
 									</tr>
 								</tbody>
 							</table>
@@ -261,6 +261,7 @@ body {
 						<div v-for="it in info.methods">
 							<div class="pull-left">
 								<h3>{{info.name}} - {{it.methodName}}</h3>
+								<button class="btn btn-info" @click="debugCall(it)">调试</button>
 							</div>
 							<div class="clearfix"></div>
 							<div v-for="path in it.paths">
@@ -365,7 +366,8 @@ body {
 							} else if (it.adaptorName == "org.nutz.mvc.upload.UploadAdaptor") {
 								bodyType = "Form";
 								headersType = "MultiPartForm";
-							} 
+							}
+							var scheme_name = location.protocol == "http:" ? "http" : "https";
 							var payload = {
 									   body: {
 									       bodyType: bodyType
@@ -388,7 +390,7 @@ body {
 									   uri: {
 									       "path": location.hostname + (location.port > 0 ? (":" + location.port) : "" ) + this.content_path + it.paths[0],
 									       "scheme": {
-									           "name": location.protocol,
+									           "name": scheme_name,
 									           "version": "V11"
 									       }
 									   }
