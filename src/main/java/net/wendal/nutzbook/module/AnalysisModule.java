@@ -18,11 +18,13 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
+
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.util.Toolkit;
 
-@Api(name="统计分析模块", description="聚合各种数据")
+@Api(name="统计分析模块", description="聚合各种数据", match=ApiMatchMode.NONE)
 @IocBean
 @At("/analysis")
 @Ok("json")

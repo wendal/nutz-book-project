@@ -17,8 +17,9 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Param;
 
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
 
-@Api(name="web钩子", description="例如github更新了代码,就触发一些操作")
+@Api(name="web钩子", description="例如github更新了代码,就触发一些操作", match=ApiMatchMode.NONE)
 @IocBean
 @At("/webhook")
 public class WebHookModule extends BaseModule {

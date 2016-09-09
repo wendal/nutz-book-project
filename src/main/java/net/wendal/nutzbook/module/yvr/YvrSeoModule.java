@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
+
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.util.Markdowns;
@@ -44,7 +46,7 @@ import com.rometools.rome.io.SyndFeedOutput;
  * @author wendal
  *
  */
-@Api(name="SEO模块", description="负责输出rss和sitemap等SEO相关的文件")
+@Api(name="SEO模块", description="负责输出rss和sitemap等SEO相关的文件", match=ApiMatchMode.NONE)
 @IocBean(create="init")
 @At("/yvr")
 @Fail("http:500")

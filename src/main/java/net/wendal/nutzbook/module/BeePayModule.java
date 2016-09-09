@@ -37,12 +37,14 @@ import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfStamper;
 
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
+
 import net.wendal.nutzbook.bean.BeePayment;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.Toolkit;
 
-@Api(name="支付服务", description="对接BeeCloud的支付服务,当前只对接了打赏")
+@Api(name="支付服务", description="对接BeeCloud的支付服务,当前只对接了打赏", match=ApiMatchMode.NONE)
 @IocBean
 @At("/pay/bc")
 public class BeePayModule extends BaseModule {

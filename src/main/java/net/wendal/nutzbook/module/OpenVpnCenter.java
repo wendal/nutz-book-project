@@ -24,11 +24,13 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
+
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.openvpn.OpenvpnClient;
 import net.wendal.nutzbook.util.Toolkit;
 
-@Api(name="OpenVPN管理", description="管理和分发OpenVPN配置文件")
+@Api(name="OpenVPN管理", description="管理和分发OpenVPN配置文件", match=ApiMatchMode.NONE)
 @IocBean(create="init")
 @At("/openvpn")
 @Fail("http:500")
