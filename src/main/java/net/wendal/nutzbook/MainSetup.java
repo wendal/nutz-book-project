@@ -77,6 +77,11 @@ public class MainSetup implements Setup {
 		RedisCache.DEBUG = true;
 
         Dao dao = ioc.get(Dao.class);
+        
+        // 为全部标注了@Table的bean建表
+        Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
+        Daos.migration(dao, Topic.class, true, false);
+        Daos.migration(dao, TopicReply.class, true, false);
 
 		JedisPool pool = ioc.get(JedisPool.class);
 		try (Jedis jedis = pool.getResource()) {
@@ -92,10 +97,6 @@ public class MainSetup implements Setup {
 		ioc.get(Configuration.class).setAutoImports(new NutMap().setv("p", "/ftl/pony/index.ftl").setv("s", "/ftl/spring.ftl"));
 		ioc.get(FreeMarkerConfigurer.class, "mapTags");
 
-		// 为全部标注了@Table的bean建表
-		Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
-		Daos.migration(dao, Topic.class, true, false);
-		Daos.migration(dao, TopicReply.class, true, false);
 		
 		// 迁移Topic和TopicReply的数据到BigContent
 		BigContentService bcs = ioc.get(BigContentService.class);
