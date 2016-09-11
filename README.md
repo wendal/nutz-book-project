@@ -23,6 +23,8 @@ Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
 请查阅[部署指南](INSTALL.md)
 
+Redis-Windows 下载地址 https://github.com/MSOpenTech/redis/releases
+
 ## 特色
 
 * 完善的发帖回帖机制,引导式发帖

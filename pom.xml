@@ -196,11 +196,6 @@
 			<artifactId>commons-dbutils</artifactId>
 			<version>1.6</version>
 		</dependency>
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>3.19.0-GA</version>
-		</dependency>
 		<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
 			<version>9.4-1201-jdbc41</version> </dependency> -->
 		<dependency>
@@ -320,11 +315,6 @@
 			<version>1.b.53</version>
 		</dependency>
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.2.7</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
@@ -343,11 +333,6 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
 			<version>2.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-compress</artifactId>
-			<version>1.10</version>
 		</dependency>
 		<!-- JBoss 9.X需要下面的依赖,是Druid导致的 -->
 		<!-- <dependency> -->
@@ -375,11 +360,6 @@
 					<artifactId>junit</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -436,11 +416,6 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-			<groupId>de.ruedigermoeller</groupId>
-			<artifactId>fst</artifactId>
-			<version>2.47</version>
-		</dependency>
-		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.8</version>
@@ -451,5 +426,5 @@
 			<version>1.r.58-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<version>2.9.0-SNAPSHOT</version>
+	<version>2.9.1</version>
 </project>
