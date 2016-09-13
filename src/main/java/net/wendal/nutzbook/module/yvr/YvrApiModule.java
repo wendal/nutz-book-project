@@ -37,6 +37,8 @@ import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.HttpStatusView;
 
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiParam;
+
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -119,6 +121,15 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.author.loginname 作者登陆名
 	 *
 	 */
+	@Api(name="帖子列表", description="按指定条件,分页获取帖子列表", author="wendal<wendal1985@gmail.com>",
+	        params={
+                    @ApiParam(name="tab", description="分类", defaultValue="ask", optional=true),
+                    @ApiParam(name="tag", description="标签", optional=true),
+	                @ApiParam(name="page", description="页数", defaultValue="1", optional=true),
+	                @ApiParam(name="search", description="查询条件", optional=true),
+	                @ApiParam(name="limit", description="每页的帖子数量", optional=true),
+	                @ApiParam(name="mdrender", description="是否渲染markdown", optional=true)
+	        })
 	@GET
 	@At
 	@Aop("redis")
@@ -206,6 +217,11 @@ public class YvrApiModule extends BaseModule {
 	 *
 	 * @apiError 404 The <code>id</code> of the Topic was not found.
 	 */
+	@Api(name="帖子详情", description="获取指定帖子的详细数据",
+	        params={
+	                @ApiParam(name="id", description="帖子的id"),
+	                @ApiParam(name="mdrender", description="是否渲染markdown", optional=true)
+	        })
 	@Aop("redis")
 	@GET
 	@At({"/topic/?", "/topic"})
@@ -251,6 +267,10 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} loginname		用户登陆名
 	 *
 	 */
+	@Api(name="测试accesstoken", description="测试访问凭证",
+	        params={
+	                @ApiParam(name="accesstoken", description="访问凭证,可以在用户个人主页找到")
+	        })
 	@At("/accesstoken")
 	@Aop("redis")
 	public Object checkAccessToken(@Param("accesstoken")String accesstoken) {
@@ -286,6 +306,10 @@ public class YvrApiModule extends BaseModule {
 	 * @apiError 404 The <code>id</code> of the User was not found.
 	 *
 	 */
+	@Api(name="用户信息", description="获取指定用户的详细信息,包括最近发帖/回帖记录等等",
+	        params={
+	                @ApiParam(name="loginname", description="用户登录名")
+	        })
 	@At({"/user/?", "/user"})
 	@GET
 	public Object user(@Param("loginname")String loginname) {

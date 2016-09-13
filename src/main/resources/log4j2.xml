@@ -17,6 +17,7 @@
     <Logger name="net.sf.ehcache.store.disk.Segment" level="info"/>
     <Logger name="com.corundumstudio.socketio" level="info"/>
     <Logger name="org.apache.shiro.mgt.DefaultSecurityManager" level="info"/>
+    <Logger name="org.apache.shiro.session.mgt.DefaultSessionManager" level="info"/>
     <Logger name="org.apache.shiro.web.servlet.SimpleCookie" level="info"/>
     <Logger name="org.apache.log4j.xml" level="debug"/>
     <Logger name="org.eclipse.jetty" level="info"/>
