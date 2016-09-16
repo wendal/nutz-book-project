@@ -240,6 +240,51 @@ $(function() {
   var s = document.getElementsByTagName("script")[0]; 
   s.parentNode.insertBefore(hm, s);
 });
+<!--#if (null != obj.current_user!){ #-->
+var ws;
+$(function(){
+	if (!Notification) {
+		return;
+	}
+	if (console)
+	    console.info(Notification.permission);
+	if (Notification.permission == "denied") {
+		return;
+	}
+	if (Notification.permission !== "granted") {
+		Notification.requestPermission();
+	}
+	if (Notification.permission !== "granted") {
+		return;
+	}
+	try {
+		var WS_URL = window.location.host+"${base}/websocket"
+		if (location.protocol == 'http:') {
+			ws = new WebSocket("ws://"+WS_URL);
+		} else {
+			ws = new WebSocket("wss://"+WS_URL);
+		}
+		
+		ws.onmessage = function(event) {
+		    var re = JSON.parse(event.data);
+		    if (re.action == "notify") {
+			    var n = new Notification(re.data, re.options);
+				n.onclick = function() {
+					location.reload();
+				};
+		    } else if (re.action == "layer") {
+		    	
+		    }
+		};
+		ws.onopen = function(event) {
+			ws.send(JSON.stringify({room:'${null == obj.topic.id! ? "home" : "topic:"+obj.topic.id}',"action":"join"}));
+		};
+	} catch (ex) {
+		if (console)
+		    console.info(ex);
+	}
+});
+<!--#} #-->
 </script>
 </body>
 </html>

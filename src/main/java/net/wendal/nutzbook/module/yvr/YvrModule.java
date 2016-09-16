@@ -362,12 +362,6 @@ public class YvrModule extends BaseModule {
 		extras.put("action", "open_topic");
 		pushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
 	}
-	
-    @Ok("json")
-    @At("/t/?/check")
-    public Object check(String topicId, @Param("replies") int replies) {
-        return yvrService.check(topicId, replies);
-    }
 
 	public void init() {
 		log.debug("Image Dir = " + imageDir);

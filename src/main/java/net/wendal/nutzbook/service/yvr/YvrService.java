@@ -27,6 +27,8 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.json.Json;
+import org.nutz.json.JsonFormat;
 import org.nutz.lang.Files;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
@@ -48,6 +50,7 @@ import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.util.RedisKey;
 import net.wendal.nutzbook.util.Toolkit;
+import net.wendal.nutzbook.websocket.NutzbookWebsocket;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
@@ -161,6 +164,7 @@ public class YvrService implements RedisKey {
 		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
 			return _fail("相同标题已经发过了");
 		}
+		String oldTitle = topic.getTitle().trim();
 		topic.setTitle(Strings.escapeHtml(topic.getTitle().trim()));
 		topic.setUserId(userId);
 		topic.setTop(false);
@@ -190,7 +194,7 @@ public class YvrService implements RedisKey {
 			for (Integer watcherId : globalWatcherIds) {
 			    if (watcherId != userId)
 				pushUser(watcherId,
-						"新帖:" + StringEscapeUtils.unescapeHtml(topic.getTitle()),
+						"新帖:" + oldTitle,
 						topic.getId(),
 						replyAuthorName,
 						topic.getTitle(),
@@ -199,6 +203,7 @@ public class YvrService implements RedisKey {
 		}
         pipe.sync();
 		updateTopicTypeCount();
+        notifyWebSocket("home", "新帖:" + oldTitle, topic.getId());
 		return _ok(topic.getId());
 	}
 
@@ -246,7 +251,8 @@ public class YvrService implements RedisKey {
 		pipe.sync();
 		
 		notifyUsers(topic, reply, cnt, userId);
-		
+
+        notifyWebSocket("topic:"+topic.getId(), "有新回复: " + topic.getTitle(), topic.getId());
 		return _ok(reply.getId());
 	}
 	
@@ -509,25 +515,15 @@ public class YvrService implements RedisKey {
 			tt.count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 		}
 	}
-
+    
     @Aop("redis")
-	public Object check(String topicId, int replies) {
-        Topic topic = dao.fetch(Topic.class, topicId);
-        if (topic == null)
-            return "";
-        Double reply_count = jedis().zscore(RKEY_REPLY_COUNT, topicId);
-        if (reply_count == null)
-            reply_count = Double.valueOf(0);
-        if (reply_count.intValue() == replies) {
-            return "";
-        }
-        String replyId = jedis().hget(RKEY_REPLY_LAST, topicId);
-        TopicReply reply = dao.fetch(TopicReply.class, replyId);
-        dao.fetchLinks(reply, null);
-
-        NutMap re = new NutMap().setv("count", reply_count.intValue());
-        re.put("data", reply.getAuthor().getNickname() + " 回复了帖子:" + topic.getTitle());
-        re.put("options", new NutMap().setv("tag", topicId));
-        return re;
+    protected void notifyWebSocket(String room, Object data, String tag) {
+        NutMap map = new NutMap();
+        map.put("action", "notify");
+        map.put("data", data);
+        map.put("options", new NutMap().setv("tag", tag));
+        String msg = Json.toJson(map, JsonFormat.compact());
+        log.debugf("publish channel=%s msg=%s", NutzbookWebsocket.prefix+room, msg);
+        jedis().publish(NutzbookWebsocket.prefix+room, msg);
     }
 }
