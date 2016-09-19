@@ -23,6 +23,7 @@ import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Each;
+import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
 import org.nutz.lang.Streams;
 import org.nutz.mvc.annotation.At;
@@ -138,7 +139,7 @@ public class YvrSeoModule extends BaseModule {
 		InputStream ins = getClass().getClassLoader().getResourceAsStream(path);
 		if (ins == null)
 			return HTTP_404;
-		String cnt = Streams.readAndClose(new InputStreamReader(ins));
+		String cnt = Streams.readAndClose(new InputStreamReader(ins, Encoding.CHARSET_UTF8));
 		String[] tmp = cnt.split("\n", 2);
 		String title = tmp[0].trim().split(" ", 2)[1].trim();
 		return _map("title", title, "cnt", cnt, "current_user", fetch_userprofile(Toolkit.uid()));
