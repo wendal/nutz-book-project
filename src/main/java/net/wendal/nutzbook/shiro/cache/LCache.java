@@ -8,11 +8,15 @@ import java.util.Set;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 public class LCache<K, V> implements Cache<K, V> {
+    
+    private static final Log log = Logs.get();
 
     protected List<Cache<K, V>> list = new ArrayList<>();
 
@@ -46,14 +50,9 @@ public class LCache<K, V> implements Cache<K, V> {
     }
 
     public V remove(K key) throws CacheException {
-        _remove(key);
-        fire(genKey(key));
-        return null;
-    }
-
-    public V _remove(K key) throws CacheException {
         for (Cache<K, V> cache : list)
             cache.remove(key);
+        fire(genKey(key));
         return null;
     }
 
@@ -97,7 +96,9 @@ public class LCache<K, V> implements Cache<K, V> {
         if (pool != null) {
             try (Jedis jedis = pool.getResource()) {
                 String channel = (LCacheManager.PREFIX + name);
-                jedis.publish(channel, LCacheManager.me().id + ":" + key);
+                String msg = LCacheManager.me().id + ":" + key;
+                log.debugf("fire channel=%s msg=%s", channel, msg);
+                jedis.publish(channel, msg);
             }
             catch (Exception e) {}
         }

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.shiro.cache;
 
+import org.apache.shiro.cache.Cache;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
@@ -11,12 +12,12 @@ public class CachePubSub extends JedisPubSub {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void onPMessage(String pattern, String channel, String message) {
+        log.debugf("channel=%s, msg=%s", channel, message);
         if (message.startsWith(LCacheManager.me.id))
             return;
-        log.debugf("channel=%s, msg=%s", channel, message);
         String cacheName = channel.substring(LCacheManager.PREFIX.length());
         LCache cache = LCacheManager.me.caches.get(cacheName);
         if (cache != null)
-            cache._remove(message.substring(LCacheManager.me.id.length() + 1));
+            ((Cache) cache.list.get(0)).remove(message.substring(LCacheManager.me.id.length() + 1));
     }
 }
