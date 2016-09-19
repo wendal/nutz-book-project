@@ -27,8 +27,9 @@ var ioc = {
 			type : "org.nutz.dao.impl.NutDao",
 			args : [{refer:"dataSource"}],
 			fields : {
-				executor : {refer: "cacheExecutor"},
-				runner : {refer: "daoRunner"}
+				//executor : {refer: "cacheExecutor"},
+				runner : {refer: "daoRunner"},
+				interceptors : [{refer:"cacheExecutor"}, "log", "time"]
 			}
 		},
 		daoRunner : {
@@ -38,7 +39,8 @@ var ioc = {
 			}
 		},
 		cacheExecutor : {
-			type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
+			type : "org.nutz.plugins.cache.dao.DaoCacheInterceptor",
+			//type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
 			//type : "net.wendal.nutzbook.util.MasterSlaveDaoExecutor",
 			fields : {
 				cacheProvider : {refer:"cacheProvider"},
