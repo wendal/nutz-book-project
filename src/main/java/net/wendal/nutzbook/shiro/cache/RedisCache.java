@@ -11,28 +11,26 @@ import java.util.Set;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-@IocBean(singleton=false)
 @SuppressWarnings("unchecked")
 public class RedisCache<K, V> implements Cache<K, V> {
-    
+
     private static final Log log = Logs.get();
-    
+
     public static boolean DEBUG = false;
-    
+
     private String name;
     private byte[] nameByteArray;
-    
+
     protected JedisPool _pool() {
-        return RedisCacheManager.pool;
+        return LCacheManager.me.pool;
     }
-    
+
     public RedisCache<K, V> setName(String name) {
         this.name = name;
         this.nameByteArray = name.getBytes();
@@ -44,7 +42,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
         if (DEBUG)
             log.debugf("GET name=%s key=%s", name, key);
         try (Jedis jedis = _pool().getResource()) {
-            byte[] buf = jedis.hget(nameByteArray, key.toString().getBytes());
+            byte[] buf = jedis.hget(nameByteArray, genKey(key));
             if (buf == null)
                 return null;
             return (V) toObject(buf);
@@ -55,10 +53,8 @@ public class RedisCache<K, V> implements Cache<K, V> {
     public V put(K key, V value) throws CacheException {
         if (DEBUG)
             log.debugf("SET name=%s key=%s", name, key);
-        // TODO 应使用pipeline
-        //V prev = get(key);
         try (Jedis jedis = _pool().getResource()) {
-            jedis.hset(nameByteArray, key.toString().getBytes(), toByteArray(value));
+            jedis.hset(nameByteArray, genKey(key), toByteArray(value));
             return null;
         }
     }
@@ -68,9 +64,9 @@ public class RedisCache<K, V> implements Cache<K, V> {
         if (DEBUG)
             log.debugf("DEL name=%s key=%s", name, key);
         // TODO 应使用pipeline
-        //V prev = get(key);
+        // V prev = get(key);
         try (Jedis jedis = _pool().getResource()) {
-            jedis.hdel(nameByteArray, key.toString().getBytes());
+            jedis.hdel(nameByteArray, genKey(key));
             return null;
         }
     }
@@ -108,10 +104,14 @@ public class RedisCache<K, V> implements Cache<K, V> {
             List<byte[]> vals = jedis.hvals(nameByteArray);
             List<V> list = new ArrayList<>();
             for (byte[] buf : vals) {
-                list.add((V)toObject(buf));
+                list.add((V) toObject(buf));
             }
             return list;
         }
+    }
+
+    protected byte[] genKey(Object key) {
+        return key.toString().getBytes();
     }
 
     public static final byte[] toByteArray(Object obj) {
@@ -128,7 +128,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
             return null;
         }
     }
-    
+
     public static final Object toObject(byte[] buf) {
         try {
             ByteArrayInputStream ins = new ByteArrayInputStream(buf);

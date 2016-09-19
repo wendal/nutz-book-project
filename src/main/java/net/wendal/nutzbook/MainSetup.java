@@ -44,8 +44,8 @@ import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.service.yvr.YvrService;
+import net.wendal.nutzbook.shiro.cache.LCacheManager;
 import net.wendal.nutzbook.shiro.cache.RedisCache;
-import net.wendal.nutzbook.shiro.cache.RedisCacheManager;
 import net.wendal.nutzbook.util.Markdowns;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -73,7 +73,7 @@ public class MainSetup implements Setup {
 		Ioc ioc = nc.getIoc();
 
 		// 初始化RedisCacheManager
-		RedisCacheManager.pool = ioc.get(JedisPool.class);
+		LCacheManager.me().setupJedisPool(ioc.get(JedisPool.class));
 		RedisCache.DEBUG = true;
 
         Dao dao = ioc.get(Dao.class);

@@ -9,14 +9,25 @@ import java.util.Set;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-public class ComboCache<K, V> implements Cache<K, V> {
-    
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+public class LCache<K, V> implements Cache<K, V> {
+
     protected List<Cache<K, V>> list = new ArrayList<>();
+
+    protected String name;
+
+    protected JedisPool pool;
+
+    public LCache(String name) {
+        this.name = name;
+    }
 
     public void add(Cache<K, V> cache) {
         list.add(cache);
     }
-    
+
     public V get(K key) throws CacheException {
         for (Cache<K, V> cache : list) {
             V v = cache.get(key);
@@ -28,24 +39,22 @@ public class ComboCache<K, V> implements Cache<K, V> {
 
     @Override
     public V put(K key, V value) throws CacheException {
-        V v = null;
-        for (Cache<K, V> cache : list) {
-            V tmp = cache.put(key, value);
-            if (v == null)
-                v = tmp;
-        }
-        return v;
+        for (Cache<K, V> cache : list)
+            cache.put(key, value);
+        fire(genKey(key));
+        return null;
     }
 
-    @Override
     public V remove(K key) throws CacheException {
-        V v = null;
-        for (Cache<K, V> cache : list) {
-            V tmp = cache.remove(key);
-            if (v == null)
-                v = tmp;
-        }
-        return v;
+        _remove(key);
+        fire(genKey(key));
+        return null;
+    }
+
+    public V _remove(K key) throws CacheException {
+        for (Cache<K, V> cache : list)
+            cache.remove(key);
+        return null;
     }
 
     @Override
@@ -63,7 +72,7 @@ public class ComboCache<K, V> implements Cache<K, V> {
     @Override
     public Set<K> keys() {
         Set<K> keys = new HashSet<>();
-        for (Cache<K,V> cache : list) {
+        for (Cache<K, V> cache : list) {
             keys.addAll(cache.keys());
         }
         return keys;
@@ -72,10 +81,25 @@ public class ComboCache<K, V> implements Cache<K, V> {
     @Override
     public Collection<V> values() {
         Set<V> values = new HashSet<>();
-        for (Cache<K,V> cache : list) {
+        for (Cache<K, V> cache : list) {
             values.addAll(cache.values());
         }
         return values;
     }
 
+    public String genKey(K k) {
+        return k.toString();
+    }
+
+    public void fire(String key) {
+        if (pool == null)
+            pool = LCacheManager.me.pool;
+        if (pool != null) {
+            try (Jedis jedis = pool.getResource()) {
+                String channel = (LCacheManager.PREFIX + name);
+                jedis.publish(channel, LCacheManager.me().id + ":" + key);
+            }
+            catch (Exception e) {}
+        }
+    }
 }
