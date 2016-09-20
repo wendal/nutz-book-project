@@ -172,15 +172,6 @@ public class MainSetup implements Setup {
 		ioc.get(YvrService.class).updateTopicTypeCount();
 		
 		Mvcs.disableFastClassInvoker = false;
-		
-        // 初始化Dubbo服务
-        
-//        try {
-//            ioc.get(DubboManager.class);
-//        }
-//        catch (Exception e) {
-//            log.debug("dubbo error", e);
-//        }
 	}
 
 	public void destroy(NutConfig conf) {
@@ -218,7 +209,7 @@ public class MainSetup implements Setup {
                 mbeanServer.unregisterMBean(objectName);
         } catch (Exception ex) {
         }
-		PdfView.setDefaultFontData(new byte[1024*1024*256]);
-		//ProtocolConfig.destroyAll();
+		
+        LCacheManager.me().depose();
 	}
 }

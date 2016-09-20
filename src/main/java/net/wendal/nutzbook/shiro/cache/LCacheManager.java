@@ -16,6 +16,8 @@ import redis.clients.jedis.JedisPool;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class LCacheManager implements CacheManager, Initializable, Destroyable {
 
+    public static String PREFIX = "LCache:";
+    
     protected String id = R.UU32();
 
     protected CacheManager level1;
@@ -23,7 +25,6 @@ public class LCacheManager implements CacheManager, Initializable, Destroyable {
 
     protected JedisPool pool;
     protected CachePubSub pubSub = new CachePubSub();
-    public static String PREFIX = "LCache:";
     protected Map<String, LCache> caches = new HashMap<>();
 
     protected static LCacheManager me;
@@ -39,7 +40,6 @@ public class LCacheManager implements CacheManager, Initializable, Destroyable {
     public void setupJedisPool(JedisPool pool) {
         this.pool = pool;
         new Thread(() -> pool.getResource().psubscribe(pubSub, PREFIX + "*")).start();
-        ;
     }
 
     public void depose() {
