@@ -37,7 +37,6 @@ import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Toolkit;
 
@@ -47,9 +46,6 @@ import net.wendal.nutzbook.util.Toolkit;
 public class OauthModule extends BaseModule {
 	
 	private static final Log log = Logs.get();
-	
-	@Inject
-	protected UserService userService;
 	
 	@Inject
 	protected SysLogService sysLogService;

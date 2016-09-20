@@ -3,9 +3,9 @@ package net.wendal.nutzbook.module.admin;
 import javax.servlet.http.HttpServletRequest;
 
 import net.wendal.nutzbook.bean.User;
+import net.wendal.nutzbook.module.BaseModule;
 import net.wendal.nutzbook.page.Pagination;
 import net.wendal.nutzbook.service.RoleService;
-import net.wendal.nutzbook.service.UserService;
 
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,13 +20,10 @@ import org.nutz.mvc.annotation.Param;
 
 @At("/admin/user")
 @IocBean
-public class AdminUserModule {
+public class AdminUserModule extends BaseModule {
 
 	@Inject
 	private RoleService roleService;
-
-	@Inject
-	private UserService userService;
 
 	@At
 	@Ok("fm:templates.admin.user.list")

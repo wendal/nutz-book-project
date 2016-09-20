@@ -58,7 +58,6 @@ import net.wendal.nutzbook.mvc.CsrfActionFilter;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.PushService;
 import net.wendal.nutzbook.service.RedisDao;
-import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
 import net.wendal.nutzbook.util.Toolkit;
@@ -72,9 +71,6 @@ import redis.clients.jedis.Response;
 public class YvrModule extends BaseModule {
 
 	private static final Log log = Logs.get();
-
-	@Inject
-	protected UserService userService;
 
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
@@ -327,7 +323,7 @@ public class YvrModule extends BaseModule {
 	public Object search(@Param("q") String keys, @Param("format")String format) throws Exception {
 	    if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
-		List<LuceneSearchResult> results = topicSearchService.search(keys, false, "json".equals(format) ? 5 : 30);
+		List<LuceneSearchResult> results = topicSearchService.search(keys, "json".equals(format) ? 5 : 30);
         List<Topic> list = new ArrayList<Topic>();
 		for (LuceneSearchResult result : results) {
 			Topic topic = dao.fetch(Topic.class, result.getId());

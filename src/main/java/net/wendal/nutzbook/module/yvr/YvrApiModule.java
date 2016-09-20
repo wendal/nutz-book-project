@@ -151,7 +151,7 @@ public class YvrApiModule extends BaseModule {
 			topics = redisDao.queryByZset(Topic.class, RKEY_TOPIC_TAG_UPDATE + type, pager);
 		} else if (!Strings.isBlank(search)) {
 			try {
-				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), false, 30);
+				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), 30);
 				for (LuceneSearchResult result : results) {
 					Topic topic = dao.fetch(Topic.class, result.getId());
 					if (topic == null)
@@ -331,7 +331,7 @@ public class YvrApiModule extends BaseModule {
 				"recent_replies", recent_replies,
 				"create_at", _time(user.getCreateTime()),
 				"create_at_forread", _time_forread(user.getCreateTime()),
-				"score", yvrService.getUserScore(user.getId())));
+				"score", userService.getUserScore(user.getId())));
 	}
 
 	/**
@@ -555,7 +555,7 @@ public class YvrApiModule extends BaseModule {
 		tp.put("create_at_forread", _time_forread(topic.getCreateTime()));
 		UserProfile profile = topic.getAuthor();
 		if (profile != null) {
-			profile.setScore(yvrService.getUserScore(topic.getUserId()));
+			profile.setScore(userService.getUserScore(topic.getUserId()));
 		}
 		tp.put("author", _author(profile));
 		return tp;

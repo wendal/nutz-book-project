@@ -25,7 +25,6 @@ import org.nutz.plugins.view.freemarker.FreemarkerView;
 
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
 /**
@@ -41,9 +40,6 @@ public class AdminLoginModule extends BaseModule {
 
 	@Inject
 	protected FreeMarkerConfigurer freeMarkerConfigurer;
-	
-	@Inject
-	protected UserService userService;
 
 	@At
 	@Filters(@By(type = AuthenticationFilter.class))

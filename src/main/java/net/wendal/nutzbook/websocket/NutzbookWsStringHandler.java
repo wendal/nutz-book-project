@@ -25,13 +25,16 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     
     protected Set<String> rooms;
     
+    protected String uu32;
+    
     private static final Log log = Logs.get();
     
-    public NutzbookWsStringHandler(Session session, JedisPool jedisPool) {
+    public NutzbookWsStringHandler(String uu32, Session session, JedisPool jedisPool) {
         this.jedisPool = jedisPool;
         this.session = session;
         attrs = new NutMap();
         rooms = new HashSet<>();
+        this.uu32 = uu32;
     }
 
     public void onMessage(String message) {
@@ -58,20 +61,20 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     
     public void join(String room) {
         if (!Strings.isBlank(room)) {
-            log.debugf("session(id=%s) join room(name=%s)", session.getId(), room);
+            log.debugf("session(id=%s) join room(name=%s)", uu32, room);
             try (Jedis jedis = jedisPool.getResource()) {
                 rooms.add(room);
-                jedis.hset(NutzbookWebsocket.prefix+room, session.getId(), "");
+                jedis.hset(NutzbookWebsocket.prefix+room, uu32, "");
             }
         }
     }
     
     public void left(String room) {
         if (!Strings.isBlank(room)) {
-            log.debugf("session(id=%s) left room(name=%s)", session.getId(), room);
+            log.debugf("session(id=%s) left room(name=%s)", uu32, room);
             try (Jedis jedis = jedisPool.getResource()) {
                 rooms.add(room);
-                jedis.hdel(NutzbookWebsocket.prefix+room, session.getId());
+                jedis.hdel(NutzbookWebsocket.prefix+room, uu32);
             }
         }
     }
@@ -88,14 +91,14 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     public Object getAttr(String key) {
         return this.attrs.get(key);
     }
-    
-    public String getId() {
-        return session.getId();
-    }
 
     public void depose() {
         for (String room : rooms) {
             left(room);
         }
+    }
+    
+    public String getUu32() {
+        return uu32;
     }
 }

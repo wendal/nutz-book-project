@@ -20,6 +20,7 @@ import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.service.EmailService;
 import net.wendal.nutzbook.service.UserMessageService;
+import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.RedisKey;
 
@@ -46,6 +47,9 @@ public abstract class BaseModule implements RedisKey {
 	@Inject("java:$conf.get('website.title')")
 	public String websiteTitle;
 	
+	@Inject
+	protected UserService userService;
+	
 	protected QueryResult query(Class<?> klass, Condition cnd, Pager pager, String regex) {
 		if (pager != null && pager.getPageNumber() < 1) {
 			pager.setPageNumber(1);
@@ -69,7 +73,7 @@ public abstract class BaseModule implements RedisKey {
 	public UserProfile fetch_userprofile(int userId) {
 		UserProfile profile = dao.fetch(UserProfile.class, userId);
 		if (profile != null)
-			profile.setScore(yvrService.getUserScore(profile.getUserId()));
+			profile.setScore(userService.getUserScore(profile.getUserId()));
 		return profile;
 	}
 	

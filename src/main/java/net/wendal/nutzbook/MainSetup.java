@@ -27,7 +27,6 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
-import org.nutz.plugins.view.pdf.PdfView;
 import org.quartz.Scheduler;
 
 import freemarker.template.Configuration;

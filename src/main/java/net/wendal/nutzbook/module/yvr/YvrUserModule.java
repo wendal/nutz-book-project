@@ -14,7 +14,6 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.http.Http;
 import org.nutz.http.Response;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
@@ -35,17 +34,16 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.trans.Atom;
 import org.nutz.trans.Trans;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Api(name="论坛用户管理", description="注册, 修改头像,邮箱激活,用户详情页等信息")
@@ -60,9 +58,6 @@ public class YvrUserModule extends BaseModule {
 	protected static HttpStatusView HTTP_304 = new HttpStatusView(304);
 	
 	protected Cache avatarCache;
-	
-	@Inject
-	protected UserService userService;
 	
 	@Ok("beetl:yvr/user/user_index.html")
 	@RequiresUser
@@ -88,7 +83,7 @@ public class YvrUserModule extends BaseModule {
 		re.put("c_user", profile);
 		if (userId > 0) {
 			UserProfile me = fetch_userprofile(userId);
-			me.setScore(yvrService.getUserScore(userId));
+			me.setScore(userService.getUserScore(userId));
 			re.put("current_user", me);
 			// 显示accessToken二维码
 			if (me.getUserId() == user.getId()) {

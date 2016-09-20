@@ -48,6 +48,8 @@ import net.wendal.nutzbook.bean.yvr.TopicTag;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.PushService;
+import net.wendal.nutzbook.service.pubsub.PubSub;
+import net.wendal.nutzbook.service.pubsub.PubSubService;
 import net.wendal.nutzbook.util.RedisKey;
 import net.wendal.nutzbook.util.Toolkit;
 import net.wendal.nutzbook.websocket.NutzbookWebsocket;
@@ -55,7 +57,7 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 
 @IocBean(create="init")
-public class YvrService implements RedisKey {
+public class YvrService implements RedisKey, PubSub {
 	
 	private static final Log log = Logs.get();
 
@@ -67,6 +69,9 @@ public class YvrService implements RedisKey {
 	
 	@Inject
 	protected PushService pushService;
+	
+	@Inject
+	protected PubSubService pubSubService;
 	
 	@Inject
 	protected BigContentService bigContentService;
@@ -172,15 +177,9 @@ public class YvrService implements RedisKey {
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		topic.setContent(Toolkit.filteContent(topic.getContent()));
-		String oldContent = topic.getContent();
 		topic.setContentId(bigContentService.put(topic.getContent()));
 		topic.setContent(null);
 		dao.insert(topic);
-		try {
-			topic.setContent(oldContent);
-			topicSearchService.add(topic);
-		} catch (Exception e) {
-		}
 		// 如果是ask类型,把帖子加入到 "未回复"列表
 		Pipeline pipe = jedis().pipelined();
 		if (TopicType.ask.equals(topic.getType())) {
@@ -202,7 +201,7 @@ public class YvrService implements RedisKey {
 			}
 		}
         pipe.sync();
-		updateTopicTypeCount();
+        pubSubService.fire("ps:topic:add", topic.getId());
         notifyWebSocket("home", "新帖:" + oldTitle, topic.getId());
 		return _ok(topic.getId());
 	}
@@ -228,8 +227,6 @@ public class YvrService implements RedisKey {
 		reply.setContentId(bigContentService.put(reply.getContent()));
 		reply.setContent(null);
 		dao.insert(reply);
-		// 更新索引
-		topicSearchService.add(topic);
 		// 更新topic的时间戳
 		Pipeline pipe = jedis().pipelined();
 		if (topic.isTop()) {
@@ -251,8 +248,8 @@ public class YvrService implements RedisKey {
 		pipe.sync();
 		
 		notifyUsers(topic, reply, cnt, userId);
-
-        notifyWebSocket("topic:"+topic.getId(), "有新回复: " + topic.getTitle(), topic.getId());
+        pubSubService.fire("ps:topic:reply", topic.getId());
+        notifyWebSocket("topic:"+topic.getId(), "新回复: " + topic.getTitle(), topic.getId());
 		return _ok(reply.getId());
 	}
 	
@@ -356,16 +353,6 @@ public class YvrService implements RedisKey {
 			}
 		}
 		return recent_replies;
-	}
-	
-	@Aop("redis")
-	public int getUserScore(int userId) {
-		Double score = jedis().zscore(RKEY_USER_SCORE, ""+userId);
-		if (score == null) {
-			return 0;
-		} else {
-			return score.intValue();
-		}
 	}
 	
 	public NutMap upload(TempFile tmp, int userId) throws IOException {
@@ -516,14 +503,28 @@ public class YvrService implements RedisKey {
 		}
 	}
     
-    @Aop("redis")
     protected void notifyWebSocket(String room, Object data, String tag) {
         NutMap map = new NutMap();
         map.put("action", "notify");
         map.put("data", data);
         map.put("options", new NutMap().setv("tag", tag));
         String msg = Json.toJson(map, JsonFormat.compact());
-        log.debugf("publish channel=%s msg=%s", NutzbookWebsocket.prefix+room, msg);
-        jedis().publish(NutzbookWebsocket.prefix+room, msg);
+        pubSubService.fire(NutzbookWebsocket.prefix+room, msg);
+    }
+    
+    @Override
+    public void onMessage(String channel, String message) {
+        switch (channel) {
+        // TODO 数据库集群的delay会导致
+        case "ps:topic:add":
+            updateTopicTypeCount();
+            topicSearchService.add(dao.fetch(Topic.class, message));
+            break;
+        case "ps:topic:reply":
+            topicSearchService.add(dao.fetch(Topic.class, message));
+            break;
+        default:
+            break;
+        }
     }
 }

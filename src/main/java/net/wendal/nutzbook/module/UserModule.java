@@ -12,7 +12,6 @@ import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.ioc.aop.Aop;
-import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -28,7 +27,6 @@ import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Api(name="用户管理", description="传说中的增删改查")
@@ -38,8 +36,6 @@ import net.wendal.nutzbook.util.Toolkit;
 @Fail("http:500") // 抛出异常的话,就走500页面
 @SLog(tag="用户管理", msg="")
 public class UserModule extends BaseModule {
-	
-	@Inject protected UserService userService;
 	
 	@At
 	public int count() { // 统计用户数的方法,算是个测试点

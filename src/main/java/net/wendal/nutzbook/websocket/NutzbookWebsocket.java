@@ -14,57 +14,46 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.nutz.ioc.Ioc;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
+import net.wendal.nutzbook.service.pubsub.PubSub;
+import net.wendal.nutzbook.service.pubsub.PubSubService;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPubSub;
 
 @ServerEndpoint(value = "/websocket", configurator=NutIocWebSocketConfigurator.class)
 @IocBean(create="init", depose="depose")
-public class NutzbookWebsocket extends Endpoint {
+public class NutzbookWebsocket extends Endpoint implements PubSub {
     
-    @Inject("refer:$ioc")
-    protected Ioc ioc;
+    // WebSocketSession只对当前JVM是唯一的
+    /** UU32 --> WebSocketSession*/
+    protected ConcurrentHashMap<String, NutzbookWsStringHandler> _sessions = new ConcurrentHashMap<>();
+    /** WebSocketSession.id --> UU32 */
+    protected ConcurrentHashMap<String, String> sessionIds = new ConcurrentHashMap<String, String>();
     
-    protected ConcurrentHashMap<String, NutzbookWsStringHandler> sessions = new ConcurrentHashMap<>();
+    @Inject
+    protected PubSubService pubSubService;
     
     @Inject
     protected JedisPool jedisPool;
-    
-    protected JedisPubSub listener;
     
     public static String prefix = "wsroom:";
     
     protected static final Log log = Logs.get();
     
     public void init() {
-        listener = new JedisPubSub() {
-            public void onPMessage(String patten, String channel, String message) {
-                log.debugf("channel=%s, message=%s", channel, message);
-                onPublishMessage(channel, message);
-            }
-        };
-        new Thread(){
-            public void run() {
-                jedisPool.getResource().psubscribe(listener, prefix+"*");
-            };
-        }.start();
-    }
-    
-    public void depose() {
-        if (listener != null)
-            listener.punsubscribe(prefix+"*");
+        pubSubService.reg(prefix+"*", this);
     }
     
     @Aop("redis")
-    public void onPublishMessage(String channel, String message) {
-        for(String id : jedis().hkeys(channel)) {
-            NutzbookWsStringHandler handler = sessions.get(id);
+    public void onMessage(String channel, String message) {
+        for(String uu32 : jedis().hkeys(channel)) {
+            log.debug("uu32 == " + uu32);
+            NutzbookWsStringHandler handler = _sessions.get(uu32);
             if (handler == null)
                 continue;
             Session session = handler.getSession();
@@ -77,7 +66,10 @@ public class NutzbookWebsocket extends Endpoint {
     
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
-        NutzbookWsStringHandler handler = sessions.remove(session.getId());
+        String uu32 = sessionIds.remove(session.getId());
+        if (uu32 == null)
+            return;
+        NutzbookWsStringHandler handler = _sessions.remove(uu32);
         if (handler != null)
             handler.depose();
     }
@@ -89,13 +81,28 @@ public class NutzbookWebsocket extends Endpoint {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        NutzbookWsStringHandler handler = new NutzbookWsStringHandler(session, jedisPool);
+        String uu32 = R.UU32();
+        NutzbookWsStringHandler handler = new NutzbookWsStringHandler(uu32, session, jedisPool);
         session.addMessageHandler(handler);
-        sessions.put(session.getId(), handler);
+        sessionIds.put(session.getId(), uu32);
+        _sessions.put(uu32, handler);
     }
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        sessions.get(session.getId()).onMessage(message);
+        NutzbookWsStringHandler handler = getHandler(session.getId());
+        if (handler != null)
+            handler.onMessage(message);
+    }
+    
+    protected NutzbookWsStringHandler getHandler(String sessionId) {
+        String uu32 = sessionIds.get(sessionId);
+        if (uu32 == null)
+            return null;
+        return _sessions.get(uu32);
+    }
+    
+    public void depose() {
+        
     }
 }

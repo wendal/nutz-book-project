@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ansj.lucene4.AnsjAnalysis;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -20,13 +19,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.vectorhighlight.BaseFragmentsBuilder;
-import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
-import org.apache.lucene.search.vectorhighlight.FieldQuery;
-import org.apache.lucene.search.vectorhighlight.FragListBuilder;
-import org.apache.lucene.search.vectorhighlight.FragmentsBuilder;
-import org.apache.lucene.search.vectorhighlight.ScoreOrderFragmentsBuilder;
-import org.apache.lucene.search.vectorhighlight.SimpleFragListBuilder;
 import org.apache.lucene.util.Version;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Dao;
@@ -62,6 +54,12 @@ public class TopicSearchService {
 
 	@Async
 	public void add(Topic topic) {
+	    if (topic == null) {
+	        // TODO 数据库延迟?
+	        return;
+	    }
+	    if (topic.getContent() == null)
+	        bigContentService.fill(topic);
 	    _add(topic);
 	}
 	protected void _add(Topic topic) {
@@ -116,7 +114,7 @@ public class TopicSearchService {
 		            continue;
 		        bigContentService.fill(reply);
                 if (reply.getContent() != null) {
-                    if (sb.length()+reply.getContent().length() > (IndexWriter.MAX_TERM_LENGTH/3)) {
+                    if (sb.length()+reply.getContent().length() > (IndexWriter.MAX_TERM_LENGTH/4)) {
                         break;
                     }
                     sb.append(reply.getContent());
@@ -157,53 +155,39 @@ public class TopicSearchService {
 		luceneIndex.writer.commit();
 	}
 	
-	Map<String,Float> boosts = new HashMap<>();
-	{
-	    boosts.put("title", 5.0f);
-	    boosts.put("content", 3.0f);
-	    boosts.put("reply", 2.0f);
-	}
+
+    Map<String, Float> boosts = new HashMap<>();
+    {
+        boosts.put("title", 5.0f);
+        boosts.put("content", 3.0f);
+        boosts.put("reply", 2.0f);
+    }
     String[] fields = boosts.keySet().toArray(new String[boosts.size()]);
-	public List<LuceneSearchResult> search(String keyword, boolean highlight, int size) throws IOException, ParseException {
-		IndexReader reader = luceneIndex.reader();
-		try {
-			IndexSearcher searcher = new IndexSearcher(reader);
-			Analyzer analyzer = new AnsjAnalysis();
-			MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer, boosts);
-			// 将关键字包装成Query对象
-			Query query = parser.parse(keyword);
-			TopDocs results = searcher.search(query, size);
-			FragListBuilder fragListBuilder = new SimpleFragListBuilder();
-			FragmentsBuilder fragmentsBuilder = new ScoreOrderFragmentsBuilder(BaseFragmentsBuilder.COLORED_PRE_TAGS, BaseFragmentsBuilder.COLORED_POST_TAGS);
-			FastVectorHighlighter fvh = new FastVectorHighlighter(true, true, fragListBuilder, fragmentsBuilder);
-			FieldQuery fq = fvh.getFieldQuery(query);
-			//System.out.println("命中--》" + results.totalHits);
-			List<LuceneSearchResult> searchResults = new ArrayList<LuceneSearchResult>();
-			for (ScoreDoc sd : results.scoreDocs) {
-				// 当查询不到高亮信息时，返回内容为Null
-				//String highContent = fvh.getBestFragment(fq, reader, sd.doc, "content", 100);
-				//System.out.println("highContent-->" + highContent);
-				String highTitle = null;
-				if (highlight) {
-					fvh.getBestFragment(fq, reader, sd.doc, "title", 100);
-					if (highTitle == null) {
-						Document doc = searcher.doc(sd.doc);
-						/**
-						 * 如果高亮内容为null，那么表示标题没有需要高亮的内容，那么赋值为原有标题
-						 */
-						highTitle = doc.get("title");
-					}
-				} else {
-					highTitle = searcher.doc(sd.doc).get("title");
-				}
-				String id = searcher.doc(sd.doc).get("id");
-				searchResults.add(new LuceneSearchResult(id, highTitle));
-			}
-			return searchResults;
-		} finally {
-			reader.close();
-		}
-	}
+
+    public List<LuceneSearchResult> search(String keyword, int size)
+            throws IOException, ParseException {
+        IndexReader reader = luceneIndex.reader();
+        try {
+            IndexSearcher searcher = new IndexSearcher(reader);
+            Analyzer analyzer = luceneIndex.analyzer();
+            MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_4_9,
+                                                                     fields,
+                                                                     analyzer,
+                                                                     boosts);
+            // 将关键字包装成Query对象
+            Query query = parser.parse(keyword);
+            TopDocs results = searcher.search(query, size);
+            List<LuceneSearchResult> searchResults = new ArrayList<LuceneSearchResult>();
+            for (ScoreDoc sd : results.scoreDocs) {
+                String id = searcher.doc(sd.doc).get("id");
+                searchResults.add(new LuceneSearchResult(id, searcher.doc(sd.doc).get("title")));
+            }
+            return searchResults;
+        }
+        finally {
+            reader.close();
+        }
+    }
 
 	public void init() throws IOException {
 		Files.createDirIfNoExists(indexDir);
