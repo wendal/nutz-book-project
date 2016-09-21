@@ -2,12 +2,14 @@ package net.wendal.nutzbook;
 
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.net.ssl.SSLContext;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -63,10 +65,13 @@ public class MainSetup implements Setup {
 
 	public void init(NutConfig nc) {
 		NutShiro.DefaultLoginURL = "/admin/logout";
-		// 检查环境
+		// 检查环境,必须运行在UTF-8环境
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
-			log.warn("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
+			log.error("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
 		}
+		// Log4j 2.x的JMX默认启用,会导致reload时内存不释放!!
+		if (!"true".equals(System.getProperty("log4j2.disable.jmx")))
+		    log.error("log4j2 jmx will case reload memory leak! pls add -Dlog4j2.disable.jmx=true to JAVA_OPTS");
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
@@ -210,5 +215,12 @@ public class MainSetup implements Setup {
         }
 		
         LCacheManager.me().depose();
+        
+        // org.brickred.socialauth.util.HttpUtil 把一个内部类注册到SSLContext,擦!
+        try {
+            SSLContext.getDefault().init(null, null, new SecureRandom());
+        }
+        catch (Exception e) {
+        }
 	}
 }
