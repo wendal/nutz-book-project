@@ -13,7 +13,7 @@ layout("_layout.html",{title:'添加新帖子'}){
     <div class='inner' id="topicAdd">
         <form id='create_topic_form' action='#' method='post'>
             <span>选择版块：</span>
-            <select v-module="topicType" name="type" data-intro="请根据内容正确的选择板块">
+            <select v-model="topicType" data-intro="请根据内容正确的选择板块">
               <!--# for (ttype in obj.types) { #-->
               <option value="${ttype}" >${ttype.display}</option>
               <!--# }  #-->
