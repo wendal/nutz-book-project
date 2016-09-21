@@ -28,7 +28,7 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn \
   && curl -sSL https://github.com/wendal/nutz-book-project/archive/master.tar.gz | tar xzf - -C /tmp2 \
   && cd /tmp2 && ls -l  && cd nutz-book-project-master \
-  && mvn clean package \
+  && mvn -Dmaven.test.skip=true clean package \
   && mkdir -p /usr/local/tomcat/webapps/ROOT \
   && cp -r target/nutzbook-2.9.1/* /usr/local/tomcat/webapps/ROOT/ \
   && find /usr/local/tomcat/webapps/ROOT/ \
