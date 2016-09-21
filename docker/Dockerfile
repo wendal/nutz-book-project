@@ -33,7 +33,7 @@ RUN mkdir /tmp2 && cd /tmp2 \
   && cp -r target/nutzbook-2.9.1/* /usr/local/tomcat/webapps/ROOT/ \
   && find /usr/local/tomcat/webapps/ROOT/ \
   && cd / \
-  && rm -fr /tmp2 usr/share/maven /usr/bin/mvn ~/.m2
+  && rm -fr /tmp2 /usr/share/maven /usr/bin/mvn ~/.m2
 
 WORKDIR $CATALINA_HOME
 
