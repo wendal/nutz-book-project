@@ -136,7 +136,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-daocache</artifactId>
-			<version>1.r.58-SNAPSHOT</version>
+			<version>1.r.58</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>
@@ -237,7 +237,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-views</artifactId>
-			<version>1.r.58-SNAPSHOT</version>
+			<version>1.r.58</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>
@@ -408,7 +408,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-mock</artifactId>
-			<version>1.r.58-SNAPSHOT</version>
+			<version>1.r.58</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -430,7 +430,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-apidoc</artifactId>
-			<version>1.r.58-SNAPSHOT</version>
+			<version>1.r.58</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>
