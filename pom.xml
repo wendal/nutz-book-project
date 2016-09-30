@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-quartz</artifactId>
-			<version>1.r.57</version>
+			<version>1.r.58</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>c3p0</artifactId>
@@ -120,7 +120,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-shiro</artifactId>
-			<version>1.r.57</version>
+			<version>1.r.58</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
@@ -374,7 +374,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
-			<version>1.r.57</version>
+			<version>1.r.58</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>
@@ -445,7 +445,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.58-SNAPSHOT</version>
+			<version>1.r.59-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<version>2.9.1</version>
