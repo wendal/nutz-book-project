@@ -79,19 +79,8 @@
 			<url>http://maven.nutz.cn/nexus/content/repositories/central</url>
 		</repository>
 		<repository>
-			<id>nutz-snapshot</id>
-			<url>http://maven.nutz.cn/nexus/content/repositories/snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>nutz-ossrh</id>
+			<url>http://maven.nutz.cn/nexus/content/repositories/ossrh</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
