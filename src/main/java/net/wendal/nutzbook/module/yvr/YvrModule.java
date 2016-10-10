@@ -245,6 +245,8 @@ public class YvrModule extends BaseModule {
         if (replyId != null && replyId.equals(_etag)) {
             return HTTP_304;
         }
+        if (replyId != null)
+            response.setHeader("ETag", replyId);
         
 		topic.setAuthor(fetch_userprofile(topic.getUserId()));
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
@@ -358,6 +360,20 @@ public class YvrModule extends BaseModule {
 		extras.put("action", "open_topic");
 		pushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
 	}
+	
+//	@At("/t/?/next")
+//	@Ok("void")
+//	public Object nextTopic(String topidId) {
+//	    Topic topic = dao.fetch(Topic.class);
+//	    if (topic == null)
+//	        return HTTP_404;
+//	    
+//	}
+//	
+//	@At("/t/?/prev")
+//    public void prevTopic(String topidId) {
+//        
+//    }
 
 	public void init() {
 		log.debug("Image Dir = " + imageDir);

@@ -233,13 +233,8 @@ $(function() {
 <!--#if (null != obj.current_user!){ #-->
 <script src="${cdnbase}${base}/rs/js/jquery.autocomplete.min.js" type="text/javascript"></script>
 <script src="${cdnbase}${base}/rs/libs/webuploader/webuploader.withoutimage.js"></script>
+<script src="${base}/pay/bc/js"></script>
 <script>
-$(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=${conf["bc.appId"]}";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-});
 var ws;
 $(function(){
 	if (!Notification) {

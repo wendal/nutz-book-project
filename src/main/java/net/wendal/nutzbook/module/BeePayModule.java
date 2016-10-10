@@ -1,19 +1,24 @@
 package net.wendal.nutzbook.module;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
+import org.nutz.http.Http;
+import org.nutz.http.Response;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
+import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.Times;
 import org.nutz.lang.random.R;
@@ -31,13 +36,12 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.annotation.ReqHeader;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
 
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfStamper;
-
-import org.nutz.plugins.apidoc.annotation.Api;
-import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
 
 import net.wendal.nutzbook.bean.BeePayment;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -240,5 +244,27 @@ public class BeePayModule extends BaseModule {
             }
         });
         return cnt;
+    }
+    
+    protected byte[] buf;
+    protected String jsEtag;
+    
+    @At("/js")
+    @Ok("raw:js")
+    public Object js(@ReqHeader("If-None-Match")String _etag, HttpServletResponse _resp) {
+        if (_etag != null && jsEtag != null && _etag.equals(jsEtag))
+            return HTTP_304;
+        if (buf == null) {
+            String url = "https://jspay.beecloud.cn/1/pay/jsbutton/returnscripts?appId=" + conf.get("bc.appId");
+            Response resp = Http.get(url);
+            if (resp.isOK()) {
+                buf = Streams.readBytesAndClose(resp.getStream());
+                jsEtag = Lang.md5(new ByteArrayInputStream(buf));
+            }
+        }
+        if (buf == null)
+            return HTTP_404;
+        _resp.setHeader("ETag", jsEtag);
+        return buf;
     }
 }
