@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -18,13 +17,10 @@ import org.nutz.dao.Dao;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.json.Json;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Files;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
-import org.nutz.lang.random.R;
-import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.View;
 import org.nutz.mvc.adaptor.VoidAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
@@ -33,15 +29,10 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.ForwardView;
 import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.ServerRedirectView;
+import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.repo.Base64;
 
-import org.nutz.plugins.apidoc.annotation.Api;
-import net.wendal.nutzbook.bean.CResult;
-import net.wendal.nutzbook.bean.User;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.module.BaseModule;
-import net.wendal.nutzbook.util.Toolkit;
 
 /**
  * 取代原nutz.cn的短地址服务
@@ -91,27 +82,6 @@ public class YvrShortModule extends BaseModule {
 		if (fileSize > 1024 * 1024 * 10)
 			return Helper._fail("err.file_too_big");
 		String re = Helper._ok(write(req.getInputStream(), "txt:"));
-		String title = req.getParameter("title");
-		if (!Strings.isBlank(title) && title.trim().length() < 100) {
-			title += "_"+R.UU16().substring(0, 8);
-			String code = (String) Json.fromJsonAsMap(Object.class, re).get("code");
-			Topic topic = new Topic();
-			topic.setTitle(title.trim());
-			String cnt = Streams.readAndClose(new InputStreamReader((InputStream) read(code, null)));
-			cnt = cnt.length() > 50000 ? cnt.substring(0, 50000) : cnt;
-			topic.setContent(String.format("[查看完整内容](%s/s/c/%s)\r\n\r\n```\r\n%s\r\n```",req.getContextPath(), code, cnt));
-			topic.setType(TopicType.shortit);
-			try {
-				int userId = Toolkit.uid();
-				CResult resp = yvrService.add(topic, userId > 0 ? userId : dao.fetch(User.class, "guest").getId());
-				if (resp.isOk()) {
-					String topicId = resp.as(String.class);
-					return Json.toJson(new NutMap().setv("ok", true).setv("url", req.getContextPath() + "/yvr/t/" + topicId));
-				}
-			} catch (Exception e) {
-			}
-		}
-		
 		return re;
 	}
 

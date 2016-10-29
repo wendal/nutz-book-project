@@ -14,6 +14,7 @@ layout("_layout.html",{}){
           	 class="topic-tab ${(null == obj.type && null == obj.tag)? 'current-tab' : '' }"><span property="name">全部</span></a><span class='divider'>/</span>
         </li>
       <!--# for (topic_type in obj.types) { #-->
+        <!--# if (topic_type.name == "shortit") {continue;} #-->
         <li property="itemListElement" typeof="ListItem">
 		  <a data-pjax href="${ctxPath}/yvr/list/${topic_type}" property="item" typeof="WebPage" 
 		  	 class="topic-tab ${topic_type == obj.type ? 'current-tab' : '' }">${topic_type.display}(${topic_type.count})</a>

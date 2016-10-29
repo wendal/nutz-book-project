@@ -25,4 +25,8 @@ public enum TopicType {
 	public Long getCount() {
 		return count;
 	}
+	
+	public String getName() {
+	    return this.name();
+	}
 }
