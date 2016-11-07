@@ -25,6 +25,8 @@ Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
 Redis-Windows 下载地址 https://github.com/MSOpenTech/redis/releases
 
+后台管理账户密码 admin/123456
+
 ## 特色
 
 * 完善的发帖回帖机制,引导式发帖
