@@ -2,7 +2,7 @@
 
 ### 使用原则
 
-供Nutz社区的用户开发Nutz相关的项目时使用
+供Nutz社区的用户开发Nutz相关的项目时使用,必须登录才能下载!!!
 
 ### 下载链接
 
@@ -43,15 +43,15 @@ HTTP Requests
 GET /nutzbook/rs/logo.png     200 OK
 ```
 
-本地启动tomcat或其他web应用后, 访问对应的地址即可(替换成自己的地址哦)
+本地启动tomcat或其他web应用后, 访问对应的地址即可(替换成自己的地址哦), 全面支持https和wss协议!!
 
 ```
 http://wendal.ngrok.wendal.cn/nutzbook/
-
-http://wendal.ngrok.wendal.cn:9080/nutzbook/
+https://wendal.ngrok.wendal.cn/nutzbook/
 ```
 
 ### 注意事项
 
-1. 可以通过80端口访问,经由nginx转发,最长链接10分钟,最大POST body大小为1mb
-2. 本服务的可用性保证是95%
+1. 可以通过80/443端口访问,经由nginx转发,最长链接10分钟,最大POST body大小为1024mb
+2. 本服务的SLA是99.5%
+3. 真金白银购买的泛域名https证书,兼容绝大部分的浏览器
