@@ -175,11 +175,16 @@ public class MainSetup implements Setup {
 			}
 		}
 
-		try (final Jedis jedis = pool.getResource()){
-		    dao.each(Topic.class, Cnd.where("good", "=", true), (index, topic, length) -> {
-	            jedis.zadd(RedisKey.RKEY_TOPIC_UPDATE + "good", jedis.zscore(RedisKey.RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()), topic.getId());
-	        });
-		}
+        try (final Jedis jedis = pool.getResource()) {
+            dao.each(Topic.class, Cnd.where("good", "=", true), (index, topic, length) -> {
+                Double t = jedis.zscore(RedisKey.RKEY_TOPIC_UPDATE
+                                        + topic.getType(),
+                                        topic.getId());
+                if (t == null)
+                    t = (double) topic.getCreateTime().getTime();
+                jedis.zadd(RedisKey.RKEY_TOPIC_UPDATE + "good", t, topic.getId());
+            });
+        }
         
 		ioc.get(YvrService.class).updateTopicTypeCount();
 		
