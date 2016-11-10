@@ -58,32 +58,32 @@ import redis.clients.jedis.Response;
 
 @IocBean(create="init")
 public class YvrService implements RedisKey, PubSub {
-	
+
 	private static final Log log = Logs.get();
 
-	@Inject 
+	@Inject
 	protected Dao dao;
-	
+
 	@Inject
 	protected TopicSearchService topicSearchService;
-	
+
 	@Inject
 	protected PushService pushService;
-	
+
 	@Inject
 	protected PubSubService pubSubService;
-	
+
 	@Inject
 	protected BigContentService bigContentService;
 
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
-	
+
 	@Inject("java:$conf.get('topic.global.watchers')")
 	protected String topicGlobalWatchers;
-	
+
 	protected Set<Integer> globalWatcherIds = new HashSet<>();
-	
+
 	@Aop("redis")
 	public void fillTopic(Topic topic, Map<Integer, UserProfile> authors) {
 		if (topic.getUserId() == 0)
@@ -104,7 +104,7 @@ public class YvrService implements RedisKey, PubSub {
 		Double visited = jedis().zscore(RKEY_TOPIC_VISIT, topic.getId());
 		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 	}
-	
+
 	protected UserProfile _cacheFetch(Map<Integer, UserProfile> authors, int userId) {
 		if (authors == null)
 			return null;
@@ -115,12 +115,12 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		return author;
 	}
-	
+
 	@Aop("redis")
 	public String accessToken(String loginname) {
 		return jedis().hget(RKEY_USER_ACCESSTOKEN, loginname);
 	}
-	
+
 	@Aop("redis")
 	public String accessToken(UserProfile profile) {
 		String loginname = profile.getLoginname();
@@ -134,7 +134,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		return at;
 	}
-	
+
 	@Aop("redis")
 	public void resetAccessToken(String loginname) {
 		String at = jedis().hget(RKEY_USER_ACCESSTOKEN, loginname); {
@@ -143,7 +143,7 @@ public class YvrService implements RedisKey, PubSub {
 			jedis().hdel(RKEY_USER_ACCESSTOKEN3, at);
 		}
 	}
-	
+
 	@Aop("redis")
 	public int getUserByAccessToken(String at) {
 		String uid_str = jedis().hget(RKEY_USER_ACCESSTOKEN3, at);
@@ -246,13 +246,13 @@ public class YvrService implements RedisKey, PubSub {
 		pipe.zincrby(RKEY_REPLY_COUNT, 1, topicId);
 		pipe.zincrby(RKEY_USER_SCORE, 10, ""+userId);
 		pipe.sync();
-		
+
 		notifyUsers(topic, reply, cnt, userId);
         pubSubService.fire("ps:topic:reply", topic.getId());
         notifyWebSocket("topic:"+topic.getId(), "新回复: " + topic.getTitle(), topic.getId());
 		return _ok(reply.getId());
 	}
-	
+
 	@Async
 	protected void notifyUsers(Topic topic, TopicReply reply, String cnt, int userId) {
 	    String replyAuthorName = dao.fetch(User.class, userId).getName();
@@ -285,7 +285,7 @@ public class YvrService implements RedisKey, PubSub {
                     PushService.PUSH_TYPE_AT);
         }
 	}
-	
+
 	@Aop("redis")
 	public CResult replyUp(String replyId, int userId) {
 		if (userId < 1)
@@ -303,7 +303,7 @@ public class YvrService implements RedisKey, PubSub {
 			return _ok("up");
 		}
 	}
-	
+
 	@Async
 	protected void pushUser(int userId, String alert, String topic_id, String post_user, String topic_title, int type) {
 	    topic_title = StringEscapeUtils.unescapeHtml(topic_title);
@@ -315,7 +315,7 @@ public class YvrService implements RedisKey, PubSub {
 		extras.put("type", type+"");
 		pushService.alert(userId, alert, topic_title, extras);
 	}
-	
+
 	public List<Topic> getRecentTopics(int userId, Pager pager) {
 		List<Topic> recent_topics = dao.query(Topic.class, Cnd.where("userId", "=", userId).desc("createTime"), pager);
 
@@ -327,15 +327,15 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		pager.setRecordCount(dao.count(Topic.class, Cnd.where("userId", "=", userId)));
 		return recent_topics;
-		
+
 	}
-	
+
 	public List<Topic> getRecentReplyTopics(int userId, Pager pager) {
 
 		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
 		Cnd cnd = Cnd.where("userId", "=", userId);
 		cnd.desc("createTime");
-		
+
 		Sql sql = Sqls.queryString("select DISTINCT topicId from t_topic_reply $cnd").setEntity(dao.getEntity(TopicReply.class)).setVar("cnd", cnd);
 		pager.setRecordCount(dao.execute(Sqls.fetchInt("select count(DISTINCT topicId) from t_topic_reply $cnd").setEntity(dao.getEntity(TopicReply.class)).setVar("cnd", cnd)).getInt());
 		sql.setPager(pager);
@@ -354,7 +354,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		return recent_replies;
 	}
-	
+
 	public NutMap upload(TempFile tmp, int userId) throws IOException {
 		NutMap re = new NutMap();
 		if (userId < 1)
@@ -376,7 +376,7 @@ public class YvrService implements RedisKey, PubSub {
 		re.setv("success", true);
 		return re;
 	}
-	
+
 	public void init() {
 		if (topicGlobalWatchers != null) {
 			for (String username : Strings.splitIgnoreBlank(topicGlobalWatchers)) {
@@ -389,9 +389,9 @@ public class YvrService implements RedisKey, PubSub {
 			}
 		}
 	}
-	
+
 	static Pattern atPattern = Pattern.compile("@([a-zA-Z0-9\\_]{4,20}\\s)");
-	
+
 	public static Set<String> findAt(String cnt, int limit) {
 		Set<String> ats = new HashSet<String>();
 		Matcher matcher = atPattern.matcher(cnt+" ");
@@ -406,7 +406,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		return ats;
 	}
-	
+
 
 	@Aop("redis")
 	public boolean updateTags(String topicId, @Param("tags")Set<String> tags) {
@@ -442,7 +442,7 @@ public class YvrService implements RedisKey, PubSub {
 		pipe.sync();
 		return true;
 	}
-	
+
 	@Aop("redis")
 	public List<Topic> fetchTop() {
 		List<Topic> list = new ArrayList<>();
@@ -456,7 +456,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		return list;
 	}
-	
+
 	@Aop("redis")
 	public List<TopicTag> fetchTopTags() {
 		Set<String> names = jedis().zrevrangeByScore(RKEY_TOPIC_TAG_COUNT, Long.MAX_VALUE, 0, 0, 20);
@@ -474,7 +474,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
 		return tags;
 	}
-	
+
 	@Aop("redis")
 	public boolean checkNonce(String nonce, String time) {
 		try {
@@ -494,15 +494,21 @@ public class YvrService implements RedisKey, PubSub {
 			return false;
 		}
 	}
-	
+
 	@Async
 	@Aop("redis")
 	public void updateTopicTypeCount() {
+		dao.each(Topic.class, Cnd.where("c_good", "=", "0"), (index, topic, length) -> {
+			if (null == jedis().zscore(RKEY_TOPIC_UPDATE + "good", topic.getId())) {
+				jedis().zadd(RKEY_TOPIC_UPDATE + "good", topic.getCreateTime().getTime(), topic.getId());
+			}
+		});
+
 		for (TopicType tt : TopicType.values()) {
 			tt.count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 		}
 	}
-    
+
     protected void notifyWebSocket(String room, Object data, String tag) {
         NutMap map = new NutMap();
         map.put("action", "notify");
@@ -511,7 +517,7 @@ public class YvrService implements RedisKey, PubSub {
         String msg = Json.toJson(map, JsonFormat.compact());
         pubSubService.fire(NutzbookWebsocket.prefix+room, msg);
     }
-    
+
     @Override
     public void onMessage(String channel, String message) {
         switch (channel) {
