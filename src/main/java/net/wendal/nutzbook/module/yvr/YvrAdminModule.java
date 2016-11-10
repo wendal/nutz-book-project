@@ -49,7 +49,15 @@ public class YvrAdminModule extends BaseModule{
 		if (old == null)
 			return;
 		Daos.ext(dao, FieldFilter.create(Topic.class, opt, true)).update(topic);
-		
+
+		if ("good".equals(opt)) {
+			if (topic.isGood()) {
+				jedis().zadd(RKEY_TOPIC_UPDATE + "good", System.currentTimeMillis(), topic.getId());
+			} else {
+				jedis().zrem(RKEY_TOPIC_UPDATE + "good", topic.getId());
+			}
+		}
+
 		if ("top".equals(opt)) {
 			Pipeline pipe = jedis().pipelined();
 			if (topic.isTop()) {
@@ -64,7 +72,7 @@ public class YvrAdminModule extends BaseModule{
 			pipe.sync();
 			return;
 		}
-		
+
 		// 检查一下是不是修改了type
 		if (topic.getType() != null && old.getType() != null && !topic.getType().equals(old.getType())) {
 			Double old_d = jedis().zscore(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
@@ -81,7 +89,7 @@ public class YvrAdminModule extends BaseModule{
 			}
 		}
 	}
-	
+
 	@POST
 	@RequiresPermissions("topic:update:tags")
 	@At("/update/tags")
@@ -90,7 +98,7 @@ public class YvrAdminModule extends BaseModule{
 	public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags, @Param("update_value")String[] tags2) {
 		return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags != null ? tags : tags2)));
 	}
-	
+
 	@Ok("json")
 	@At
 	public Object query(@Param("..")Pager pager, @Param("type")TopicType tp) {
@@ -107,19 +115,19 @@ public class YvrAdminModule extends BaseModule{
 		List<Topic> list = dao.query(Topic.class, cnd, pager);
 		return new QueryResult(list, pager);
 	}
-	
+
 	@RequiresPermissions("topic:expstatic")
 	@At("/expstatic")
 	@Aop("redis")
 	public void exportStatic() {
 		String root = "http://127.0.0.1:8080" + Mvcs.getServletContext().getContextPath();
 		String dst = "/tmp/yvr_static" + Mvcs.getServletContext().getContextPath();
-		
+
 		// 首页
 		visitAndWrite(root, "/", dst);
 		visitAndWrite(root, "/yvr/", dst);
 		visitAndWrite(root, "/yvr/list/", dst);
-		
+
 		// 输出列表页
 		for (TopicType tt : TopicType.values()) {
 			Long count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
@@ -136,20 +144,20 @@ public class YvrAdminModule extends BaseModule{
 			String id = topic.getId();
 			visitAndWrite(root, "/yvr/t/"+id+"/", dst);
 		}
-		
+
 		// 用户页及用户头像
 		for (User user : Daos.ext(dao, FieldFilter.create(User.class, "name")).query(User.class, null)) {
 			visitAndWrite(root, "/yvr/u/"+user.getName()+"/", dst);
 			visitAndWrite(root, "/yvr/u/"+user.getName()+"/avatar", dst);
 		}
-		
+
 		// SEO页
 		visitAndWrite(root, "/yvr/rss.xml", dst);
 		visitAndWrite(root, "/yvr/sitemap.xml", dst);
-		
+
 		// TODO 拷贝rs资源及upload的图片, 或者指向CDN地址?
 	}
-	
+
 	protected void visitAndWrite(String root, String path, String dst) {
 		dst += path;
 		if (path.endsWith("/")) {
