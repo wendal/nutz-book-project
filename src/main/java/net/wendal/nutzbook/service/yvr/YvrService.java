@@ -498,12 +498,6 @@ public class YvrService implements RedisKey, PubSub {
 	@Async
 	@Aop("redis")
 	public void updateTopicTypeCount() {
-		dao.each(Topic.class, Cnd.where("c_good", "=", "0"), (index, topic, length) -> {
-			if (null == jedis().zscore(RKEY_TOPIC_UPDATE + "good", topic.getId())) {
-				jedis().zadd(RKEY_TOPIC_UPDATE + "good", topic.getCreateTime().getTime(), topic.getId());
-			}
-		});
-
 		for (TopicType tt : TopicType.values()) {
 			tt.count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
 		}

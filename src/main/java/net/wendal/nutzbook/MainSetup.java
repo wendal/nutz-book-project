@@ -11,6 +11,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.net.ssl.SSLContext;
 
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.sql.Sql;
@@ -48,6 +49,7 @@ import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.shiro.cache.LCacheManager;
 import net.wendal.nutzbook.shiro.cache.RedisCache;
 import net.wendal.nutzbook.util.Markdowns;
+import net.wendal.nutzbook.util.RedisKey;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -172,7 +174,13 @@ public class MainSetup implements Setup {
 				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
 			}
 		}
-		
+
+		try (final Jedis jedis = pool.getResource()){
+		    dao.each(Topic.class, Cnd.where("good", "=", true), (index, topic, length) -> {
+	            jedis.zadd(RedisKey.RKEY_TOPIC_UPDATE + "good", jedis.zscore(RedisKey.RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()), topic.getId());
+	        });
+		}
+        
 		ioc.get(YvrService.class).updateTopicTypeCount();
 		
 		Mvcs.disableFastClassInvoker = false;

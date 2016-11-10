@@ -88,6 +88,7 @@ public class YvrAdminModule extends BaseModule{
 				}
 			}
 		}
+		yvrService.updateTopicTypeCount();
 	}
 
 	@POST
