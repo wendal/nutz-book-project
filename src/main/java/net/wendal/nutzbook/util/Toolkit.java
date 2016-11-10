@@ -1,12 +1,16 @@
 package net.wendal.nutzbook.util;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.crypto.Cipher;
@@ -21,9 +25,12 @@ import org.apache.shiro.subject.Subject;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
+import org.nutz.lang.util.Disks;
+import org.nutz.lang.util.FileVisitor;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -268,4 +275,24 @@ public class Toolkit {
 	//----------------------------------------------------------------------------
 
 	public static byte[] csKEY = R.sg(24).next().getBytes();
+	
+	public static void main(String[] args) {
+        // 生成著作权所需要的60页代码,每页50行,共3000行
+	    final List<String> lines = new ArrayList<>();
+	    Disks.visitFile(new File("D:\\nutzbook\\workspace\\nutzbook\\src\\main\\java\\"), new FileVisitor() {
+            public void visit(File file) {
+                if (lines.size() < 50*60)
+                    lines.addAll(Files.readLines(file));
+            }
+        }, new FileFilter() {
+            public boolean accept(File pathname) {
+                if (pathname.getPath().contains("bean"))
+                    return false;
+                return pathname.isDirectory() || pathname.getName().endsWith(".java");
+            }
+        });
+	    for (String line : lines) {
+            System.out.println(line);
+        }
+    }
 }
