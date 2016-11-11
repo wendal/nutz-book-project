@@ -388,6 +388,7 @@ public class YvrService implements RedisKey, PubSub {
 				globalWatcherIds.add(user.getId());
 			}
 		}
+		pubSubService.reg("ps:topic:*", this);
 	}
 
 	static Pattern atPattern = Pattern.compile("@([a-zA-Z0-9\\_]{4,20}\\s)");
@@ -514,6 +515,7 @@ public class YvrService implements RedisKey, PubSub {
 
     @Override
     public void onMessage(String channel, String message) {
+        log.debugf("channel=%s, msg=%s", channel, message);
         switch (channel) {
         // TODO 数据库集群的delay会导致
         case "ps:topic:add":
