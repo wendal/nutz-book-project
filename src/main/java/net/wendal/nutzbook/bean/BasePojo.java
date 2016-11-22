@@ -27,7 +27,7 @@ public abstract class BasePojo implements Serializable {
 	protected Date updateTime;
 	
 	public String toString() {
-		return String.format("/*%s*/%s", super.toString(), Json.toJson(this, JsonFormat.compact()));
+		return Json.toJson(this, JsonFormat.compact().setQuoteName(true).setIgnoreNull(false));
 	}
 
 	public Date getCreateTime() {
