@@ -45,4 +45,26 @@ public class RedisDao {
 		}
 		return list;
 	}
+
+    @Aop("redis")
+    public String znext(String zkey, String id) {
+        Long thisRank = jedis().zrank(zkey, id);
+        if (thisRank == null)
+            return null;
+        Set<String> re = jedis().zrange(zkey, thisRank+1, thisRank+2);
+        if (re.isEmpty())
+            return null;
+        return re.iterator().next();
+    }
+    
+    @Aop("redis")
+    public String zprev(String zkey, String id) {
+        Long thisRank = jedis().zrank(zkey, id);
+        if (thisRank == null)
+            return null;
+        Set<String> re = jedis().zrange(zkey, thisRank-1, thisRank);
+        if (re.isEmpty())
+            return null;
+        return re.iterator().next();
+    }
 }

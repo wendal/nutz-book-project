@@ -52,6 +52,16 @@ layout("_layout.html",{}){
         <span>
           <a id="copy_link_btn" href="#" class="zclip" title="跨设备免登陆.注意,不是给手机客户端用的" data-intro="手机扫描后可免登陆访问该页面" onclick="cs_qrcode();return false; ">跨屏二维码</a>
         </span>
+        <!--# if (null != obj.prev_topic_id!) {  #-->
+        <span>
+          <a href="${base}/yvr/t/${obj.prev_topic_id}" title="跳转到上一个同类型的帖子">上一个帖子</a>
+        </span>
+        <!--#} #-->
+        <!--# if (null != obj.next_topic_id!) {  #-->
+        <span>
+          <a href="${base}/yvr/t/${obj.next_topic_id}" title="跳转到下一个同类型的帖子">下一个帖子</a>
+        </span>
+        <!--#} #-->
       </div>
       
       <div class="changes">

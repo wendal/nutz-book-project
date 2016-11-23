@@ -279,6 +279,8 @@ public class YvrModule extends BaseModule {
 		}
         topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId(), dao.createPager(1, 5)));
+        re.put("next_topic_id", redisDao.znext(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
+        re.put("prev_topic_id", redisDao.zprev(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
 		//re.put("top_tags", yvrService.fetchTopTags());
 		return re;
 	}
@@ -360,20 +362,6 @@ public class YvrModule extends BaseModule {
 		extras.put("action", "open_topic");
 		pushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
 	}
-	
-//	@At("/t/?/next")
-//	@Ok("void")
-//	public Object nextTopic(String topidId) {
-//	    Topic topic = dao.fetch(Topic.class);
-//	    if (topic == null)
-//	        return HTTP_404;
-//	    
-//	}
-//	
-//	@At("/t/?/prev")
-//    public void prevTopic(String topidId) {
-//        
-//    }
 
 	public void init() {
 		log.debug("Image Dir = " + imageDir);
