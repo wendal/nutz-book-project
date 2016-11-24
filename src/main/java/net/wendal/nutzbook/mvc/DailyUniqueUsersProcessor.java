@@ -34,6 +34,7 @@ public class DailyUniqueUsersProcessor extends AbstractProcessor implements Redi
             		Pipeline pipe = jedis.pipelined();
             		pipe.setbit(RKEY_ONLINE_DAY+Toolkit.today_yyyyMMdd(), uid, true);
             		pipe.setbit(RKEY_ONLINE_HOUR+Toolkit.today_yyyyMMddHH(), uid, true);
+            		pipe.zadd(RKEY_USER_LVTIME, System.currentTimeMillis(), ""+uid);
             		pipe.sync();
             	}
             }

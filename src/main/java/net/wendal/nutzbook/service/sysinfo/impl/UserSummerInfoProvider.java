@@ -56,6 +56,13 @@ public class UserSummerInfoProvider extends AbstractSysInfoProvider implements R
         map.put("value", jedis().bitcount(RKEY_ONLINE_HOUR + Toolkit.today_yyyyMMddHH()));
         re.add(map);
         
+        long now = System.currentTimeMillis();
+        
+        map = new NutMap();
+        map.put("name", "最近24小时在线人数");
+        map.put("value", jedis().zcount(RKEY_USER_LVTIME, now - 24*3600*1000L, now));
+        re.add(map);
+        
         return re;
     }
 
