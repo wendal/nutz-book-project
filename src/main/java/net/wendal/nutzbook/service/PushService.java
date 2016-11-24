@@ -86,6 +86,9 @@ public class PushService {
 
 	private void alertXmPush(int userId, String alert, String description, Map<String, String> extras) {
 		Message.Builder builder = new Message.Builder().title(alert).description(description);
+		if (conf.has("xmpush.appPkg")) {
+            builder.restrictedPackageName(conf.get("xmpush.appPkg"));
+        }
 		for (Entry<String, String> en : extras.entrySet()) {
 			builder.extra(en.getKey(), en.getValue());
 		}
@@ -94,6 +97,9 @@ public class PushService {
 
 	private void messageXmPush(int userId, String message, Map<String, String> extras) {
 		Message.Builder builder = new Message.Builder().title(message).description(message).passThrough(1).payload(message);
+		if (conf.has("xmpush.appPkg")) {
+		    builder.restrictedPackageName(conf.get("xmpush.appPkg"));
+		}
 		for (Entry<String, String> en : extras.entrySet()) {
 			builder.extra(en.getKey(), en.getValue());
 		}
