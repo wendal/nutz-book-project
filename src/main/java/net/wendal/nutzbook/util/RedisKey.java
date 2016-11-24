@@ -13,6 +13,7 @@ public interface RedisKey {
 	String RKEY_USER_ACCESSTOKEN2 = "u:accesstoken2";
 	String RKEY_USER_ACCESSTOKEN3 = "u:accesstoken3";
 	String RKEY_USER_SCORE = "u:score";
+	String RKEY_USER_LVTIME = "u:lvtime";
 
 	// 帖子相关
 	String RKEY_TOPIC_VISIT = "t:visit";
@@ -36,5 +37,5 @@ public interface RedisKey {
 	String RKEY_QQBOT_BIND_REQ = "qqbot:bind:request:";
 
 	String RKEY_ONLINE_DAY = "online:day:";
-	String RKEY_ONLINE_HOUR = "online:hour:";
+    String RKEY_ONLINE_HOUR = "online:hour:";
 }
