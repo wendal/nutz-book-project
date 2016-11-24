@@ -19,7 +19,7 @@ Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
 ## 部署指南
 
-**本项目必须依赖Redis数据库** http://reids.io
+**本项目必须依赖Redis数据库** http://redis.io
 
 请查阅[部署指南](INSTALL.md)
 
