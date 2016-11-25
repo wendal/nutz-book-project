@@ -92,6 +92,7 @@ public class YvrApiModule extends BaseModule {
 	 * @param type 参数名叫tab,默认是ask,如果传all,也会变成ask
 	 * @param limit 每页数量
 	 * @param mdrender 是否渲染md
+	 * @param gcnt 是否获取文本主体
 	 *
 	 * @api {get} /yvr/api/v1/topics 获取帖子列表
 	 * @apiGroup Topic
@@ -192,7 +193,8 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.id 			唯一标示符
 	 * @apiSuccess {String} data.title 			标题
 	 * @apiSuccess {String} data.tab 			类型
-	 * @apiSuccess {String} data.content 		内容
+     * @apiSuccess {String} data.content        内容
+     * @apiSuccess {String} data.content_id     内容id
 	 * @apiSuccess {String} [data.last_reply_at] 最后回复时间
 	 * @apiSuccess {String} [data.last_reply_at_forread] 最后回复的相对时间,例如 10 Mins.
 	 * @apiSuccess {boolean} data.top 			是否置顶
@@ -208,7 +210,8 @@ public class YvrApiModule extends BaseModule {
 	 * @apiSuccess {String} data.replies.author	回复的作者
 	 * @apiSuccess {String} data.replies.author.id 回复的作者的id
 	 * @apiSuccess {String} data.replies.author.loginname 回复的作者的登陆名称
-	 * @apiSuccess {String} data.replies.content 回复的内容
+     * @apiSuccess {String} data.replies.content 回复的内容
+     * @apiSuccess {String} data.replies.content_id 回复的内容id
 	 * @apiSuccess {String[]} data.replies.ups	点赞数
 	 * @apiSuccess {Object} data.replies.author 回帖作者信息
 	 * @apiSuccess {String} data.replies.create_at 回帖时间
@@ -220,17 +223,18 @@ public class YvrApiModule extends BaseModule {
 	@Api(name="帖子详情", description="获取指定帖子的详细数据",
 	        params={
 	                @ApiParam(name="id", description="帖子的id"),
-	                @ApiParam(name="mdrender", description="是否渲染markdown", optional=true)
+	                @ApiParam(name="mdrender", description="是否渲染markdown", optional=true),
+	                @ApiParam(name="gcnt", description="是否获取文本主体", optional=true, defaultValue="true")
 	        })
 	@Aop("redis")
 	@GET
 	@At({"/topic/?", "/topic"})
-	public Object topic(@Param("id")String id,@Param("mdrender")String mdrender) {
+	public Object topic(@Param("id")String id, @Param("mdrender")String mdrender, @Param("gcnt")String gcnt) {
 		Topic topic = dao.fetch(Topic.class, id);
 		if (id == null) {
 			return HttpStatusView.HTTP_404;
 		}
-		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender, true);
+		NutMap tp = _topic(topic, new HashMap<Integer, UserProfile>(), mdrender, !"false".equals(gcnt));
 
 		List<NutMap> replies = new ArrayList<NutMap>();
 		for (TopicReply reply : dao.query(TopicReply.class, Cnd.where("topicId", "=", id).asc("createTime"))) {
@@ -241,8 +245,12 @@ public class YvrApiModule extends BaseModule {
 			re.put("id", reply.getId());
 			re.put("author", _author(reply.getAuthor()));
 
-			String cnt = bigContentService.getString(reply.getContentId());
-			re.put("content", "false".equals(mdrender) ? cnt : Markdowns.toHtml(cnt, urlbase));
+			if (!"false".equals(gcnt)) {
+	            String cnt = bigContentService.getString(reply.getContentId());
+	            re.put("content", "false".equals(mdrender) ? cnt : Markdowns.toHtml(cnt, urlbase));
+			} else {
+			    re.put("content_id", reply.getContentId());
+			}
 			re.put("ups", new ArrayList<String>(reply.getUps()));
 			re.put("create_at", _time(reply.getCreateTime()));
 			re.put("create_at_forread", _time_forread(reply.getCreateTime()));
@@ -542,6 +550,8 @@ public class YvrApiModule extends BaseModule {
 		tp.put("tags", topic.getTags());
 		if (hasContent)
 			tp.put("content", "false".equals(mdrender) ? topic.getContent() : Markdowns.toHtml(topic.getContent(), urlbase));
+		else
+		    tp.put("content_id", topic.getContentId());
 		tp.put("title", StringEscapeUtils.unescapeHtml(topic.getTitle()));
 		if (topic.getLastComment() != null) {
 			tp.put("last_reply_at", _time(topic.getLastComment().getCreateTime()));
@@ -559,5 +569,24 @@ public class YvrApiModule extends BaseModule {
 		}
 		tp.put("author", _author(profile));
 		return tp;
+	}
+	
+    /**
+     * @api {get} /yvr/api/v1/content/:id 获取内容主体
+     * @apiGroup Topic
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} id    内容的id,可以是topic的 content id,或者reply的content id
+     * @apiSuccess {String} [body] 内容.如果不存在,则显示0字节的内容
+     */
+	@Ok("raw:stream")
+	@At("/content/?")
+	public String getContent(String id, 
+	                         @Param("mdrender")String mdrender) {
+	    String cnt = bigContentService.getString(id);
+	    if (cnt == null)
+	        return null;
+	    // TODO 支持根据sha1判断
+        return "false".equals(mdrender) ? cnt : Markdowns.toHtml(cnt, urlbase);
 	}
 }
