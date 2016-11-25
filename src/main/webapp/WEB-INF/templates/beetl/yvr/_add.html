@@ -19,6 +19,14 @@ layout("_layout.html",{title:'添加新帖子'}){
               <!--# }  #-->
             </select>
             <p/>
+            <span>选择子版块：</span>
+            <select v-model="topicTag">
+              <option value="" >默认</option>
+              <option value="fireflow" >Fireflow</option>
+              <option value="ssdb" >SSDB</option>
+              <option value="nginx" >Nginx</option>
+            </select>
+            <p/>
             <span class="tab-selector">标题:</span>
 			<input v-model="topicTitle" autofocus="" class="span9" id="title" 
 				name="title" rows="1" placeholder="字数 10 字以上,概括问题很关键!! 认真的提问才会有好的回复!!"
@@ -37,5 +45,5 @@ layout("_layout.html",{title:'添加新帖子'}){
     </div>
   </div>
 </div>
-<script src="${base}/asserts/js/topic_add.js?v=3"></script>
+<script src="${base}/asserts/js/topic_add.js?v=4"></script>
 <!--#}  #-->

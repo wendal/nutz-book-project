@@ -169,11 +169,13 @@ public class YvrService implements RedisKey, PubSub {
 		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
 			return _fail("相同标题已经发过了");
 		}
+		Set<String> tags = topic.getTags();
+		topic.setTags(new HashSet<>());
 		String oldTitle = topic.getTitle().trim();
 		topic.setTitle(Strings.escapeHtml(topic.getTitle().trim()));
 		topic.setUserId(userId);
 		topic.setTop(false);
-		topic.setTags(new HashSet<String>());
+		//topic.setTags(new HashSet<String>());
 		if (topic.getType() == null)
 			topic.setType(TopicType.ask);
 		topic.setContent(Toolkit.filteContent(topic.getContent()));
@@ -203,6 +205,8 @@ public class YvrService implements RedisKey, PubSub {
         pipe.sync();
         pubSubService.fire("ps:topic:add", topic.getId());
         notifyWebSocket("home", "新帖:" + oldTitle, topic.getId());
+        if (tags != null && tags.size() > 0)
+            updateTags(topic.getId(), tags);
 		return _ok(topic.getId());
 	}
 

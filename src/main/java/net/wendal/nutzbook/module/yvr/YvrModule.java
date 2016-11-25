@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -115,8 +116,11 @@ public class YvrModule extends BaseModule {
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
 	@AdaptBy(type=WhaleAdaptor.class)
-	public CResult add(@Param("..")Topic topic) {
+	public CResult add(@Param("..")Topic topic, @Param("_tags")String tags) {
 		int userId = Toolkit.uid();
+		if (!Strings.isBlank(tags)) {
+		    topic.setTags(new HashSet<>(Lang.list(Strings.splitIgnoreBlank(tags))));
+		}
 		return yvrService.add(topic, userId);
 	}
 

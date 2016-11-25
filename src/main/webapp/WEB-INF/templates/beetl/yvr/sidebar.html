@@ -54,6 +54,8 @@
   
   <!--# }  #-->
 
+  <!-- 禁用 无人回复的话题-->
+  <!--# if ( 1 != 1) { #-->
   <!--# if ( null != obj.no_reply_topics! && obj.no_reply_topics.~size > 0) {  #-->
   <div class='panel'>
     <div class='header'>
@@ -70,6 +72,20 @@
     </div>
   </div>
   <!--# }  #-->
+  <!--# }  #-->
+  
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>子论坛</span>
+    </div>
+    <div class='inner'>
+      <ul class="unstyled">
+      	<a data-pjax href='${ctxPath}/yvr/tag/fireflow' property="item" typeof="WebPage" class="topic_tag">FireFlow工作流</a>
+      	<a data-pjax href='${ctxPath}/yvr/tag/ssdb' property="item" typeof="WebPage" class="topic_tag">SSDB数据库</a>
+      	<a data-pjax href='${ctxPath}/yvr/tag/nginx' property="item" typeof="WebPage" class="topic_tag">Nginx服务器</a>
+      </ul>
+    </div>
+  </div>
   
   <!--# if ( null != obj.top_tags! && obj.top_tags.~size > 0) {  #-->
   <div class='panel'>
@@ -110,20 +126,17 @@
       <span class='col_fade'>友情社区</span>
     </div>
     <div class='inner'>
-      <ol class="friendship-community">
+      <ul class="unstyled">
       	<!--#
       	var i = 0;
       	while (i < 10){
       		if (conf['website.friendship.'+i] != null){
       	 #-->
-        <li>
-          <a href="${conf['website.friendship.'+i+'.url']}"  target="_blank">${conf['website.friendship.'+i]}</a>
-        </li>
-        <div class="sep10"></div>
+          <a class="topic_tag" href="${conf['website.friendship.'+i+'.url']}"  target="_blank">${conf['website.friendship.'+i]}</a>
         <!--#	}
         	i++;
         } #-->
-      </ol>
+      </ul>
     </div>
   </div>
   <div class='panel' data-intro="客户端二维码" data-position="top">

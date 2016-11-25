@@ -6,6 +6,7 @@ $(function(){
 			topicTitle : "",
 			topicContent : "",
 			topicButtonTip : "我要答案(提交)",
+			topicTag : "",
 			suggestions : []
 		},
 		methods : {
@@ -33,9 +34,11 @@ $(function(){
 					return;
 				}
 				this.topicButtonTip = "正在提交...";
-				var tmpData = {"type":this.topicType,
+				var tmpData = {
+						"type":this.topicType,
 						"title":this.topicTitle,
-						"content":this.topicContent
+						"content":this.topicContent,
+						"_tags" : this.topicTag
 				};
 				this.$http.post(ctxPath+"/yvr/add", tmpData).then(function(resp){
 					this.topicButtonTip = "我要答案";
