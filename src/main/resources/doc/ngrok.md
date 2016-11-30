@@ -8,7 +8,7 @@
 
 ** 注意: 已单独部署为域名 wendal.cn **
 
-[配置文件](/ngrok/config/download)
+[点我下载配置文件](/ngrok/config/download)
 
 [Ngrok客户端v1.x 不支持2.x客户端](https://ngrok.com/download/1)
 

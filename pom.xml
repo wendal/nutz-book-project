@@ -451,7 +451,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.59-SNAPSHOT</version>
+			<version>1.r.59</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
