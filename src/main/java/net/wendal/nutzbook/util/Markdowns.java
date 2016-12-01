@@ -36,7 +36,7 @@ public class Markdowns {
 	public static Cache cache;
 	
 	public static Pattern VideoURL = Pattern.compile(".+\\.(mp4|webm|ogg)$");
-	public static Pattern AtUser = Pattern.compile("(@[a-zA-Z_]+[ ])");
+	public static Pattern AtUser = Pattern.compile("(@[a-zA-Z0-9_]+[ ])");
 	
 	public static HashSet<String> codeNames = new HashSet<String>();
 	static {
