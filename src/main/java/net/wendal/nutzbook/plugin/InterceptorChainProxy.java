@@ -22,9 +22,13 @@ public class InterceptorChainProxy extends InterceptorChain {
     }
 
     public InterceptorChain doChain() throws Throwable {
-        if (it.hasNext())
+        if (it.hasNext()) {
             it.next().filter(this);
-        return chain.doChain();
+            return this;
+        }
+        else {
+            return chain.doChain();
+        }
     }
     
     // TODO 代理其他方法
