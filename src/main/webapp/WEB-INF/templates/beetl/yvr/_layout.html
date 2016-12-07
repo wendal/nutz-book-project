@@ -236,6 +236,11 @@ $(function() {
 <script src="${base}/pay/bc/js"></script>
 <script>
 var ws;
+function ws_ping() {
+	if (ws) {
+		ws.send("{}");
+	}
+}
 $(function(){
 	if (!Notification) {
 		return;
@@ -274,6 +279,7 @@ $(function(){
 		ws.onopen = function(event) {
 			ws.send(JSON.stringify({room:'${null == obj.topic.id! ? "home" : "topic:"+obj.topic.id}',"action":"join"}));
 		};
+		setInterval("ws_ping()", 25000);
 	} catch (ex) {
 		if (console)
 		    console.info(ex);

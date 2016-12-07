@@ -17,6 +17,8 @@
 				layer.alert("修改昵称失败了");
 			}
 		});
+		if (typeof(WebUploader) == "undefined")
+			return;
 		var uploader = WebUploader.create({
             swf: ctxPath+'/libs/webuploader/Uploader.swf',
             server: ctxPath+'/yvr/u/profile/update/avatar',
