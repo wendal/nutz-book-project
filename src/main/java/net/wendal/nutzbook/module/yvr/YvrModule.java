@@ -100,15 +100,16 @@ public class YvrModule extends BaseModule {
 	@GET
 	@At
 	@Ok("beetl:yvr/_add.html")
+	@Aop("redis")
 	public Object add(HttpSession session) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
 
-		String csrf = Lang.md5(R.UU16());
-		session.setAttribute("_csrf", csrf);
-		re.put("_csrf", csrf);
+		String csrf = R.UU32();
+		jedis().setex("csrf:"+csrf, 900, "1");
 		int userId = Toolkit.uid();
 		re.put("current_user", fetch_userprofile(userId));
+		re.put("sub_forums", dao.query(SubForum.class, Cnd.NEW().asc("tagname")));
 		return re;
 	}
 
@@ -223,8 +224,7 @@ public class YvrModule extends BaseModule {
 			re.put("top_topics", new ArrayList<>());
 		
 		re.put("top_tags", yvrService.fetchTopTags());
-		List<SubForum> sub_forums = dao.query(SubForum.class, Cnd.NEW().asc("tagname"));
-		re.put("sub_forums", sub_forums);
+		re.put("sub_forums", dao.query(SubForum.class, Cnd.NEW().asc("tagname")));
 		return re;
 	}
 

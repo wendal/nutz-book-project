@@ -22,9 +22,9 @@ layout("_layout.html",{title:'添加新帖子'}){
             <span>选择子版块：</span>
             <select v-model="topicTag">
               <option value="" >默认</option>
-              <option value="fireflow" >Fireflow</option>
-              <option value="ssdb" >SSDB</option>
-              <option value="nginx" >Nginx</option>
+              <!--# for (sub_forum in obj.sub_forums) { #-->
+              	<option value="${sub_forum.tagname}" >${sub_forum.display}</option>
+              <!--# }  #-->
             </select>
             <p/>
             <span class="tab-selector">标题:</span>
