@@ -43,7 +43,13 @@ public class PluginModule extends BaseModule {
                             throws IOException {
         try {
             byte[] buf = Streams.readBytesAndClose(tmp.getInputStream());
-            IPlugin plugin = pluginMaster.build(className, buf);
+            IPlugin plugin;
+            if (tmp.getSubmittedFileName().endsWith(".class"))
+                plugin = pluginMaster.build(className, buf);
+            else if (tmp.getSubmittedFileName().endsWith(".jar") || tmp.getSubmittedFileName().endsWith(".zip"))
+                plugin = pluginMaster.buildFromJar(className, buf);
+            else
+                throw new RuntimeException("only accept class or jar!!");
             pluginMaster.register(key, plugin, args);
             return new NutMap("ok", true);
         }

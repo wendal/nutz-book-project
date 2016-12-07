@@ -1,6 +1,9 @@
 package net.wendal.nutzbook.plugin;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,6 +13,7 @@ import java.util.Map;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -71,6 +75,19 @@ public class PluginMaster {
         }
     }
     
+    @SuppressWarnings("resource")
+    public IPlugin buildFromJar(final String className, byte[] buf) {
+        try {
+            File tmp = File.createTempFile("plugins-", ".jar");
+            Files.write(tmp, buf);
+            return (IPlugin) new URLClassLoader(new URL[]{tmp.toURI().toURL()}, getClass().getClassLoader(), null).loadClass(className).newInstance();
+        }
+        catch (Exception e) {
+            log.info("load plugin fail name="+className, e);
+            throw Lang.wrapThrow(e);
+        }
+    }
+    
     /**
      * 逐一销毁每个插件
      */
@@ -116,7 +133,7 @@ public class PluginMaster {
         return list;
     }
     
-    public class ByteArrayClassLoader extends ClassLoader {
+    public static class ByteArrayClassLoader extends ClassLoader {
         
         public ByteArrayClassLoader() {
             super(IPlugin.class.getClassLoader());
