@@ -5,3 +5,12 @@
 <!--# } else {  #-->
 <span class="topiclist-tab">${topic.type.display}</span>
 <!--# }  #-->
+<!--#        if ( topic.tags! != null  && obj.sub_forums! != null) {
+                 for (sub_forum in obj.sub_forums) {
+                      for (_tag in topic.tags) {
+                 	      if (_tag == sub_forum.tagname) {  #-->
+	                          <span class="topiclist-tab" style="background-color:#E7F2ED;">${sub_forum.tagname}</span>
+<!--#                     }
+                      }
+                 }
+             }#-->

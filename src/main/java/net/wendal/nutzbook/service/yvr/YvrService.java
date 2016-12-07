@@ -42,6 +42,7 @@ import org.nutz.mvc.upload.TempFile;
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.SubForum;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicTag;
@@ -205,8 +206,25 @@ public class YvrService implements RedisKey, PubSub {
         pipe.sync();
         pubSubService.fire("ps:topic:add", topic.getId());
         notifyWebSocket("home", "新帖:" + oldTitle, topic.getId());
-        if (tags != null && tags.size() > 0)
+        if (tags != null && tags.size() > 0) {
             updateTags(topic.getId(), tags);
+            for (String tag : tags) {
+                SubForum sf = dao.fetch(SubForum.class, tag);
+                if (sf != null && sf.getMasters() != null && sf.getMasters().size() > 0) {
+                    for (String master : tags) {
+                        User u_master = dao.fetch(User.class, master);
+                        if (u_master != null) {
+                            pushUser(u_master.getId(),
+                                     tag+"新帖:" + oldTitle,
+                                     topic.getId(),
+                                     dao.fetch(User.class, userId).getName(),
+                                     topic.getTitle(),
+                                     PushService.PUSH_TYPE_REPLY);
+                        }
+                    }
+                }
+            }
+        }
 		return _ok(topic.getId());
 	}
 

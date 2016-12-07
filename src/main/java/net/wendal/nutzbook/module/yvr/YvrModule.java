@@ -51,6 +51,7 @@ import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.SubForum;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.bean.yvr.TopicType;
@@ -222,6 +223,8 @@ public class YvrModule extends BaseModule {
 			re.put("top_topics", new ArrayList<>());
 		
 		re.put("top_tags", yvrService.fetchTopTags());
+		List<SubForum> sub_forums = dao.query(SubForum.class, Cnd.NEW().asc("tagname"));
+		re.put("sub_forums", sub_forums);
 		return re;
 	}
 

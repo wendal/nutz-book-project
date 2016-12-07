@@ -48,7 +48,8 @@ var ioc = {
 				    "t_user_profile", "t_user", "t_role",
 					"t_permission", "t_role_permission", 
 					"t_topic","t_topic_reply", "t_big_content",
-					"t_oauth_user", "t_user_role" ],
+					"t_oauth_user", "t_user_role",
+					"t_sub_forum"],
 				
 				//slave : {refer:"dataSource_slave"}
 		}

@@ -80,9 +80,11 @@
     </div>
     <div class='inner'>
       <ul class="unstyled">
-      	<a data-pjax href='${ctxPath}/yvr/tag/fireflow' property="item" typeof="WebPage" class="topic_tag">FireFlow工作流</a>
-      	<a data-pjax href='${ctxPath}/yvr/tag/ssdb' property="item" typeof="WebPage" class="topic_tag">SSDB数据库</a>
-      	<a data-pjax href='${ctxPath}/yvr/tag/nginx' property="item" typeof="WebPage" class="topic_tag">Nginx服务器</a>
+      <!--# if ( null != obj.sub_forums!) {  #-->
+        <!--# for (sub_forum in obj.sub_forums) {  #-->
+      	<a data-pjax href='${ctxPath}/yvr/tag/${sub_forum.tagname}' property="item" typeof="WebPage" class="topic_tag">${sub_forum.display}</a>
+      	<!--#} #-->
+      <!--#} #-->
       </ul>
     </div>
   </div>

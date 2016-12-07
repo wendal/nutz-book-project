@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 import javax.management.MBeanServer;
@@ -37,6 +38,7 @@ import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.msg.UserMessage;
+import net.wendal.nutzbook.bean.yvr.SubForum;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.ig.RedisIdGenerator;
@@ -119,6 +121,25 @@ public class MainSetup implements Setup {
 			reply.setContentId(cid);
 			reply.setContent(null);
 			dao.update(reply, "(content|contentId)");
+		}
+		// 初始化子论坛数据
+		if (dao.count(SubForum.class) == 0) {
+		    SubForum fireflow = new SubForum();
+		    fireflow.setDisplay("Fireflow工作流");
+		    fireflow.setTagname("fireflow");
+		    fireflow.setMasters(Arrays.asList("qq_9d0c01e6", "fireflow"));
+		    dao.insert(fireflow);
+		    
+		    SubForum ssdb = new SubForum();
+		    ssdb.setDisplay("SSDB数据库");
+		    ssdb.setTagname("ssdb");
+		    ssdb.setMasters(Arrays.asList("ideawu"));
+		    dao.insert(ssdb);
+		    
+		    SubForum nginx = new SubForum();
+		    nginx.setDisplay("Nginx服务器");
+		    nginx.setTagname("nginx");
+		    dao.insert(nginx);
 		}
 
 		// 获取配置对象
