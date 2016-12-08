@@ -74,20 +74,20 @@
   <!--# }  #-->
   <!--# }  #-->
   
+  <!--# if ( null != obj.sub_forums!) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>子论坛</span>
     </div>
     <div class='inner'>
       <ul class="unstyled">
-      <!--# if ( null != obj.sub_forums!) {  #-->
         <!--# for (sub_forum in obj.sub_forums) {  #-->
       	<a data-pjax href='${ctxPath}/yvr/tag/${sub_forum.tagname}' property="item" typeof="WebPage" class="topic_tag">${sub_forum.display}</a>
       	<!--#} #-->
-      <!--#} #-->
       </ul>
     </div>
   </div>
+  <!--#} #-->
   
   <!--# if ( null != obj.top_tags! && obj.top_tags.~size > 0) {  #-->
   <div class='panel'>
