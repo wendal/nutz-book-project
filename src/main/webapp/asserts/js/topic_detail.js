@@ -22,7 +22,7 @@ $(function(){
 						var re = resp.json();
 						if (re.ok) {
 							this.replyButtonTip = "提交成功,正在跳转";
-							window.location.href=ctxPath+"/yvr/t/" + this.topicId;
+							window.location.href=ctxPath+"/yvr/t/" + this.topicId + "#" + re.data;
 						} else {
 							layer.alert(re.msg);
 						}
