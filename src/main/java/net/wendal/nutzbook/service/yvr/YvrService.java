@@ -211,7 +211,7 @@ public class YvrService implements RedisKey, PubSub {
             for (String tag : tags) {
                 SubForum sf = dao.fetch(SubForum.class, tag);
                 if (sf != null && sf.getMasters() != null && sf.getMasters().size() > 0) {
-                    for (String master : tags) {
+                    for (String master : sf.getMasters()) {
                         User u_master = dao.fetch(User.class, master);
                         if (u_master != null) {
                             pushUser(u_master.getId(),
