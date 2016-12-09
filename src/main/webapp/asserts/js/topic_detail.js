@@ -21,8 +21,8 @@ $(function(){
 					if (resp.ok) {
 						var re = resp.json();
 						if (re.ok) {
-							this.replyButtonTip = "提交成功,正在跳转";
-							window.location.href=ctxPath+"/yvr/t/" + this.topicId + "#" + re.data;
+							//this.replyButtonTip = "提交成功,正在跳转";
+							window.location.reload();
 						} else {
 							layer.alert(re.msg);
 						}
