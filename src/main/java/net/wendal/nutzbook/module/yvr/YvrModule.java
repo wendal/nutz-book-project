@@ -296,7 +296,6 @@ public class YvrModule extends BaseModule {
 	@POST
 	@At
 	@Ok("json")
-	@Filters(@By(type = CsrfActionFilter.class))
 	public Object upload(@Param("file") TempFile tmp) throws IOException {
 		int userId = Toolkit.uid();
 		return yvrService.upload(tmp, userId);
@@ -312,6 +311,7 @@ public class YvrModule extends BaseModule {
 		return f;
 	}
 
+	@AdaptBy(type=WhaleAdaptor.class)
 	@Filters(@By(type = CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")

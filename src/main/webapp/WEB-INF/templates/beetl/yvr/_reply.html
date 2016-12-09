@@ -19,55 +19,20 @@
       <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
     </div>
     <!-- user_action -->
+    <!--# if (false) { #-->
     <div class='user_action'>
       <span>
-      	<!--# if (null != obj.current_user!) {
-      	 #-->
-        <i class="fa up_btn
-        
-        ${ array.contain(reply.ups, ""+ obj.current_user.userId) ? 'fa-thumbs-up uped' : 'fa-thumbs-o-up' }
-
-        " title="喜欢"></i>
-        <span class="up-count">
-        	${reply.ups.~size > 0 ? reply.ups.~size : '' }
-        </span>
-        <!--# }  #-->
-      </span>
-      <span>
-        <!--# if (null != obj.current_user!){  #-->
-          <i class="fa fa-reply reply2_btn" title="回复"></i>
+        <!--# if (null != obj.current_user! && reply.author.userId == obj.current_user.userId){  #-->
+          <i class="fa fa-reply reply2_btn" title="修改"></i>
         <!--# }  #-->
       </span>
     </div>
+    <!--# } #-->
   </div>
   <!-- reply_content -->
   <div class='reply_content from-${null == reply.author.loginname! ? 'admin' : reply.author.loginname}'>
     <div class="markdown-text">
     ${markdown(reply.content, reply.author.loginname)}
-    </div>
-  </div>
-  <div class='clearfix'>
-    <div class='reply2_area'>
-    <!--# if (null != obj.current_user!) {  #-->
-      <form class='reply2_form' action='#' method='post'>
-        <input type='hidden' name='_csrf' value='${obj._csrf!}'/>
-        <input type='hidden' name='replyTo' value='${reply.id}'/>
-
-        <div class='markdown_editor in_editor'>
-          <div class='markdown_in_editor'>
-            <textarea class='span8 editor reply_editor'
-                      id="reply2_editor_${reply.id}" name='content' rows='4'></textarea>
-
-            <div class='editor_buttons'>
-              <input class='span-primary reply2_submit_btn submit_btn'
-                     type="submit" data-id='${reply.id}' data-loading-text="回复中.." value="回复">
-            </div>
-          </div>
-
-        </div>
-
-      </form>
-      <!--# }  #-->
     </div>
   </div>
 </div>

@@ -49,9 +49,11 @@ layout("_layout.html",{}){
         <span>
           <a id="copy_link_btn" href="#" class="zclip" title="复制标题和地址" data-intro="可以复制标题和地址">复制</a>
         </span>
+        <!--# if (false) { #-->
         <span>
           <a id="copy_link_btn" href="#" class="zclip" title="跨设备免登陆.注意,不是给手机客户端用的" data-intro="手机扫描后可免登陆访问该页面" onclick="cs_qrcode();return false; ">跨屏二维码</a>
         </span>
+		<!--# } #-->
         <!--# if (null != obj.prev_topic_id!) {  #-->
         <span>
           <a href="${base}/yvr/t/${obj.prev_topic_id}" title="跳转到上一个同类型的帖子">上一个帖子</a>
@@ -127,7 +129,7 @@ layout("_layout.html",{}){
      #-->
   </div>
   <!--# }  #-->
-  <div class='panel' data-intro="回帖回帖回帖!!" data-position="top">
+  <div class='panel' data-intro="回帖回帖回帖!!" data-position="top" id="replyAdd">
     <div class='header'>
       <span class='col_fade'>添加回复</span>
     </div>
@@ -135,21 +137,15 @@ layout("_layout.html",{}){
     <!--# if (obj.topic.lock) { #-->
     	<span class='col_fade'>该帖子已被锁定,不能回复.</span>
     <!--# } else if (null != obj.current_user!){  #-->
-      <form id='reply_form' action='#'>
-
-        <div class='markdown_editor in_editor'>
-          <div class='markdown_in_editor'>
-            <textarea class='editor' name='content' rows='8'></textarea>
-
-            <div class='editor_buttons'>
-              <input class='span-primary submit_btn' type="submit" data-loading-text="回复中.." value="回复${obj.topic.lock ? '(此主题已锁定)' : ''}" ${obj.topic.lock ? 'disabled="disabled"' : ''}>
-            </div>
-          </div>
-
-        </div>
-
-        <input type='hidden' name='_csrf' id="_csrf" value='${obj._csrf!}'/>
+      <form action='#'>
+      	  <input id="input_topic_id" type="hidden" name="id" value="${obj.topic.id}">
+          <input type='hidden' name='_csrf' id="_csrf" value='${obj._csrf!}'/>
+          <textarea id="replyArea" v-model="replyContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
       </form>
+      
+      <button class='btn' @click="replySubmit">回复</button>
+      <button class='btn' @click="replyAddImage">插入图片</button>
+      <button class='btn' @click="replyAddCode">插入代码或日志片段</button>
     <!--# } else { #-->
     	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
     <!--# }  #-->
@@ -164,218 +160,8 @@ layout("_layout.html",{}){
 <!--# if (null != obj.current_user!){  #-->
 <script src="${cdnbase}${base}/rs/libs/markdownit.js?v=1"></script>
 <script src="${cdnbase}${base}/rs/libs/code-prettify/prettify.js?v=1"></script>
-<script src="${cdnbase}${base}/rs/libs/editor/editor.js?v=3"></script>
-<script src="${base}/rs/libs/editor/ext.js?v=5"></script>
-<script>
-  $(document).ready(function () {
-    // 获取所有回复者name
-    var allNames = $('.reply_author').map(function (idx, ele) {
-      var _tmp = $(ele).text().trim();
-      if (_tmp.indexOf("(") > -1 && _tmp.indexOf(")") > _tmp.indexOf("(")){
-          return _tmp.substr(_tmp.indexOf("(")+1, _tmp.indexOf(")") - _tmp.indexOf("(") - 1);
-      }
-      return _tmp;
-    }).toArray();
-    allNames = _.uniq(allNames);
-    // END 获取所有回复者name
-    // 编辑器相关
-    $('textarea.editor').each(function(){
-      var editor = new Editor({
-        status: []
-      });
-      var $el = $(this);
-      editor.render(this);
-      //绑定editor
-      $(this).data('editor', editor);
-      var $input = $(editor.codemirror.display.input);
-      $input.keydown(function(event){
-        if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
-          event.preventDefault();
-          if (console)
-          	console.log("hi");
-          //$el.closest('form').submit();
-        }
-      });
-      // at.js 配置
-      var codeMirrorGoLineUp = CodeMirror.commands.goLineUp;
-      var codeMirrorGoLineDown = CodeMirror.commands.goLineDown;
-      var codeMirrorNewlineAndIndent = CodeMirror.commands.newlineAndIndent;
-      $input.atwho({
-        at: '@',
-        data: allNames
-      })
-      .on('shown.atwho', function () {
-        CodeMirror.commands.goLineUp = _.noop;
-        CodeMirror.commands.goLineDown = _.noop;
-        CodeMirror.commands.newlineAndIndent = _.noop;
-      })
-      .on('hidden.atwho', function () {
-        CodeMirror.commands.goLineUp = codeMirrorGoLineUp;
-        CodeMirror.commands.goLineDown = codeMirrorGoLineDown;
-        CodeMirror.commands.newlineAndIndent = codeMirrorNewlineAndIndent;
-      });
-      // END at.js 配置
-    });
-    // END 编辑器相关
-    // 评论回复
-    $('#content').on('click', '.reply2_btn', function (event) {
-      var $btn = $(event.currentTarget);
-      var parent = $btn.closest('.reply_area');
-      var editorWrap = parent.find('.reply2_form');
-      parent.find('.reply2_area').prepend(editorWrap);
-      var textarea = editorWrap.find('textarea.editor');
-      var user = $btn.closest('.author_content').find('.reply_author').text().trim();
-      if (user.indexOf("(") > -1 && user.indexOf(")") > user.indexOf("(")){
-          user = user.substr(user.indexOf("(")+1, user.indexOf(")") - user.indexOf("(") - 1);
-      }
-      var editor = textarea.data('editor');
-      editorWrap.show('fast', function () {
-        var cm = editor.codemirror;
-        cm.focus();
-        if(cm.getValue().indexOf('@' + user) < 0){
-          editor.push('@' + user + ' ');
-        }
-      });
-    });
-    $('#content').on('click', '.reply2_at_btn', function (event) {
-      var $btn = $(event.currentTarget);
-      var editorWrap = $btn.closest('.reply2_area').find('.reply2_form');
-      $btn.closest('.reply2_item').after(editorWrap);
-      var textarea = editorWrap.find('textarea.editor');
-      var user = $btn.closest('.reply2_item').find('.reply_author').text().trim();
-      var editor = textarea.data('editor');
-      editorWrap.show('fast', function () {
-        var cm = editor.codemirror;
-        cm.focus();
-        if(cm.getValue().indexOf('@' + user) < 0){
-          editor.push('@' + user + ' ');
-        }
-      });
-    });
-    // END 评论回复
-    // 加入收藏
-    $('#collect_btn').click(function () {
-      var $me = $(this);
-      var action = $me.attr('action');
-      var data = {
-        topic_id: '${obj.topic.id}',
-        _csrf: '${obj._csrf}'
-      };
-      var $countSpan = $('.collect-topic-count');
-      $.post('/topic/' + action, data, function (data) {
-        if (data.status === 'success') {
-          if (action == 'collect') {
-            $me.text('取消收藏');
-            $me.attr('action', 'de_collect');
-          } else {
-            $me.text('加入收藏');
-            $me.attr('action', 'collect');
-          }
-          $me.toggleClass('span-success');
-        }
-      }, 'json');
-    });
-    // END 加入收藏
-    // 删除回复
-    $('#content').on('click', '.delete_reply_btn, .delete_reply2_btn', function (event) {
-      var $me = $(event.currentTarget);
-      if (confirm('确定要删除此回复吗？')) {
-        var reply_id = null;
-        if ($me.hasClass('delete_reply_btn')) {
-          reply_id = $me.closest('.reply_item').attr('reply_id');
-        }
-        if ($me.hasClass('delete_reply2_btn')) {
-          reply_id = $me.closest('.reply2_item').attr('reply_id');
-        }
-        var data = {
-          reply_id: reply_id,
-          _csrf: "${obj._csrf}"
-        };
-        $.post('/reply/' + reply_id + '/delete', data, function (data) {
-          if (data.status === 'success') {
-            if ($me.hasClass('delete_reply_btn')) {
-              $me.closest('.reply_item').remove();
-            }
-            if ($me.hasClass('delete_reply2_btn')) {
-              $me.closest('.reply2_item').remove();
-            }
-          }
-        }, 'json');
-      }
-      return false;
-    });
-    // END 删除回复
-    // 删除话题
-    $('.delete_topic_btn').click(function () {
-      var topicId = $(this).data('id');
-      if (topicId && confirm('确定要删除此话题吗？')) {
-        $.post('/topic/' + topicId + '/delete', { _csrf: $('#_csrf').val() }, function (result) {
-          if (!result.success) {
-            alert(result.message);
-          } else {
-            location.href = '/';
-          }
-        });
-      }
-      return false;
-    });
-    // END 删除话题
-    // 用户 hover 在回复框时才显示点赞按钮
-    $('.reply_area').hover(
-      function () {
-        $(this).find('.up_btn').removeClass('invisible');
-      },
-      function () {
-        var $this = $(this);
-        if ($this.find('.up-count').text().trim() === '') {
-          $this.find('.up_btn').addClass('invisible');
-        }
-      });
-    // END 用户 hover 在回复框时才显示点赞按钮
-    
-    // 提交回复
-    $('#reply_form').on('submit', function (e) {
-    	if (console) 
-    		console.log($(this).serialize());
-    	$.ajax({
-    		url : "${ctxPath}/yvr/t/${obj.topic.id}/reply",
-    		method : "POST",
-    		data : $(this).serialize(),
-    		dataType : "json",
-    		success : function(re) {
-    			if (re.ok) {
-    				location.reload();
-    			} else {
-    				$('#reply_form').button('reset');
-    				layer.alert(re.msg);
-    			}
-    		}
-    	});
-    	return false;
-    });
-    $('.reply2_area').on('submit', function (event) {
-    	var $btn = $(event.currentTarget);
-      	var editorWrap = $btn.closest('.reply2_area').find('.reply2_form');
-    	if (console) 
-    		console.log($(editorWrap).serialize());
-    	$.ajax({
-    		url : "${ctxPath}/yvr/t/${obj.topic.id}/reply",
-    		method : "POST",
-    		data : $(editorWrap).serialize(),
-    		dataType : "json",
-    		success : function(re) {
-    			if (re.ok) {
-    				location.reload();
-    			} else {
-    				layer.alert(re.msg);
-    				$('.reply2_area').button('reset');
-    			}
-    		}
-    	});
-    	return false;
-    });
-  });
-</script>
+<script src="${base}/asserts/js/topic_detail.js?v=4"></script>
+<script src="${base}/asserts/js/jquery/atwho.min.js?v=1.4.1"></script>
 
 <!--#} #-->
 <script type="text/javascript">
@@ -392,94 +178,7 @@ layout("_layout.html",{}){
     }).on('mouseleave', function(){
       $repliesHistory.fadeOut('fast');
     });
-    // 显示被 at 用户的本页评论
-    if ($('.reply2_item').length === 0) {
-      // 只在流式评论布局中使用
-      $('#content').on('mouseenter', '.reply_content a', function (e) {
-        clearTimeout(timer);
-        var $this = $(this);
-        if ($this.text()[0] === '@') {
-          var thisText = $this.text().trim();
-          var loginname = thisText.slice(1);
-          var offset = $this.offset();
-          var width = $this.width();
-          var mainOffset = $('#main').offset();
-          $repliesHistory.css('left', offset.left-mainOffset.left+width+10); // magic number
-          $repliesHistory.css('top', offset.top-mainOffset.top-10); // magic number
-          $repliesHistory.css({
-            'z-index': 1,
-          });
-          $repliesHistoryContent.empty();
-          var chats = [];
-          var replyToId = $this.closest('.reply_item').attr('reply_to_id');
-          while (replyToId) {
-            var $replyItem = $('.reply_item[reply_id=' + replyToId + ']');
-            var replyContent = $replyItem.find('.reply_content').text().trim();
-            if (replyContent.length > 0) {
-              chats.push([
-                $($replyItem.find('.user_avatar').html()).attr({
-                  height: '30px',
-                  width: '30px',
-                }), // avatar
-                (replyContent.length>300?replyContent.substr(0,300)+'...':replyContent), // reply content
-                '<a href="#'+replyToId+'" class="scroll_to_original" title="查看原文">↑</a>'
-              ]);
-            }
-            replyToId = $replyItem.attr('reply_to_id');
-          }
-          if(chats.length > 0) {
-            chats.reverse();
-            $repliesHistoryContent.append('<div class="title">查看对话</div>');
-            chats.forEach(function (pair, idx) {
-              var $chat = $repliesHistoryContent.append('<div class="item"></div>');
-              $chat.append(pair[0]); // 头像
-              $chat.append($('<span>').text(pair[1])); // 内容
-              $chat.append(pair[2]); // 查看原文 anchor
-            });
-            $repliesHistory.fadeIn('fast');
-          }else{
-            $repliesHistory.hide();
-          }
-        }
-      }).on('mouseleave', '.reply_content a', function (e) {
-        timer = setTimeout(function(){
-          $repliesHistory.fadeOut('fast');
-        }, 500);
-      });
-    }
-    // END 显示被 at 用户的本页评论
   })();
-  // 点赞
-  $('.up_btn').click(function (e) {
-    var $this = $(this);
-    var replyId = $this.closest('.reply_area').attr('reply_id');
-    $.ajax({
-      url: '${ctxPath}/yvr/t/${obj.topic.id}/reply/' + replyId + '/up',
-      method: 'POST',
-      dataType : "json"
-    }).done(function (data) {
-      if (data.ok) {
-        $this.removeClass('invisible');
-        var currentCount = Number($this.next('.up-count').text().trim()) || 0;
-        if (data.data === 'up') {
-          $this.next('.up-count').text(currentCount + 1);
-          $this.addClass('uped');
-        } else {
-          if (data.data === 'down') {
-            $this.next('.up-count').text(currentCount - 1);
-            $this.removeClass('uped');
-          }
-        }
-      } else {
-        layer.alert(data.msg);
-      }
-    }).fail(function (xhr) {
-      if (xhr.status === 403) {
-        alert('请先登录，登陆后即可点赞。');
-      }
-    });
-  });
-  // END 点赞
 </script>
 
 <!--#}  #-->
@@ -549,8 +248,6 @@ $(function() {
 	});
 });
 
-	
-	
 	function topic_update(tid, val, tp) {
 		var param = {id:tid, "opt":tp};
 		param[tp] = val;
@@ -565,3 +262,25 @@ $(function() {
 		});
 	};
 </script>
+<!--# 
+if (obj.topic.replies.~size > 0) {
+	var reply_authors = "";
+	var reply_authors_array = [];
+	for (_reply in obj.topic.replies) {
+		if (array.contain(reply_authors_array, _reply.author.loginname)) {
+		
+		} else {
+			array.add(reply_authors_array, _reply.author.loginname);
+			reply_authors = reply_authors + '"' + _reply.author.loginname + '",';
+		}
+	}
+	#-->
+<script type="text/javascript">
+$('#replyArea').atwho({
+    at: "@",
+    data:[${reply_authors}]
+})
+</script>
+<!--# 
+}
+#-->
