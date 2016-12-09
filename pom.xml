@@ -76,28 +76,17 @@
 	<repositories>
 		<repository>
 			<id>nutz</id>
-			<url>http://maven.nutz.cn/nexus/content/repositories/central</url>
+			<url>https://jfrog.nutz.cn/artifactory/jcenter</url>
 		</repository>
 		<repository>
 			<id>nutz-snapshots</id>
-			<url>http://maven.nutz.cn/nexus/content/repositories/snapshots</url>
+			<url>https://jfrog.nutz.cn/artifactory/snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 			<releases>
 				<enabled>false</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>nexus-nutzcn-thirdparty</id>
-			<name>Nexus nutzcn thirdparty</name>
-			<url>http://maven.nutz.cn/nexus/content/repositories/thirdparty</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<updatePolicy>never</updatePolicy>
 			</releases>
 		</repository>
 	</repositories>
