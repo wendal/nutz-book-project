@@ -205,7 +205,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
         pipe.sync();
         pubSubService.fire("ps:topic:add", topic.getId());
-        notifyWebSocket("home", "新帖:" + oldTitle, topic.getId());
+        notifyWebSocket("home", "新帖:" + oldTitle, topic.getId(), userId);
         if (tags != null && tags.size() > 0) {
             updateTags(topic.getId(), tags);
             for (String tag : tags) {
@@ -271,7 +271,7 @@ public class YvrService implements RedisKey, PubSub {
 
 		notifyUsers(topic, reply, cnt, userId);
         pubSubService.fire("ps:topic:reply", topic.getId());
-        notifyWebSocket("topic:"+topic.getId(), "新回复: " + topic.getTitle(), topic.getId());
+        notifyWebSocket("topic:"+topic.getId(), "新回复: " + topic.getTitle(), topic.getId(), userId);
 		return _ok(reply.getId());
 	}
 
@@ -526,11 +526,12 @@ public class YvrService implements RedisKey, PubSub {
 		}
 	}
 
-    protected void notifyWebSocket(String room, Object data, String tag) {
+    protected void notifyWebSocket(String room, Object data, String tag, int byuser) {
         NutMap map = new NutMap();
         map.put("action", "notify");
         map.put("data", data);
         map.put("options", new NutMap().setv("tag", tag));
+        map.put("byuser", byuser);
         String msg = Json.toJson(map, JsonFormat.compact());
         pubSubService.fire(NutzbookWebsocket.prefix+room, msg);
     }

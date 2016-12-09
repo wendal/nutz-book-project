@@ -246,8 +246,8 @@ $(function(){
 	if (!Notification) {
 		return;
 	}
-	if (console)
-	    console.info(Notification.permission);
+	//if (console)
+	//    console.info(Notification.permission);
 	if (Notification.permission == "denied") {
 		return;
 	}
@@ -268,6 +268,10 @@ $(function(){
 		ws.onmessage = function(event) {
 		    var re = JSON.parse(event.data);
 		    if (re.action == "notify") {
+		    	<!--# if (obj.current_user! != null) { #-->
+		    	if (re.byuser == ${obj.current_user.userId})
+		    		return;
+		    	<!--# } #-->
 		    	re.options["icon"] = "${cdnbase}${base}/rs/logo.png";
 			    var n = new Notification(re.data, re.options);
 				n.onclick = function() {
