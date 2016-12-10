@@ -7,7 +7,7 @@ ENV PATH $CATALINA_HOME/bin:$PATH
 RUN mkdir -p "$CATALINA_HOME"
 ENV TOMCAT_MAJOR 8
 ENV TOMCAT_VERSION 8.5.9
-ENV TOMCAT_TGZ_URL http://archive.apache.org/dist/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+ENV TOMCAT_TGZ_URL http://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN cd $CATALINA_HOME \
