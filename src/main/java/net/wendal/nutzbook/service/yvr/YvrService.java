@@ -543,10 +543,10 @@ public class YvrService implements RedisKey, PubSub {
         // TODO 数据库集群的delay会导致
         case "ps:topic:add":
             updateTopicTypeCount();
-            topicSearchService.add(dao.fetch(Topic.class, message));
+            topicSearchService.addIndex(dao.fetch(Topic.class, message), true);
             break;
         case "ps:topic:reply":
-            topicSearchService.add(dao.fetch(Topic.class, message));
+            topicSearchService.addIndex(dao.fetch(Topic.class, message), false);
             break;
         default:
             break;

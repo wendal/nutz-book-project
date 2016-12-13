@@ -13,6 +13,7 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -54,16 +55,13 @@ public class TopicSearchService {
 	protected BigContentService bigContentService;
 
 	@Async
-	public void add(Topic topic) {
-	    if (topic == null) {
-	        // TODO 数据库延迟?
-	        return;
-	    }
+	public void addIndex(Topic topic, boolean add) {
 	    if (topic.getContent() == null)
 	        bigContentService.fill(topic);
-	    _add(topic);
+	    _add(topic, add);
 	}
-	protected void _add(Topic topic) {
+	
+	protected void _add(Topic topic, boolean add) {
 		if (topic == null)
 			return; // 虽然不太可能,还是预防一下吧
 		if (topic.getType() != TopicType.ask && topic.getType() != TopicType.share)
@@ -79,8 +77,9 @@ public class TopicSearchService {
 		fieldType = new FieldType();
 		fieldType.setIndexed(true);// 索引
 		fieldType.setStored(true);// 存储
-		fieldType.setStoreTermVectors(true);
-		fieldType.setTokenized(true);
+		fieldType.setTokenized(false);
+        fieldType.setStoreTermVectors(true);
+		fieldType.setStoreTermVectorPayloads(true);
 		fieldType.setStoreTermVectorPositions(true);// 存储位置
 		fieldType.setStoreTermVectorOffsets(true);// 存储偏移量
 		field = new Field("id", topic.getId(), fieldType);
@@ -134,10 +133,8 @@ public class TopicSearchService {
         document.add(field);
 
 		try {
-		    QueryParser qp = new QueryParser(Version.LUCENE_4_9, "id", luceneIndex.analyzer());
-		    luceneIndex.writer.deleteDocuments(qp.parse(topic.getId()));
-			luceneIndex.writer.addDocument(document);
-			luceneIndex.writer.commit();
+		    luceneIndex.writer.updateDocument(new Term("id", topic.getId()), document);
+		    luceneIndex.writer.commit();
 		} catch (Exception e) {
 			log.debug("add to index fail : id=" + topic.getId());
 		} catch (Error e) {
@@ -154,7 +151,7 @@ public class TopicSearchService {
 		for (String topicId : topicIds) {
 			Topic topic = dao.fetch(Topic.class, topicId);
 			bigContentService.fill(topic);
-			_add(topic);
+			_add(topic, true);
 		}
 		luceneIndex.writer.commit();
 	}
