@@ -17,12 +17,14 @@ import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Fail;
+import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
-
+import org.nutz.mvc.filter.CrossOriginFilter;
 import org.nutz.plugins.apidoc.annotation.Api;
 import net.wendal.nutzbook.annotation.SLog;
 import net.wendal.nutzbook.bean.User;
@@ -37,6 +39,7 @@ import net.wendal.nutzbook.util.Toolkit;
 @SLog(tag="用户管理", msg="")
 public class UserModule extends BaseModule {
 	
+    @Filters(@By(type=CrossOriginFilter.class))
 	@At
 	public int count() { // 统计用户数的方法,算是个测试点
 		return dao.count(User.class);
