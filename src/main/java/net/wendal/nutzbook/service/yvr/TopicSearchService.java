@@ -15,6 +15,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -67,10 +68,10 @@ public class TopicSearchService {
 			return; // 虽然不太可能,还是预防一下吧
 		if (topic.getType() != TopicType.ask && topic.getType() != TopicType.share)
 		    return;
+		
 		// 暂时不索引评论
 		dao.fetchLinks(topic, "replies");
-		Document document;
-		document = new Document();
+		Document document = new Document();
 		Field field;
 		FieldType fieldType;
 
@@ -133,8 +134,11 @@ public class TopicSearchService {
         document.add(field);
 
 		try {
+		    QueryParser qp = new QueryParser(Version.LUCENE_4_9, "id", luceneIndex.analyzer());
+		    luceneIndex.writer.deleteDocuments(qp.parse(topic.getId()));
 			luceneIndex.writer.addDocument(document);
-		} catch (IOException e) {
+			luceneIndex.writer.commit();
+		} catch (Exception e) {
 			log.debug("add to index fail : id=" + topic.getId());
 		} catch (Error e) {
 		    log.debug("add to index fail : id=" + topic.getId());
