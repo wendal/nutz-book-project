@@ -24,7 +24,7 @@ layout("_layout.html",{}){
         <!--#
 		layout("_top_good.html",{"topic":obj.topic}){}
 		 #-->
-		${obj.topic.title}
+		 <span id="TopicTitleSpan">${obj.topic.title}</span>
       </span>
       <div class="changes">
         <span>
@@ -247,7 +247,6 @@ $(function() {
 		}
 	});
 });
-
 	function topic_update(tid, val, tp) {
 		var param = {id:tid, "opt":tp};
 		param[tp] = val;
@@ -262,6 +261,29 @@ $(function() {
 		});
 	};
 </script>
+<!--# if (shiro.hasRole("admin")){ #-->
+<script type="text/javascript">
+$(function(){
+$("#TopicTitleSpan").editInPlace({
+	method : "POST",
+	url: "${base}/yvr/admin/update/title",
+	textarea_rows : 5,
+	text_size:100,
+	bg_over: "none",
+	bg_out: "none",
+	field_type: "textarea",
+	value_required: "true",
+	params : "id=${obj.topic.id}&opt=title",
+	success: function(data){
+		location.reload();
+	},
+	error: function(e){
+		layer.alert("当前仅管理员可以修改");
+	}
+});
+});
+</script>
+<!--# } #-->
 <!--# 
 if (obj.topic.replies.~size > 0) {
 	var reply_authors = "";

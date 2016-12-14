@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.FieldFilter;
 import org.nutz.dao.QueryResult;
@@ -91,14 +92,24 @@ public class YvrAdminModule extends BaseModule{
 		yvrService.updateTopicTypeCount();
 	}
 
-	@POST
-	@RequiresPermissions("topic:update:tags")
-	@At("/update/tags")
-	@Aop("redis")
-	@Ok("json")
-	public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags, @Param("update_value")String[] tags2) {
-		return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags != null ? tags : tags2)));
-	}
+    @POST
+    @RequiresPermissions("topic:update:tags")
+    @At("/update/tags")
+    @Aop("redis")
+    @Ok("json")
+    public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags, @Param("update_value")String[] tags2) {
+        return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags != null ? tags : tags2)));
+    }
+    
+
+    @POST
+    @RequiresPermissions("topic:update:title")
+    @At("/update/title")
+    @Aop("redis")
+    @Ok("json")
+    public boolean updateTitle(@Param("id")String topicId, @Param("update_value")String val) {
+        return 0 < dao.update(Topic.class, Chain.make("title", val), Cnd.where("id", "=", topicId));
+    }
 
 	@Ok("json")
 	@At
