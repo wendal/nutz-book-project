@@ -22,7 +22,7 @@ import org.quartz.JobExecutionException;
 
 import net.wendal.nutzbook.bean.justfuck.OschinaTop10;
 
-@Scheduled(cron="0 */1 * * * ?")
+@Scheduled(cron="16 */15 * * * ?")
 @IocBean
 public class OschinaTop10At2016Job implements Job {
 
