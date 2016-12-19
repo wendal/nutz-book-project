@@ -40,8 +40,8 @@ layout("_layout.html",{title:'添加新帖子'}){
             <textarea v-model="topicContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
       </form>
       <button class='btn' @click="topicSubmit">{{topicButtonTip}}</button>
-      <button class='btn' @click="topicAddImage">插入图片</button>
       <button class='btn' @click="topicAddCode">插入代码或日志片段</button>
+      <button class='btn' @click="topicAddImage" disabled="disabled">插入图片</button>
     </div>
   </div>
 </div>
