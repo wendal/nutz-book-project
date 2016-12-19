@@ -16,6 +16,7 @@ $(function(){
 				var tmpData = {
 						"content":this.replyContent
 				};
+				$("#reply_btn").attr('disabled', 'disabled');
 				this.$http.post(ctxPath+"/yvr/t/"+this.topicId+"/reply", tmpData).then(function(resp){
 					this.replyButtonTip = "我要答案";
 					if (resp.ok) {
@@ -28,6 +29,7 @@ $(function(){
 						}
 					} else {
 						layer.alert("网络或系统错误:"+resp);
+						$("#reply_btn").removeAttr('disabled');
 					}
 				}, function(resp) {
 					layer.alert("网络或系统错误:"+resp);
