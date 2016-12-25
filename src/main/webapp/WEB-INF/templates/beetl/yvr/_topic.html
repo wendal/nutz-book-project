@@ -143,9 +143,8 @@ layout("_layout.html",{}){
           <textarea id="replyArea" v-model="replyContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
       </form>
       
-      <button class='btn' @click="replySubmit" id="reply_btn">回复</button>
-      <button class='btn' @click="replyAddCode">插入代码或日志片段</button>
-      <button class='btn' @click="replyAddImage" disabled="disabled">插入图片</button>
+      <button class='btn btn-primary' @click="replySubmit" id="reply_btn">回复</button>
+      <button class='btn btn-info' @click="replyAddCode">插入代码或日志片段</button>
     <!--# } else { #-->
     	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
     <!--# }  #-->
