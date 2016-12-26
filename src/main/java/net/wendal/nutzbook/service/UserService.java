@@ -21,10 +21,10 @@ import org.nutz.lang.random.R;
 import org.nutz.service.IdNameEntityService;
 
 @IocBean(fields = "dao")
-@SLog(tag = "用户管理", msg = "")
+@SLog(tag = "用户管理")
 public class UserService extends IdNameEntityService<User> implements RedisKey {
 
-	@SLog(tag = "新增用户", msg = "用户名[${args[0]}]")
+	@SLog(tag = "新增用户", before = "用户名[${args[0]}]")
 	public User add(String name, String password) {
 		User user = new User();
 		user.setName(name.trim().toLowerCase());

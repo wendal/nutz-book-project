@@ -230,7 +230,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-views</artifactId>
-			<version>1.r.58</version>
+			<version>1.r.59</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.nutz</groupId>

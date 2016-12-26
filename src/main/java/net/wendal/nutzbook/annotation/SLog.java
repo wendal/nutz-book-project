@@ -15,13 +15,11 @@ public @interface SLog {
 
 	String tag();
 	
-	String msg();
+	String before() default "";
 	
-	boolean before() default false;
+	String after() default "";
 	
-	boolean after() default true;
-	
-	boolean error() default true;
+	String error() default "";
 	
 	boolean async() default true;
 }

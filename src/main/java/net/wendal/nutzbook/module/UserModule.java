@@ -36,7 +36,7 @@ import net.wendal.nutzbook.util.Toolkit;
 @At("/user") // 整个模块的路径前缀
 @Ok("json:{locked:'password|salt',ignoreNull:true}") // 忽略password和salt属性,忽略空属性的json输出
 @Fail("http:500") // 抛出异常的话,就走500页面
-@SLog(tag="用户管理", msg="")
+@SLog(tag="用户管理")
 public class UserModule extends BaseModule {
 	
     @Filters(@By(type=CrossOriginFilter.class))
@@ -74,7 +74,7 @@ public class UserModule extends BaseModule {
 	@RequiresPermissions("user:delete")
 	@At
 	@Aop(TransAop.READ_COMMITTED)
-	@SLog(tag="删除用户", msg="用户id[${args[0]}]")
+	@SLog(tag="删除用户", before="用户id[${args[0]}]")
 	public Object delete(@Param("id")int id) {
 		int me = Toolkit.uid();
 		if (me == id) {
