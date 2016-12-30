@@ -32,6 +32,8 @@ import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
+import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
+import org.subethamail.smtp.server.SMTPServer;
 
 import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
@@ -42,6 +44,7 @@ import net.wendal.nutzbook.bean.yvr.SubForum;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.ig.RedisIdGenerator;
+import net.wendal.nutzbook.mailsrv.SmtpMailListener;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.SysConfigureService;
@@ -66,6 +69,8 @@ public class MainSetup implements Setup {
 	private static final Log log = Logs.get();
 	
 	public static PropertiesProxy conf;
+	
+	protected SMTPServer smtpServer;
 
 	public void init(NutConfig nc) {
 		NutShiro.DefaultLoginURL = "/admin/logout";
@@ -210,6 +215,9 @@ public class MainSetup implements Setup {
 		ioc.get(YvrService.class).updateTopicTypeCount();
 		
 		Mvcs.disableFastClassInvoker = false;
+		
+		smtpServer = new SMTPServer(new SimpleMessageListenerAdapter(ioc.get(SmtpMailListener.class)));
+		smtpServer.start();
 	}
 
 	public void destroy(NutConfig conf) {
@@ -256,5 +264,8 @@ public class MainSetup implements Setup {
         }
         catch (Exception e) {
         }
+        
+        if (smtpServer != null)
+            smtpServer.stop();
 	}
 }
