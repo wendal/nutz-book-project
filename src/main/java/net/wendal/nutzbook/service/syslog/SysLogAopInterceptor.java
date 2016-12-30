@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.service.syslog;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.nutz.aop.InterceptorChain;
@@ -32,6 +33,7 @@ public class SysLogAopInterceptor implements MethodInterceptor {
 	protected Ioc ioc;
 	
 	public SysLogAopInterceptor(Ioc ioc, SLog slog, Method method) {
+	    els = new HashMap<>();
         if (!Strings.isBlank(slog.before())) {
             before = new CharSegment(slog.before());
             before.keys().forEach((key)->els.put(key, new El(key)));
