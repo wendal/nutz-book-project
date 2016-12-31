@@ -12,6 +12,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.net.ssl.SSLContext;
 
+import org.apache.commons.mail.HtmlEmail;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
@@ -39,6 +40,7 @@ import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.mainsrv.SmtpMail;
 import net.wendal.nutzbook.bean.msg.UserMessage;
 import net.wendal.nutzbook.bean.yvr.SubForum;
 import net.wendal.nutzbook.bean.yvr.Topic;
@@ -95,6 +97,7 @@ public class MainSetup implements Setup {
         Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
         Daos.migration(dao, Topic.class, true, false);
         Daos.migration(dao, TopicReply.class, true, false);
+        Daos.migration(dao, SmtpMail.class, true, true, false);
 
 		JedisPool pool = ioc.get(JedisPool.class);
 		try (Jedis jedis = pool.getResource()) {
@@ -218,6 +221,8 @@ public class MainSetup implements Setup {
 		
 		smtpServer = new SMTPServer(new SimpleMessageListenerAdapter(ioc.get(SmtpMailListener.class)));
 		smtpServer.start();
+		
+		ioc.get(HtmlEmail.class);
 	}
 
 	public void destroy(NutConfig conf) {
