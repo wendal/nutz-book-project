@@ -14,6 +14,7 @@ import org.nutz.dao.util.blob.SimpleBlob;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
+import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.subethamail.smtp.helper.SimpleMessageListener;
@@ -40,6 +41,7 @@ public class SmtpMailListener implements SimpleMessageListener {
             Files.write(tmp, data);
             BigContent cnt = new BigContent();
             cnt.setData(new SimpleBlob(tmp));
+            cnt.setId(R.UU32());
 
 
             SmtpMail mail = new SmtpMail();
