@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.nutz.dao.Dao;
 import org.nutz.dao.jdbc.Jdbcs;
 import org.nutz.dao.util.blob.SimpleBlob;
@@ -53,6 +54,14 @@ public class SmtpMailListener implements SimpleMessageListener {
                 log.debug("msg content-type = " + msg.getContentType());
                 log.debug("msg class = " + msg.getClass().getName());
                 mail.setSubject(msg.getSubject());
+                MimeMessageParser parser = new MimeMessageParser(msg);
+                parser.parse();
+                if (parser.hasHtmlContent() && log.isDebugEnabled()) {
+                    log.debugf("mail html content=%s", parser.getHtmlContent());
+                }
+                if (parser.hasPlainContent() && log.isDebugEnabled()) {
+                    log.debugf("mail plain content=%s", parser.getPlainContent());
+                }
             }
             dao.insert(cnt);
             mail.setContentId(cnt.getId());
