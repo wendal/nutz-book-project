@@ -5,6 +5,7 @@ import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
@@ -46,8 +48,8 @@ import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.mvc.view.ServerRedirectView;
 import org.nutz.mvc.view.UTF8JsonView;
 import org.nutz.mvc.view.ViewWrapper;
-
 import org.nutz.plugins.apidoc.annotation.Api;
+
 import net.wendal.nutzbook.bean.CResult;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
@@ -146,11 +148,18 @@ public class YvrModule extends BaseModule {
 		User user = dao.fetch(User.class, loginname);
 		if (user == null)
 			return HTTP_404;
-		if ("topic".equals(type)) {
-			list = yvrService.getRecentTopics(user.getId(), pager);
-		} else {
-			list = yvrService.getRecentReplyTopics(user.getId(), pager);
-		}
+		switch (type) {
+        case "topic":
+            list = yvrService.getRecentTopics(user.getId(), pager);
+            break;
+        case "reply":
+            list = yvrService.getRecentReplyTopics(user.getId(), pager);
+            break;
+        case "mark":
+            return _query_topic_by_zset(RKEY_USER_TOPIC_MARK+user.getId(), pager, userId, null, null, pager.getPageNumber() == 1, "list/u/" + loginname + "/" + type);
+        default:
+            return HTTP_404;
+        }
 		return _process_query_list(pager, list, userId, null, null, false, "list/u/" + loginname + "/" + type);
 	}
 	
@@ -228,7 +237,8 @@ public class YvrModule extends BaseModule {
 		return re;
 	}
 
-	@GET
+	@SuppressWarnings("unchecked")
+    @GET
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.html")
 	@Aop("redis")
@@ -274,6 +284,12 @@ public class YvrModule extends BaseModule {
 			reply.setUps(it.next().get());
 		}
 		bigContentService.fill(topic);
+		// 收藏列表
+		topic.setCollectors(jedis().smembers(RKEY_TOPIC_MARK+topic.getId()));
+		if (topic.getCollectors() == null) {
+		    topic.setCollectors(Collections.EMPTY_SET);
+		}
+		
 		//------------------------------------
 		NutMap re = new NutMap();
 		re.put("topic", topic);
@@ -288,6 +304,7 @@ public class YvrModule extends BaseModule {
 		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId(), dao.createPager(1, 5)));
         re.put("next_topic_id", redisDao.znext(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
         re.put("prev_topic_id", redisDao.zprev(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
+        re.put("user_topic_marked", topic.getCollectors().contains(""+Toolkit.uid()));
 		//re.put("top_tags", yvrService.fetchTopTags());
 		return re;
 	}
@@ -368,6 +385,14 @@ public class YvrModule extends BaseModule {
 		extras.put("topic_id", topicId);
 		extras.put("action", "open_topic");
 		pushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
+	}
+	
+	@RequiresAuthentication
+	@POST
+	@At("/t/?/mark")
+	@Ok("void")
+	public void mark(String topicId) {
+	    yvrService.topicMark(topicId, Toolkit.uid());
 	}
 
 	public void init() {

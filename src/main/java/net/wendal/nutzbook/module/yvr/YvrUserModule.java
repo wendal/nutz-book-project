@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +17,7 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.http.Http;
 import org.nutz.http.Response;
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
@@ -43,7 +47,9 @@ import net.sf.ehcache.Element;
 import net.wendal.nutzbook.bean.OAuthUser;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
+import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.module.BaseModule;
+import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Api(name="论坛用户管理", description="注册, 修改头像,邮箱激活,用户详情页等信息")
@@ -52,6 +58,9 @@ import net.wendal.nutzbook.util.Toolkit;
 public class YvrUserModule extends BaseModule {
 
 	private static final Log log = Logs.get();
+	
+	@Inject
+	protected RedisDao redisDao;
 	
 	protected byte[] emailKEY = R.sg(24).next().getBytes();
 	
@@ -92,6 +101,12 @@ public class YvrUserModule extends BaseModule {
 		}
 		re.put("recent_topics", yvrService.getRecentTopics(user.getId(), dao.createPager(1, 5)));
 		re.put("recent_replies", yvrService.getRecentReplyTopics(user.getId(), dao.createPager(1, 5)));
+		List<Topic> list = redisDao.queryByZset(Topic.class, RKEY_USER_TOPIC_MARK+user.getId(), dao.createPager(1, 5));
+		Map<Integer, UserProfile> authors = new HashMap<Integer, UserProfile>();
+        for (Topic topic : list) {
+            yvrService.fillTopic(topic, authors);
+        }
+		re.put("marked_topics", list);
 		return re;
 	}
 	

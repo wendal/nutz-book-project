@@ -25,17 +25,15 @@ public interface RedisKey {
 	String RKEY_REPLY_COUNT = "t:reply:count";
 	String RKEY_REPLY_LAST = "t:reply:last";
 	
-	String RKEY_TOPIC_SEXY = "t:sexy";
-	
+	// 标签相关
 	String RKEY_TOPIC_TAG = "t:tag:";
 	String RKEY_TOPIC_TAG_COUNT = "t:tag_count";
 	String RKEY_TOPIC_TAG_UPDATE = "t:tag_update";
 	
-//	String RKEY_U2F_REQ = "u2f:req";
-//	String RKEY_U2F_AUTH = "u2f:auth";
+	// 收藏
+	String RKEY_TOPIC_MARK = "t:mark:";
+	String RKEY_USER_TOPIC_MARK = "u:mark:";
 
-	String RKEY_QQBOT_BIND_REQ = "qqbot:bind:request:";
-
+	// 活跃用户统计
 	String RKEY_ONLINE_DAY = "online:day:";
-    //String RKEY_ONLINE_HOUR = "online:hour:";
 }

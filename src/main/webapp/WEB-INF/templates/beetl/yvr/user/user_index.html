@@ -49,37 +49,46 @@
   </div>
   <!--#} #-->
   
+  <!--# if ( null != obj.marked_topics && obj.marked_topics.~size > 0 ) {  #-->
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>收藏的话题</span>
+    </div>
+    <!--# layout("../list.html", {"topics":obj.marked_topics}){};  #-->
+    <!--# if (obj.marked_topics.~size > 5) { #-->
+    <div class='cell more'>
+      <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/mark">查看更多»</a>
+    </div>
+    <!--# }  #-->
+  </div>
+  <!--# }  #-->
+  
+  <!--# if ( null != obj.recent_topics && obj.recent_topics.~size > 0 ) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>最近创建的话题</span>
     </div>
-    <!--# if ( null != obj.recent_topics ) {  #-->
     <!--# layout("../list.html", {"topics":obj.recent_topics}){};  #-->
+    <!--# if (obj.recent_topics.~size > 5) { #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/topic">查看更多»</a>
     </div>
-    <!--# } else {  #-->
-    <div class='inner'>
-      <p>无话题</p>
-    </div>
     <!--# }  #-->
   </div>
+  <!--# }  #-->
   
-  
+  <!--# if ( null != obj.recent_replies && obj.recent_replies.~size > 0 ) {  #-->
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>最近回复的话题</span>
     </div>
-    <!--# if ( null != obj.recent_replies ) {  #-->
     <!--# layout("../list.html", {"topics":obj.recent_replies}){};  #-->
+    <!--# if (obj.recent_replies.~size > 5) { #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/reply">查看更多»</a>
     </div>
-    <!--# } else {  #-->
-    <div class='inner'>
-      <p>无话题</p>
-    </div>
     <!--# }  #-->
   </div>
+  <!--# }  #-->
 </div>
 <!--#} #-->

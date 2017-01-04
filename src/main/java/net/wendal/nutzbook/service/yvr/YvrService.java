@@ -552,4 +552,27 @@ public class YvrService implements RedisKey, PubSub {
             break;
         }
     }
+    
+    /**
+     * 收藏/取消收藏
+     * @param topicId 帖子id
+     * @param uid 用户id
+     * @param markOrUnmark true,如果是收藏. false, 取消收藏
+     * @return 是否成功
+     */
+    @Aop("redis")
+    public boolean topicMark(String topicId, int uid) {
+        if (uid < 1)
+            return false;
+        if (dao.count(Topic.class, Cnd.where("id", "=", topicId)) == 0)
+            return false;
+        if (!jedis().sismember(RKEY_TOPIC_MARK+topicId, ""+uid)) {
+            jedis().sadd(RKEY_TOPIC_MARK+topicId, ""+uid);
+            jedis().zadd(RKEY_USER_TOPIC_MARK+uid, System.currentTimeMillis(), topicId);
+        } else {
+            jedis().srem(RKEY_TOPIC_MARK+topicId, ""+uid);
+            jedis().zrem(RKEY_USER_TOPIC_MARK+uid, topicId);
+        }
+        return true;
+    }
 }

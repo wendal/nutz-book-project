@@ -54,6 +54,8 @@ public class Topic extends BasePojo {
 
 	@Column("c_lock")
 	protected boolean lock;
+	
+	// 以下均不是数据库字段
 
 	// 浏览总数
 	protected transient long visitCount;
@@ -62,6 +64,8 @@ public class Topic extends BasePojo {
 	protected transient long replyCount;
 
 	protected TopicReply lastComment;
+	
+	protected Set<String> collectors;
 
 	@Many(target = TopicReply.class, field = "topicId")
 	protected List<TopicReply> replies;
@@ -196,4 +200,12 @@ public class Topic extends BasePojo {
 	public void setContentId(String contentId) {
 		this.contentId = contentId;
 	}
+
+    public Set<String> getCollectors() {
+        return collectors;
+    }
+
+    public void setCollectors(Set<String> collectors) {
+        this.collectors = collectors;
+    }
 }

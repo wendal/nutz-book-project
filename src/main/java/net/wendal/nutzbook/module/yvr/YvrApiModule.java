@@ -589,4 +589,24 @@ public class YvrApiModule extends BaseModule {
 	    // TODO 支持根据sha1判断
         return "false".equals(mdrender) ? cnt : Markdowns.toHtml(cnt, urlbase);
 	}
+
+
+	/**
+     * @api {post} /yvr/api/v1/topic/:id/mark 收藏或取消收藏
+     * @apiGroup Topic
+     * @apiVersion 1.0.0
+     *
+     * @apiUse TOKEN
+     * @apiUse TOKEN_ERROR
+     *
+     * @apiParam {String} id    帖子的id
+     * @apiSuccess {boolean} success 是否成功
+     */
+    @POST
+    @At("/topic/?/mark")
+    @AdaptBy(type=WhaleAdaptor.class)
+    @Filters(@By(type=AccessTokenFilter.class))
+    public void mark(String id, String mark) {
+        yvrService.topicMark(id, Toolkit.uid());
+    }
 }
