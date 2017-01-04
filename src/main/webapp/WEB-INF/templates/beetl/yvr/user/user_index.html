@@ -55,7 +55,7 @@
       <span class='col_fade'>收藏的话题</span>
     </div>
     <!--# layout("../list.html", {"topics":obj.marked_topics}){};  #-->
-    <!--# if (obj.marked_topics.~size > 5) { #-->
+    <!--# if (obj.marked_topics.~size = 5) { #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/mark">查看更多»</a>
     </div>
@@ -69,7 +69,7 @@
       <span class='col_fade'>最近创建的话题</span>
     </div>
     <!--# layout("../list.html", {"topics":obj.recent_topics}){};  #-->
-    <!--# if (obj.recent_topics.~size > 5) { #-->
+    <!--# if (obj.recent_topics.~size = 5) { #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/topic">查看更多»</a>
     </div>
@@ -83,7 +83,7 @@
       <span class='col_fade'>最近回复的话题</span>
     </div>
     <!--# layout("../list.html", {"topics":obj.recent_replies}){};  #-->
-    <!--# if (obj.recent_replies.~size > 5) { #-->
+    <!--# if (obj.recent_replies.~size = 5) { #-->
     <div class='cell more'>
       <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/reply">查看更多»</a>
     </div>
