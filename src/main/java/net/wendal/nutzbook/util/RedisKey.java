@@ -37,5 +37,5 @@ public interface RedisKey {
 	String RKEY_QQBOT_BIND_REQ = "qqbot:bind:request:";
 
 	String RKEY_ONLINE_DAY = "online:day:";
-    String RKEY_ONLINE_HOUR = "online:hour:";
+    //String RKEY_ONLINE_HOUR = "online:hour:";
 }
