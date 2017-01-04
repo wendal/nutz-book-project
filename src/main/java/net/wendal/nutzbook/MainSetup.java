@@ -12,11 +12,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.net.ssl.SSLContext;
 
-import org.apache.commons.mail.HtmlEmail;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
-import org.nutz.dao.sql.Sql;
 import org.nutz.dao.util.Daos;
 import org.nutz.el.opt.custom.CustomMake;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
@@ -33,20 +31,16 @@ import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
-import org.subethamail.smtp.helper.SimpleMessageListenerAdapter;
-import org.subethamail.smtp.server.SMTPServer;
 
 import freemarker.template.Configuration;
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.bean.mainsrv.SmtpMail;
 import net.wendal.nutzbook.bean.msg.UserMessage;
 import net.wendal.nutzbook.bean.yvr.SubForum;
 import net.wendal.nutzbook.bean.yvr.Topic;
 import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.ig.RedisIdGenerator;
-import net.wendal.nutzbook.mailsrv.SmtpMailListener;
 import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.SysConfigureService;
@@ -71,11 +65,9 @@ public class MainSetup implements Setup {
 	private static final Log log = Logs.get();
 	
 	public static PropertiesProxy conf;
-	
-	protected SMTPServer smtpServer;
 
 	public void init(NutConfig nc) {
-		NutShiro.DefaultLoginURL = "/admin/logout";
+		NutShiro.DefaultLoginURL = "/";
 		// 检查环境,必须运行在UTF-8环境
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
 			log.error("This project must run in UTF-8, pls add -Dfile.encoding=UTF-8 to JAVA_OPTS");
@@ -95,9 +87,6 @@ public class MainSetup implements Setup {
         
         // 为全部标注了@Table的bean建表
         Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
-        Daos.migration(dao, Topic.class, true, false);
-        Daos.migration(dao, TopicReply.class, true, false);
-        Daos.migration(dao, SmtpMail.class, true, true, false);
 
 		JedisPool pool = ioc.get(JedisPool.class);
 		try (Jedis jedis = pool.getResource()) {
@@ -190,19 +179,6 @@ public class MainSetup implements Setup {
 		if (cacheManager.getCache("markdown") == null)
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
-		
-		if (dao.meta().isMySql()) {
-			String schema = dao.execute(Sqls.fetchString("SELECT DATABASE()")).getString();
-			
-			// 检查所有非日志表,如果表引擎是MyISAM,切换到InnoDB
-			Sql sql = Sqls.queryString("SELECT TABLE_NAME FROM information_schema.TABLES where TABLE_SCHEMA = @schema and engine = 'MyISAM'");
-			sql.params().set("schema", schema);
-			for (String tableName : dao.execute(sql).getObject(String[].class)) {
-				if (tableName.startsWith("t_syslog") || tableName.startsWith("t_user_message"))
-					continue;
-				dao.execute(Sqls.create("alter table "+tableName+" ENGINE = InnoDB"));
-			}
-		}
 
         try (final Jedis jedis = pool.getResource()) {
             dao.each(Topic.class, Cnd.where("good", "=", true), (index, topic, length) -> {
@@ -218,11 +194,6 @@ public class MainSetup implements Setup {
 		ioc.get(YvrService.class).updateTopicTypeCount();
 		
 		Mvcs.disableFastClassInvoker = false;
-		
-		smtpServer = new SMTPServer(new SimpleMessageListenerAdapter(ioc.get(SmtpMailListener.class)));
-		smtpServer.start();
-		
-		ioc.get(HtmlEmail.class);
 	}
 
 	public void destroy(NutConfig conf) {
@@ -269,8 +240,5 @@ public class MainSetup implements Setup {
         }
         catch (Exception e) {
         }
-        
-        if (smtpServer != null)
-            smtpServer.stop();
 	}
 }
