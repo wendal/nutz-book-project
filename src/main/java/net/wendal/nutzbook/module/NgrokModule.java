@@ -1,6 +1,6 @@
 package net.wendal.nutzbook.module;
 
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+import static org.nutz.integration.jedis.RedisInterceptor.jedis;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

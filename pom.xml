@@ -365,12 +365,6 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
 			<version>1.r.59</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.nutz</groupId>
-					<artifactId>nutz</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -410,12 +404,6 @@
 			<artifactId>nutz-plugins-mock</artifactId>
 			<version>1.r.59</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.nutz</groupId>
-					<artifactId>nutz</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -431,12 +419,6 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-apidoc</artifactId>
 			<version>1.r.59</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.nutz</groupId>
-					<artifactId>nutz</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -447,6 +429,11 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-qrcode</artifactId>
 			<version>1.r.59</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-integration-jedis</artifactId>
+			<version>1.r.60-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<version>2.9.5</version>

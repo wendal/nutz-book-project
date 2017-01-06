@@ -1,6 +1,6 @@
 package net.wendal.nutzbook.service;
 
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+import static org.nutz.integration.jedis.RedisInterceptor.jedis;
 
 import java.util.List;
 

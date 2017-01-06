@@ -1,6 +1,6 @@
 package net.wendal.nutzbook.module.yvr;
 
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+import static org.nutz.integration.jedis.RedisInterceptor.jedis;
 
 import java.io.File;
 import java.io.FileInputStream;

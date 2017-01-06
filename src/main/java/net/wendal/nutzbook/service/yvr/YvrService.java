@@ -2,7 +2,7 @@ package net.wendal.nutzbook.service.yvr;
 
 import static net.wendal.nutzbook.bean.CResult._fail;
 import static net.wendal.nutzbook.bean.CResult._ok;
-import static net.wendal.nutzbook.util.RedisInterceptor.jedis;
+import static org.nutz.integration.jedis.RedisInterceptor.jedis;
 
 import java.io.File;
 import java.io.IOException;
