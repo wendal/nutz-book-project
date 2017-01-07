@@ -19,7 +19,7 @@ iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id108219
 
 ### 友情链接
 
-* [Nutz官网](http://www.nutzam.com)
+* [Nutz官网](https://www.nutzam.com)
 * [NutzBook Nutz入门指南](http://nutzbook.wendal.net)
 * [查找网](http://www.chazhao.me)
 * [七牛云存储 移动时代的云存储服务商](http://www.qiniu.com/)
