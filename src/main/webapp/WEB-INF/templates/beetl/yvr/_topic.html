@@ -135,7 +135,7 @@ layout("_layout.html",{}){
       <form action='#'>
       	  <input id="input_topic_id" type="hidden" name="id" value="${obj.topic.id}">
           <input type='hidden' name='_csrf' id="_csrf" value='${obj._csrf!}'/>
-          <textarea id="replyArea" v-model="replyContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
+          <textarea id="replyArea" v-model="replyContent" class='editor' name='content' rows='50' placeholder='本站使用Markdown语法,下方有粘贴代码和日志的按钮,会有代码高亮'></textarea>
       </form>
       
       <button class='btn btn-primary' @click="replySubmit" id="reply_btn">回复</button>

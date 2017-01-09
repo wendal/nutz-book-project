@@ -37,9 +37,9 @@ layout("_layout.html",{title:'添加新帖子'}){
             		<a class="list-group-item list-group-item-action list-group-item-info" href='${ctxPath}/yvr/t/{{item.id}}' target="_blank">{{item.title}}</a>
             	</div>
             </div>
-            <textarea v-model="topicContent" class='editor' name='content' rows='50' placeholder='文章支持 Markdown 语法, 请注意标记代码'></textarea>
+            <textarea v-model="topicContent" class='editor' name='content' rows='50' placeholder='本站使用Markdown语法,下方有粘贴代码和日志的按钮,会有代码高亮'></textarea>
       </form>
-      <button class='btn btn-primary' @click="topicSubmit">{{topicButtonTip}}</button>
+      <button class='btn btn-primary' @click="topicSubmit" id="btn_submit">{{topicButtonTip}}</button>
       <button class='btn btn-info' @click="topicAddCode">插入代码或日志片段</button>
     </div>
   </div>
