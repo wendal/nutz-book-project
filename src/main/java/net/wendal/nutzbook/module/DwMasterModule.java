@@ -17,6 +17,7 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
 import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 
 import net.wendal.nutzbook.bean.DwRecord;
 import net.wendal.nutzbook.util.Toolkit;
@@ -50,6 +51,7 @@ public class DwMasterModule extends BaseModule {
         return new NutMap("ok", true);
     }
 
+    @Ok("json:full")
     @At
     @RequiresRoles("admin")
     public NutMap uptoken() {
@@ -57,7 +59,8 @@ public class DwMasterModule extends BaseModule {
         String secretKey = conf.get("qiniu.secretKey");
         String bucketName = conf.get("qiniu.bucketName");
         Auth auth = Auth.create(accessKey, secretKey);
-        String token = auth.uploadToken(bucketName);
+        StringMap policy = new StringMap(); // 可选,详情请查阅七牛的文档
+        String token = auth.uploadToken(bucketName, null, 600, policy);
         return new NutMap("uptoken", token);
     }
     

@@ -20,17 +20,17 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
  */
 public class DailyUniqueUsersProcessor extends AbstractProcessor implements RedisKey {
 
-	protected JedisPool pool;
+	protected JedisPool jedisPool;
 	
 	private static final Log log = Logs.get();
 	
 	public void process(ActionContext ac) throws Throwable {
 		try {
-            if (pool == null)
-            	pool = Mvcs.getIoc().get(JedisPool.class);
+            if (jedisPool == null)
+                jedisPool = Mvcs.getIoc().get(JedisPool.class);
             int uid = Toolkit.uid();
             if (uid > 0) {
-            	try (Jedis jedis = pool.getResource()) {
+            	try (Jedis jedis = jedisPool.getResource()) {
             		Pipeline pipe = jedis.pipelined();
             		pipe.setbit(RKEY_ONLINE_DAY+Toolkit.today_yyyyMMdd(), uid, true);
             		//pipe.setbit(RKEY_ONLINE_HOUR+Toolkit.today_yyyyMMddHH(), uid, true);

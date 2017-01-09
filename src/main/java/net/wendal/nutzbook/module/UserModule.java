@@ -26,7 +26,8 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.filter.CrossOriginFilter;
 import org.nutz.plugins.apidoc.annotation.Api;
-import net.wendal.nutzbook.annotation.SLog;
+import org.nutz.plugins.slog.annotation.Slog;
+
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.util.Toolkit;
@@ -36,7 +37,7 @@ import net.wendal.nutzbook.util.Toolkit;
 @At("/user") // 整个模块的路径前缀
 @Ok("json:{locked:'password|salt',ignoreNull:true}") // 忽略password和salt属性,忽略空属性的json输出
 @Fail("http:500") // 抛出异常的话,就走500页面
-@SLog(tag="用户管理")
+@Slog(tag="用户管理")
 public class UserModule extends BaseModule {
 	
     @Filters(@By(type=CrossOriginFilter.class))
@@ -74,7 +75,7 @@ public class UserModule extends BaseModule {
 	@RequiresPermissions("user:delete")
 	@At
 	@Aop(TransAop.READ_COMMITTED)
-	@SLog(tag="删除用户", before="用户id[${args[0]}]")
+	@Slog(tag="删除用户", before="用户id[${args[0]}]")
 	public Object delete(@Param("id")int id) {
 		int me = Toolkit.uid();
 		if (me == id) {

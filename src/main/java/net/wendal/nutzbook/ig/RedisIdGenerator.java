@@ -12,16 +12,16 @@ import redis.clients.jedis.JedisPool;
 public class RedisIdGenerator implements IdGenerator {
     
     @Inject
-    protected JedisPool pool;
+    protected JedisPool jedisPool;
     
     public RedisIdGenerator() {}
 
-    public RedisIdGenerator(JedisPool pool) {
-        this.pool = pool;
+    public RedisIdGenerator(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
     }
 
     public long next(String key) {
-        try (Jedis jedis = pool.getResource()) {
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.incr("ig:"+key);
         }
     }

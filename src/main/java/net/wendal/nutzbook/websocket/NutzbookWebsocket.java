@@ -14,6 +14,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.nutz.integration.jedis.pubsub.PubSub;
+import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -21,8 +23,6 @@ import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-import net.wendal.nutzbook.service.pubsub.PubSub;
-import net.wendal.nutzbook.service.pubsub.PubSubService;
 import redis.clients.jedis.JedisPool;
 
 @ServerEndpoint(value = "/websocket", configurator=NutIocWebSocketConfigurator.class)

@@ -31,13 +31,12 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
-
 import org.nutz.plugins.apidoc.annotation.Api;
+import org.nutz.plugins.slog.service.SlogService;
+
 import net.wendal.nutzbook.bean.OAuthUser;
-import net.wendal.nutzbook.bean.SysLog;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
-import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.util.Toolkit;
 
 @Api(name="第三方登陆", description="基于SocialAuth的第三方登陆")
@@ -48,7 +47,7 @@ public class OauthModule extends BaseModule {
 	private static final Log log = Logs.get();
 	
 	@Inject
-	protected SysLogService sysLogService;
+	protected SlogService slogService;
 
 	@Ok("void")
 	@At("/?")
@@ -136,7 +135,7 @@ public class OauthModule extends BaseModule {
 	// 进行Shiro登录
 	protected void doShiroLogin(int userId, String _providerId) {
 		Toolkit.doLogin(new SimpleShiroToken(userId), userId);
-		sysLogService.async(SysLog.c("method", "用户登陆", null, userId, "用户通过"+_providerId+" Oauth登陆"));
+		slogService.log("method", "用户登陆", null, "用户通过"+_providerId+" Oauth登陆", true);
 	}
 	
 	// TODO 关联已有用户

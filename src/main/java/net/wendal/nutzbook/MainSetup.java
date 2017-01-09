@@ -31,6 +31,7 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.nutz.plugins.slog.service.SlogService;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
 
@@ -47,7 +48,6 @@ import net.wendal.nutzbook.service.AuthorityService;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.service.UserService;
-import net.wendal.nutzbook.service.syslog.SysLogService;
 import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Markdowns;
 import net.wendal.nutzbook.util.RedisKey;
@@ -144,7 +144,7 @@ public class MainSetup implements Setup {
 		ioc.get(SysConfigureService.class).doReload();
 
 		// 初始化SysLog,触发全局系统日志初始化
-		ioc.get(SysLogService.class);
+		ioc.get(SlogService.class).log("method", "system", null, "系统启动", false);
 
 		// 初始化默认根用户
 		User admin = dao.fetch(User.class, "admin");
@@ -191,7 +191,10 @@ public class MainSetup implements Setup {
             });
         }
         
+        log.debug("F========================================");
 		ioc.get(YvrService.class).updateTopicTypeCount();
+        
+        log.debug("U========================================");
 		
 		Mvcs.disableFastClassInvoker = false;
 	}

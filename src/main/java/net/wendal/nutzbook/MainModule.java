@@ -27,9 +27,10 @@ import net.wendal.nutzbook.beetl.BeetlViewMaker2;
                "*anno",
                "net.wendal.nutzbook",
                "*quartz", // 关联Quartz
-               "*async",
+               "*async", "128",
                "*tx",
                "*jedis",
+               "*slog",
                "*org.nutz.plugins.view.freemarker.FreemarkerIocLoader"})
 @Modules(scanPackage = true)
 @ChainBy(args = "mvc/nutzbook-mvc-chain.js")

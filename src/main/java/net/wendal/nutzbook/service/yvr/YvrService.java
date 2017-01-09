@@ -24,6 +24,8 @@ import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.sql.Sql;
+import org.nutz.integration.jedis.pubsub.PubSub;
+import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -49,8 +51,6 @@ import net.wendal.nutzbook.bean.yvr.TopicTag;
 import net.wendal.nutzbook.bean.yvr.TopicType;
 import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.PushService;
-import net.wendal.nutzbook.service.pubsub.PubSub;
-import net.wendal.nutzbook.service.pubsub.PubSubService;
 import net.wendal.nutzbook.util.RedisKey;
 import net.wendal.nutzbook.util.Toolkit;
 import net.wendal.nutzbook.websocket.NutzbookWebsocket;
@@ -518,7 +518,7 @@ public class YvrService implements RedisKey, PubSub {
 		}
 	}
 
-	@Async
+    @Async
 	@Aop("redis")
 	public void updateTopicTypeCount() {
 		for (TopicType tt : TopicType.values()) {
