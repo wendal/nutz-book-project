@@ -29,13 +29,19 @@
   <div class='panel'>
     <div class='header'>
       <span class='col_fade'>AccessToken二维码</span>
+      <button onclick="$('#access-token-qrcode').show();">显示</button>
       <button onclick="resetToken();">重置</button>
     </div>
+    <div class='header'>
+      <span class='col_fade'>Ngrok内网穿透配置文件</span>
+      <a href="${base}/ngrok/config/download">(点我下载)</button>
+      <a href="${base}/ngrok/me">查看使用说明</a>
+    </div>
     <div class='inner'>
-      <span id="access-token-qrcode"></span>
+      <span id="access-token-qrcode" style="display: none;"></span>
       <script type="text/javascript">
   	  // qrcode generate
-  	  $(function(){
+  	  $(function (){
   	    var accessToken = "${obj.access_token}";
         new QRCode(document.getElementById("access-token-qrcode"), {
      	  text: accessToken,
@@ -43,8 +49,8 @@
     	  height: 200,
   	    });
   	  });
-  	// END qrcode generate
-	</script>
+  	  // END qrcode generate
+	  </script>
     </div>
   </div>
   <!--#} #-->
