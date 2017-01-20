@@ -53,6 +53,7 @@ public class UserModule extends BaseModule {
 
 	@RequiresPermissions("user:add")
 	@At
+	@Slog(tag="新增用户", before="用户[${user.name}] ok=${re.ok}")
 	public Object add(@Param("..")User user) { // 两个点号是按对象属性一一设置
 		NutMap re = new NutMap();
 		String msg = checkUser(user, true);
@@ -65,17 +66,18 @@ public class UserModule extends BaseModule {
 
 	@RequiresPermissions("user:update")
 	@At
-	public Object update(@Param("password")String password, @Param("id")int userId) {
+	@Slog(tag="更新用户", before="用户[${id}] ok=${re.ok}")
+	public Object update(@Param("password")String password, @Param("id")int id) {
 		if (Strings.isBlank(password) || password.length() < 6)
 			return new NutMap().setv("ok", false).setv("msg", "密码不符合要求");
-		userService.updatePassword(userId, password);
+		userService.updatePassword(id, password);
 		return new NutMap().setv("ok", true);
 	}
 
 	@RequiresPermissions("user:delete")
 	@At
 	@Aop(TransAop.READ_COMMITTED)
-	@Slog(tag="删除用户", before="用户id[${args[0]}]")
+	@Slog(tag="删除用户", before="用户id[${id}]")
 	public Object delete(@Param("id")int id) {
 		int me = Toolkit.uid();
 		if (me == id) {
@@ -145,6 +147,7 @@ public class UserModule extends BaseModule {
 	@POST
 	@Ok("json")
 	@At
+	@Slog(tag="用户登录", after="用户[${username}] ok=${re.ok}")
 	public Object login(@Param("username")String username, 
 					  @Param("password")String password,
 					  @Param("rememberMe")boolean rememberMe,

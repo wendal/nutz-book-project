@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
+import org.nutz.integration.jedis.JedisProxy;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -13,11 +14,10 @@ import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     
-    protected JedisPool jedisPool;
+    protected JedisProxy jedisProxy;
     
     protected Session session;
     
@@ -29,8 +29,8 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     
     private static final Log log = Logs.get();
     
-    public NutzbookWsStringHandler(String uu32, Session session, JedisPool jedisPool) {
-        this.jedisPool = jedisPool;
+    public NutzbookWsStringHandler(String uu32, Session session, JedisProxy jedisProxy) {
+        this.jedisProxy = jedisProxy;
         this.session = session;
         attrs = new NutMap();
         rooms = new HashSet<>();
@@ -62,7 +62,7 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     public void join(String room) {
         if (!Strings.isBlank(room)) {
             log.debugf("session(id=%s) join room(name=%s)", uu32, room);
-            try (Jedis jedis = jedisPool.getResource()) {
+            try (Jedis jedis = jedisProxy.getResource()) {
                 rooms.add(room);
                 jedis.hset(NutzbookWebsocket.prefix+room, uu32, "");
             }
@@ -72,7 +72,7 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     public void left(String room) {
         if (!Strings.isBlank(room)) {
             log.debugf("session(id=%s) left room(name=%s)", uu32, room);
-            try (Jedis jedis = jedisPool.getResource()) {
+            try (Jedis jedis = jedisProxy.getResource()) {
                 rooms.add(room);
                 jedis.hdel(NutzbookWebsocket.prefix+room, uu32);
             }

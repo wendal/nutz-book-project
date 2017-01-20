@@ -24,7 +24,7 @@ import org.nutz.service.IdNameEntityService;
 @Slog(tag = "用户管理")
 public class UserService extends IdNameEntityService<User> implements RedisKey {
 
-	@Slog(tag = "新增用户", before = "用户名[${args[0]}]")
+	@Slog(tag = "新增用户", before = "用户名[${name}]")
 	public User add(String name, String password) {
 		User user = new User();
 		user.setName(name.trim().toLowerCase());
@@ -53,6 +53,7 @@ public class UserService extends IdNameEntityService<User> implements RedisKey {
 		return -1;
 	}
 
+	@Slog(tag = "用户更新密码", before = "用户名[${userId}]")
 	public void updatePassword(int userId, String password) {
 		User user = fetch(userId);
 		if (user == null) {

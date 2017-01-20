@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,8 +64,6 @@ import net.wendal.nutzbook.service.RedisDao;
 import net.wendal.nutzbook.service.yvr.LuceneSearchResult;
 import net.wendal.nutzbook.service.yvr.TopicSearchService;
 import net.wendal.nutzbook.util.Toolkit;
-import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
 
 @Api(name="论坛模块", description="论坛相关的API")
 @IocBean(create = "init")
@@ -257,31 +254,14 @@ public class YvrModule extends BaseModule {
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
         Double visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
-        // 检查是否匹配etag(其实就是最后回复的replay id), 如果匹配,就304呗
-        String replyId = jedis().hget(RKEY_REPLY_LAST, topic.getId());
-        if (replyId != null && replyId.equals(_etag)) {
-            return HTTP_304;
-        }
-        if (replyId != null)
-            response.setHeader("ETag", replyId);
         
 		topic.setAuthor(fetch_userprofile(topic.getUserId()));
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
-		//-------------------------------------
-		// 修正userId及读取每个reply的ups
-		Pipeline pipe = jedis().pipelined();
-		List<Response<Set<String>>> upsList = new ArrayList<>();
-		for (TopicReply reply : topic.getReplies()) {
-			if (reply.getUserId() == 0)
-				reply.setUserId(1);
-			Response<Set<String>> resp = pipe.zrange(RKEY_REPLY_LIKE + reply.getId(), 0, Long.MAX_VALUE);
-			upsList.add(resp);
-		}
-		pipe.sync();
 		dao.fetchLinks(topic.getReplies(), null);
-		Iterator<Response<Set<String>>> it = upsList.iterator();
+		//-------------------------------------
+		// 点赞功能已废弃
 		for (TopicReply reply : topic.getReplies()) {
-			reply.setUps(it.next().get());
+			reply.setUps(Collections.EMPTY_SET);
 		}
 		bigContentService.fill(topic);
 		// 收藏列表

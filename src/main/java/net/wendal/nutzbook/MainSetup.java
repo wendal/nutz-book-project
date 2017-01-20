@@ -5,22 +5,18 @@ import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.Arrays;
 import java.util.Enumeration;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.net.ssl.SSLContext;
 
-import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
-import org.nutz.dao.Sqls;
 import org.nutz.dao.util.Daos;
 import org.nutz.el.opt.custom.CustomMake;
+import org.nutz.integration.jedis.JedisProxy;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
-import org.nutz.integration.shiro.cache.LCacheManager;
-import org.nutz.integration.shiro.cache.RedisCache;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
@@ -31,6 +27,8 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.nutz.plugins.cache.impl.lcache.LCacheManager;
+import org.nutz.plugins.cache.impl.redis.RedisCache;
 import org.nutz.plugins.slog.service.SlogService;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
@@ -40,19 +38,13 @@ import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.bean.User;
 import net.wendal.nutzbook.bean.UserProfile;
 import net.wendal.nutzbook.bean.msg.UserMessage;
-import net.wendal.nutzbook.bean.yvr.SubForum;
-import net.wendal.nutzbook.bean.yvr.Topic;
-import net.wendal.nutzbook.bean.yvr.TopicReply;
 import net.wendal.nutzbook.ig.RedisIdGenerator;
 import net.wendal.nutzbook.service.AuthorityService;
-import net.wendal.nutzbook.service.BigContentService;
 import net.wendal.nutzbook.service.SysConfigureService;
 import net.wendal.nutzbook.service.UserService;
 import net.wendal.nutzbook.service.yvr.YvrService;
 import net.wendal.nutzbook.util.Markdowns;
-import net.wendal.nutzbook.util.RedisKey;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -66,7 +58,7 @@ public class MainSetup implements Setup {
 	
 	public static PropertiesProxy conf;
 
-	public void init(NutConfig nc) {
+    public void init(NutConfig nc) {
 		NutShiro.DefaultLoginURL = "/";
 		// 检查环境,必须运行在UTF-8环境
 		if (!Charset.defaultCharset().name().equalsIgnoreCase(Encoding.UTF8)) {
@@ -80,16 +72,16 @@ public class MainSetup implements Setup {
 		Ioc ioc = nc.getIoc();
 
 		// 初始化RedisCacheManager
-		LCacheManager.me().setupJedisPool(ioc.get(JedisPool.class));
-		RedisCache.DEBUG = true;
+		JedisProxy jedisProxy = ioc.get(JedisProxy.class);
+        LCacheManager.me().setJedisProxy(jedisProxy);
+        RedisCache.DEBUG = true;
 
         Dao dao = ioc.get(Dao.class);
         
         // 为全部标注了@Table的bean建表
         Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
 
-		JedisPool pool = ioc.get(JedisPool.class);
-		try (Jedis jedis = pool.getResource()) {
+		try (Jedis jedis = jedisProxy.getResource()) {
             if (!jedis.exists("ig:t_user") && dao.count(User.class) > 0)
                 jedis.set("ig:t_user", ""+dao.getMaxId(User.class)+1);
             if (!jedis.exists("ig:t_user_message") && dao.count(UserMessage.class) > 0)
@@ -101,43 +93,6 @@ public class MainSetup implements Setup {
 		// 加载freemarker自定义标签　自定义宏路径
 		ioc.get(Configuration.class).setAutoImports(new NutMap().setv("p", "/ftl/pony/index.ftl").setv("s", "/ftl/spring.ftl"));
 		ioc.get(FreeMarkerConfigurer.class, "mapTags");
-
-		
-		// 迁移Topic和TopicReply的数据到BigContent
-		BigContentService bcs = ioc.get(BigContentService.class);
-		for (String topicId : dao.execute(Sqls.queryString("select id from t_topic where cid is null")).getObject(String[].class)) {
-			Topic topic = dao.fetch(Topic.class, topicId);
-			String cid = bcs.put(topic.getContent());
-			topic.setContentId(cid);
-			topic.setContent(null);
-			dao.update(topic, "(content|contentId)");
-		}
-		for (String topicId : dao.execute(Sqls.queryString("select id from t_topic_reply where cid is null")).getObject(String[].class)) {
-			TopicReply reply = dao.fetch(TopicReply.class, topicId);
-			String cid = bcs.put(reply.getContent());
-			reply.setContentId(cid);
-			reply.setContent(null);
-			dao.update(reply, "(content|contentId)");
-		}
-		// 初始化子论坛数据
-		if (dao.count(SubForum.class) == 0) {
-		    SubForum fireflow = new SubForum();
-		    fireflow.setDisplay("Fireflow工作流");
-		    fireflow.setTagname("fireflow");
-		    fireflow.setMasters(Arrays.asList("qq_9d0c01e6", "fireflow"));
-		    dao.insert(fireflow);
-		    
-		    SubForum ssdb = new SubForum();
-		    ssdb.setDisplay("SSDB数据库");
-		    ssdb.setTagname("ssdb");
-		    ssdb.setMasters(Arrays.asList("ideawu"));
-		    dao.insert(ssdb);
-		    
-		    SubForum nginx = new SubForum();
-		    nginx.setDisplay("Nginx服务器");
-		    nginx.setTagname("nginx");
-		    dao.insert(nginx);
-		}
 
 		// 获取配置对象
 		conf = ioc.get(PropertiesProxy.class, "conf");
@@ -180,21 +135,7 @@ public class MainSetup implements Setup {
 			cacheManager.addCache("markdown");
 		Markdowns.cache = cacheManager.getCache("markdown");
 
-        try (final Jedis jedis = pool.getResource()) {
-            dao.each(Topic.class, Cnd.where("good", "=", true), (index, topic, length) -> {
-                Double t = jedis.zscore(RedisKey.RKEY_TOPIC_UPDATE
-                                        + topic.getType(),
-                                        topic.getId());
-                if (t == null)
-                    t = (double) topic.getCreateTime().getTime();
-                jedis.zadd(RedisKey.RKEY_TOPIC_UPDATE + "good", t, topic.getId());
-            });
-        }
-        
-        log.debug("F========================================");
 		ioc.get(YvrService.class).updateTopicTypeCount();
-        
-        log.debug("U========================================");
 		
 		Mvcs.disableFastClassInvoker = false;
 	}
@@ -234,8 +175,6 @@ public class MainSetup implements Setup {
                 mbeanServer.unregisterMBean(objectName);
         } catch (Exception ex) {
         }
-		
-        LCacheManager.me().depose();
         
         // org.brickred.socialauth.util.HttpUtil 把一个内部类注册到SSLContext,擦!
         try {

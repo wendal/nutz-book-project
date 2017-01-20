@@ -2,26 +2,26 @@ package net.wendal.nutzbook.ig;
 
 import java.util.List;
 
+import org.nutz.integration.jedis.JedisProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 @IocBean
 public class RedisIdGenerator implements IdGenerator {
     
     @Inject
-    protected JedisPool jedisPool;
+    protected JedisProxy jedisProxy;
     
     public RedisIdGenerator() {}
 
-    public RedisIdGenerator(JedisPool jedisPool) {
-        this.jedisPool = jedisPool;
+    public RedisIdGenerator(JedisProxy jedisProxy) {
+        this.jedisProxy = jedisProxy;
     }
 
     public long next(String key) {
-        try (Jedis jedis = jedisPool.getResource()) {
+        try (Jedis jedis = jedisProxy.getResource()) {
             return jedis.incr("ig:"+key);
         }
     }

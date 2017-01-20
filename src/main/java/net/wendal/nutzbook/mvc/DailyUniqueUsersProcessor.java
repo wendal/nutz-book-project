@@ -1,16 +1,14 @@
 package net.wendal.nutzbook.mvc;
 
+import org.nutz.integration.jedis.JedisProxy;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.ActionContext;
-import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.impl.processor.AbstractProcessor;
 
 import net.wendal.nutzbook.util.RedisKey;
 import net.wendal.nutzbook.util.Toolkit;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 /**
@@ -20,22 +18,20 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
  */
 public class DailyUniqueUsersProcessor extends AbstractProcessor implements RedisKey {
 
-	protected JedisPool jedisPool;
+	protected JedisProxy jedisProxy;
 	
 	private static final Log log = Logs.get();
 	
 	public void process(ActionContext ac) throws Throwable {
 		try {
-            if (jedisPool == null)
-                jedisPool = Mvcs.getIoc().get(JedisPool.class);
+            if (jedisProxy == null)
+                jedisProxy = ac.getIoc().get(JedisProxy.class);
             int uid = Toolkit.uid();
             if (uid > 0) {
-            	try (Jedis jedis = jedisPool.getResource()) {
-            		Pipeline pipe = jedis.pipelined();
-            		pipe.setbit(RKEY_ONLINE_DAY+Toolkit.today_yyyyMMdd(), uid, true);
+            	try (Jedis jedis = jedisProxy.getResource()) {
+            	    jedis.setbit(RKEY_ONLINE_DAY+Toolkit.today_yyyyMMdd(), uid, true);
             		//pipe.setbit(RKEY_ONLINE_HOUR+Toolkit.today_yyyyMMddHH(), uid, true);
-            		pipe.zadd(RKEY_USER_LVTIME, System.currentTimeMillis(), ""+uid);
-            		pipe.sync();
+            	    jedis.zadd(RKEY_USER_LVTIME, System.currentTimeMillis(), ""+uid);
             	}
             }
         }
