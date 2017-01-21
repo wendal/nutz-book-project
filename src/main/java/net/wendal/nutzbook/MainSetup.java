@@ -14,7 +14,7 @@ import javax.net.ssl.SSLContext;
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.Daos;
 import org.nutz.el.opt.custom.CustomMake;
-import org.nutz.integration.jedis.JedisProxy;
+import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.Ioc;
@@ -72,8 +72,8 @@ public class MainSetup implements Setup {
 		Ioc ioc = nc.getIoc();
 
 		// 初始化RedisCacheManager
-		JedisProxy jedisProxy = ioc.get(JedisProxy.class);
-        LCacheManager.me().setJedisProxy(jedisProxy);
+		JedisAgent jedisAgent = ioc.get(JedisAgent.class);
+        LCacheManager.me().setJedisAgent(jedisAgent);
         RedisCache.DEBUG = true;
 
         Dao dao = ioc.get(Dao.class);
@@ -81,7 +81,7 @@ public class MainSetup implements Setup {
         // 为全部标注了@Table的bean建表
         Daos.createTablesInPackage(dao, getClass().getPackage().getName()+".bean", false);
 
-		try (Jedis jedis = jedisProxy.getResource()) {
+		try (Jedis jedis = jedisAgent.getResource()) {
             if (!jedis.exists("ig:t_user") && dao.count(User.class) > 0)
                 jedis.set("ig:t_user", ""+dao.getMaxId(User.class)+1);
             if (!jedis.exists("ig:t_user_message") && dao.count(UserMessage.class) > 0)

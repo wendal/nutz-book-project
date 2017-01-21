@@ -14,7 +14,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.nutz.integration.jedis.JedisProxy;
+import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.jedis.pubsub.PubSub;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.aop.Aop;
@@ -40,7 +40,7 @@ public class NutzbookWebsocket extends Endpoint implements PubSub {
     protected PubSubService pubSubService;
     
     @Inject
-    protected JedisProxy jedisProxy;
+    protected JedisAgent jedisAgent;
     
     public static String prefix = "wsroom:";
     
@@ -83,7 +83,7 @@ public class NutzbookWebsocket extends Endpoint implements PubSub {
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
         String uu32 = R.UU32();
-        NutzbookWsStringHandler handler = new NutzbookWsStringHandler(uu32, session, jedisProxy);
+        NutzbookWsStringHandler handler = new NutzbookWsStringHandler(uu32, session, jedisAgent);
         session.addMessageHandler(handler);
         sessionIds.put(session.getId(), uu32);
         _sessions.put(uu32, handler);
