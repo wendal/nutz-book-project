@@ -1,14 +1,11 @@
 package net.wendal.nutzbook;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
-import java.util.Map.Entry;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -30,8 +27,6 @@ import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
-import org.nutz.plugins.cache.impl.lcache.LCacheManager;
-import org.nutz.plugins.cache.impl.redis.RedisCache;
 import org.nutz.plugins.slog.service.SlogService;
 import org.nutz.plugins.view.freemarker.FreeMarkerConfigurer;
 import org.quartz.Scheduler;
@@ -74,28 +69,8 @@ public class MainSetup implements Setup {
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
 
-		// 初始化RedisCacheManager
+		// 初始化JedisAgent
 		JedisAgent jedisAgent = ioc.get(JedisAgent.class);
-        LCacheManager.me().setJedisAgent(jedisAgent);
-        RedisCache.DEBUG = true;
-        // 迁移session会话
-        try (Jedis jedis = jedisAgent.getResource()) {
-            if (jedis.exists("shiro-activeSessionCache") && jedis.hlen("shiro-activeSessionCache") > 0) {
-                for(Entry<byte[], byte[]> en : jedis.hgetAll("shiro-activeSessionCache".getBytes()).entrySet()) {
-                    try {
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        out.write("shiro-activeSessionCache".getBytes());
-                        out.write(":".getBytes());
-                        out.write(en.getKey());
-                        jedis.set(out.toByteArray(), en.getValue());
-                    }
-                    catch (IOException e) {
-                        log.debug("merge shiro-activeSessionCache", e);
-                    }
-                };
-            }
-            jedis.del("shiro-activeSessionCache");
-        }
 
         Dao dao = ioc.get(Dao.class);
         
