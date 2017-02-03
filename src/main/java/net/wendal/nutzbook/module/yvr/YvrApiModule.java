@@ -606,7 +606,8 @@ public class YvrApiModule extends BaseModule {
     @At("/topic/?/mark")
     @AdaptBy(type=WhaleAdaptor.class)
     @Filters(@By(type=AccessTokenFilter.class))
-    public void mark(String id, String mark) {
+    public Object mark(String id, String mark) {
         yvrService.topicMark(id, Toolkit.uid());
+        return _map("success", true);
     }
 }
