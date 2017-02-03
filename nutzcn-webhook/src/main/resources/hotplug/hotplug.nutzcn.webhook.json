@@ -1,0 +1,6 @@
+{
+	name : "webhook",
+	version : "3.0.1",
+	base : "net.wendal.nutzbook.webhook",
+	describe : "N社区的Web钩子模块"
+}

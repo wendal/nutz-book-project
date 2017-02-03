@@ -1,0 +1,6 @@
+{
+	name : "sysinfo",
+	version : "3.0.1",
+	base : "net.wendal.nutzbook.sysinfo",
+	describe : "N社区的系统状态模块"
+}

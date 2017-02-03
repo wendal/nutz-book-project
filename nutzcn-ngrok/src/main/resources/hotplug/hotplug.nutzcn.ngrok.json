@@ -1,0 +1,6 @@
+{
+	name : "ngrok",
+	version : "3.0.1",
+	base : "net.wendal.nutzbook.ngrok",
+	describe : "N社区的Ngrok管理模块"
+}

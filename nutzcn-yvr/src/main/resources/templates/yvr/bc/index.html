@@ -1,0 +1,90 @@
+
+<!--# layout("../_layout.html", {"title":"打赏主页"}){ #-->
+<!--# layout("../sidebar.html",{"c_user":obj.current_user!}){}; #-->
+<div id='content'>
+  <div class='panel' id="bclist">
+    <div class='header'>
+      <ul class='breadcrumb'>
+        <li><a href='${ctxPath}/pay/bc'>打赏主页</a><span class='divider'>/</span></li>
+      </ul>
+    </div>
+    <div class='inner'>
+    	<b>进入用户的详情页或其发起的帖子的详情页,均可打赏</b>
+    </div>
+    <div class='inner'>
+    	<button class="btn" v-on:click="doReload" disabled>当前页数{{pageNumber}}</button>
+    	<button class="btn" v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
+    	<button class="btn" v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
+    	<button class="btn" v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>
+    	<button class="btn" v-on:click="jump(pageCount)" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    </div>
+    <div class='inner'>
+    	<table class="table table-bordered">
+    		<thead>
+      			<tr>
+        			<th>发起者</th>
+        			<th>接受者</th>
+        			<th>金额(单位是分)</th>
+        			<th>时间</th>
+        			<th>操作</th>
+      			</tr>
+    		</thead>
+    		<tbody>
+      			<tr class='cell' v-for="item in list" track-by="out_trade_no">
+      				<td>
+      					<a href="${ctxPath}/yvr/u/{{item.fromUserProfile.loginname}}" class="user_avatar">
+      						<img src="${cdnbase}${base}/yvr/u/{{item.fromUserProfile.loginname}}/avatar" title="{{item.fromUserProfile.loginname}}">
+      						<span>{{item.fromUserProfile.nickname}}</span>
+    					</a>
+      	  			</td>
+      	  			
+      				<td>
+      					<a href="${ctxPath}/yvr/u/{{item.toUserProfile.loginname}}" class="user_avatar">
+      						<img src="${cdnbase}${base}/yvr/u/{{item.toUserProfile.loginname}}/avatar" title="{{item.toUserProfile.loginname}}">
+      						<span>{{item.toUserProfile.nickname}}</span>
+    					</a>
+      	  			</td>
+      	  			<td>{{item.transaction_fee}}</td>
+      	  			<td>{{item.updateTime}}</td>
+      	  			<td>
+      	  				<!--#if (null != obj.current_user!) { #-->
+      	  				<button v-on:click="do_pay(item.toUser)">我也要打赏给Ta</button>
+      	  				证书(
+      	  				<a href="${ctxPath}/pay/bc/pdf/{{item.out_trade_no}}">下载</a>
+      	  				/
+      	  				<a href="${ctxPath}/pay/bc/pdfview/{{item.out_trade_no}}">查看</a>
+      	  				)
+      	  				<!--#} else { #-->
+      	  				<button">登陆后您也可以打赏Ta哦</button>
+      	  				<!--#} #-->
+      	  			</td>
+      			</tr>
+    		</tbody>
+    	</table>
+    </div>
+    <div class='inner'>
+    	<b>天使轮--打赏功能启用前的支付宝打款</b>
+    	<table class="table table-bordered">
+    		<thead>
+      			<tr>
+        			<th>日期</th>
+        			<th>昵称</th>
+        			<th>金额/设备</th>
+      			</tr>
+    		</thead>
+    		<tbody>
+      			<tr class='cell' v-for="item in list2">
+      				<td>{{item[0]}}</td>
+      				<td>{{item[1]}}</td>
+      				<td>{{item[2]}}</td>
+      	  		</tr>
+      	  	</tbody>
+      	  </table>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var base = "${base}";
+</script>
+<script src="${base}/asserts/yvr/js/bc/index.js" type="text/javascript"></script>
+<!--#} #-->

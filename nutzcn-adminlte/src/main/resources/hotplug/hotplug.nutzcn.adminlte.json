@@ -1,0 +1,6 @@
+{
+	name : "adminlte",
+	version : "3.0.1",
+	base : "net.wendal.nutzbook.adminlte",
+	describe : "N社区的后台管理模块"
+}

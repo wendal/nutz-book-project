@@ -1,0 +1,6 @@
+{
+	name : "dwmaster",
+	version : "3.0.1",
+	base : "net.wendal.nutzbook.dwmaster",
+	describe : "N社区的资源下载模块"
+}
