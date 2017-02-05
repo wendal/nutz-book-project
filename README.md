@@ -1,5 +1,7 @@
 # NutzCN社区
 
+这个分支正在开发中, 使用hotplug插件进行模块化分离
+
 Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
 [![Build Status](https://travis-ci.org/wendal/nutz-book-project.png?branch=master)](https://travis-ci.org/wendal/nutz-book-project)
@@ -10,9 +12,7 @@ Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
 论坛系统(即Nutz社区) https://nutz.cn
 
-* 管理后台  https://nutz.cn/home
-* 管理后台2  https://nutz.cn/admin
-* 管理后台3 https://nutz.cn/admin2
+* 管理后台  https://nutz.cn/adminlte
 
 ![首页截图](index_page.jpg)
 
@@ -29,6 +29,7 @@ Redis-Windows 下载地址 https://github.com/MSOpenTech/redis/releases
 
 ## 特色
 
+* 模块化开发
 * 完善的发帖回帖机制,引导式发帖
 * Session实现2层持久化,兼顾性能和持久化
 * 回帖提醒(页面端使用WebSocket,客户端使用小米推送和极光推送)
@@ -62,29 +63,6 @@ iOS客户端
 * 基于socialauth的Oauth登陆(Github及QQ登陆)
 * 集成极光推送(jpush)及小米推送(xmpush)
 * WebSocket
-
-## 曾经集成,但已经移除的功能
-
-* U2F绑定与登陆
-* zbus集成(RPC及MQ)
-* jetbrick模板集成
-* socketio 集成及demo聊天工具
-* 洋葱登录
-
-
-## 关于目录结构变化
-
-nutzbook中的代码是eclipse结构的, 本项目最新的代码已经改为maven格式, 映射关系如下
-
-* src -- src/main/java
-* conf -- src/main/resources
-* WebContent -- src/main/webapp
-
-eclipse依然可以直接导入本项目
-
-## 依赖的jar包下载
-
-http://nutzbook.wendal.net/jars/
 
 ## License
 
