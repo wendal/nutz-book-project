@@ -159,7 +159,7 @@ public class YvrUserModule extends BaseModule {
 				}
 			}
 			if (buf == null) {
-			    buf = Streams.readBytesAndClose(getClass().getClassLoader().getResourceAsStream("/asserts/yvr/user_avatar/none.jpg"));
+			    buf = Streams.readBytesAndClose(getClass().getClassLoader().getResourceAsStream("/assets/yvr/user_avatar/none.jpg"));
 			}
 		} else {
 			buf = (byte[])ele.getObjectValue();
