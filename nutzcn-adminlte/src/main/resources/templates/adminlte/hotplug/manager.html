@@ -14,9 +14,6 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
-          
-          </div>
-          <div class="box">
             <div class="box-header">
               <h3 class="box-title">插件一览</h3>
             </div>
@@ -40,8 +37,9 @@
                   <td>{{hotplug.base}}</td>
                   <td>
                   	<button>详情</button>
-                  	<button v-if="hotplug.disabled != true">停用</button>
-                  	<button v-else>启用</button>
+                  	<button @click="do_remove(hotplug.name)">卸载</button>
+                  	<button v-if="hotplug.disabled != true" @click="do_disable(hotplug.name)">停用</button>
+                  	<button v-else @click="do_enable(hotplug.name)">启用</button>
                   </td>
                 </tr>
                 </tbody>
@@ -49,10 +47,27 @@
             </div>
             <!-- /.box-body -->
           </div>
+          
+          <div class="box">
+          	<div class="box-header">
+              <h3 class="box-title">上传插件</h3>
+            </div>
+            <div class="box-body">
+            	<div id="uploader" class="wu-example">
+    				<!--用来存放文件信息-->
+    				<div id="thelist" class="uploader-list"></div>
+    				<div class="btns">
+        				<div id="hotplug_picker">选择文件并上传</div>
+    				</div>
+				</div>
+            </div>
+          </div>
         </div>
         <!-- /.col -->
       </div>
       <!-- /.row -->
     </section>
     <!-- /.content -->
+    <link rel="stylesheet" type="text/css" href="${base}/assets/adminlte/libs/webuploader/webuploader.css">
+    <script src="${base}/assets/adminlte/libs/webuploader/webuploader.withoutimage.js"></script>
     <script src="${base}/assets/adminlte/js/hotplug/manager.js"></script>

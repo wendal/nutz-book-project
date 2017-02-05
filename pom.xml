@@ -17,7 +17,7 @@
 		<module>nutzcn-beepay</module>
 		<module>nutzcn-webhook</module>
 		<module>nutzcn-dwmaster</module>
-		<module>nutzcn-robot</module>
+		
 		<module>nutzcn-sysinfo</module>
 		<module>nutzcn-shortit</module>
 	</modules>
@@ -103,6 +103,7 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
 			<version>1.r.61-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

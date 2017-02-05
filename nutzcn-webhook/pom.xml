@@ -14,4 +14,17 @@
   		<scope>provided</scope>
   	</dependency>
   </dependencies>
+  <build>
+  	<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+  	</plugins>
+  </build>
 </project>

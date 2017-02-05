@@ -39,4 +39,11 @@ public class HotplugModule extends BaseModule {
     public HotPlugConfig add(@Param("file")TempFile f) throws Exception {
         return hotPlug.add(f.getFile());
     }
+    
+    @RequiresRoles("admin")
+    @POST
+    @At
+    public void remove(@Param("name")String name) throws Exception {
+        hotPlug.remove(name);
+    }
 }
