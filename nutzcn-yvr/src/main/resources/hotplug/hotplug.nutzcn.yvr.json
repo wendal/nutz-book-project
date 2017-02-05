@@ -2,5 +2,5 @@
 	name : "yvr",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.yvr",
-	describe : "N社区的社区模块"
+	describe : "N平台的社区模块"
 }

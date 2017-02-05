@@ -12,7 +12,7 @@ public class AdminlteModule {
     @At({"/", "/index"})
     public void index(){}
     
-    @At("/user/list")
-    @Ok("beetl:/adminlte/user/list.html")
-    public void userList() {}
+    @At("/page/?/?")
+    @Ok("beetl:/adminlte/${pathargs[0]}/${pathargs[1]}.html")
+    public void page() {}
 }

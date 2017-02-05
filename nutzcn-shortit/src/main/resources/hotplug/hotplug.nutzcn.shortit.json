@@ -2,5 +2,5 @@
 	name : "shortit",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.shortit",
-	describe : "N社区的OAuth模块"
+	describe : "N平台的OAuth模块"
 }

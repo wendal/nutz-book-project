@@ -2,5 +2,5 @@
 	name : "beepay",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.beepay",
-	describe : "N社区的BeeCloud对接模块"
+	describe : "N平台的BeeCloud对接模块"
 }

@@ -335,9 +335,9 @@
             <span>用户及权限管理</span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" @click="switch_content(`${base}/adminlte/user/list`)"><i class="fa fa-circle-o"></i>用户管理</a></li>
-            <li><a href="#"><i class="fa fa-circle-o"></i>角色管理</a></li>
-            <li><a href="#"><i class="fa fa-circle-o"></i>权限管理</a></li>
+            <li><a href="#" @click="switch_page(`/authority/user`)"><i class="fa fa-circle-o"></i>用户管理</a></li>
+            <li><a href="#" @click="switch_page(`/authority/role`)"><i class="fa fa-circle-o"></i>角色管理</a></li>
+            <li><a href="#" @click="switch_page(`/authority/permission`)"><i class="fa fa-circle-o"></i>权限管理</a></li>
           </ul>
         </li>
         <li class="treeview">
@@ -349,8 +349,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i>插件管理</a></li>
-            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i>插件仓库</a></li>
+            <li><a href="#" @click="switch_page(`/hotplug/manager`)"><i class="fa fa-circle-o"></i>插件管理</a></li>
+            <li><a href="#" @click="switch_page(`/hotplug/repo`)"><i class="fa fa-circle-o"></i>插件仓库</a></li>
           </ul>
         </li>
         <li class="treeview" v-for="menu in menus">
@@ -887,9 +887,9 @@
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 2.3.8
+      <b>Version</b> 3.x
     </div>
-    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
+    <strong>Copyright &copy; 2015-2017 <a href="https://nutz.cn">N平台</a>.</strong> All rights
     reserved.
   </footer>
 
@@ -1126,6 +1126,7 @@ var base = "${base}";
 <!-- AdminLTE App -->
 <script src="${base}/assets/adminlte/dist/js/app.min.js"></script>
 <!-- wendal在此 -->
+<script src="${base}/assets/adminlte/libs/layer2/layer.js"></script>
 <script src="${base}/assets/adminlte/vue2/vue.js"></script>
 <script src="${base}/assets/adminlte/js/adminlte_main.js"></script>
 </body>

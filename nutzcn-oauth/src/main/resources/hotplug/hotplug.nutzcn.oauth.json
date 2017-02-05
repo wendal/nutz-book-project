@@ -2,5 +2,5 @@
 	name : "oauth",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.oauth",
-	describe : "N社区的OAuth模块"
+	describe : "N平台的OAuth模块"
 }

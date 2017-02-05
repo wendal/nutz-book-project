@@ -2,5 +2,5 @@
 	name : "core",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.core",
-	describe : "N社区的核心模块"
+	describe : "N平台的核心模块"
 }

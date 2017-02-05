@@ -69,7 +69,7 @@ public class AuthorityModule extends BaseModule {
 	@RequiresPermissions("authority:permission:query")
 	@At
 	public Object permissions(@Param("query")String query, @Param("..")Pager pager) {
-		return ajaxOk(query(Permission.class, Cnd.NEW().asc("id"), pager, null));
+		return ajaxOk(query(Permission.class, Cnd.NEW().asc("name"), pager, null));
 	}
 	
 

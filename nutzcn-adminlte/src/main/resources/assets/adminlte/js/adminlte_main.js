@@ -5,7 +5,8 @@ var mainSidebar = new Vue({
 		menus : []
 	},
 	methods : {
-		switch_content : function(path) {
+		switch_page : function(path) {
+			path = base + "/adminlte/page" + path
 			if (console)
 				console.info(path);
 			$("#main_content").load(path);
