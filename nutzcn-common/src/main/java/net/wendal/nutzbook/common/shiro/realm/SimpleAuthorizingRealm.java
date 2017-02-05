@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.common.shiro.realm;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -15,9 +16,12 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.nutz.dao.Dao;
+import org.nutz.dao.FieldFilter;
+import org.nutz.dao.util.Daos;
 import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.mvc.Mvcs;
 
+import net.wendal.nutzbook.core.bean.Permission;
 import net.wendal.nutzbook.core.bean.User;
 
 public class SimpleAuthorizingRealm extends AuthorizingRealm {
@@ -29,7 +33,7 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 		if (principals == null) {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 		}
-		int userId = (Integer) principals.getPrimaryPrincipal();
+		long userId = (Long) principals.getPrimaryPrincipal();
 		User user = dao().fetch(User.class, userId);
 		if (user == null)
 			return null;
@@ -38,7 +42,20 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 
 		SimpleAuthorizationInfo auth = new SimpleAuthorizationInfo();
 		if (user.getRoleNames() != null) {
-		    auth.addRoles(Arrays.asList(user.getRoleNames().split(",")));
+		    boolean flag = false;
+		    for (String role : user.getRoleNames().split(",")) {
+                auth.addRole(role);
+                // 管理员拥有所有权限
+                if ("admin".equals(role)) {
+                    List<Permission> permissions = Daos.ext(dao(), FieldFilter.create(Permission.class, "name")).query(Permission.class, null);
+                    for (Permission permission : permissions) {
+                        auth.addStringPermission(permission.getName());
+                    }
+                    flag = true;
+                }
+            }
+		    if (flag)
+		        return auth;
 		}
 		if (user.getPermissionNames() != null) {
 		    auth.addStringPermissions(Arrays.asList(user.getPermissionNames().split(",")));

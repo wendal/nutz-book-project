@@ -19,6 +19,7 @@
 		<module>nutzcn-dwmaster</module>
 		<module>nutzcn-robot</module>
 		<module>nutzcn-sysinfo</module>
+		<module>nutzcn-shortit</module>
 	</modules>
 	<build>
 		<plugins>

@@ -16,8 +16,8 @@
   <!--#} #-->
   <link title="RSS" type="application/rss+xml" rel="alternate" href="${ctxPath}/yvrs.xml"/>
 
-  <link rel="icon" href="${base}/asserts/yvr/logo.png" type="image/x-icon"/>
-  <link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/logo/logo.css"/>
+  <link rel="icon" href="${base}/assets/yvr/logo.png" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" href="${base}/assets/yvr/logo/logo.css"/>
   
   <link rel="canonical" href="${conf["website.urlbase"]}" itemprop="url"/>
 
@@ -26,28 +26,28 @@
 html { overflow-y: scroll; }
 .autocomplete-suggestions { border: 1px solid #999; background: #AABBCC; overflow: auto; }
 </style>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/libs/bootstrap/css/bootstrap.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/stylesheets/common.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/stylesheets/style.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/stylesheets/responsive.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/stylesheets/jquery.atwho.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/js/layer/skin/layer.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/libs/editor/editor.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/libs/webuploader/webuploader.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/libs/code-prettify/prettify.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/libs/font-awesome/font-awesome.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/css/introjs.css?v=1"/>
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/css/cal-heatmap.css" />
-<link rel="stylesheet" type="text/css" href="${base}/asserts/yvr/css/jquery.atwho.min.css" />
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/libs/bootstrap/css/bootstrap.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/stylesheets/common.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/stylesheets/style.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/stylesheets/responsive.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/stylesheets/jquery.atwho.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/js/layer/skin/layer.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/libs/editor/editor.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/libs/webuploader/webuploader.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/libs/code-prettify/prettify.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/libs/font-awesome/font-awesome.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/css/introjs.css?v=1"/>
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/css/cal-heatmap.css" />
+<link rel="stylesheet" type="text/css" href="${base}/assets/yvr/css/jquery.atwho.min.css" />
 
 <!-- scripts -->
 <script>
 var ctxPath = "${ctxPath}";
 var base = "${ctxPath}";
 </script>
-<script src="${base}/asserts/yvr/libs/jquery-2.1.4.min.js?v=1"></script>
-<script src="${base}/asserts/yvr/js/vue.min.js?v=2" type="text/javascript"></script>
-<script src="${base}/asserts/yvr/js/vue-resource.min.js" type="text/javascript"></script>
+<script src="${base}/assets/yvr/libs/jquery-2.1.4.min.js?v=1"></script>
+<script src="${base}/assets/yvr/js/vue.min.js?v=2" type="text/javascript"></script>
+<script src="${base}/assets/yvr/js/vue-resource.min.js" type="text/javascript"></script>
 
   <!--# if (null != obj.topic!) {  #-->
   <title itemprop='name'>${obj.topic.title} - ${conf['website.title']}</title>
@@ -91,7 +91,7 @@ var base = "${ctxPath}";
       <a class='brand' href='${ctxPath}/yvr/list'>
         <div class="nutz-logo-bar">
     		<div class="nutz-logo">
-        		<img src="${base}/asserts/yvr/logo/logo2.png" alt="网站logo"/>
+        		<img src="${base}/assets/yvr/logo/logo2.png" alt="网站logo"/>
         		<div class="logo-tail"></div>
     		</div>
     		<div class="nutz-txt">${conf["website.shortname"]}</div>
@@ -144,7 +144,7 @@ var base = "${ctxPath}";
       | Power By 
       <a class='dark' href='https://github.com/nutzam/nutz'>Nutz</a>
       ,
-      <a class='dark' href='http://www.qiniu.com/'><img src="${base}/asserts/yvr/images/qiniu-transparent.png" style="width: 10%; height: 10%"/></a>
+      <a class='dark' href='http://www.qiniu.com/'><img src="${base}/assets/yvr/images/qiniu-transparent.png" style="width: 10%; height: 10%"/></a>
       | 
       <a class="dark" href='https://cnodejs.org'>页面模板源自cnodejs</a>
       |
@@ -217,25 +217,25 @@ $(function() {
 </script>
 <!--# }  #-->
 
-<script src="${base}/asserts/yvr/libs/lodash.compat.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/jquery-ujs.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/bootstrap/js/bootstrap.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/jquery.caret.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/jquery.atwho.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/qrcode.js?v=1"></script>
-<script src="${base}/asserts/yvr/javascripts/main.js?v=1"></script>
-<script src="${base}/asserts/yvr/javascripts/responsive.js?v=1"></script>
-<script src="${base}/asserts/yvr/js/layer/layer.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/jquery.pjax.js?v=1"></script>
-<script src="${base}/asserts/yvr/js/jquery.zclip.js?v=0.2.2"></script>
+<script src="${base}/assets/yvr/libs/lodash.compat.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/jquery-ujs.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/bootstrap/js/bootstrap.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/jquery.caret.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/jquery.atwho.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/qrcode.js?v=1"></script>
+<script src="${base}/assets/yvr/javascripts/main.js?v=1"></script>
+<script src="${base}/assets/yvr/javascripts/responsive.js?v=1"></script>
+<script src="${base}/assets/yvr/js/layer/layer.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/jquery.pjax.js?v=1"></script>
+<script src="${base}/assets/yvr/js/jquery.zclip.js?v=0.2.2"></script>
 <!-- jQuery edit in place plugin -->
-<script src="${base}/asserts/yvr/libs/jquery.browser.js" type="text/javascript"></script>
-<script src="${base}/asserts/yvr/libs/jquery.editinplace.js" type="text/javascript"></script>
-<script src="${base}/asserts/yvr/js/base.js"></script>
-<script src="${base}/asserts/yvr/js/user.js"></script>
+<script src="${base}/assets/yvr/libs/jquery.browser.js" type="text/javascript"></script>
+<script src="${base}/assets/yvr/libs/jquery.editinplace.js" type="text/javascript"></script>
+<script src="${base}/assets/yvr/js/base.js"></script>
+<script src="${base}/assets/yvr/js/user.js"></script>
 <!--#if (null != obj.current_user!){ #-->
-<script src="${base}/asserts/yvr/js/jquery.autocomplete.min.js" type="text/javascript"></script>
-<script src="${base}/asserts/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
+<script src="${base}/assets/yvr/js/jquery.autocomplete.min.js" type="text/javascript"></script>
+<script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
 <script src="${base}/pay/bc/js"></script>
 <script>
 var ws;
@@ -274,7 +274,7 @@ $(function(){
 		    	if (re.byuser == ${obj.current_user.userId})
 		    		return;
 		    	<!--# } #-->
-		    	re.options["icon"] = "${base}/asserts/yvr/logo.png";
+		    	re.options["icon"] = "${base}/assets/yvr/logo.png";
 			    var n = new Notification(re.data, re.options);
 				n.onclick = function() {
 					location.reload();

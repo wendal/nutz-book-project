@@ -26,7 +26,7 @@ public class AccessTokenFilter extends AbstractProcessor implements ActionFilter
 	
 	private static final Log log = Logs.get();
 	
-	YvrService yvrService;
+	protected YvrService yvrService;
 
 	public View match(ActionContext ac) {
 		if (yvrService == null)
@@ -62,7 +62,7 @@ public class AccessTokenFilter extends AbstractProcessor implements ActionFilter
 		else if (Strings.isBlank(at)) { // TODO 移除这种兼容性,改成必须用nonce加密
 			return BaseModule.HTTP_403;
 		}
-		int uid = yvrService.getUserByAccessToken(at);
+		long uid = yvrService.getUserByAccessToken(at);
 		if (uid < 1) {
 			return BaseModule.HTTP_403;
 		}
@@ -72,7 +72,7 @@ public class AccessTokenFilter extends AbstractProcessor implements ActionFilter
 
 	public void process(ActionContext ac) throws Throwable {
 		Subject subject = SecurityUtils.getSubject();
-		Integer uid = (Integer) subject.getSession().getAttribute("me");
+		Long uid = (Long) subject.getSession().getAttribute("me");
 		if (!subject.isAuthenticated())
 			subject.login(new SimpleShiroToken(uid));
 		doNext(ac);

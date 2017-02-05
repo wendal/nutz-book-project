@@ -42,11 +42,11 @@ import org.nutz.mvc.upload.TempFile;
 
 import net.wendal.nutzbook.common.util.RedisKey;
 import net.wendal.nutzbook.common.util.Toolkit;
-import net.wendal.nutzbook.common.websocket.NutzbookWebsocket;
 import net.wendal.nutzbook.core.bean.CResult;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.service.PushService;
+import net.wendal.nutzbook.core.websocket.NutzbookWebsocket;
 import net.wendal.nutzbook.yvr.bean.SubForum;
 import net.wendal.nutzbook.yvr.bean.Topic;
 import net.wendal.nutzbook.yvr.bean.TopicReply;
@@ -143,11 +143,11 @@ public class YvrService implements RedisKey, PubSub {
 	}
 
 	@Aop("redis")
-	public int getUserByAccessToken(String at) {
+	public long getUserByAccessToken(String at) {
 		String uid_str = jedis().hget(RKEY_USER_ACCESSTOKEN3, at);
 		if (uid_str == null)
 			return -1;
-		return Integer.parseInt(uid_str);
+		return Long.parseLong(uid_str);
 	}
 
 	@Aop("redis")

@@ -152,10 +152,10 @@ layout("_layout.html",{}){
   <div class="anchor"></div>
 </div>
 <!--# if (null != obj.current_user!){  #-->
-<script src="${base}/asserts/yvr/libs/markdownit.js?v=1"></script>
-<script src="${base}/asserts/yvr/libs/code-prettify/prettify.js?v=1"></script>
-<script src="${base}/asserts/yvr/js/topic_detail.js?v=4"></script>
-<script src="${base}/asserts/yvr/js/jquery.atwho.min.js?v=1.4.1"></script>
+<script src="${base}/assets/yvr/libs/markdownit.js?v=1"></script>
+<script src="${base}/assets/yvr/libs/code-prettify/prettify.js?v=1"></script>
+<script src="${base}/assets/yvr/js/topic_detail.js?v=4"></script>
+<script src="${base}/assets/yvr/js/jquery.atwho.min.js?v=1.4.1"></script>
 
 <!--#} #-->
 <script type="text/javascript">
@@ -221,7 +221,7 @@ $(function() {
 		copy:function() {
 			return "${obj.topic.title} " + location.href;
 		},
-		path : '${base}/asserts/yvr/js/ZeroClipboard.swf'
+		path : '${base}/assets/yvr/js/ZeroClipboard.swf'
 	});
 	$("#TopicTagSpan").editInPlace({
 		method : "POST",

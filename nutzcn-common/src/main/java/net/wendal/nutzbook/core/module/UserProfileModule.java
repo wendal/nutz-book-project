@@ -200,7 +200,7 @@ public class UserProfileModule extends BaseModule {
 			if (System.currentTimeMillis() - time > 10*60*1000) {
 				return "该验证链接已经超时";
 			}
-			int userId = Integer.parseInt(tmp[0]);
+			long userId = Long.parseLong(tmp[0]);
 			Cnd cnd = Cnd.where("userId", "=", userId).and("email", "=", tmp[1]);
 			int re = dao.update(UserProfile.class, Chain.make("emailChecked", true), cnd);
 			if (re == 1) {

@@ -1,0 +1,48 @@
+#progress p {
+  display: block;
+  width: 240px;
+  padding: 2px 5px;
+  margin: 2px 0;
+  border: 1px inset #446;
+  border-radius: 5px;
+}
+
+#progress p.success {
+  background: #0c0 none 0 0 no-repeat;
+}
+
+#progress p.failed {
+  background: #c00 none 0 0 no-repeat;
+}
+
+#filedrag {
+  display: none;
+  font-weight: bold;
+  text-align: center;
+  padding: 1em 0;
+  margin: 1em 0;
+  color: #555;
+  border: 2px dashed #555;
+  border-radius: 7px;
+  cursor: default;
+}
+
+#filedrag.hover {
+  color: #f00;
+  border-color: #f00;
+  border-style: solid;
+  box-shadow: inset 0 3px 4px #888;
+}
+
+#data {
+  padding: 1em 0;
+  margin: 1em 0;
+  border: 2px dashed #555;
+}
+
+#data.hover {
+  color: #f00;
+  border-color: #f00;
+  border-style: solid;
+  box-shadow: inset 0 3px 4px #888;
+}
