@@ -24,8 +24,6 @@ import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-import redis.clients.jedis.JedisPool;
-
 @ServerEndpoint(value = "/websocket", configurator=NutIocWebSocketConfigurator.class)
 @IocBean(create="init", depose="depose")
 public class NutzbookWebsocket extends Endpoint implements PubSub {
