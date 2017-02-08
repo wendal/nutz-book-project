@@ -23,7 +23,7 @@
             swf: ctxPath+'/libs/webuploader/Uploader.swf',
             server: ctxPath+'/yvr/u/profile/update/avatar',
             pick: "#user_index_avatar",
-            paste: document.body,
+            //paste: document.body,
             //dnd: this.$upload[0],
             auto: true,
             fileSingleSizeLimit: 256 * 1024,
