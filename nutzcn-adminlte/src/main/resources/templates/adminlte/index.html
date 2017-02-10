@@ -332,7 +332,7 @@
         <li class="treeview">
           <a href="#">
             <i class="fa fa-files-o"></i>
-            <span>用户及权限管理</span>
+            <span>Security管理</span>
           </a>
           <ul class="treeview-menu">
             <li><a href="#" @click="switch_page(`/authority/user`)"><i class="fa fa-circle-o"></i>用户管理</a></li>
@@ -343,14 +343,16 @@
         <li class="treeview">
           <a href="#">
             <i class="fa fa-pie-chart"></i>
-            <span>插件管理</span>
+            <span>系统设置</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" @click="switch_page(`/hotplug/manager`)"><i class="fa fa-circle-o"></i>插件管理</a></li>
-            <li><a href="#" @click="switch_page(`/hotplug/repo`)"><i class="fa fa-circle-o"></i>插件仓库</a></li>
+            <li><a href="#" @click="switch_page(`/system/basic`)"><i class="fa fa-circle-o"></i>基本管理</a></li>
+            <li><a href="#" @click="switch_page(`/system/dict`)"><i class="fa fa-circle-o"></i>数据字典</a></li>
+            <li><a href="#" @click="switch_page(`/system/hotplug_manager`)"><i class="fa fa-circle-o"></i>插件管理</a></li>
+            <li><a href="#" @click="switch_page(`/system/hotplug_repo`)"><i class="fa fa-circle-o"></i>插件仓库</a></li>
           </ul>
         </li>
         <li class="treeview" v-for="menu in menus">

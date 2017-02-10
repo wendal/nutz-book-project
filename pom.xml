@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>NutzCN的根项目</name>
 	<modules>
-		<module>nutzcn-common</module>
+		<module>nutzcn-core</module>
 		
 		<module>nutzcn-adminlte</module>
 		<module>nutzcn-webapp</module>
@@ -52,6 +52,15 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
 					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 				</configuration>
 			</plugin>
 		</plugins>

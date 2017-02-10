@@ -11,7 +11,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
-			<artifactId>nutzcn-common</artifactId>
+			<artifactId>nutzcn-core</artifactId>
+			<version>3.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.wendal.nutzcn</groupId>
+			<artifactId>nutzcn-adminlte</artifactId>
 			<version>3.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -34,46 +39,28 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>all</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<id>yvr</id>
 			<dependencies>
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-yvr</artifactId>
 					<version>3.0.1-SNAPSHOT</version>
 				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>beepay</id>
+			<dependencies>
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-beepay</artifactId>
 					<version>3.0.1-SNAPSHOT</version>
 				</dependency>
-				<dependency>
-					<groupId>net.wendal.nutzcn</groupId>
-					<artifactId>nutzcn-ngrok</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
-				</dependency>
-				<dependency>
-					<groupId>net.wendal.nutzcn</groupId>
-					<artifactId>nutzcn-oauth</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
-				</dependency>
-				<dependency>
-					<groupId>net.wendal.nutzcn</groupId>
-					<artifactId>nutzcn-sysinfo</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
-				</dependency>
-				<dependency>
-					<groupId>net.wendal.nutzcn</groupId>
-					<artifactId>nutzcn-dwmaster</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
-				</dependency>
-				<dependency>
-					<groupId>net.wendal.nutzcn</groupId>
-					<artifactId>nutzcn-adminlte</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
-				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>shortit</id>
+			<dependencies>
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-shortit</artifactId>
@@ -82,7 +69,44 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>simple</id>
+			<id>dwmaster</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-dwmaster</artifactId>
+					<version>3.0.1-SNAPSHOT</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>sysinfo</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-sysinfo</artifactId>
+					<version>3.0.1-SNAPSHOT</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>oauth</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-oauth</artifactId>
+					<version>3.0.1-SNAPSHOT</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>ngrok</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-ngrok</artifactId>
+					<version>3.0.1-SNAPSHOT</version>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 </project>

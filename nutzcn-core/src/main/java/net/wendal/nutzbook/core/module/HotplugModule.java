@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.core.module;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -7,6 +8,7 @@ import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
@@ -45,5 +47,37 @@ public class HotplugModule extends BaseModule {
     @At
     public void remove(@Param("name")String name) throws Exception {
         hotPlug.remove(name);
+    }
+    
+    @RequiresRoles("admin")
+    @POST
+    @At
+    public NutMap disable(@Param("name")String name) throws Exception {
+        HotPlugConfig hc = HotPlug.plugins.get(name);
+        if (hc != null) {
+            hc.put("disabled", true);
+            if ("file".equals(hc.get("origin"))) {
+                String path = hc.getString("origin_path");
+                new File(path + ".disabled").createNewFile();
+            }
+            return ajaxOk(true);
+        }
+        return ajaxFail("没找到该插件");
+    }
+    
+    @RequiresRoles("admin")
+    @POST
+    @At
+    public NutMap enable(@Param("name")String name) throws Exception {
+        HotPlugConfig hc = HotPlug.plugins.get(name);
+        if (hc != null) {
+            hc.remove("disable");
+            if ("file".equals(hc.get("origin"))) {
+                String path = hc.getString("origin_path");
+                new File(path + ".disabled").delete();
+            }
+            return ajaxOk(true);
+        }
+        return ajaxFail("没找到该插件");
     }
 }

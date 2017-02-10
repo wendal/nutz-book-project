@@ -6,7 +6,7 @@
 		<artifactId>nutzcn-parent</artifactId>
 		<version>3.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>nutzcn-common</artifactId>
+	<artifactId>nutzcn-core</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>

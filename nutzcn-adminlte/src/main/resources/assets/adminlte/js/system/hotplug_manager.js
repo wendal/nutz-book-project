@@ -27,10 +27,50 @@ var vueHotplugList = new Vue({
 			});
 		},
 		do_disable : function(hotplug_name) {
-			layer.alert("尚未实现");
+			$.ajax({
+				url : base + "/admin/hotplug/disable",
+				type : "POST",
+				data : {"name":hotplug_name},
+				dataType : "json",
+				success : function(re) {
+					if (console)
+						console.info(re);
+					if (re && re.ok) {
+						vueHotplugList.dataReload();
+					} else if (re) {
+						layer.alert("失败:" + re.msg);
+					}
+				},
+				fail : function(err) {
+					layer.alert("加载失败:" + err);
+				},
+				error : function(err) {
+					layer.alert("加载失败:" + err);
+				}
+			});
 		},
 		do_enable : function(hotplug_name) {
-			layer.alert("尚未实现");
+			$.ajax({
+				url : base + "/admin/hotplug/enable",
+				type : "POST",
+				data : {"name":hotplug_name},
+				dataType : "json",
+				success : function(re) {
+					if (console)
+						console.info(re);
+					if (re && re.ok) {
+						vueHotplugList.dataReload();
+					} else if (re) {
+						layer.alert("失败:" + re.msg);
+					}
+				},
+				fail : function(err) {
+					layer.alert("加载失败:" + err);
+				},
+				error : function(err) {
+					layer.alert("加载失败:" + err);
+				}
+			});
 		},
 		do_remove : function(hotplug_name) {
 			if ("core" == hotplug_name) {

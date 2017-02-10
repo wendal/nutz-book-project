@@ -10,7 +10,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
-			<artifactId>nutzcn-common</artifactId>
+			<artifactId>nutzcn-core</artifactId>
 			<version>3.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>

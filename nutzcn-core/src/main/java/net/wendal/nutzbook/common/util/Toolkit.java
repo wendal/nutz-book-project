@@ -275,24 +275,4 @@ public class Toolkit {
 	//----------------------------------------------------------------------------
 
 	public static byte[] csKEY = R.sg(24).next().getBytes();
-	
-	public static void main(String[] args) {
-        // 生成著作权所需要的60页代码,每页50行,共3000行
-	    final List<String> lines = new ArrayList<>();
-	    Disks.visitFile(new File("D:\\nutzbook\\workspace\\nutzbook\\src\\main\\java\\"), new FileVisitor() {
-            public void visit(File file) {
-                if (lines.size() < 50*60)
-                    lines.addAll(Files.readLines(file));
-            }
-        }, new FileFilter() {
-            public boolean accept(File pathname) {
-                if (pathname.getPath().contains("bean"))
-                    return false;
-                return pathname.isDirectory() || pathname.getName().endsWith(".java");
-            }
-        });
-	    for (String line : lines) {
-            System.out.println(line);
-        }
-    }
 }
