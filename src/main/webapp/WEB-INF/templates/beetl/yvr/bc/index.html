@@ -8,9 +8,15 @@
         <li><a href='${ctxPath}/pay/bc'>打赏主页</a><span class='divider'>/</span></li>
       </ul>
     </div>
+    <!--#if (null != obj.current_user!) { #-->
     <div class='inner'>
-    	<b>进入用户的详情页或其发起的帖子的详情页,均可打赏</b>
+    	<b>输入打赏金额, 若输入0则随机金额: </b>
+    	<input value="0" v-model="amount" placeholder="仅能输入整数哦">元 .
     </div>
+    <div class='inner'>
+    	<button @click="do_pay(2)">打赏给帮主</button></b>
+    </div>
+    <!--#} #-->
     <div class='inner'>
     	<button class="btn" v-on:click="doReload" disabled>当前页数{{pageNumber}}</button>
     	<button class="btn" v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
@@ -86,5 +92,5 @@
 <script type="text/javascript">
 var base = "${base}";
 </script>
-<script src="${base}/asserts/js/bc/index.js" type="text/javascript"></script>
+<script src="${base}/asserts/js/bc/index.js?v=2" type="text/javascript"></script>
 <!--#} #-->
