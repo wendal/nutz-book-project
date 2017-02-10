@@ -90,7 +90,7 @@ function startGuide(){
       	function pay_tips(toUser, amount) {
       		if (amount) {
       			if (typeof(amount) == "string")
-      				amount = parseInt(amount);
+      				amount = parseInt(amount) * 100;
       		}
       		else {
       			amount = 0;
