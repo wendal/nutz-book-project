@@ -111,7 +111,9 @@ public class BeePayModule extends BaseModule {
         String id = R.UU32();
         if (Strings.isBlank(title)) {
             UserProfile profile = dao.fetch(UserProfile.class, toUserId);
-            title = String.format("打赏给%s,uid=%d,id=%s", profile.getDisplayName(), toUserId, id);
+            title = String.format("打赏给%s %s", profile.getDisplayName(), id);
+            if (title.length() > 16)
+                title = title.substring(0, 16);
         }
         return _createPay(toUserId, title, amount, referer, id);
     }
