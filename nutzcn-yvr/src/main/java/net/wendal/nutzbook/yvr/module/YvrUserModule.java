@@ -137,25 +137,33 @@ public class YvrUserModule extends BaseModule {
 					buf = user.getProfile().getAvatar();
 				} 
 				else {
-					OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
-					if (ouser != null && ouser.getAvatar_url() != null) {
-						try {
-							Response resp = Http.get(ouser.getAvatar_url(), 5000);
-							if (resp != null && resp.isOK()) {
-								InputStream ins = resp.getStream();
-								ByteArrayOutputStream out = new ByteArrayOutputStream();
-								buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
-								int len = 0;
-								while (-1 != (len = ins.read(buf)))
-									out.write(buf, 0, len);
-								buf = out.toByteArray();
-								user.getProfile().setAvatar(buf);
-								dao.update(user.getProfile(), "avatar");
-							}
-						} catch (IOException e) {
-							log.debug("load github avatar fail", e);
-						}
-					}
+					try {
+                        OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
+                        if (ouser != null && ouser.getAvatar_url() != null) {
+                        	try {
+                        		Response resp = Http.get(ouser.getAvatar_url(), 5000);
+                        		if (resp != null && resp.isOK()) {
+                        			InputStream ins = resp.getStream();
+                        			ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        			buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
+                        			int len = 0;
+                        			while (-1 != (len = ins.read(buf)))
+                        				out.write(buf, 0, len);
+                        			buf = out.toByteArray();
+                        			user.getProfile().setAvatar(buf);
+                        			dao.update(user.getProfile(), "avatar");
+                        		}
+                        	} catch (IOException e) {
+                        		log.debug("load github avatar fail", e);
+                        	}
+                        }
+                    }
+                    catch (Exception e) {
+                        if (e instanceof ClassNotFoundException)
+                            log.debug("oauth plugin not fouhd?");
+                        else
+                            log.debug("something wrong", e);
+                    }
 				}
 			}
 			if (buf == null) {

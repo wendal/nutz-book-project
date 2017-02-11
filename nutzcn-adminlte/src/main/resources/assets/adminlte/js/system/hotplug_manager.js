@@ -26,34 +26,11 @@ var vueHotplugList = new Vue({
 				}
 			});
 		},
-		do_disable : function(hotplug_name) {
-			$.ajax({
-				url : base + "/admin/hotplug/disable",
-				type : "POST",
-				data : {"name":hotplug_name},
-				dataType : "json",
-				success : function(re) {
-					if (console)
-						console.info(re);
-					if (re && re.ok) {
-						vueHotplugList.dataReload();
-					} else if (re) {
-						layer.alert("失败:" + re.msg);
-					}
-				},
-				fail : function(err) {
-					layer.alert("加载失败:" + err);
-				},
-				error : function(err) {
-					layer.alert("加载失败:" + err);
-				}
-			});
-		},
-		do_enable : function(hotplug_name) {
+		do_enable : function(hotplug_sha1) {
 			$.ajax({
 				url : base + "/admin/hotplug/enable",
 				type : "POST",
-				data : {"name":hotplug_name},
+				data : "sha1="+hotplug_sha1,
 				dataType : "json",
 				success : function(re) {
 					if (console)
@@ -72,18 +49,24 @@ var vueHotplugList = new Vue({
 				}
 			});
 		},
-		do_remove : function(hotplug_name) {
+		do_disable : function(hotplug_name) {
 			if ("core" == hotplug_name) {
 				layer.alert("core模块不允许卸载");
 			} else if ("adminlte" == hotplug_name) {
 				layer.alert("adminlte模块不允许卸载");
 			} else {
 				$.ajax({
-					url : base + "/admin/hotplug/remove",
+					url : base + "/admin/hotplug/disable",
 					method : "POST",
 					data : "name=" + hotplug_name,
 					success : function() {
 						vueHotplugList.dataReload();
+					},
+					fail : function(err) {
+						layer.alert("加载失败:" + err);
+					},
+					error : function(err) {
+						layer.alert("加载失败:" + err);
 					}
 				});
 			}

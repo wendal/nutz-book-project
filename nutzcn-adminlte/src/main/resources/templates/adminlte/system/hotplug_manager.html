@@ -13,42 +13,6 @@
     <section class="content" id="hotplug_manager_div">
       <div class="row">
         <div class="col-xs-12">
-          <div class="box">
-            <div class="box-header">
-              <h3 class="box-title">插件一览</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="user_table" class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                  <th>名称</th>
-                  <th>版本</th>
-                  <th>描述</th>
-                  <th>来源</th>
-                  <th>基础package</th>
-                  <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="hotplug in hotplugs">
-                  <td>{{hotplug.name}}</td>
-                  <td>{{hotplug.version}}</td>
-                  <td>{{hotplug.describe}}</td>
-                  <td>{{hotplug.origin}}</td>
-                  <td>{{hotplug.base}}</td>
-                  <td>
-                  	<button>详情</button>
-                  	<button @click="do_remove(hotplug.name)">卸载</button>
-                  	<button v-if="hotplug.disabled != true" @click="do_disable(hotplug.name)">停用</button>
-                  	<button v-else @click="do_enable(hotplug.name)">启用</button>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-            <!-- /.box-body -->
-          </div>
           
           <div class="box">
           	<div class="box-header">
@@ -63,6 +27,46 @@
     				</div>
 				</div>
             </div>
+          </div>
+          
+          
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">插件一览</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="user_table" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>版本</th>
+                  <th>描述</th>
+                  <th>来源</th>
+                  <th>状态</th>
+                  <th>基础package</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="hotplug in hotplugs">
+                  <td>{{hotplug.name}}</td>
+                  <td>{{hotplug.version}}</td>
+                  <td>{{hotplug.describe}}</td>
+                  <td>{{hotplug.origin}}</td>
+                  <td>{{hotplug.enable ? "使用中" : "未启用"}}</td>
+                  <td>{{hotplug.base}}</td>
+                  <td>
+                  	<div v-if="hotplug.origin == 'file'">
+                  		<button v-if="hotplug.enable" @click="do_disable(hotplug.name)">卸载</button>
+                  		<button v-else @click="do_enable(hotplug.sha1)">启用</button>
+                  	</div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
           </div>
         </div>
         <!-- /.col -->

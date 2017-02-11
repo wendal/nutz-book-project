@@ -2,6 +2,7 @@ package net.wendal.nutzbook.core.module;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.QueryResult;
@@ -9,6 +10,8 @@ import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
@@ -24,13 +27,30 @@ import org.nutz.plugins.hotplug.HotPlugConfig;
 @Ok("json")
 public class HotplugModule extends BaseModule {
     
+    private static final Log log = Logs.get();
+    
     @Inject
     protected HotPlug hotPlug;
     
     @RequiresRoles("admin")
     @At
     public Object list() throws Exception {
-        return ajaxOk(new QueryResult(new ArrayList<>(HotPlug.plugins.values()), new Pager()));
+        List<HotPlugConfig> list = new ArrayList<>(HotPlug.plugins.values());
+        for (HotPlugConfig hc : list) {
+            log.debugf("hc name=%s version=%s enable=%s", hc.getName(), hc.getVersion(), hc.isEnable());
+        }
+        for (HotPlugConfig hc_file : HotPlug.getHotPlugJarList(true)) {
+            boolean flag = true;
+            for (HotPlugConfig hc : HotPlug.plugins.values()) {
+                if (hc_file.getSha1().equals(hc.getSha1())) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag)
+                list.add(hc_file);
+        }
+        return ajaxOk(new QueryResult(list, new Pager()));
     }
 
     @SuppressWarnings("deprecation")
@@ -38,45 +58,28 @@ public class HotplugModule extends BaseModule {
     @POST
     @At
     @AdaptBy(type=UploadAdaptor.class)
-    public HotPlugConfig add(@Param("file")TempFile f) throws Exception {
-        return hotPlug.add(f.getFile());
-    }
-    
-    @RequiresRoles("admin")
-    @POST
-    @At
-    public void remove(@Param("name")String name) throws Exception {
-        hotPlug.remove(name);
+    public NutMap add(@Param("file")TempFile f) throws Exception {
+        boolean ok = hotPlug.add(f.getFile());
+        return ajaxOk(ok);
     }
     
     @RequiresRoles("admin")
     @POST
     @At
     public NutMap disable(@Param("name")String name) throws Exception {
-        HotPlugConfig hc = HotPlug.plugins.get(name);
-        if (hc != null) {
-            hc.put("disabled", true);
-            if ("file".equals(hc.get("origin"))) {
-                String path = hc.getString("origin_path");
-                new File(path + ".disabled").createNewFile();
-            }
-            return ajaxOk(true);
-        }
-        return ajaxFail("没找到该插件");
+        hotPlug.disable(name);
+        return ajaxOk(null);
     }
     
     @RequiresRoles("admin")
     @POST
     @At
-    public NutMap enable(@Param("name")String name) throws Exception {
-        HotPlugConfig hc = HotPlug.plugins.get(name);
-        if (hc != null) {
-            hc.remove("disable");
-            if ("file".equals(hc.get("origin"))) {
-                String path = hc.getString("origin_path");
-                new File(path + ".disabled").delete();
+    public NutMap enable(@Param("sha1")String sha1) throws Exception {
+        for (HotPlugConfig hc : HotPlug.getHotPlugJarList(true)) {
+            if (sha1.equals(hc.getSha1())) {
+                hotPlug.enable(new File(hc.getOriginPath()), null);
+                return ajaxOk(null);
             }
-            return ajaxOk(true);
         }
         return ajaxFail("没找到该插件");
     }
