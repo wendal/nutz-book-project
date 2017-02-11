@@ -26,24 +26,12 @@
                 <thead>
                 <tr>
                   <th>id</th>
-                  <th>插件库名称</th>
-                  <th>插件库别名</th>
-                  <th>创建时间</th>
+                  <th>名称</th>
+                  <th>值</th>
                   <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="repo in repos">
-                  <td>{{repo.id}}</td>
-                  <td>{{repo.name}}</td>
-                  <td>{{repo.alias}}</td>
-                  <td>{{repo.createTime}}</td>
-                  <td>
-                  	<button>详情</button>
-                  	<button v-if="repo.enable">禁用</button>
-                  	<button v-else>启用</button>
-                  </td>
-                </tr>
                 </tbody>
               </table>
             </div>
@@ -55,4 +43,3 @@
       <!-- /.row -->
     </section>
     <!-- /.content -->
-    <script src="${base}/assets/adminlte/js/hotplug/repo.js"></script>

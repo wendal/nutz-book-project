@@ -18,34 +18,10 @@
           </div>
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">插件库一览</h3>
+              <h3 class="box-title">基本信息</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <table id="user_table" class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                  <th>id</th>
-                  <th>插件库名称</th>
-                  <th>插件库别名</th>
-                  <th>创建时间</th>
-                  <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="repo in repos">
-                  <td>{{repo.id}}</td>
-                  <td>{{repo.name}}</td>
-                  <td>{{repo.alias}}</td>
-                  <td>{{repo.createTime}}</td>
-                  <td>
-                  	<button>详情</button>
-                  	<button v-if="repo.enable">禁用</button>
-                  	<button v-else>启用</button>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
             </div>
             <!-- /.box-body -->
           </div>
@@ -55,4 +31,3 @@
       <!-- /.row -->
     </section>
     <!-- /.content -->
-    <script src="${base}/assets/adminlte/js/hotplug/repo.js"></script>
