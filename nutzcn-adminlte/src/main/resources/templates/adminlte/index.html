@@ -364,7 +364,7 @@
           </a>
           <ul class="treeview-menu">
             <li v-for="sub_menu in menu.subs">
-            	<a href="#" @click="swith_"><i class="fa fa-circle-o"></i>{{sub_menu.name}}</a>
+            	<a href="#" @click="switch_page(sub_menu.page)"><i class="fa fa-circle-o"></i>{{sub_menu.name}}</a>
             </li>
           </ul>
         </li>

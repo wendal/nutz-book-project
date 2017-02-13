@@ -6,6 +6,9 @@
 	<version>3.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>NutzCN的根项目</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<modules>
 		<module>nutzcn-core</module>
 		

@@ -13,9 +13,7 @@
     <section class="content" id="permission_manager_div">
       <div class="row">
         <div class="col-xs-12">
-          <div class="box">
           
-          </div>
           <div class="box">
             <div class="box-header">
               <h3 class="box-title">权限一览</h3>
@@ -47,6 +45,17 @@
             </div>
             <!-- /.box-body -->
           </div>
+			<div class="box">
+				<div>
+					<div class='inner'>
+						<button class="btn" v-on:click="dataReload" disabled>当前页数{{pager.pageNumber}}</button>
+						<button class="btn" v-on:click="changePage(1)">第一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+					</div>
+				</div>
+			</div>
         </div>
         <!-- /.col -->
       </div>

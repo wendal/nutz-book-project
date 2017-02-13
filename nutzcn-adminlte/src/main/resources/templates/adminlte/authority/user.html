@@ -14,9 +14,6 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
-          
-          </div>
-          <div class="box">
             <div class="box-header">
               <h3 class="box-title">用户一览</h3>
             </div>
@@ -55,24 +52,21 @@
                 </tr>
                 </tfoot>
               </table>
-					<div class="pagination" current_page="1">
-						<ul>
-							<li v-if="pager.pagerNumber != 1" @click="changePage(1)"><a>«</a></li>
-							<li v-if="pager.pagerNumber - 3 > 0"><a>...</a></li>
-							<li v-if="pager.pagerNumber - 2 > 0" @click="changePage(pager.pagerNumber - 2)"><a>{{pager.pagerNumber - 2}}</a></li>
-							<li v-if="pager.pagerNumber - 1 > 0" @click="changePage(pager.pagerNumber - 1)"><a>{{pager.pagerNumber - 1}}</a></li>
-							<li><a style="color: red;">{{pager.pagerNumber}}</a></li>
-							<li v-if="pager.pagerNumber + 1 < pager.pagerCount" @click="changePage(pager.pagerNumber + 1)"><a>{{pager.pagerNumber + 1}}</a></li>
-							<li v-if="pager.pagerNumber + 2 < pager.pagerCount" @click="changePage(pager.pagerNumber + 2)"><a>{{pager.pagerNumber + 2}}</a></li>
-							<li v-if="pager.pagerNumber + 3 < pager.pagerCount"><a>...</a></li>
-
-							<li><a v-if="pager.pagerNumber != pager.pagerCount" @click="changePage(pager.pagerCount)">»</a></li>
-						</ul>
-					</div>
 				</div>
             <!-- /.box-body -->
           </div>
-        </div>
+			<div class="box">
+				<div>
+					<div class='inner'>
+						<button class="btn" v-on:click="dataReload" disabled>当前页数{{pager.pageNumber}}</button>
+						<button class="btn" v-on:click="changePage(1)">第一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+					</div>
+				</div>
+			</div>
+		</div>
         <!-- /.col -->
       </div>
       <!-- /.row -->
