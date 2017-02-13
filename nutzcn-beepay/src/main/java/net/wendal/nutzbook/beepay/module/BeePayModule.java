@@ -109,11 +109,12 @@ public class BeePayModule extends BaseModule {
         }
         else if (amount < 88)
             amount = 188;
+        String out_trade_no = "u"+toUserId+"z"+R.UU32();
         if (Strings.isBlank(title)) {
             UserProfile profile = dao.fetch(UserProfile.class, toUserId);
-            title = String.format("打赏给%s,uid=%d", profile.getDisplayName(), toUserId);
+            title = String.format("打赏给%s,uid=%d, %s", profile.getDisplayName(), toUserId, out_trade_no);
         }
-        return _createPay(toUserId, title, amount, referer);
+        return _createPay(toUserId, title, amount, referer, out_trade_no);
     }
     
     @POST
@@ -128,13 +129,13 @@ public class BeePayModule extends BaseModule {
             amount = 999;// 土豪就是任性
         if (Strings.isBlank(title))
             title = "土豪,任性";
-        return _createPay(toUserId, title, amount, referer);
+        String out_trade_no = "u"+toUserId+"z"+R.UU32();
+        return _createPay(toUserId, title, amount, referer, out_trade_no);
     }
     
-    protected Object _createPay(int toUserId, String title, int amount, String referer) {
+    protected Object _createPay(int toUserId, String title, int amount, String referer, String out_trade_no) {
         String appid = conf.get("bc.appId");
         String appSecret = conf.get("bc.appSecret");
-        String out_trade_no = "u"+toUserId+"z"+R.UU32();
         NutMap re = new NutMap();
         re.put("out_trade_no", out_trade_no);
         re.put("amount", amount);

@@ -34,21 +34,23 @@ public class HotplugModule extends BaseModule {
     
     @RequiresRoles("admin")
     @At
-    public Object list() throws Exception {
+    public Object list(@Param("active")boolean activeOnly) throws Exception {
         List<HotPlugConfig> list = new ArrayList<>(HotPlug.plugins.values());
         for (HotPlugConfig hc : list) {
             log.debugf("hc name=%s version=%s enable=%s", hc.getName(), hc.getVersion(), hc.isEnable());
         }
-        for (HotPlugConfig hc_file : HotPlug.getHotPlugJarList(true)) {
-            boolean flag = true;
-            for (HotPlugConfig hc : HotPlug.plugins.values()) {
-                if (hc_file.getSha1().equals(hc.getSha1())) {
-                    flag = false;
-                    break;
+        if (!activeOnly) {
+            for (HotPlugConfig hc_file : HotPlug.getHotPlugJarList(true)) {
+                boolean flag = true;
+                for (HotPlugConfig hc : HotPlug.plugins.values()) {
+                    if (hc_file.getSha1().equals(hc.getSha1())) {
+                        flag = false;
+                        break;
+                    }
                 }
+                if (flag)
+                    list.add(hc_file);
             }
-            if (flag)
-                list.add(hc_file);
         }
         return ajaxOk(new QueryResult(list, new Pager()));
     }
@@ -83,4 +85,5 @@ public class HotplugModule extends BaseModule {
         }
         return ajaxFail("没找到该插件");
     }
+    
 }

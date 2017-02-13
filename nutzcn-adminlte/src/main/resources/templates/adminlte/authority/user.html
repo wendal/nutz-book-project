@@ -55,7 +55,21 @@
                 </tr>
                 </tfoot>
               </table>
-            </div>
+					<div class="pagination" current_page="1">
+						<ul>
+							<li v-if="pager.pagerNumber != 1" @click="changePage(1)"><a>«</a></li>
+							<li v-if="pager.pagerNumber - 3 > 0"><a>...</a></li>
+							<li v-if="pager.pagerNumber - 2 > 0" @click="changePage(pager.pagerNumber - 2)"><a>{{pager.pagerNumber - 2}}</a></li>
+							<li v-if="pager.pagerNumber - 1 > 0" @click="changePage(pager.pagerNumber - 1)"><a>{{pager.pagerNumber - 1}}</a></li>
+							<li><a style="color: red;">{{pager.pagerNumber}}</a></li>
+							<li v-if="pager.pagerNumber + 1 < pager.pagerCount" @click="changePage(pager.pagerNumber + 1)"><a>{{pager.pagerNumber + 1}}</a></li>
+							<li v-if="pager.pagerNumber + 2 < pager.pagerCount" @click="changePage(pager.pagerNumber + 2)"><a>{{pager.pagerNumber + 2}}</a></li>
+							<li v-if="pager.pagerNumber + 3 < pager.pagerCount"><a>...</a></li>
+
+							<li><a v-if="pager.pagerNumber != pager.pagerCount" @click="changePage(pager.pagerCount)">»</a></li>
+						</ul>
+					</div>
+				</div>
             <!-- /.box-body -->
           </div>
         </div>
