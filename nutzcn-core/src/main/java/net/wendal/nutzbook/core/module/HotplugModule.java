@@ -35,14 +35,14 @@ public class HotplugModule extends BaseModule {
     @RequiresRoles("admin")
     @At
     public Object list(@Param("active")boolean activeOnly) throws Exception {
-        List<HotPlugConfig> list = new ArrayList<>(HotPlug.plugins.values());
+        List<HotPlugConfig> list = new ArrayList<>(HotPlug.getActiveHotPlug().values());
         for (HotPlugConfig hc : list) {
             log.debugf("hc name=%s version=%s enable=%s", hc.getName(), hc.getVersion(), hc.isEnable());
         }
         if (!activeOnly) {
             for (HotPlugConfig hc_file : HotPlug.getHotPlugJarList(true)) {
                 boolean flag = true;
-                for (HotPlugConfig hc : HotPlug.plugins.values()) {
+                for (HotPlugConfig hc : HotPlug.getActiveHotPlug().values()) {
                     if (hc_file.getSha1().equals(hc.getSha1())) {
                         flag = false;
                         break;
