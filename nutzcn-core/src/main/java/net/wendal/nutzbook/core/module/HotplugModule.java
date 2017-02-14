@@ -19,8 +19,8 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
-import org.nutz.plugins.hotplug.HotPlug;
-import org.nutz.plugins.hotplug.HotPlugConfig;
+import org.nutz.plugins.hotplug.Hotplug;
+import org.nutz.plugins.hotplug.HotplugConfig;
 
 @IocBean
 @At("/admin/hotplug")
@@ -30,19 +30,20 @@ public class HotplugModule extends BaseModule {
     private static final Log log = Logs.get();
     
     @Inject
-    protected HotPlug hotPlug;
+    protected Hotplug hotplug;
     
     @RequiresRoles("admin")
     @At
     public Object list(@Param("active")boolean activeOnly) throws Exception {
-        List<HotPlugConfig> list = new ArrayList<>(HotPlug.getActiveHotPlug().values());
-        for (HotPlugConfig hc : list) {
+        List<HotplugConfig> activeList = Hotplug.getActiveHotPlugList();
+        List<HotplugConfig> list = new ArrayList<>(activeList);
+        for (HotplugConfig hc : list) {
             log.debugf("hc name=%s version=%s enable=%s", hc.getName(), hc.getVersion(), hc.isEnable());
         }
         if (!activeOnly) {
-            for (HotPlugConfig hc_file : HotPlug.getHotPlugJarList(true)) {
+            for (HotplugConfig hc_file : Hotplug.getHotPlugJarList(true)) {
                 boolean flag = true;
-                for (HotPlugConfig hc : HotPlug.getActiveHotPlug().values()) {
+                for (HotplugConfig hc : activeList) {
                     if (hc_file.getSha1().equals(hc.getSha1())) {
                         flag = false;
                         break;
@@ -61,7 +62,7 @@ public class HotplugModule extends BaseModule {
     @At
     @AdaptBy(type=UploadAdaptor.class)
     public NutMap add(@Param("file")TempFile f) throws Exception {
-        boolean ok = hotPlug.add(f.getFile());
+        boolean ok = hotplug.add(f.getFile());
         return ajaxOk(ok);
     }
     
@@ -69,7 +70,7 @@ public class HotplugModule extends BaseModule {
     @POST
     @At
     public NutMap disable(@Param("name")String name) throws Exception {
-        hotPlug.disable(name);
+        hotplug.disable(name);
         return ajaxOk(null);
     }
     
@@ -77,9 +78,9 @@ public class HotplugModule extends BaseModule {
     @POST
     @At
     public NutMap enable(@Param("sha1")String sha1) throws Exception {
-        for (HotPlugConfig hc : HotPlug.getHotPlugJarList(true)) {
+        for (HotplugConfig hc : Hotplug.getHotPlugJarList(true)) {
             if (sha1.equals(hc.getSha1())) {
-                hotPlug.enable(new File(hc.getOriginPath()), null);
+                hotplug.enable(new File(hc.getOriginPath()), null);
                 return ajaxOk(null);
             }
         }

@@ -16,7 +16,7 @@ import org.nutz.mvc.annotation.Views;
 import org.nutz.plugins.apidoc.ApidocUrlMapping;
 import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
-import org.nutz.plugins.hotplug.HotPlug;
+import org.nutz.plugins.hotplug.Hotplug;
 import org.nutz.plugins.view.pdf.PdfViewMaker;
 
 import net.wendal.nutzbook.common.beetl.BeetlViewMaker2;
@@ -43,7 +43,7 @@ import net.wendal.nutzbook.common.beetl.BeetlViewMaker2;
 @Views({BeetlViewMaker2.class, PdfViewMaker.class})
 @SessionBy(ShiroSessionProvider.class)
 @UrlMappingBy(ApidocUrlMapping.class)
-@LoadingBy(HotPlug.class)
+@LoadingBy(Hotplug.class)
 public class MainModule {
     @At
     public void test(){}

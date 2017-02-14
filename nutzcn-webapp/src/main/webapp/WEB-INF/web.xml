@@ -31,7 +31,7 @@
 	
 	<filter>
 		<filter-name>hotplug</filter-name>
-		<filter-class>org.nutz.plugins.hotplug.HotPlugFilter</filter-class>
+		<filter-class>org.nutz.plugins.hotplug.HotplugFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>hotplug</filter-name>
