@@ -3,7 +3,7 @@ var ioc = {
 			type : "org.nutz.ioc.impl.PropertiesProxy",
 			fields : {
 				ignoreResourceNotFound : true,
-				paths : ["custom/", {env:["JAVA_HOME", "/conf/"]}]
+				paths : ["custom/", "/opt/nutzcn/local.properties"]
 			}
 		},
 	    dataSource : {
@@ -28,7 +28,6 @@ var ioc = {
 			type : "org.nutz.dao.impl.NutDao",
 			args : [{refer:"dataSource"}],
 			fields : {
-				//executor : {refer: "cacheExecutor"},
 				runner : {refer: "daoRunner"},
 				interceptors : [{refer:"cacheExecutor"}, "log", "time"]
 			}
@@ -41,8 +40,6 @@ var ioc = {
 		},
 		cacheExecutor : {
 			type : "org.nutz.plugins.cache.dao.DaoCacheInterceptor",
-			//type : "org.nutz.plugins.cache.dao.CachedNutDaoExecutor",
-			//type : "net.wendal.nutzbook.common.util.MasterSlaveDaoExecutor",
 			fields : {
 				cacheProvider : {refer:"cacheProvider"},
 				cachedTableNames : [ 
@@ -50,26 +47,9 @@ var ioc = {
 					"t_permission", "t_role_permission",  "t_permission_category",
 					"t_topic_reply", "t_big_content",
 					"t_oauth_user", "t_user_role",
-					"t_sub_forum"],
-				
-				//slave : {refer:"dataSource_slave"}
+					"t_sub_forum"]
 		}
 	},
-	fst : {
-		type : "net.wendal.nutzbook.common.util.FstCacheSerializer"
-	},
-	/*
-	// 基于内存的简单LRU实现
-	cacheProvider : {
-		type : "org.nutz.plugins.cache.dao.impl.provider.MemoryDaoCacheProvider",
-		fields : {
-			cacheSize : 10000 // 缓存的对象数
-		},
-		events : {
-			create : "init"
-		}
-	}
-	 */
 	// 基于Ehcache的DaoCacheProvider
 	cacheProvider : {
 		type : "org.nutz.plugins.cache.dao.impl.provider.EhcacheDaoCacheProvider",
@@ -77,8 +57,6 @@ var ioc = {
 			cacheManager : {
 				refer : "cacheManager"
 			},
-			//serializer : {refer:"fst"}
-		// 引用ehcache.js中定义的CacheManager
 		},
 		events : {
 			create : "init"

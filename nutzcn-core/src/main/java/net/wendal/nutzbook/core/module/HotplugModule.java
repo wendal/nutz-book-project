@@ -60,7 +60,7 @@ public class HotplugModule extends BaseModule {
     @RequiresRoles("admin")
     @POST
     @At
-    @AdaptBy(type=UploadAdaptor.class)
+    @AdaptBy(type=UploadAdaptor.class, args="${app.root}/WEB-INF/tmp/hotplug")
     public NutMap add(@Param("file")TempFile f) throws Exception {
         boolean ok = hotplug.add(f.getFile());
         return ajaxOk(ok);

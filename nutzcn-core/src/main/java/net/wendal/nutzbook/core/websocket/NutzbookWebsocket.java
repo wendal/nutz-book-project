@@ -12,6 +12,7 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
 
 import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.jedis.pubsub.PubSub;
@@ -23,7 +24,7 @@ import org.nutz.lang.random.R;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 
-//@ServerEndpoint(value = "/websocket", configurator=NutIocWebSocketConfigurator.class)
+@ServerEndpoint(value = "/websocket", configurator=NutIocWebSocketConfigurator.class)
 @IocBean(create="init", depose="depose")
 public class NutzbookWebsocket extends Endpoint implements PubSub {
     

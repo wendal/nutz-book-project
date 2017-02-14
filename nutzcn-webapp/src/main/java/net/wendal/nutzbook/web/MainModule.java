@@ -1,4 +1,4 @@
-package net.wendal.nutzbook;
+package net.wendal.nutzbook.web;
 
 import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.At;
@@ -28,7 +28,7 @@ import net.wendal.nutzbook.common.beetl.BeetlViewMaker2;
                "*js",
                "ioc/",
                //"*anno",
-               //"net.wendal.nutzbook",
+               //"net.wendal.nutzbook.web",
                "*quartz", // 关联Quartz
                "*async", "128",
                "*tx",
