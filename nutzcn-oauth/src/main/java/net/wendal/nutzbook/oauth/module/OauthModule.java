@@ -1,9 +1,9 @@
 package net.wendal.nutzbook.oauth.module;
 
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,14 +16,13 @@ import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
 import org.nutz.integration.shiro.SimpleShiroToken;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Lang;
-import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
-import org.nutz.lang.stream.VoidInputStream;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
@@ -49,6 +48,9 @@ public class OauthModule extends BaseModule {
 	
 	@Inject
 	protected SlogService slogService;
+	
+	@Inject
+	protected PropertiesProxy conf;
 
 	@Ok("void")
 	@At("/?")
@@ -148,16 +150,13 @@ public class OauthModule extends BaseModule {
 
 	public void init() throws Exception {
 		SocialAuthConfig config = new SocialAuthConfig();
-		InputStream devConfig = getClass().getClassLoader().getResourceAsStream("oauth_consumer.properties_dev"); // 开发期所使用的配置文件
-		if (devConfig == null)
-			devConfig = getClass().getClassLoader().getResourceAsStream("oauth_consumer.properties"); // 真实环境所使用的配置文件
-		if (devConfig == null)
-			config.load(new VoidInputStream());
-		else {
-			log.info("Using " + devConfig);
-			config.load(devConfig);
-			Streams.safeClose(devConfig);
-		}
+		Properties pp = new Properties();
+		for (String key : conf.keys()) {
+            if (key.startsWith("oauth")) {
+                pp.put(key.substring("oauth.".length()), conf.get(key));
+            }
+        }
+		config.load(pp);
 		this.config = config;
 	}
 }
