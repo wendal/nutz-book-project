@@ -1,40 +1,42 @@
-# NutzCN社区
-
-这个分支正在开发中, 使用hotplug插件进行模块化分离
+# N平台
 
 Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
-[![Build Status](https://travis-ci.org/wendal/nutz-book-project.png?branch=master)](https://travis-ci.org/wendal/nutz-book-project)
-[![](https://imagelayers.io/badge/wendal/nutzbook:latest.svg)](https://imagelayers.io/?images=wendal/nutzbook:latest 'Get your own badge on imagelayers.io')[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
+[![Build Status](https://travis-ci.org/wendal/nutz-book-project.png?branch=v3.x)](https://travis-ci.org/wendal/nutz-book-project)
+[license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
 
+## 依赖的环境
 
-## 在线演示地址
-
-论坛系统(即Nutz社区) https://nutz.cn
-
-* 管理后台  https://nutz.cn/adminlte
-
-![首页截图](index_page.jpg)
-
-
-## 部署指南
+* mysql/oracle/pgsql/h2 数据库
+* redis 3.0+
+* maven 3.3+
+* Jdk 8+
 
 **本项目必须依赖Redis数据库** http://redis.io
 
-请查阅[部署指南](INSTALL.md)
-
-Redis-Windows 下载地址 https://github.com/MSOpenTech/redis/releases
+Redis-Windows 下载地址  https://github.com/MSOpenTech/redis/releases 或者 https://nutz.cn/nutzdw/
 
 后台管理账户密码 admin/123456
 
-## 特色
+* 在线演示地址 https://nutz.cn 
+* 管理后台(需要管理员权限才能操作)  https://nutz.cn/adminlte
 
-* 模块化开发
-* 完善的发帖回帖机制,引导式发帖
-* Session实现2层持久化,兼顾性能和持久化
-* 回帖提醒(页面端使用WebSocket,客户端使用小米推送和极光推送)
-* 打赏机制
-* Android及ios客户端,可轻易定制自己的版本
+本项目是由模块化+插件化开发, 请查阅[hotplug开发指南](https://github.com/nutzam/nutzmore/tree/master/nutz-plugins-hotplug)
+
+## 模块简介
+
+* nutzcn-core 核心模块,其他模块均依赖它
+* nutzcn-webapp web项目模块, 用于启动
+* nutzcn-adminlte 后台管理界面
+* nutzcn-yvr 论坛模块
+
+## 如何开发
+
+默认情况下, webapp模块仅依赖了core和adminlte,所以启动后只有后台可访问.
+
+在eclipes下, 单击nutzcn-webapp模块, 然后按 Ctrl+Alt+P, 按需加载的模块
+
+若新建模块, 务必按hotplug插件规范的要求添加必要的文件
 
 ## 手机客户端
 
@@ -47,22 +49,6 @@ iOS客户端
 
   * 下载地址 https://itunes.apple.com/us/app/nutz-she-qu/id1082195150?l=zh&ls=1&mt=8
   * 源码地址 https://github.com/TuWei1992/NutzCommunity
-
-## 使用到的技术
-
-* 基本的增删改查,MVC各种用法及文件上传
-* Dao关联关系(One/Many/ManyMany)
-* 邮件发送及基于3DES的无数据库验证机制
-* Quartz计划任务集成
-* Shiro集成及权限管理
-* Ehcache及DaoCache集成
-* redis 集成
-* beetl模板集成及应用
-* 二维码生成及跨屏登陆
-* 声明式系统日志,SLog注解及相关服务
-* 基于socialauth的Oauth登陆(Github及QQ登陆)
-* 集成极光推送(jpush)及小米推送(xmpush)
-* WebSocket
 
 ## License
 
