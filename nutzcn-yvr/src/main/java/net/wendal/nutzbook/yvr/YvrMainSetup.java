@@ -1,5 +1,7 @@
 package net.wendal.nutzbook.yvr;
 
+import org.nutz.dao.Dao;
+import org.nutz.dao.util.Daos;
 import org.nutz.ioc.Ioc;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -17,6 +19,7 @@ public class YvrMainSetup implements Setup {
     @Override
     public void init(NutConfig nc) {
         Ioc ioc = nc.getIoc();
+        Daos.createTablesInPackage(nc.getIoc().get(Dao.class), getClass().getPackage().getName() + ".bean", false);
         // 检查一下Ehcache CacheManager 是否正常.
         CacheManager cacheManager = ioc.get(CacheManager.class);
         log.debug("Ehcache CacheManager = " + cacheManager);
