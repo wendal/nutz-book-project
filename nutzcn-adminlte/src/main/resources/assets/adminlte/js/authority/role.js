@@ -16,7 +16,9 @@ var vueRoleList = new Vue({
 		    		if (re && re.ok) {
 		    			vueRoleList.roles = re.data.list;
 		    			vueRoleList.pager = re.data.pager;
-		    		}
+		    		} else if (re && re.msg) {
+		    			layer.alert(re.msg);
+					}
 		    	},
 		    	fail : function(err) {
 		    		layer.alert("加载失败:" + err);

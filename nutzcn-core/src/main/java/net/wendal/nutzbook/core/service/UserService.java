@@ -12,7 +12,7 @@ public interface UserService {
 
     boolean checkPassword(User user, String password);
 
-    User fetch(int id);
+    User fetch(long uid);
 
     int getUserScore(long userId);
 

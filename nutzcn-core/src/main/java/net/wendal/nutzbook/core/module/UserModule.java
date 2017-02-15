@@ -20,7 +20,6 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.By;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Filters;
-import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
@@ -46,10 +45,10 @@ public class UserModule extends BaseModule {
 		return dao.count(User.class);
 	}
 	
-	@GET
-	@At("/login")
-	@Ok("jsp:jsp.user.login")
-	public void loginPage() {}
+//	@GET
+//	@At("/login")
+//	@Ok("jsp:jsp.user.login")
+//	public void loginPage() {}
 
 	@RequiresPermissions("user:add")
 	@At

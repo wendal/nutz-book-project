@@ -16,6 +16,8 @@ var vueHotplugList = new Vue({
 					if (re && re.ok) {
 						vueHotplugList.hotplugs = re.data.list;
 						vueHotplugList.pager = re.data.pager;
+					} else if (re && re.msg) {
+						layer.alert(re.me);
 					}
 				},
 				fail : function(err) {
@@ -37,7 +39,7 @@ var vueHotplugList = new Vue({
 						console.info(re);
 					if (re && re.ok) {
 						vueHotplugList.dataReload();
-					} else if (re) {
+					} else if (re && re.msg) {
 						layer.alert("失败:" + re.msg);
 					}
 				},

@@ -42,7 +42,7 @@
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.3.15.v20161220</version>
+				<version>9.4.1.v20170120</version>
 				<configuration>
 					<jvmArgs>-Dfile.encoding=UTF-8</jvmArgs>
 					<scanIntervalSeconds>5</scanIntervalSeconds>
@@ -51,7 +51,7 @@
 					<dependency>
 						<groupId>org.eclipse.jetty.websocket</groupId>
 						<artifactId>websocket-server</artifactId>
-						<version>9.3.15.v20161220</version>
+						<version>9.4.1.v20170120</version>
 					</dependency>
 				</dependencies>
 			</plugin>

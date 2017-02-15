@@ -2,7 +2,6 @@ var vueUserList = new Vue({
 	el : "#user_manager_div",
 	data : {
 		users : [],
-		
 		pager : {pageNumber:1,pageCount:1}
 	},
 	methods : {
@@ -17,7 +16,9 @@ var vueUserList = new Vue({
 		    		if (re && re.ok) {
 		    			vueUserList.users = re.data.list;
 		    			vueUserList.pager = re.data.pager;
-		    		}
+		    		} else if (re && re.msg) {
+						layer.alert(re.me);
+					}
 		    	},
 		    	fail : function(err) {
 		    		layer.alert("加载失败:" + err);
@@ -30,7 +31,33 @@ var vueUserList = new Vue({
 	    changePage: function(to_page) {
 	    	this.pager.pageNumber = to_page;
 	    	this.dataReload();
-	    }
+	    },
+	    userAdd: function() {
+			var username = prompt("输入用户名");
+			if (username) {
+				$.ajax({
+					url : base + "/user/add",
+			    	dataType : "json",
+			    	data : "password=123456&name="+username,
+			    	success : function(re) {
+			    		if (console)
+			    			console.info(re);
+			    		if (re && re.ok) {
+			    			layer.alert("添加成功");
+			    			vueUserList.dataReload();
+			    		} else if (re && re.msg) {
+							layer.alert(re.msg);
+						}
+			    	},
+			    	fail : function(err) {
+			    		layer.alert("加载失败:" + err);
+			    	},
+			    	error : function (err){
+			    		layer.alert("加载失败:" + err);
+			    	}
+				});
+			}
+		}
 	},
 	created: function () {
 	    this.dataReload();

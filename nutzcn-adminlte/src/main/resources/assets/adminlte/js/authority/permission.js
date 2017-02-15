@@ -16,7 +16,9 @@ var vuePermisssionList = new Vue({
 		    		if (re && re.ok) {
 		    			vuePermisssionList.permissions = re.data.list;
 		    			vuePermisssionList.pager = re.data.pager;
-		    		}
+		    		} else if (re && re.msg) {
+		    			layer.alert(re.msg);
+					}
 		    	},
 		    	fail : function(err) {
 		    		layer.alert("加载失败:" + err);
