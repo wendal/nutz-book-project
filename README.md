@@ -5,6 +5,8 @@ Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 [![Build Status](https://travis-ci.org/wendal/nutz-book-project.png?branch=v3.x)](https://travis-ci.org/wendal/nutz-book-project)
 [license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
 
+与nutzbook相关的2.x分支在这里[master分支](https://github.com/wendal/nutz-book-project/tree/master)
+
 ## 依赖的环境
 
 * mysql/oracle/pgsql/h2 数据库
