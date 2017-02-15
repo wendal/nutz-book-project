@@ -96,6 +96,7 @@ var uploader = WebUploader.create({
 });
 uploader.on( 'uploadSuccess', function( file ) {
     layer.alert("上传成功: " + file.name);
+    vueHotplugList.dataReload();
 });
 
 uploader.on( 'uploadError', function( file ) {
