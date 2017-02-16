@@ -23,7 +23,7 @@ var vueHotplugRepoList = new Vue({
 		    			vueHotplugRepoList.repos = re.data.list;
 		    			vueHotplugRepoList.pager = re.data.pager;
 		    		} else if (re && re.msg) {
-						layer.alert(re.me);
+						layer.alert(re.msg);
 					}
 		    	},
 		    	fail : function(err) {

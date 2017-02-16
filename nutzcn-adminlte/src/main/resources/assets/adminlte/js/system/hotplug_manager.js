@@ -17,7 +17,7 @@ var vueHotplugList = new Vue({
 						vueHotplugList.hotplugs = re.data.list;
 						vueHotplugList.pager = re.data.pager;
 					} else if (re && re.msg) {
-						layer.alert(re.me);
+						layer.alert(re.msg);
 					}
 				},
 				fail : function(err) {

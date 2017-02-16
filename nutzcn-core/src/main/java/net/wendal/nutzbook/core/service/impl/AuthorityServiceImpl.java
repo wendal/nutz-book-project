@@ -95,7 +95,11 @@ public class AuthorityServiceImpl implements AuthorityService {
         }
         // admin组必须有authority:* 也就是权限管理相关的权限
         List<Record> res = dao.query("t_role_permission", Cnd.where("role_id", "=", adminRole.getId()));
-        OUT: for (Permission permission : dao.query(Permission.class, Cnd.where("name", "like", "authority:%").or("name", "like", "user:%").or("name", "like", "topic:%"), null)) {
+        Cnd cnd = Cnd.where("name", "like", "authority:%");
+        cnd.or("name", "like", "user:%");
+        cnd.or("name", "like", "configure:%");
+        cnd.or("name", "like", "topic:%");
+        OUT: for (Permission permission : dao.query(Permission.class, cnd, null)) {
             for (Record re : res) {
                 if (re.getInt("permission_id") == permission.getId())
                     continue OUT;
