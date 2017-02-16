@@ -31,8 +31,10 @@ var mainSidebar = new Vue({
 						var hc = re.data.list[i];
 						if (hc.menu) {
 							if (console)
-								console.log(hc.name, hc.menu)
-							menus.push(hc.menu);
+								console.log(hc.name, hc.menu);
+							for (var k in hc.menu) {
+								menus.push(hc.menu[k]);
+							}
 						}
 					}
 					mainSidebar.menus = menus;

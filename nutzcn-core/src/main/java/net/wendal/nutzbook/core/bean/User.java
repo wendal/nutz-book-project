@@ -5,15 +5,22 @@ import java.util.List;
 
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
+import org.nutz.dao.entity.annotation.EL;
+import org.nutz.dao.entity.annotation.Id;
+import org.nutz.dao.entity.annotation.ManyMany;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
+import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_user")
-public class User extends IdentityPojo implements Serializable {
+public class User extends BasePojo implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	@Id(auto=false)
+	@Prev(els=@EL("ig(view.tableName)"))
+	protected long id;
 	@Name
 	@Column
 	protected String name;
@@ -24,17 +31,19 @@ public class User extends IdentityPojo implements Serializable {
 	protected String salt;
 	@Column
 	protected boolean locked;
-	@Column
-	@ColDefine(width=4096)
-	protected String roleNames;
-    @Column
-    @ColDefine(width=4096)
-	protected String permissionNames;
+	@ManyMany(from="u_id", relation="t_user_role", target=Role.class, to="role_id")
 	protected List<Role> roles;
+	@ManyMany(from="u_id", relation="t_user_permission", target=Permission.class, to="permission_id")
 	protected List<Permission> permissions;
 	@One(target=UserProfile.class, field="id", key="userId")
 	protected UserProfile profile;
 	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -53,6 +62,7 @@ public class User extends IdentityPojo implements Serializable {
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
+
 	
 	public boolean isLocked() {
 		return locked;
@@ -78,16 +88,4 @@ public class User extends IdentityPojo implements Serializable {
 	public void setProfile(UserProfile profile) {
 		this.profile = profile;
 	}
-    public String getRoleNames() {
-        return roleNames;
-    }
-    public void setRoleNames(String roleNames) {
-        this.roleNames = roleNames;
-    }
-    public String getPermissionNames() {
-        return permissionNames;
-    }
-    public void setPermissionNames(String permissionNames) {
-        this.permissionNames = permissionNames;
-    }
 }

@@ -23,8 +23,8 @@ function do_login() {
 		success : function(re) {
 			if (re && re.ok) {
 				window.location = base + "/adminlte";
-			} else if (re) {
-				layer.alert(re.msg);
+			} else if (re && re.msg) {
+				layer.alert("登录失败: "+re.msg);
 			}
 		},
 		fail : function (re) {

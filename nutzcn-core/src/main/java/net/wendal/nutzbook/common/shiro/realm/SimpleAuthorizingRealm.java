@@ -1,8 +1,5 @@
 package net.wendal.nutzbook.common.shiro.realm;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -16,12 +13,11 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.nutz.dao.Dao;
-import org.nutz.dao.FieldFilter;
-import org.nutz.dao.util.Daos;
 import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.mvc.Mvcs;
 
 import net.wendal.nutzbook.core.bean.Permission;
+import net.wendal.nutzbook.core.bean.Role;
 import net.wendal.nutzbook.core.bean.User;
 
 public class SimpleAuthorizingRealm extends AuthorizingRealm {
@@ -41,26 +37,24 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 			throw new LockedAccountException("Account [" + user.getName() + "] is locked.");
 
 		SimpleAuthorizationInfo auth = new SimpleAuthorizationInfo();
-		if (user.getRoleNames() != null) {
-		    boolean flag = false;
-		    for (String role : user.getRoleNames().split(",")) {
-                auth.addRole(role);
-                // 管理员拥有所有权限
-                if ("admin".equals(role)) {
-                    List<Permission> permissions = Daos.ext(dao(), FieldFilter.create(Permission.class, "name")).query(Permission.class, null);
-                    for (Permission permission : permissions) {
-                        auth.addStringPermission(permission.getName());
+        user = dao().fetchLinks(user, null);
+        if (user.getRoles() != null) {
+            dao().fetchLinks(user.getRoles(), null);
+            for (Role role : user.getRoles()) {
+                auth.addRole(role.getName());
+                if (role.getPermissions() != null) {
+                    for (Permission p : role.getPermissions()) {
+                        auth.addStringPermission(p.getName());
                     }
-                    flag = true;
                 }
             }
-		    if (flag)
-		        return auth;
-		}
-		if (user.getPermissionNames() != null) {
-		    auth.addStringPermissions(Arrays.asList(user.getPermissionNames().split(",")));
-		}
-		return auth;
+        }
+        if (user.getPermissions() != null) {
+            for (Permission p : user.getPermissions()) {
+                auth.addStringPermission(p.getName());
+            }
+        }
+        return auth;
 	}
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {

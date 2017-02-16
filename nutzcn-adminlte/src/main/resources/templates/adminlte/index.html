@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Dashboard</title>
+  <title>N平台 | 后台管理</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -287,7 +287,7 @@
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="${base}/user/login" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="${base}/user/logout" class="btn btn-default btn-flat">Sign out</a>
                 </div>
               </li>
             </ul>
@@ -326,32 +326,6 @@
           </a>
           <ul class="treeview-menu">
             <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i>公告板</a></li>
-          </ul>
-        </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-files-o"></i>
-            <span>Security管理</span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="#" @click="switch_page(`/authority/user`, '用户管理')"><i class="fa fa-circle-o"></i>用户管理</a></li>
-            <li><a href="#" @click="switch_page(`/authority/role`, '角色管理')"><i class="fa fa-circle-o"></i>角色管理</a></li>
-            <li><a href="#" @click="switch_page(`/authority/permission`, '权限管理')"><i class="fa fa-circle-o"></i>权限管理</a></li>
-          </ul>
-        </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>系统设置</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="#" @click="switch_page(`/system/basic`, '基本管理')"><i class="fa fa-circle-o"></i>基本管理</a></li>
-            <li><a href="#" @click="switch_page(`/system/dict`, '数据字典')"><i class="fa fa-circle-o"></i>数据字典</a></li>
-            <li><a href="#" @click="switch_page(`/system/hotplug_manager`, '插件管理')"><i class="fa fa-circle-o"></i>插件管理</a></li>
-            <li><a href="#" @click="switch_page(`/system/hotplug_repo`, '插件仓库')"><i class="fa fa-circle-o"></i>插件仓库</a></li>
           </ul>
         </li>
         <li class="treeview" v-for="menu in menus">

@@ -72,6 +72,29 @@ var vueHotplugList = new Vue({
 					}
 				});
 			}
+		},
+		do_delete: function(hotplug_sha1) {
+			$.ajax({
+				url : base + "/admin/hotplug/delete",
+				method : "POST",
+				data : "sha1=" + hotplug_sha1,
+				dataType : "json",
+				success : function(re) {
+					if (re && re.ok && re.data)
+						vueHotplugList.dataReload();
+					else if (re && re.msg) {
+						layer.alert("删除失败: " + re.msg);
+					} else if (re && !re.data) {
+						layer.alert("删除失败: 文件被锁定??");
+					}
+				},
+				fail : function(err) {
+					layer.alert("加载失败:" + err);
+				},
+				error : function(err) {
+					layer.alert("加载失败:" + err);
+				}
+			});
 		}
 	},
 	created : function() {

@@ -13,7 +13,7 @@ import org.nutz.dao.entity.annotation.Table;
 public class Permission extends IdentityPojo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Name
 	protected String name;
 	@Column("al")

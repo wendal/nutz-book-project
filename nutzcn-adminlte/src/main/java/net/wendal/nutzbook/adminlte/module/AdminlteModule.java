@@ -6,7 +6,9 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
-import org.nutz.mvc.view.ForwardView;
+import org.nutz.mvc.view.ServerRedirectView;
+
+import net.wendal.nutzbook.common.util.Toolkit;
 
 @IocBean
 @At("/adminlte")
@@ -26,9 +28,9 @@ public class AdminlteModule {
     @GET
     @At(value="/user/login", top=true)
     @Ok("beetl:/adminlte/login.html")
-    public Object login(@Attr("me")Object me) {
-        if (me != null) {
-            return new ForwardView("/adminlte");
+    public Object login() {
+        if (Toolkit.uid() > 0) {
+            return new ServerRedirectView("/adminlte");
         }
         return null;
     }

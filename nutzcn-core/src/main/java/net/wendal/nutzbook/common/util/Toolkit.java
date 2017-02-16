@@ -1,16 +1,12 @@
 package net.wendal.nutzbook.common.util;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import javax.crypto.Cipher;
@@ -25,12 +21,9 @@ import org.apache.shiro.subject.Subject;
 import org.nutz.integration.shiro.NutShiro;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
-import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
-import org.nutz.lang.util.Disks;
-import org.nutz.lang.util.FileVisitor;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;

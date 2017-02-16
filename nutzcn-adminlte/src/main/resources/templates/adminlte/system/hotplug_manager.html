@@ -60,6 +60,7 @@
                   	<div v-if="hotplug.origin == 'file'">
                   		<button v-if="hotplug.enable" @click="do_disable(hotplug.name)">卸载</button>
                   		<button v-else @click="do_enable(hotplug.sha1)">启用</button>
+                  		<button v-if="!hotplug.enable" @click="do_delete(hotplug.sha1)">删除</button>
                   	</div>
                   </td>
                 </tr>

@@ -87,4 +87,18 @@ public class HotplugModule extends BaseModule {
         return ajaxFail("没找到该插件");
     }
     
+    @RequiresRoles("admin")
+    @POST
+    @At
+    public NutMap delete(@Param("sha1")String sha1) throws Exception {
+        for (HotplugConfig hc : Hotplug.getHotPlugJarList(true)) {
+            if (sha1.equals(hc.getSha1())) {
+                boolean ok = new File(hc.getOriginPath()).delete();
+                new File(hc.getOriginPath()+".enable").delete();
+                return ajaxOk(ok);
+            }
+        }
+        return ajaxFail("没找到该插件");
+    }
+    
 }

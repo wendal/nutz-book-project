@@ -6,6 +6,7 @@ import java.util.List;
 import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.ColType;
 import org.nutz.dao.entity.annotation.Column;
+import org.nutz.dao.entity.annotation.ManyMany;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Table;
 
@@ -13,7 +14,7 @@ import org.nutz.dao.entity.annotation.Table;
 public class Role extends IdentityPojo implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-
+	
 	@Name
 	protected String name;
 	@Column("al")
@@ -21,9 +22,7 @@ public class Role extends IdentityPojo implements Serializable {
 	@Column("dt")
 	@ColDefine(type = ColType.VARCHAR, width = 500)
 	private String description;
-    @Column
-    @ColDefine(width=4096)
-    protected String permissionNames;
+	@ManyMany(from="role_id", relation="t_role_permission", target=Permission.class, to="permission_id")
 	protected List<Permission> permissions;
 
 	public String getName() {

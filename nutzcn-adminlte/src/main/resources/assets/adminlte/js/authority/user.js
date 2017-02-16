@@ -32,11 +32,42 @@ var vueUserList = new Vue({
 	    	this.pager.pageNumber = to_page;
 	    	this.dataReload();
 	    },
+	    user_change_password : function (uid) {
+	    	var password = prompt("输入新密码");
+	    	if (password) {
+				$.ajax({
+					url : base + "/admin/authority/user/update/password",
+					type : "post",
+			    	dataType : "json",
+			    	data : "password="+password+"&id="+uid,
+			    	success : function(re) {
+			    		if (console)
+			    			console.info(re);
+			    		if (re && re.ok) {
+			    			layer.alert("更新成功");
+			    			vueUserList.dataReload();
+			    		} else if (re && re.msg) {
+							layer.alert(re.msg);
+						}
+			    	},
+			    	fail : function(err) {
+			    		layer.alert("加载失败:" + err);
+			    	},
+			    	error : function (err){
+			    		layer.alert("加载失败:" + err);
+			    	}
+				});
+			}
+		},
+		user_setLock : function(locked) {
+			layer.alert("暂未实现");
+		},
 	    userAdd: function() {
 			var username = prompt("输入用户名");
 			if (username) {
 				$.ajax({
-					url : base + "/user/add",
+					url : base + "/admin/authority/user/add",
+					type : "post",
 			    	dataType : "json",
 			    	data : "password=123456&name="+username,
 			    	success : function(re) {
