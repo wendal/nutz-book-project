@@ -1,5 +1,6 @@
 var ioc={
 	emailAuthenticator : {
+		singleton : false,
 		type : "org.apache.commons.mail.DefaultAuthenticator",
 		args : [{java:"$conf.get('mail.username')"}, {java:"$conf.get('mail.password')"}]
 	},
