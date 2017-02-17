@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.core.service.impl;
 
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.ioc.Ioc;
@@ -11,33 +12,35 @@ import org.nutz.log.Logs;
 
 import net.wendal.nutzbook.core.service.EmailService;
 
-@IocBean(name="emailService")
+@IocBean(name = "emailService")
 public class EmailServiceImpl implements EmailService {
 
-	private static final Log log = Logs.get();
-	
-	@Inject("refer:$ioc")
-	protected Ioc ioc;
+    private static final Log log = Logs.get();
 
-	public boolean send(String to, String subject, String html) {
-		try {
-			HtmlEmail email = ioc.get(HtmlEmail.class);
-			email.setSubject(subject);
-			email.setHtmlMsg(html);
-			email.addTo(to);
-			email.buildMimeMessage();
-			email.sendMimeMessage();
-			return true;
-		} catch (Throwable e) {
-			log.info("send email fail", e);
-			return false;
-		}
-	}
+    @Inject("refer:$ioc")
+    protected Ioc ioc;
 
-	@Async
-	public void sendAsync(String to, String subject, String html, Callback<Boolean> callback) {
-		boolean re = this.send(to, subject, html);
-		if (callback != null)
-			callback.invoke(re);
-	}
+    public boolean send(String to, String subject, String html) throws EmailException {
+
+        HtmlEmail email = ioc.get(HtmlEmail.class);
+        email.setSubject(subject);
+        email.setHtmlMsg(html);
+        email.addTo(to);
+        email.buildMimeMessage();
+        email.sendMimeMessage();
+        return true;
+    }
+
+    @Async
+    public void sendAsync(String to, String subject, String html, Callback<Boolean> callback) {
+        boolean re = false;
+        try {
+            re = this.send(to, subject, html);
+        }
+        catch (EmailException e) {
+            log.debug("send fail", e);
+        }
+        if (callback != null)
+            callback.invoke(re);
+    }
 }

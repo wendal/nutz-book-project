@@ -2,5 +2,13 @@
 	name : "oauth",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.oauth",
-	describe : "N平台的OAuth模块"
+	describe : "N平台的OAuth模块",
+	menu : [
+		{
+			name : "第三方登录管理",
+			subs : [
+				{name:"基本设置",page:"oauth/basic.html"}
+			]
+		}
+	]
 }

@@ -1,29 +1,22 @@
 
 var config_map = {
-		"website.urlbase" : "网站地址",
-		"website.title" : "网站名称",
-		"website.shortname" : "网站简称",
-		"website.description" : "网站简介",
-		"website.author" : "网站作者",
-		//"website.tmp_dir" : "临时目录",
-		"website.keywords" : "默认关键字",
-		"website.long_description" : "网站完整描述",
-		"website.beian" : "备案号",
-		"website.ltd" : "公司名称",
-		//"website.qq_login" : "是否允许QQ登录",
-		//"website.small_features" : "是否启用小功能区",
-		//"website.fornew.url" : "新手引导页地址",
-		//"website.csrf.enable" : "是否启用CSRF防护"
+		"mail.host" : "smtp服务器域名",
+		"mail.port" : "端口号",
+		"mail.username" : "用户名",
+		"mail.password" : "密码",
+		"mail.ssl" : "启用SSL",
+		"mail.from" : "发件人邮箱"
 };
-var vueBasicConfigList = new Vue({
-	el : "#system_basic_div",
+var vueEmailcConfigList = new Vue({
+	el : "#system_mail_div",
 	data : {
-		configs : []
+		configs : [],
+		test_mail_addr : "vt400@qq.com"
 	},
 	methods : {
 		dataReload : function() {
 			$.ajax({
-				url : base + "/admin/config/list?prefix=website",
+				url : base + "/admin/config/list?prefix=mail",
 				dataType : "json",
 				success : function(re) {
 					if (console)
@@ -37,7 +30,7 @@ var vueBasicConfigList = new Vue({
 							config.value = re.data[k];
 							configs.push(config);
 						}
-						vueBasicConfigList.configs = configs
+						vueEmailcConfigList.configs = configs
 					} else if (re && re.msg) {
 						layer.alert(re.msg);
 					}
@@ -64,8 +57,31 @@ var vueBasicConfigList = new Vue({
 					if (console)
 						console.info(re);
 					if (re && re.ok) {
-						vueBasicConfigList.dataReload();
+						vueEmailcConfigList.dataReload();
 						layer.alert("保存完成");
+					} else if (re && re.msg) {
+						layer.alert("失败:" + re.msg);
+					}
+				},
+				fail : function(err) {
+					layer.alert("加载失败:" + err);
+				},
+				error : function(err) {
+					layer.alert("加载失败:" + err);
+				}
+			});
+		},
+		do_mail_test : function() {
+			$.ajax({
+				url : base + "/adminlte/test/mail",
+				type : "POST",
+				data : "to=" + vueEmailcConfigList.test_mail_addr,
+				dataType : "json",
+				success : function(re) {
+					if (console)
+						console.info(re);
+					if (re && re.ok) {
+						layer.alert("发送成功");
 					} else if (re && re.msg) {
 						layer.alert("失败:" + re.msg);
 					}

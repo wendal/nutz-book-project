@@ -3,7 +3,6 @@ package net.wendal.nutzbook.oauth.module;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,12 +10,10 @@ import javax.servlet.http.HttpSession;
 
 import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Profile;
-import org.brickred.socialauth.SocialAuthConfig;
 import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
 import org.nutz.integration.shiro.SimpleShiroToken;
-import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Encoding;
@@ -38,6 +35,7 @@ import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.oauth.bean.OAuthUser;
+import net.wendal.nutzbook.oauth.service.OauthService;
 
 @Api(name="第三方登陆", description="基于SocialAuth的第三方登陆")
 @IocBean(create = "init")
@@ -50,7 +48,7 @@ public class OauthModule extends BaseModule {
 	protected SlogService slogService;
 	
 	@Inject
-	protected PropertiesProxy conf;
+	protected OauthService OauthService;
 
 	@Ok("void")
 	@At("/?")
@@ -69,7 +67,7 @@ public class OauthModule extends BaseModule {
 			returnTo = sb.toString();
 		}
 		SocialAuthManager manager = new SocialAuthManager(); // 每次都要新建哦
-		manager.setSocialAuthConfig(config);
+		manager.setSocialAuthConfig(OauthService.getSocialAuthConfig());
 		String url = manager.getAuthenticationUrl(provider, returnTo);
 		log.info("URL=" + url);
 		Mvcs.getResp().setHeader("Location", url);
@@ -146,17 +144,4 @@ public class OauthModule extends BaseModule {
 	public void link() {
 	}
 
-	private SocialAuthConfig config;
-
-	public void init() throws Exception {
-		SocialAuthConfig config = new SocialAuthConfig();
-		Properties pp = new Properties();
-		for (String key : conf.keys()) {
-            if (key.startsWith("oauth")) {
-                pp.put(key.substring("oauth.".length()), conf.get(key));
-            }
-        }
-		config.load(pp);
-		this.config = config;
-	}
 }

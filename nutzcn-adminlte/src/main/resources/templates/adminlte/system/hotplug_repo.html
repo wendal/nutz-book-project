@@ -40,8 +40,8 @@
                   <td>{{repo.createTime}}</td>
                   <td>
                   	<button>详情</button>
-                  	<button v-if="repo.enable">禁用</button>
-                  	<button v-else>启用</button>
+                  	<button v-if="repo.enable" v-transition>禁用</button>
+                  	<button v-else v-transition>启用</button>
                   </td>
                 </tr>
                 </tbody>
