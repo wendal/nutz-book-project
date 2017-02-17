@@ -3,9 +3,7 @@ package net.wendal.nutzbook.core.module;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.subject.Subject;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -36,10 +34,7 @@ public class ConfigureModule extends BaseModule {
         // 当前,这个接口仅允许修改website相关的属性
         for (Entry<String, Object> en : props.entrySet()) {
             String key = en.getKey();
-            if (key.startsWith("website.") || key.startsWith("mail.")) {
-                configureService.update(key, (String) en.getValue(), false);
-                continue;
-            }
+            configureService.update(key, (String) en.getValue(), false);
         }
         configureService.doReload();
         return ajaxOk(null);
