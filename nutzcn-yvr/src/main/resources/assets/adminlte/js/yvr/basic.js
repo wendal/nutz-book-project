@@ -1,24 +1,22 @@
 
 var config_map = {
-		"website.urlbase" : "网站地址",
-		"website.title" : "网站名称",
-		"website.shortname" : "网站简称",
-		"website.description" : "网站简介",
-		"website.author" : "网站作者",
-		"website.keywords" : "默认关键字",
-		"website.long_description" : "网站完整描述",
-		"website.beian" : "备案号",
-		"website.ltd" : "公司名称",
+		"yvr.title" : "论坛名称",
+		"yvr.logo_path" : "论坛logo路径",
+		//"yvr.shortname" : "网站简称",
+		//"yvr.description" : "网站简介",
+		//"yvr.author" : "网站作者",
+		"yvr.keywords" : "默认关键字",
+		//"yvr.long_description" : "网站完整描述"
 };
 var vueBasicConfigList = new Vue({
-	el : "#system_basic_div",
+	el : "#yvr_config_div",
 	data : {
 		configs : []
 	},
 	methods : {
 		dataReload : function() {
 			$.ajax({
-				url : base + "/admin/config/list?prefix=website",
+				url : base + "/admin/config/list?prefix=yvr",
 				dataType : "json",
 				success : function(re) {
 					if (console)

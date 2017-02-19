@@ -17,7 +17,7 @@ var vueUserList = new Vue({
 		    			vueUserList.users = re.data.list;
 		    			vueUserList.pager = re.data.pager;
 		    		} else if (re && re.msg) {
-						layer.alert(re.me);
+						layer.alert(re.msg);
 					}
 		    	},
 		    	fail : function(err) {

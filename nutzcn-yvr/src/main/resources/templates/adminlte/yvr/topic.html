@@ -10,7 +10,7 @@
     </section>
 
     <!-- Main content -->
-    <section class="content" id="permission_manager_div">
+    <section class="content" id="topic_manager_div">
       <div class="row">
         <div class="col-xs-12">
           
@@ -32,14 +32,20 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="topic in topies">
+                <tr v-for="topic in topics">
                   <td>{{topic.id}}</td>
                   <td>{{topic.title}}</td>
                   <td>{{topic.author.userId}}</td>
                   <td>{{topic.type}}</td>
                   <td>{{topic.createTime}}</td>
                   <td>
-                  	<button>详情</button>
+                  	<button @click="update_type(topic.id)">修改类型</button>
+                  	<button @click="update_title(topic.id)">修改标题</button>
+                  	<button @click="update_good(topic.id, true)" v-if="!topic.good">加精</button>
+                  	<button @click="update_good(topic.id, false)" v-else>取消加精</button>
+                  	<button @click="update_top(topic.id, true)" v-if="!topic.top">置顶</button>
+                  	<button @click="update_top(topic.id, false)" v-else>取消置顶</button>
+                  	<button @click="do_delete(topic.id)">删除</button>
                   </td>
                 </tr>
                 </tbody>

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.FieldFilter;
@@ -50,7 +51,7 @@ public class YvrAdminModule extends BaseModule{
 	public void update(@Param("..")Topic topic, @Param("opt")String opt) {
 		if (topic == null)
 			return;
-		if (Strings.isBlank(topic.getId()) || opt == null || !opt.matches("^(good|top|type|lock)$"))
+		if (Strings.isBlank(topic.getId()) || opt == null || !opt.matches("^(good|top|type|lock|title)$"))
 			return;
 		Topic old = dao.fetch(Topic.class, topic.getId());
 		if (old == null)
@@ -130,7 +131,8 @@ public class YvrAdminModule extends BaseModule{
 		int count = dao.count(Topic.class, cnd);
 		pager.setRecordCount(count);
 		List<Topic> list = dao.query(Topic.class, cnd, pager);
-		return new QueryResult(list, pager);
+		dao.fetchLinks(list, "author");
+		return ajaxOk(new QueryResult(list, pager));
 	}
 
 	@RequiresPermissions("topic:expstatic")

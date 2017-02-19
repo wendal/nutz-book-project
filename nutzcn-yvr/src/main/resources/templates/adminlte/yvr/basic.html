@@ -10,7 +10,7 @@
     </section>
 
     <!-- Main content -->
-    <section class="content" id="hotplug_repo_div">
+    <section class="content" id="yvr_config_div">
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -22,6 +22,22 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
+              <form class="form-horizontal">
+              	<div v-for="config in configs">
+              		<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" :title="config.name">{{config.display}}</label>
+   						<div class="col-sm-6">
+      						<input type="text" class="form-control" v-model="config.value">
+    					</div>
+    					<div class="col-sm-4"></div>
+            		</div>
+              	</div>
+              </form>
+              <div class="row">
+            	<div class="col-xs-12">
+            		<button type="button" class="btn btn-default" @click="do_save()">保存</button>
+            	</div>
+              </div>
             </div>
             <!-- /.box-body -->
           </div>
@@ -31,3 +47,4 @@
       <!-- /.row -->
     </section>
     <!-- /.content -->
+    <script src="${base}/assets/adminlte/js/yvr/basic.js"></script>
