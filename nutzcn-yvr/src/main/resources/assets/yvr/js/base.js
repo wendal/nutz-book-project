@@ -87,9 +87,17 @@ function startGuide(){
 
 // 支付功能
 
-      	function pay_tips(toUser) {
+      	function pay_tips(toUser, amount) {
+      		if (amount) {
+      			if (typeof(amount) == "string")
+      				amount = parseInt(amount) * 100;
+      		}
+      		else {
+      			amount = 0;
+      		}
       		$.ajax({
-      		    url : ctxPath+"/pay/bc/create?to="+toUser,
+      		    url : ctxPath+"/pay/bc/create",
+      		    data : {"to":toUser, "amount":amount},
       		    dataType : "json",
       		    method : "post",
       		    success : function(re) {
