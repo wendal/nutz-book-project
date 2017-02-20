@@ -45,7 +45,7 @@ import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.CResult;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
-import net.wendal.nutzbook.core.service.PushService;
+import net.wendal.nutzbook.core.service.AppPushService;
 import net.wendal.nutzbook.core.websocket.NutzbookWebsocket;
 import net.wendal.nutzbook.yvr.bean.SubForum;
 import net.wendal.nutzbook.yvr.bean.Topic;
@@ -66,7 +66,7 @@ public class YvrService implements RedisKey, PubSub {
 	protected TopicSearchService topicSearchService;
 
 	@Inject
-	protected PushService pushService;
+	protected AppPushService appPushService;
 
 	@Inject
 	protected PubSubService pubSubService;
@@ -197,7 +197,7 @@ public class YvrService implements RedisKey, PubSub {
 						topic.getId(),
 						replyAuthorName,
 						topic.getTitle(),
-						PushService.PUSH_TYPE_REPLY);
+						AppPushService.PUSH_TYPE_REPLY);
 			}
 		}
         pubSubService.fire("ps:topic:add", topic.getId());
@@ -215,7 +215,7 @@ public class YvrService implements RedisKey, PubSub {
                                      topic.getId(),
                                      dao.fetch(User.class, userId).getName(),
                                      topic.getTitle(),
-                                     PushService.PUSH_TYPE_REPLY);
+                                     AppPushService.PUSH_TYPE_REPLY);
                         }
                     }
                 }
@@ -281,7 +281,7 @@ public class YvrService implements RedisKey, PubSub {
                     topic.getId(),
                     replyAuthorName,
                     topic.getTitle(),
-                    PushService.PUSH_TYPE_REPLY);
+                    AppPushService.PUSH_TYPE_REPLY);
         }
 
         Set<String> ats = findAt(cnt, 5);
@@ -299,7 +299,7 @@ public class YvrService implements RedisKey, PubSub {
                     topic.getId(),
                     replyAuthorName,
                     topic.getTitle(),
-                    PushService.PUSH_TYPE_AT);
+                    AppPushService.PUSH_TYPE_AT);
         }
 	}
 
@@ -330,7 +330,7 @@ public class YvrService implements RedisKey, PubSub {
 		extras.put("topic_title", topic_title);
 		// 通知类型
 		extras.put("type", type+"");
-		pushService.alert(userId, alert, topic_title, extras);
+		appPushService.alert(userId, alert, topic_title, extras);
 	}
 
 	public List<Topic> getRecentTopics(long userId, Pager pager) {

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -14,6 +15,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
+import net.wendal.nutzbook.core.service.AppPushService;
 import net.wendal.nutzbook.core.service.ConfigureService;
 
 @IocBean
@@ -23,6 +25,9 @@ public class ConfigureModule extends BaseModule {
 
     @Inject
     protected ConfigureService configureService;
+    
+    @Inject("refer:$ioc")
+    protected Ioc ioc;
 
     @Inject
     protected PropertiesProxy conf;
@@ -31,12 +36,15 @@ public class ConfigureModule extends BaseModule {
     @POST
     @At
     public Object save(@Param("..") Map<String, Object> props) {
-        // 当前,这个接口仅允许修改website相关的属性
+        // 逐个更新
         for (Entry<String, Object> en : props.entrySet()) {
             String key = en.getKey();
             configureService.update(key, (String) en.getValue(), false);
         }
         configureService.doReload();
+        // 先hack一下吧...
+        if (props.keySet().contains("jpush.enable") || props.keySet().contains("xmpush.enable"))
+            ioc.get(AppPushService.class).reload();
         return ajaxOk(null);
     }
 

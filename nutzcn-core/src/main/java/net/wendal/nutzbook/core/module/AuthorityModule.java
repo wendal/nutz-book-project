@@ -14,13 +14,12 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
-import org.nutz.mvc.adaptor.JsonAdaptor;
+import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
-
 import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
 import org.nutz.plugins.slog.annotation.Slog;
@@ -40,7 +39,8 @@ import net.wendal.nutzbook.core.bean.UserProfile;
 @Api(name = "权限角色管理", description = "一个用户属于多种角色,拥有多种特许权限. 每种角色拥有多种权限", match = ApiMatchMode.NONE)
 @At("/admin/authority")
 @IocBean
-@Ok("void") // 避免误写导致敏感信息泄露到服务器外
+@Ok("json:full")
+@AdaptBy(type=WhaleAdaptor.class)
 public class AuthorityModule extends BaseModule {
 
     // ---------------------------------------------
@@ -90,7 +90,7 @@ public class AuthorityModule extends BaseModule {
             return re.setv("ok", false).setv("msg", msg);
         }
         user = userService.add(user.getName(), user.getPassword());
-        return re.setv("ok", true).setv("data", user);
+        return ajaxOk(user);
     }
 
     @Ok("json")
@@ -100,30 +100,29 @@ public class AuthorityModule extends BaseModule {
     @Slog(tag = "更新用户", before = "用户[${id}] ok=${re.ok}")
     public Object updatePassword(@Param("password") String password, @Param("id") int id) {
         if (Strings.isBlank(password) || password.length() < 6)
-            return new NutMap().setv("ok", false).setv("msg", "密码不符合要求");
+            return ajaxFail("密码不符合要求");
         userService.updatePassword(id, password);
-        return new NutMap().setv("ok", true);
+        return ajaxOk(null);
     }
 
     @RequiresPermissions("authority:user:delete")
-    @At("/user/del")
+    @At("/user/delete")
     @Aop(TransAop.READ_COMMITTED)
     @Slog(tag = "删除用户", before = "用户id[${id}]")
-    public Object delete(@Param("id") long id) {
+    public Object userDelete(@Param("id") long id) {
         long me = Toolkit.uid();
         if (me == id) {
-            return new NutMap().setv("ok", false).setv("msg", "不能删除当前用户!!");
+            return ajaxFail("不能删除当前用户!!");
         }
         dao.delete(User.class, id); // 再严谨一些的话,需要判断是否为>0
         dao.clear(UserProfile.class, Cnd.where("userId", "=", me));
-        return new NutMap().setv("ok", true);
+        return ajaxOk(null);
     }
 
     /**
      * 更新用户所属角色/特许权限
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:user:update")
     @At("/user/update")
     @Aop(TransAop.READ_COMMITTED)
@@ -213,47 +212,48 @@ public class AuthorityModule extends BaseModule {
      * 新增一个角色
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:role:add")
     @At("/role/add")
-    public void addRole(@Param("..") Role role) {
+    public Object addRole(@Param("..") Role role) {
         if (role == null)
-            return;
+            return ajaxFail("非法请求");
         dao.insert(role); // 注意,这里并没有用insertWith, 即总是插入一个无权限的角色
+
+        return ajaxOk(null);
     }
 
     /**
      * 删除一个角色,其中admin角色禁止删除
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:role:delete")
     @At("/role/delete")
-    public void delRole(@Param("..") Role role) {
+    public Object delRole(@Param("..") Role role) {
         if (role == null)
-            return;
+            return ajaxFail("非法请求");
         role = dao.fetch(Role.class, role.getId());
         if (role == null)
-            return;
+            return ajaxFail("角色不存在");
         // 不允许删除admin角色
         if ("admin".equals(role.getName()))
-            return;
+            return ajaxFail("admin角色不可以删除");
         dao.delete(Role.class, role.getId());
+
+        return ajaxOk(null);
     }
 
     /**
      * 更新权限的一般信息或所拥有的权限
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:role:update")
     @At("/role/update")
     @Aop(TransAop.SERIALIZABLE) // 关键操作,强事务操作
-    public void updateRole(@Param("role") Role role, @Param("permissions") List<Long> permissions) {
+    public Object updateRole(@Param("role") Role role, @Param("permissions") List<Long> permissions) {
         if (role == null)
-            return;
+            return ajaxFail("非法请求");
         if (dao.fetch(Role.class, role.getId()) == null)
-            return;
+            return ajaxFail("权限不存在");
         if (!Strings.isBlank(role.getAlias()) || !Strings.isBlank(role.getDescription())) {
             Daos.ext(dao, FieldFilter.create(Role.class, "alias|desc")).update(role);
         }
@@ -274,6 +274,8 @@ public class AuthorityModule extends BaseModule {
             dao.insertRelation(role, "permissions");
         }
         // TODO 修改Role的updateTime
+
+        return ajaxOk(null);
     }
 
     /**
@@ -302,13 +304,13 @@ public class AuthorityModule extends BaseModule {
      * 新增一个权限
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:permission:add")
     @At("/permission/add")
-    public void addPermission(@Param("..") Permission permission) {
+    public Object addPermission(@Param("..") Permission permission) {
         if (permission == null)
-            return;
+            return ajaxFail("非法请求");
         dao.insert(permission);
+        return ajaxOk(null);
     }
 
     /**
@@ -317,31 +319,31 @@ public class AuthorityModule extends BaseModule {
      * @param permission
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:permission:delete")
     @At("/permission/delete")
-    public void delPermission(@Param("..") Permission permission) {
+    public Object delPermission(@Param("..") Permission permission) {
         if (permission == null)
-            return;
+            return ajaxFail("非法请求");
         // TODO 禁止删除authority相关的默认权限
         dao.delete(Permission.class, permission.getId());
+        return ajaxOk(null);
     }
 
     /**
      * 修改权限的一般信息
      */
     @POST
-    @AdaptBy(type = JsonAdaptor.class)
     @RequiresPermissions("authority:permission:update")
     @At("/permission/update")
-    public void updateRole(@Param("..") Permission permission) {
+    public Object updatePermission(@Param("..") Permission permission) {
         if (permission == null)
-            return;
+            return ajaxFail("非法请求");
         if (dao.fetch(Permission.class, permission.getId()) == null)
-            return;
+            return ajaxFail("权限不存在");
         permission.setUpdateTime(new Date());
         permission.setCreateTime(null);
         Daos.ext(dao, FieldFilter.create(Permission.class, null, "name", true)).update(permission);
+        return ajaxOk(null);
     }
     
     protected String checkUser(User user, boolean create) {

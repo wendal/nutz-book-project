@@ -47,7 +47,7 @@ import net.wendal.nutzbook.beepay.bean.BeePayment;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
-import net.wendal.nutzbook.core.service.PushService;
+import net.wendal.nutzbook.core.service.AppPushService;
 
 @Api(name="支付服务", description="对接BeeCloud的支付服务,当前只对接了打赏", match=ApiMatchMode.NONE)
 @IocBean
@@ -60,7 +60,7 @@ public class BeePayModule extends BaseModule {
     protected PropertiesProxy conf;
     
     @Inject 
-    protected PushService pushService;
+    protected AppPushService appPushService;
     
     @At("/")
     @Ok("beetl:yvr/bc/index.html")
@@ -183,8 +183,8 @@ public class BeePayModule extends BaseModule {
             dao.fetchLinks(payment, null);
             // 提醒收款人
             String payfee = String.format("%.2f", payment.getTransaction_fee()/100.0);
-            pushService.alert(payment.getToUser(), "您收到一笔打赏" + payfee+"元", "From: " + payment.getFromUserProfile().getDisplayName(), new HashMap<>());
-            pushService.alert(payment.getFromUser(), "您成功打赏了" + payfee+"元", "To: " + payment.getToUserProfile().getDisplayName(), new HashMap<>());
+            appPushService.alert(payment.getToUser(), "您收到一笔打赏" + payfee+"元", "From: " + payment.getFromUserProfile().getDisplayName(), new HashMap<>());
+            appPushService.alert(payment.getFromUser(), "您成功打赏了" + payfee+"元", "To: " + payment.getToUserProfile().getDisplayName(), new HashMap<>());
         }
         return "success";
     }

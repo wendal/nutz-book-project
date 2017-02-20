@@ -63,6 +63,10 @@ public class AuthorityServiceImpl implements AuthorityService {
 		log.debugf("found %d permission", permissions.size());
 		log.debugf("found %d role", roles.size());
 
+
+        for (String permission : permissions) {
+            roles.add(permission.split("[:]")[0]);
+        }
 		// 把全部权限查出来一一检查
 		dao.each(Permission.class, null, new Each<Permission>() {
 			public void invoke(int index, Permission ele, int length) throws ExitLoop, ContinueLoop, LoopException {
@@ -74,9 +78,6 @@ public class AuthorityServiceImpl implements AuthorityService {
 				roles.remove(ele.getName());
 			}
 		});
-		for (String permission : permissions) {
-			addPermission(permission);
-		}
 		for (String role : roles) {
 			addRole(role);
 		}

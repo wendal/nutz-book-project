@@ -37,7 +37,8 @@
                   <td>{{role.alias}}</td>
                   <td>{{role.createTime}}</td>
                   <td>
-                  	<button>详情</button>
+                  	<button @click="do_delete(role.id, role.name)">删除</button>
+                  	<button @click="update_alias(role.id, role.alias)">修改别名</button>
                   </td>
                 </tr>
                 </tbody>
@@ -48,6 +49,7 @@
 			<div class="box">
 				<div>
 					<div class='inner'>
+						<button class="btn" v-on:click="do_add" >新增</button>
 						<button class="btn" v-on:click="dataReload" disabled>当前页数{{pager.pageNumber}}</button>
 						<button class="btn" v-on:click="changePage(1)" :disabled="pager.pageNumber == 1">第一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" :disabled="pager.pageNumber == 1">上一页</button>

@@ -55,7 +55,7 @@ import net.wendal.nutzbook.core.bean.CResult;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
-import net.wendal.nutzbook.core.service.PushService;
+import net.wendal.nutzbook.core.service.AppPushService;
 import net.wendal.nutzbook.core.service.RedisDao;
 import net.wendal.nutzbook.yvr.bean.SubForum;
 import net.wendal.nutzbook.yvr.bean.Topic;
@@ -98,7 +98,7 @@ public class YvrModule extends BaseModule {
 	protected TopicSearchService topicSearchService;
 	
 	@Inject
-	protected PushService pushService;
+	protected AppPushService appPushService;
 
 	@GET
 	@At
@@ -368,7 +368,7 @@ public class YvrModule extends BaseModule {
 		Map<String, String> extras = new HashMap<String, String>();
 		extras.put("topic_id", topicId);
 		extras.put("action", "open_topic");
-		pushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
+		appPushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
 	}
 	
 	@RequiresAuthentication

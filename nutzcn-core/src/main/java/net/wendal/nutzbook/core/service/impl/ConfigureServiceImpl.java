@@ -1,6 +1,5 @@
 package net.wendal.nutzbook.core.service.impl;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -19,7 +18,6 @@ public class ConfigureServiceImpl implements ConfigureService {
     @Inject
     protected Dao dao;
 
-    @RequiresPermissions("sysconf:reload")
     public void doReload() {
         _reload();
     }
@@ -30,7 +28,6 @@ public class ConfigureServiceImpl implements ConfigureService {
         });
     }
     
-    @RequiresPermissions("sysconf:update")
     public void update(String key, String value, boolean reload) {
         dao.clear(SysConfigure.class, Cnd.where("key", "=", key));
         dao.insert(new SysConfigure(key, value));

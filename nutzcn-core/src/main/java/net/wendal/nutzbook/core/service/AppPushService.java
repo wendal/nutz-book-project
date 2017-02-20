@@ -7,7 +7,7 @@ import com.xiaomi.xmpush.server.Message;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.model.PushPayload;
 
-public interface PushService {
+public interface AppPushService {
 
     /**
      * 通知类型: 帖子被回复
@@ -25,5 +25,7 @@ public interface PushService {
     void doJpush(String name, JPushClient jpush, PushPayload payload);
 
     void doMxPush(Message message, String alias);
+    
+    void reload();
 
 }

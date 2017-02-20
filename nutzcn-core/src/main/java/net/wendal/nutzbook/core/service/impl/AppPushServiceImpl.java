@@ -1,6 +1,5 @@
 package net.wendal.nutzbook.core.service.impl;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -8,9 +7,13 @@ import org.nutz.aop.interceptor.async.Async;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+
+import com.xiaomi.xmpush.server.Constants;
+import com.xiaomi.xmpush.server.Message;
+import com.xiaomi.xmpush.server.Result;
+import com.xiaomi.xmpush.server.Sender;
 
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
@@ -21,12 +24,7 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
-import net.wendal.nutzbook.core.service.PushService;
-
-import com.xiaomi.xmpush.server.Constants;
-import com.xiaomi.xmpush.server.Message;
-import com.xiaomi.xmpush.server.Result;
-import com.xiaomi.xmpush.server.Sender;
+import net.wendal.nutzbook.core.service.AppPushService;
 
 /**
  * 推送服务,当前用jpush实现
@@ -34,18 +32,13 @@ import com.xiaomi.xmpush.server.Sender;
  * @author wendal
  *
  */
-@IocBean(create = "init", name="pushService")
-public class PushServiceImpl implements PushService {
-
+@IocBean(create = "init", name="appPushService")
+public class AppPushServiceImpl implements AppPushService {
 
 	private static final Log log = Logs.get();
 
-	@Inject
 	protected JPushClient jpush;
 
-	protected Map<String, JPushClient> jpushs;
-
-	@Inject
 	protected Sender xmpush;
 
 	@Inject
@@ -124,10 +117,6 @@ public class PushServiceImpl implements PushService {
 
 	private void sendJPush(PushPayload payload) {
 		doJpush("jpush", jpush, payload);
-		// 第三方客户端的推送账户
-		for (Entry<String, JPushClient> en : jpushs.entrySet()) {
-			doJpush(en.getKey(), en.getValue(), payload);
-		}
 	}
 
 	@Async
@@ -148,27 +137,32 @@ public class PushServiceImpl implements PushService {
 	}
 
 	public void init() {
-		jpushs = new LinkedHashMap<>();
-		// 支持10个够了吧
-		for (int i = 1; i < 11; i++) {
-			String prefix = "jpush" + i;
-			boolean enable = conf.getBoolean(prefix + ".enable", false);
-			if (!enable)
-				continue;
-			String masterSecret = conf.get(prefix + ".masterSecret");
-			String appKey = conf.get(prefix + ".appKey");
-			if (Strings.isBlank(masterSecret) || Strings.isBlank(appKey)) {
-				log.warn(prefix + ".enable=true, but masterSecret/appKey is NULL or emtry");
-				continue;
-			}
-			JPushClient jpush = new JPushClient(masterSecret, appKey);
-			jpushs.put(prefix, jpush);
-		}
-
-		Constants.useOfficial();
-		if (!conf.getBoolean("xmpush.enable", false)) {
-			log.info("xmpush disabled");
-			xmpush = null;
-		}
+		reload();
+	}
+	
+	public void reload() {
+	    try {
+            if (!conf.getBoolean("jpush.enable", false)) {
+                log.info("jpush disabled");
+                jpush = null;
+            } else {
+                jpush = new JPushClient(conf.get("jpush.masterSecret"), conf.get("jpush.appKey"));
+            }
+            if (!conf.getBoolean("xmpush.enable", false)) {
+                log.info("xmpush disabled");
+                xmpush = null;
+            } else {
+                if ("sandbox".equalsIgnoreCase("xmpush.mode")) {
+                    log.warn("xmpush using sandbox mode!");
+                    Constants.useSandbox();
+                } else {
+                    Constants.useSandbox();
+                }
+                xmpush = new Sender(conf.get("xmpush.appSecret"));
+            }
+        }
+        catch (Exception e) {
+            log.debug("bad jpush key?", e);
+        }
 	}
 }

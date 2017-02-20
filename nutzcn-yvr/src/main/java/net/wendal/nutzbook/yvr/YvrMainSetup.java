@@ -10,6 +10,7 @@ import org.nutz.mvc.Setup;
 
 import net.sf.ehcache.CacheManager;
 import net.wendal.nutzbook.common.util.Markdowns;
+import net.wendal.nutzbook.core.service.AuthorityService;
 import net.wendal.nutzbook.yvr.service.YvrService;
 
 public class YvrMainSetup implements Setup {
@@ -31,6 +32,7 @@ public class YvrMainSetup implements Setup {
         Markdowns.cache = cacheManager.getCache("markdown");
 
         ioc.get(YvrService.class).updateTopicTypeCount();
+        ioc.get(AuthorityService.class).initFormPackage(getClass().getPackage().getName());
     }
 
     @Override

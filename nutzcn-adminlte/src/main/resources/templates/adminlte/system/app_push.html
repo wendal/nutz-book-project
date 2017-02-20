@@ -1,0 +1,88 @@
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>App推送设置</h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">App推送设置</a></li>
+        <li class="active">基本设置</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="system_app_push_div">
+      <div class="row">
+        <div class="col-xs-12">
+          
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">小米推送设置</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <form class="form-horizontal">
+            		<div class="checkbox" >
+            			<div class="col-sm-12">
+    						<label class="col-sm-2">是否启用</label>
+      						<input class="col-sm-6" type="checkbox" v-model="xmpush.enable">
+      						<div class="col-sm-4"></div>
+            			</div>
+            		</div>
+              		<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left">AppSecret</label>
+   						<div class="col-sm-6">
+      						<input type="text" class="form-control" v-model="xmpush.appSecret">
+    					</div>
+    					<div class="col-sm-4"></div>
+            		</div>
+              </form>
+              <div class="row">
+            	<div class="col-xs-12">
+            		<button type="button" class="btn btn-default" @click="do_save_xmpush()">保存</button>
+            	</div>
+              </div>
+			</div>
+            <!-- /.box-body -->
+          </div>
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">极光推送设置</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <form class="form-horizontal">
+            			<div class="col-sm-12">
+    						<label class="col-sm-2">是否启用</label>
+      						<input class="col-sm-6" type="checkbox" v-model="jpush.enable">
+      						<div class="col-sm-4"></div>
+            			</div>
+              		<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left">MasterSecret</label>
+   						<div class="col-sm-6">
+      						<input type="text" class="form-control" v-model="jpush.masterSecret">
+    					</div>
+    					<div class="col-sm-4"></div>
+            		</div>
+              		<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left">AppKey</label>
+   						<div class="col-sm-6">
+      						<input type="text" class="form-control" v-model="jpush.appKey">
+    					</div>
+    					<div class="col-sm-4"></div>
+            		</div>
+              </form>
+              <div class="row">
+            	<div class="col-xs-12">
+            		<button type="button" class="btn btn-default" @click="do_save_jpush()">保存</button>
+            	</div>
+              </div>
+			</div>
+            <!-- /.box-body -->
+          </div>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    <script src="${base}/assets/adminlte/js/system/app_push.js"></script>
