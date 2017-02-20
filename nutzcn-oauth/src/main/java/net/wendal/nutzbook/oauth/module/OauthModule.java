@@ -1,5 +1,8 @@
 package net.wendal.nutzbook.oauth.module;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
@@ -13,6 +16,10 @@ import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.SocialAuthManager;
 import org.brickred.socialauth.exception.SocialAuthException;
 import org.brickred.socialauth.util.SocialAuthUtil;
+import org.nutz.aop.interceptor.async.Async;
+import org.nutz.dao.Cnd;
+import org.nutz.http.Http;
+import org.nutz.http.Response;
 import org.nutz.integration.shiro.SimpleShiroToken;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -122,6 +129,7 @@ public class OauthModule extends BaseModule {
 			if (oAuthUser.getAvatar_url() == null && !Strings.isBlank(p.getProfileImageURL())) {
 				oAuthUser.setAvatar_url(p.getProfileImageURL());
 				dao.update(oAuthUser, "avatar_url");
+				updateAvatar(oAuthUser.getUserId());
 			}
 		}
 		User user = dao.fetch(User.class, oAuthUser.getUserId());
@@ -142,6 +150,32 @@ public class OauthModule extends BaseModule {
 	// TODO 关联已有用户
 	@At
 	public void link() {
+	}
+	
+	@Async
+	protected void updateAvatar(long uid) {
+	    OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", uid));
+        if (ouser != null && ouser.getAvatar_url() != null) {
+            try {
+                Response resp = Http.get(ouser.getAvatar_url(), 5000);
+                if (resp != null && resp.isOK()) {
+                    InputStream ins = resp.getStream();
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    byte[] buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
+                    int len = 0;
+                    while (-1 != (len = ins.read(buf)))
+                        out.write(buf, 0, len);
+                    buf = out.toByteArray();
+                    UserProfile profile = dao.fetch(UserProfile.class, uid);
+                    if (profile != null) {
+                        profile.setAvatar(buf);
+                        dao.update(profile, "avatar");
+                    }
+                }
+            } catch (IOException e) {
+                log.debug("load github avatar fail", e);
+            }
+        }
 	}
 
 }

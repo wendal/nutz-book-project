@@ -60,8 +60,8 @@ public class AuthorityServiceImpl implements AuthorityService {
 				}
 			}
 		}
-		log.debugf("found %d permission", permissions.size());
-		log.debugf("found %d role", roles.size());
+		log.debugf("pkg=%s found %s", pkg, permissions);
+		log.debugf("pkg=%s found %s", pkg, roles);
 
 
         for (String permission : permissions) {
@@ -81,6 +81,9 @@ public class AuthorityServiceImpl implements AuthorityService {
 		for (String role : roles) {
 			addRole(role);
 		}
+		for (String permission : permissions) {
+            addPermission(permission);
+        }
 	}
 
 	public void checkBasicRoles() {

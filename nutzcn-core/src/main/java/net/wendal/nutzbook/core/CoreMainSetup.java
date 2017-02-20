@@ -10,8 +10,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.nutz.dao.Dao;
+import org.nutz.dao.Sqls;
+import org.nutz.dao.entity.annotation.Table;
 import org.nutz.dao.util.Daos;
 import org.nutz.el.opt.custom.CustomMake;
+import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -23,15 +26,17 @@ import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
 import org.nutz.plugins.slog.service.SlogService;
+import org.nutz.resource.Scans;
 import org.quartz.Scheduler;
 
-import net.wendal.nutzbook.core.bean.Role;
+import net.wendal.nutzbook.core.bean.IdentityPojo;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.ig.RedisIdGenerator;
 import net.wendal.nutzbook.core.service.AuthorityService;
 import net.wendal.nutzbook.core.service.ConfigureService;
 import net.wendal.nutzbook.core.service.UserService;
+import redis.clients.jedis.Jedis;
 
 /**
  * Nutz内核初始化完成后的操作
@@ -56,23 +61,38 @@ public class CoreMainSetup implements Setup {
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
+        // 获取配置对象
+        conf = ioc.get(PropertiesProxy.class, "conf");
+        ioc.get(ConfigureService.class).doReload();
 
 		// 初始化JedisAgent
-		//JedisAgent jedisAgent = ioc.get(JedisAgent.class);
+		JedisAgent jedisAgent = ioc.get(JedisAgent.class);
 
         Dao dao = ioc.get(Dao.class);
         
         // 为全部标注了@Table的bean建表
         Daos.createTablesInPackage(dao, getClass().getPackage().getName(), false);
-        Daos.migration(dao, User.class, true, false);
-        Daos.migration(dao, Role.class, true, false);
+        try {
+            dao.execute(Sqls.create("alter table t_sys_configure modify column v varchar(1024)"));
+        } catch (Throwable e) {}
 
 		// 初始化redis实现的id生成器
 		CustomMake.me().register("ig", ioc.get(RedisIdGenerator.class));
+		try (Jedis jedis = jedisAgent.getResource()) {
+		    for (Class<?> klass : Scans.me().scanPackage(getClass().getPackage().getName())) {
+	            if (klass.getAnnotation(Table.class) != null &&
+	                    IdentityPojo.class.isAssignableFrom(klass)) {
+	                String tableName = dao.getEntity(klass).getTableName();
+	                if (!jedis.exists("ig:" + tableName)) {
+	                    int max = dao.getMaxId(klass);
+	                    if (max > 0) {
+	                        jedis.set("ig:"+tableName, ""+max);
+	                    }
+	                }
+	            }
+		    }
+		}
 
-		// 获取配置对象
-		conf = ioc.get(PropertiesProxy.class, "conf");
-		ioc.get(ConfigureService.class).doReload();
 
 		// 初始化SysLog,触发全局系统日志初始化
 		ioc.get(SlogService.class).log("method", "system", null, "系统启动", false);

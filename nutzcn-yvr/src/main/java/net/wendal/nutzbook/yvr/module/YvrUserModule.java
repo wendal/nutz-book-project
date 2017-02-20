@@ -1,9 +1,7 @@
 package net.wendal.nutzbook.yvr.module;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
-import org.nutz.http.Http;
-import org.nutz.http.Response;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
@@ -48,7 +44,6 @@ import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.core.service.RedisDao;
-import net.wendal.nutzbook.oauth.bean.OAuthUser;
 import net.wendal.nutzbook.yvr.bean.Topic;
 import net.wendal.nutzbook.yvr.service.YvrService;
 
@@ -135,35 +130,6 @@ public class YvrUserModule extends BaseModule {
 				dao.fetchLinks(user, "profile");
 				if (user.getProfile() != null && user.getProfile().getAvatar() != null && user.getProfile().getAvatar().length > 0) {
 					buf = user.getProfile().getAvatar();
-				} 
-				else {
-					try {
-                        OAuthUser ouser = dao.fetch(OAuthUser.class, Cnd.where("userId", "=", user.getId()));
-                        if (ouser != null && ouser.getAvatar_url() != null) {
-                        	try {
-                        		Response resp = Http.get(ouser.getAvatar_url(), 5000);
-                        		if (resp != null && resp.isOK()) {
-                        			InputStream ins = resp.getStream();
-                        			ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        			buf = new byte[resp.getHeader().getInt("Content-Length", 8192)];
-                        			int len = 0;
-                        			while (-1 != (len = ins.read(buf)))
-                        				out.write(buf, 0, len);
-                        			buf = out.toByteArray();
-                        			user.getProfile().setAvatar(buf);
-                        			dao.update(user.getProfile(), "avatar");
-                        		}
-                        	} catch (IOException e) {
-                        		log.debug("load github avatar fail", e);
-                        	}
-                        }
-                    }
-                    catch (Exception e) {
-                        if (e instanceof ClassNotFoundException)
-                            log.debug("oauth plugin not fouhd?");
-                        else
-                            log.debug("something wrong", e);
-                    }
 				}
 			}
 			if (buf == null) {

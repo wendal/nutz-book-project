@@ -33,7 +33,7 @@ var vueTopicList = new Vue({
 	    	this.dataReload();
 	    },
 	    update_title : function (topic_id) {
-	    	layer.prompt({title: '请输入新标题,然后确认', formType: 1}, function(new_title, index){
+	    	layer.prompt({title: '请输入新标题,然后确认', formType: 0}, function(new_title, index){
 	    		  layer.close(index);
 	    		  if (new_title) {
 	    			  $.ajax({
@@ -54,7 +54,7 @@ var vueTopicList = new Vue({
 	    		});
 		},
 	    update_type : function (topic_id) {
-	    	layer.prompt({title: '请输入新类型,然后确认', formType: 1}, function(new_type, index){
+	    	layer.prompt({title: '请输入新类型,然后确认', formType: 0}, function(new_type, index){
 	    		  layer.close(index);
 	    		  if (new_type) {
 	    			  $.ajax({

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.core.bean;
 
+import org.nutz.dao.entity.annotation.ColDefine;
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Table;
@@ -21,6 +22,7 @@ public class SysConfigure {
     protected String key;
     
     @Column("v")
+    @ColDefine(width=1024)
     protected String value;
 
     public String getKey() {

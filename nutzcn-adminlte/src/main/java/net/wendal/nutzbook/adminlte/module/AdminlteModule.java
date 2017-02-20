@@ -5,6 +5,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
@@ -39,7 +40,7 @@ public class AdminlteModule extends BaseModule {
     public void page() {}
     
     @GET
-    @At(value="/user/login", top=true)
+    @At(value="/user/login")
     @Ok("beetl:/adminlte/login.html")
     public Object login() {
         if (Toolkit.uid() > 0) {
@@ -59,7 +60,7 @@ public class AdminlteModule extends BaseModule {
         }
         catch (Exception e) {
             log.info("send mail fail", e);
-            return ajaxFail(e.getMessage());
+            return ajaxFail(Lang.unwrapThrow(e).getMessage());
         }
     }
 }

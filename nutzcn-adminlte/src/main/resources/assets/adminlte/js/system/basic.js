@@ -9,6 +9,8 @@ var config_map = {
 		"website.long_description" : "网站完整描述",
 		"website.beian" : "备案号",
 		"website.ltd" : "公司名称",
+		"website.homepage" : "默认首页",
+		"website.loginpage" : "默认登录页"
 };
 var vueBasicConfigList = new Vue({
 	el : "#system_basic_div",
@@ -49,6 +51,18 @@ var vueBasicConfigList = new Vue({
 			var p = {};
 			for (var i in this.configs) {
 				p[this.configs[i].name] = this.configs[i].value;
+				if ("website.homepage" == this.configs[i].name) {
+					if (this.configs[i].value == "/") {
+						layer.alert("默认首页不可以是/. 通常是某个模块的根路径,例如管理后台/adminlte");
+						return;
+					}
+				}
+				if ("website.loginpage" == this.configs[i].name) {
+					if (this.configs[i].value == "/user/login") {
+						layer.alert("默认登录页不可以是/user/login. 默认/adminlte/user/login");
+						return;
+					}
+				}
 			}
 			$.ajax({
 				url : base + "/admin/config/save",
