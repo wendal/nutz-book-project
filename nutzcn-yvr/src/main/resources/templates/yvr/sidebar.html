@@ -27,17 +27,17 @@
       <p>${conf['website.title']}</p>
 
       <div>
+      	<!--# if (has_hotplug("oauth")) { #-->
         <a href="${ctxPath}/yvr/u/oauth/github" data-intro="使用Github登陆是推荐方式" data-position="bottom">
-          <span class="span-info">
-            推荐GitHub一键登录
-          </span>
+          <span class="span-info">推荐GitHub一键登录</span>
         </a>
-        
-      	<!--#if (conf['website.qq_login'] != "false"){ #-->
       	<a href='${ctxPath}/oauth/qq' id='qq_btn' data-intro="QQ登陆,我不想解释了">
       		<img src="${base}/assets/yvr/images/qq_connect.png"/>
       	</a>
       	<!--#} #-->
+      	<a href="${ctxPath}/user/login" data-intro="使用内置账号登陆" data-position="bottom">
+          <span class="span-info">普通账号登录</span>
+        </a>
       </div>
     </div>
     <!--# }  #-->
@@ -122,25 +122,6 @@
     </div>
   </div>
   <!--# }  #-->
-
-  <div class='panel'>
-    <div class='header'>
-      <span class='col_fade'>友情社区</span>
-    </div>
-    <div class='inner'>
-      <ul class="unstyled">
-      	<!--#
-      	var i = 0;
-      	while (i < 10){
-      		if (conf['website.friendship.'+i] != null){
-      	 #-->
-          <a class="topic_tag" href="${conf['website.friendship.'+i+'.url']}"  target="_blank">${conf['website.friendship.'+i]}</a>
-        <!--#	}
-        	i++;
-        } #-->
-      </ul>
-    </div>
-  </div>
   <div class='panel' data-intro="客户端二维码" data-position="top">
     <div class='header'>
       <span class='col_fade'>下载Android/ios客户端</span>
