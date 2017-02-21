@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.shiro.authz.annotation.RequiresUser;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.http.Http;
@@ -45,6 +44,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 
 import net.wendal.nutzbook.beepay.bean.BeePayment;
 import net.wendal.nutzbook.common.util.Toolkit;
+import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.core.service.AppPushService;
@@ -97,7 +97,6 @@ public class BeePayModule extends BaseModule {
     }
 
     @POST
-    @RequiresUser
     @Ok("json")
     @At
     public Object create(@Param("to")int toUserId, 
@@ -120,7 +119,6 @@ public class BeePayModule extends BaseModule {
     }
     
     @POST
-    @RequiresUser
     @Ok("json")
     @At
     public Object create2(@Param("to")int toUserId, 
@@ -147,6 +145,9 @@ public class BeePayModule extends BaseModule {
         re.put("return_url", referer);
         BeePayment payment = new BeePayment();
         payment.setOut_trade_no(out_trade_no);
+        long from_uid = Toolkit.uid();
+        if (from_uid < 1)
+            from_uid = dao.fetch(User.class, "guest").getId();
         payment.setFromUser(Toolkit.uid());
         payment.setToUser(toUserId);
         payment.setCommet(title);

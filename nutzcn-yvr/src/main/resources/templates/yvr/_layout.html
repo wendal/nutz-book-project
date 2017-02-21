@@ -9,8 +9,6 @@
   <meta property="qc:admins" content="345615513542636" />
   <meta name="apple-itunes-app" content="app-id=1082195150"/>
   <meta property="og:type" content="bbs"/>
-  <link rel="dns-prefetch" href="//hm.baidu.com"/>
-  <link rel="dns-prefetch" href="//s95.cnzz.com"/>
   <!--#if (cdnbase != null && cdnbase != ""){ #-->
   <link rel="dns-prefetch" href="${cdnbase}"/>
   <!--#} #-->
@@ -112,11 +110,15 @@ var base = "${ctxPath}";
         <!--# }  #-->
         <li><a href='${conf["website.fornew.url"]}' title="就是nutzbook哦" target="_blank">新手入门</a></li>
         <li><a href='${ctxPath}/yvr/links/about.html' title="Answer to the Ultimate Question of Life, The Universe, and Everything">关于</a></li>
-        <li><a href='${ctxPath}/sysinfo/' title="各种系统状态">系统状态</a></li>
+        <!--# if ( has_hotplug("beepay")) {  #-->
         <li><a href='${ctxPath}/pay/bc' title="查看打赏的清单">打赏</a></li>
+        <!--# }  #-->
+        <!--# if ( has_hotplug("shortit")) {  #-->
         <li><a href='${ctxPath}/s/' title="我只是想贴段代码">短点</a></li>
-        <li><a href='${ctxPath}/apidocs/' title="我可是有接口的论坛">论坛API</a></li>
+        <!--# }  #-->
+        <!--# if ( has_hotplug("nutzdw")) {  #-->
         <li><a href='${ctxPath}/nutzdw/' title="新的下载入口">下载</a></li>
+        <!--# }  #-->
         <!--# if ( null != obj.current_user!) {  #-->
         <li><a href='${ctxPath}/yvr/u/logout' data-method="post" rel="nofollow" title="不要说拜拜">退出登陆</a></li>
         <!--# } else {  #-->
@@ -171,7 +173,9 @@ var base = "${ctxPath}";
   		<input name="email" type="email" class="form-control" placeholder="用于发送验证邮件" aria-describedby="basic-addon1">
 	</div>
 	<button type="button" onclick="do_signup();" class="btn btn-primary">注册</button>
+	<!--# if ( has_hotplug("oauth")) {  #-->
 	<a href="${ctxPath}/yvr/u/oauth/github">推荐通过github登陆</a>
+	<!--# }  #-->
 	</form>
 </div>
 
@@ -193,7 +197,9 @@ var base = "${ctxPath}";
 		<img id="captcha_img" onclick="next_captcha();return false;"/>
 	</div>
 	<button type="button" onclick="do_signin();" class="btn btn-primary">登陆</button>
+	<!--# if ( has_hotplug("oauth")) {  #-->
 	<a href="${ctxPath}/yvr/u/oauth/github">推荐通过github登陆</a>
+	<!--# } #-->
 	</form>
 </div>
 <!--# if (null != conf["website.cnzz"]) { #-->
@@ -233,10 +239,12 @@ $(function() {
 <script src="${base}/assets/yvr/libs/jquery.editinplace.js" type="text/javascript"></script>
 <script src="${base}/assets/yvr/js/base.js"></script>
 <script src="${base}/assets/yvr/js/user.js"></script>
+<!--#if (has_hotplug("beepay")){ #-->
+<script src="${base}/pay/bc/js"></script>
+<!--#} #-->
 <!--#if (null != obj.current_user!){ #-->
 <script src="${base}/assets/yvr/js/jquery.autocomplete.min.js" type="text/javascript"></script>
 <script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${base}/pay/bc/js"></script>
 <script>
 var ws;
 function ws_ping() {
