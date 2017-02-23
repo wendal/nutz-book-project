@@ -6,9 +6,13 @@ import org.nutz.mvc.Setup;
 public class NgrokMainSetup implements Setup {
 
     @Override
-    public void init(NutConfig nc) {}
+    public void init(NutConfig nc) {
+        nc.getIoc().get(NgrokClientHolder.class);
+    }
 
     @Override
-    public void destroy(NutConfig nc) {}
+    public void destroy(NutConfig nc) {
+        nc.getIoc().get(NgrokClientHolder.class).getClient().stop();
+    }
 
 }

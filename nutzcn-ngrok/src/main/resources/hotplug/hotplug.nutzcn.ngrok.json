@@ -2,5 +2,12 @@
 	name : "ngrok",
 	version : "3.0.1",
 	base : "net.wendal.nutzbook.ngrok",
-	describe : "N平台的Ngrok管理模块"
+	describe : "N平台的Ngrok管理模块",
+	menu : [{
+		name : "内网穿透",
+		subs : [
+			{name:"Token管理", page:"ngrok/tokens.html"},
+			{name:"Ngrok客户端", page:"ngrok/client.html"},
+		]
+	}]
 }
