@@ -30,6 +30,7 @@ import org.nutz.resource.Scans;
 import org.quartz.Scheduler;
 
 import net.wendal.nutzbook.core.bean.IdentityPojo;
+import net.wendal.nutzbook.core.bean.SysConfigure;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.ig.RedisIdGenerator;
@@ -61,14 +62,15 @@ public class CoreMainSetup implements Setup {
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();
+
+        Dao dao = ioc.get(Dao.class);
+        dao.create(SysConfigure.class, false);
         // 获取配置对象
         conf = ioc.get(PropertiesProxy.class, "conf");
         ioc.get(ConfigureService.class).doReload();
 
 		// 初始化JedisAgent
 		JedisAgent jedisAgent = ioc.get(JedisAgent.class);
-
-        Dao dao = ioc.get(Dao.class);
         
         // 为全部标注了@Table的bean建表
         Daos.createTablesInPackage(dao, getClass().getPackage().getName(), false);
