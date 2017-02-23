@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,7 @@ import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfStamper;
 
 import net.wendal.nutzbook.beepay.bean.BeePayment;
+import net.wendal.nutzbook.common.util.OnConfigureChange;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
@@ -52,7 +54,7 @@ import net.wendal.nutzbook.core.service.AppPushService;
 @Api(name="支付服务", description="对接BeeCloud的支付服务,当前只对接了打赏", match=ApiMatchMode.NONE)
 @IocBean
 @At("/pay/bc")
-public class BeePayModule extends BaseModule {
+public class BeePayModule extends BaseModule implements OnConfigureChange {
     
     private static final Log log = Logs.get();
     
@@ -270,5 +272,10 @@ public class BeePayModule extends BaseModule {
             return HTTP_404;
         _resp.setHeader("ETag", jsEtag);
         return buf;
+    }
+
+    @Override
+    public void configureChanged(Map<String, Object> props) {
+        jsEtag = null;
     }
 }
