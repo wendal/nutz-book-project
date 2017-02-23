@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
@@ -81,7 +83,7 @@ public class NgrokAdminModule extends BaseModule {
     
     @RequiresRoles("admin")
     @At("/client/status")
-    public Object clientStatus() {
+    public Object clientStatus(HttpServletRequest req) {
         NutMap map = new NutMap();
         map.put("status", ngrokClientHolder.getClient().status);
         map.put("error", ngrokClientHolder.getClient().error);

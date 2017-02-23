@@ -1,5 +1,7 @@
 package net.wendal.nutzbook.adminlte.module;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.ioc.Ioc;
@@ -18,6 +20,7 @@ import org.nutz.mvc.view.ServerRedirectView;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.core.service.EmailService;
+import net.wendal.nutzbook.core.service.UserService;
 
 @IocBean
 @At("/adminlte")
@@ -27,11 +30,14 @@ public class AdminlteModule extends BaseModule {
     
     @Inject("refer:$ioc")
     protected Ioc ioc;
+    @Inject
+    protected UserService userService;
     
     @RequiresAuthentication
     @Ok("beetl:/adminlte/index.html")
     @At({"/", "/index"})
-    public void index(){
+    public void index(HttpServletRequest req){
+        req.setAttribute("profile", userService.getUserProfile(Toolkit.uid(), false));
     }
 
     @RequiresAuthentication

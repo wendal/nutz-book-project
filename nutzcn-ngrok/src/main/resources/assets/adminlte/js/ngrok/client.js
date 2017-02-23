@@ -55,7 +55,7 @@ var vueNgrokClient = new Vue({
 				p[this.configs[i].name] = this.configs[i].value;
 			}
 			$.ajax({
-				url : base + "/admin/config/save",
+				url : base + "/admin/config/save?notify=ngrokClientHolder",
 				type : "POST",
 				data : p,
 				dataType : "json",

@@ -13,7 +13,9 @@ import net.wendal.nutzbook.core.service.UserService;
 
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.FieldFilter;
 import org.nutz.dao.pager.Pager;
+import org.nutz.dao.util.Daos;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Lang;
@@ -97,5 +99,10 @@ public class UserServiceImpl extends IdNameEntityService<User> implements RedisK
         } else {
             return score.intValue();
         }
+    }
+    public UserProfile getUserProfile(long uid, boolean avatar) {
+        if (avatar)
+            return dao().fetch(UserProfile.class, uid);
+        return Daos.ext(dao(), FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, uid);
     }
 }

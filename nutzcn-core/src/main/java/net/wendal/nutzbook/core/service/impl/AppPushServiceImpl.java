@@ -24,6 +24,7 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
+import net.wendal.nutzbook.common.util.OnConfigureChange;
 import net.wendal.nutzbook.core.service.AppPushService;
 
 /**
@@ -33,7 +34,7 @@ import net.wendal.nutzbook.core.service.AppPushService;
  *
  */
 @IocBean(create = "init", name="appPushService")
-public class AppPushServiceImpl implements AppPushService {
+public class AppPushServiceImpl implements AppPushService, OnConfigureChange {
 
 	private static final Log log = Logs.get();
 
@@ -165,4 +166,9 @@ public class AppPushServiceImpl implements AppPushService {
             log.debug("bad jpush key?", e);
         }
 	}
+
+    public void configureChanged(Map<String, Object> props) {
+        if (props.keySet().contains("jpush.enable") || props.keySet().contains("xmpush.enable"))
+            this.reload();
+    }
 }

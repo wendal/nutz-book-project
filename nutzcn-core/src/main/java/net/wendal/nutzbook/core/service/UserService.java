@@ -1,6 +1,7 @@
 package net.wendal.nutzbook.core.service;
 
 import net.wendal.nutzbook.core.bean.User;
+import net.wendal.nutzbook.core.bean.UserProfile;
 
 public interface UserService {
 
@@ -15,5 +16,7 @@ public interface UserService {
     User fetch(long uid);
 
     int getUserScore(long userId);
+    
+    UserProfile getUserProfile(long uid, boolean avatar);
 
 }

@@ -3,9 +3,7 @@ package net.wendal.nutzbook.core.module;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,6 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.impl.AdaptorErrorContext;
 import org.nutz.mvc.upload.TempFile;
 import org.nutz.mvc.upload.UploadAdaptor;
-
 import org.nutz.plugins.apidoc.annotation.Api;
 
 import net.wendal.nutzbook.common.util.Toolkit;
@@ -44,7 +41,7 @@ import net.wendal.nutzbook.core.bean.UserProfile;
 @Api(name="用户配置文件", description="UserProfile的增删改查")
 @IocBean
 @At("/user/profile")
-public class UserProfileModule extends BaseModule {
+public abstract class UserProfileModule extends BaseModule {
 	
 	private static final Log log = Logs.get();
 	
@@ -53,16 +50,7 @@ public class UserProfileModule extends BaseModule {
 	@RequiresUser
 	@At
 	public UserProfile get() {
-	    long userId = Toolkit.uid();
-		UserProfile profile = Daos.ext(dao, FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, userId);
-		if (profile == null) {
-			profile = new UserProfile();
-			profile.setUserId(userId);
-			profile.setCreateTime(new Date());
-			profile.setUpdateTime(new Date());
-			dao.insert(profile);
-		}
-		return profile;
+		return Daos.ext(dao, FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, Toolkit.uid());
 	}
 
 	@RequiresUser
@@ -96,14 +84,6 @@ public class UserProfileModule extends BaseModule {
 	}
 
 	@RequiresUser
-	@At("/")
-	@GET
-	@Ok("jsp:jsp.user.profile")
-	public UserProfile index() {
-		return get();
-	}
-
-	@RequiresUser
 	@AdaptBy(type=UploadAdaptor.class, args={"${app.root}/WEB-INF/tmp/user_avatar", "8192", "utf-8", "20000", "102400"})
 	@POST
 	@Ok(">>:/user/profile")
@@ -133,19 +113,6 @@ public class UserProfileModule extends BaseModule {
 		
 		if (msg != null)
 			Mvcs.getHttpSession().setAttribute("upload-error-msg", msg);
-	}
-
-	@RequiresUser
-	@Ok("raw:jpg")
-	@At("/avatar")
-	@GET
-	public Object readAvatar(HttpServletRequest req) throws SQLException {
-	    long userId = Toolkit.uid();
-		UserProfile profile = Daos.ext(dao, FieldFilter.create(UserProfile.class, "^avatar$")).fetch(UserProfile.class, userId);
-		if (profile == null || profile.getAvatar() == null) {
-			return new File(Mvcs.getServletContext().getRealPath("/rs/user_avatar/none.jpg"));
-		}
-		return profile.getAvatar();
 	}
 	
 

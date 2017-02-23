@@ -41,7 +41,7 @@ var vueAppPushConfigList = new Vue({
 				p["xmpush.appSecret"] = this.xmpush.appSecret;
 			///}
 			$.ajax({
-				url : base + "/admin/config/save",
+				url : base + "/admin/config/save?notify=appPushService",
 				type : "POST",
 				data : p,
 				dataType : "json",

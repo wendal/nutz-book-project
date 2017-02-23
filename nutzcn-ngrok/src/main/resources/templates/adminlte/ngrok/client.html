@@ -40,7 +40,7 @@
             		<div class="form-group" v-if="client_status.status == 1" v-for="(reqid, key) in client_status.reqid_map">
     					<label class="col-sm-2 control-label" align="left">外网路径</label>
    						<div class="col-sm-6">
-      						<label class="col-sm-2 control-label" align="left" >{{reqid.Url}}</label>
+      						<label class="col-sm-2 control-label" align="left" ><a :href="reqid.Url">{{reqid.Url}}</a></label>
     					</div>
     					<div class="col-sm-4"></div>
             		</div>

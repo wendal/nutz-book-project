@@ -10,18 +10,22 @@ import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.log.Log;
+import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
-import net.wendal.nutzbook.core.service.AppPushService;
+import net.wendal.nutzbook.common.util.OnConfigureChange;
 import net.wendal.nutzbook.core.service.ConfigureService;
 
 @IocBean
 @At("/admin/config")
 @Ok("json")
 public class ConfigureModule extends BaseModule {
+    
+    private static final Log log = Logs.get();
 
     @Inject
     protected ConfigureService configureService;
@@ -35,17 +39,21 @@ public class ConfigureModule extends BaseModule {
     @RequiresPermissions("configure:set")
     @POST
     @At
-    public Object save(@Param("..") Map<String, Object> props) {
+    public Object save(@Param("..") Map<String, Object> props, @Param("notify")String notify) {
+        props.remove("notify");
         // 逐个更新
         for (Entry<String, Object> en : props.entrySet()) {
             String key = en.getKey();
             configureService.update(key, (String) en.getValue(), false);
         }
         configureService.doReload();
-        // 先hack一下吧...
-        if (props.keySet().contains("jpush.enable") || props.keySet().contains("xmpush.enable"))
-            ioc.get(AppPushService.class).reload();
-        return ajaxOk(null);
+        if (!Strings.isBlank(notify)) {
+            if (ioc.has(notify))
+                ioc.get(OnConfigureChange.class, notify).configureChanged(props);
+            else
+                log.warn("not such ioc bean to notify name=" + notify);
+        }
+        return ajaxOk("");
     }
 
     @RequiresPermissions("configure:query")
