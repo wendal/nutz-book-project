@@ -4,20 +4,23 @@
 	<parent>
 		<groupId>net.wendal.nutzcn</groupId>
 		<artifactId>nutzcn-parent</artifactId>
-		<version>3.0.1-SNAPSHOT</version>
+		<version>3.0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>nutzcn-webapp</artifactId>
 	<packaging>war</packaging>
+	<properties>
+		<nutzcn.version>3.0.2-SNAPSHOT</nutzcn.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
 			<artifactId>nutzcn-core</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>${nutzcn.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
 			<artifactId>nutzcn-adminlte</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>${nutzcn.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -64,7 +67,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-yvr</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -74,7 +77,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-beepay</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -84,7 +87,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-shortit</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -94,7 +97,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-dwmaster</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -104,7 +107,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-sysinfo</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -114,7 +117,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-oauth</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -124,7 +127,7 @@
 				<dependency>
 					<groupId>net.wendal.nutzcn</groupId>
 					<artifactId>nutzcn-ngrok</artifactId>
-					<version>3.0.1-SNAPSHOT</version>
+					<version>${nutzcn.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
