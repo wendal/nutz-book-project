@@ -63,8 +63,9 @@ var vueNgrokClient = new Vue({
 					if (console)
 						console.info(re);
 					if (re && re.ok) {
-						vueNgrokClient.dataReload();
 						layer.alert("保存完成");
+						vueNgrokClient.dataReload();
+						vueNgrokClient.status_reload();
 					} else if (re && re.msg) {
 						layer.alert("失败:" + re.msg);
 					}

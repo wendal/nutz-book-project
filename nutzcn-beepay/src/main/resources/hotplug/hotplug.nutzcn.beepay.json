@@ -8,5 +8,8 @@
 		subs : [
 			{name:"BeeCloud设置", page:"beepay/basic.html"}
 		]
-	}]
+	}],
+	event : {
+		config_change : ["beePayModule"]
+	}
 }

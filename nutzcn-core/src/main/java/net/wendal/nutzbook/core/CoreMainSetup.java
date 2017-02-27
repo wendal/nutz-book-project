@@ -5,10 +5,13 @@ import java.nio.charset.Charset;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.beetl.core.GroupTemplate;
+import org.beetl.ext.nutz.BeetlViewMaker;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.annotation.Table;
@@ -20,15 +23,18 @@ import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.NutConfig;
 import org.nutz.mvc.Setup;
+import org.nutz.mvc.ViewMaker;
 import org.nutz.plugins.slog.service.SlogService;
 import org.nutz.resource.Scans;
 import org.quartz.Scheduler;
 
+import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.IdentityPojo;
 import net.wendal.nutzbook.core.bean.SysConfigure;
 import net.wendal.nutzbook.core.bean.User;
@@ -123,6 +129,23 @@ public class CoreMainSetup implements Setup {
 		as.checkBasicRoles();
 
 		Mvcs.disableFastClassInvoker = false;
+		
+		// BeetlViewMaker要处理一下
+		for (ViewMaker vm : nc.getViewMakers()) {
+            if (vm instanceof BeetlViewMaker) {
+                GroupTemplate groupTemplate = ((BeetlViewMaker)vm).groupTemplate;
+                Map<String, Object> share = groupTemplate.getSharedVars();
+                if (share == null) {
+                    share = new NutMap();
+                    groupTemplate.setSharedVars(share);
+                }
+                NutMap re = Toolkit.getTemplateShareVars();
+                share.putAll(re);
+                groupTemplate.getSharedVars().put("ioc", ioc);
+                groupTemplate.getSharedVars().put("conf", conf);
+                groupTemplate.getSharedVars().put("cdnbase", "");// 暂时弃用
+            }
+        }
 	}
 
 	public void destroy(NutConfig conf) {

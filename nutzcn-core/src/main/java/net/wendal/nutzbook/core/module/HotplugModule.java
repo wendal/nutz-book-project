@@ -7,8 +7,10 @@ import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
+import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -31,6 +33,10 @@ public class HotplugModule extends BaseModule {
     
     @Inject
     protected Hotplug hotplug;
+    
+    protected PubSubService pubSubService;
+    
+    protected String selfId = R.UU32();
     
     @RequiresRoles("admin")
     @At
@@ -63,6 +69,7 @@ public class HotplugModule extends BaseModule {
     @AdaptBy(type=UploadAdaptor.class, args="${app.root}/WEB-INF/tmp/hotplug")
     public NutMap add(@Param("file")TempFile f) throws Exception {
         boolean ok = hotplug.add(f.getFile());
+        pubSubService.fire("hotplug:add", selfId + "," + f.getName());
         return ajaxOk(ok);
     }
     
@@ -71,6 +78,7 @@ public class HotplugModule extends BaseModule {
     @At
     public NutMap disable(@Param("name")String name) throws Exception {
         hotplug.disable(name);
+        pubSubService.fire("hotplug:disable", selfId + "," + name);
         return ajaxOk(null);
     }
     
@@ -81,6 +89,7 @@ public class HotplugModule extends BaseModule {
         for (HotplugConfig hc : Hotplug.getHotPlugJarList(true)) {
             if (sha1.equals(hc.getSha1())) {
                 hotplug.enable(new File(hc.getOriginPath()), null);
+                pubSubService.fire("hotplug:enable", selfId + "," + sha1);
                 return ajaxOk(null);
             }
         }
@@ -95,6 +104,7 @@ public class HotplugModule extends BaseModule {
             if (sha1.equals(hc.getSha1())) {
                 boolean ok = new File(hc.getOriginPath()).delete();
                 new File(hc.getOriginPath()+".enable").delete();
+                pubSubService.fire("hotplug:delete", selfId + "," + sha1);
                 return ajaxOk(ok);
             }
         }

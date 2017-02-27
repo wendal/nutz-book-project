@@ -20,7 +20,8 @@
 				{name:"App推送设置", page:"system/app_push.html"},
 				{name:"数据字典", page:"system/dict.html"},
 				{name:"插件管理", page:"system/hotplug_manager.html"},
-				{name:"插件仓库", page:"system/hotplug_repo.html"}
+				{name:"插件仓库", page:"system/hotplug_repo.html"},
+				{name:"系统日志", page:"system/slog.html"}
 			]
 		},
 		

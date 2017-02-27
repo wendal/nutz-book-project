@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.web;
 
+import org.beetl.ext.nutz.BeetlViewMaker;
 import org.nutz.integration.shiro.ShiroSessionProvider;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.ChainBy;
@@ -18,8 +19,6 @@ import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.plugins.apidoc.annotation.ApiMatchMode;
 import org.nutz.plugins.hotplug.Hotplug;
 import org.nutz.plugins.view.pdf.PdfViewMaker;
-
-import net.wendal.nutzbook.common.beetl.BeetlViewMaker2;
 
 @Api(name = "NutzCN论坛", description = "The answer to life, the universe and everything",
         match = ApiMatchMode.ONLY)
@@ -40,7 +39,7 @@ import net.wendal.nutzbook.common.beetl.BeetlViewMaker2;
 @Ok("json:full")
 @Fail("jsp:jsp.500")
 @Localization(value = "msg/", defaultLocalizationKey = "zh-CN")
-@Views({BeetlViewMaker2.class, PdfViewMaker.class})
+@Views({BeetlViewMaker.class, PdfViewMaker.class})
 @SessionBy(ShiroSessionProvider.class)
 @UrlMappingBy(ApidocUrlMapping.class)
 @LoadingBy(Hotplug.class)

@@ -276,6 +276,7 @@ public class BeePayModule extends BaseModule implements OnConfigureChange {
 
     @Override
     public void configureChanged(Map<String, Object> props) {
-        jsEtag = null;
+        if (props.containsKey("bc.appId"))
+            jsEtag = null;
     }
 }
