@@ -56,7 +56,22 @@ var vueNgrokTokensList = new Vue({
 		    		layer.alert("加载失败:" + err);
 		    	}
 		    });
-	    }
+	    },
+		clear_users : function(day) {
+			$.ajax({
+				url : base + "/admin/ngrok/token/clear",
+				type : "POST",
+				data : "day=" + day,
+				dataType : "json",
+				success : function(re) {
+					if (re && re.ok) {
+						vueNgrokClient.client_status = re.data;
+					} else if (re && re.msg) {
+						layer.alert("有问题? " + re.msg);
+					}
+				},
+			});
+		}
 	},
 	created: function () {
 	    this.dataReload();

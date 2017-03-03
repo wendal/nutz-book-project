@@ -3,6 +3,7 @@ package net.wendal.nutzbook.ngrok.module;
 import static org.nutz.integration.jedis.RedisInterceptor.jedis;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -23,6 +24,8 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
+import net.wendal.nutzbook.common.util.RedisKey;
+import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.ngrok.NgrokClientHolder;
@@ -60,8 +63,16 @@ public class NgrokAdminModule extends BaseModule {
             String domain = jedis().hget("ngrok", token);
             NutMap re = new NutMap("uid", uid).setv("token", token).setv("domain", domain);
             User user = dao.fetch(User.class, Long.parseLong(uid));
-            if (user != null)
+            if (user != null) {
                 re.put("username", user.getName());
+                // 查一下最后登录时间
+                Double lvtime = jedis().zscore(RedisKey.RKEY_USER_LVTIME, uid);
+                if (lvtime == null) {
+                    re.put("lvtime", "Never");
+                } else {
+                    re.put("lvtime", Toolkit.createAt(new Date(lvtime.longValue())));
+                }
+            }
             list.add(re);
         }
 	    return ajaxOk(new QueryResult(list, pager));
@@ -74,9 +85,42 @@ public class NgrokAdminModule extends BaseModule {
     public Object deleteToken(@Param("token")String token) {
         // 首先, 删除ngrok2上的token
         jedis().hdel("ngrok", token);
-        for(Entry<String, String> en : jedis().hgetAll("ngrok").entrySet()) {
+        for(Entry<String, String> en : jedis().hgetAll("ngrok2").entrySet()) {
             if (en.getValue().equals(token))
                 jedis().hdel("ngrok2", en.getKey());
+        }
+        return ajaxOk("");
+    }
+	
+	@POST
+    @RequiresRoles("admin")
+    @At("/token/clear")
+    @Aop("redis")
+    public Object clearToken(@Param("day")int day) {
+        // 首先, 删除ngrok2上的token
+	    if (day < 30)
+	        day = 30;
+        for(Entry<String, String> en : jedis().hgetAll("ngrok2").entrySet()) {
+            String uid = en.getKey();
+            String token = en.getValue();
+            User user = dao.fetch(User.class, Long.parseLong(uid));
+            if (user == null || user.isLocked()) {
+                jedis().hdel("ngrok2", uid);
+                jedis().hdel("ngrok", token);
+            } else {
+                Double lvtime = jedis().zscore(RedisKey.RKEY_USER_LVTIME, uid);
+                if (lvtime == null) {
+                    jedis().hdel("ngrok2", uid);
+                    jedis().hdel("ngrok", token);
+                } else {
+                    long diff = System.currentTimeMillis() - lvtime.longValue();
+                    log.debug("最后登录时间: " + Toolkit.createAt(new Date(lvtime.longValue())));
+                    if (diff > day * 86400L*1000) {
+                        jedis().hdel("ngrok2", uid);
+                        jedis().hdel("ngrok", token);
+                    }
+                }
+            }
         }
         return ajaxOk("");
     }

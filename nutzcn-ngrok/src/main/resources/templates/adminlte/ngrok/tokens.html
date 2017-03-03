@@ -26,6 +26,7 @@
                   <th>用户名</th>
                   <th>token值</th>
                   <th>子域名</th>
+                  <td>用户最后访问时间</td>
                   <th>操作</th>
                 </tr>
                 </thead>
@@ -34,6 +35,7 @@
                   <td>{{token.username}}</td>
                   <td>{{token.token}}</td>
                   <td>{{token.domain}}</td>
+                  <td>{{token.lvtime}}</td>
                   <td>
                   	<button class="btn" v-on:click="do_delete(token.token)">删除该token</button>
                   </td>
@@ -46,6 +48,7 @@
 			<div class="box">
 				<div>
 					<div class='inner'>
+						<button class="btn" v-on:click="clear_users(30)">清除30天内不活跃的用户</button>
 						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
 						<button class="btn" v-on:click="changePage(1)" :disabled="pager.pageNumber == 1">第一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" :disabled="pager.pageNumber == 1">上一页</button>
