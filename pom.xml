@@ -24,7 +24,7 @@
 		<module>nutzcn-sysinfo</module>
 		<module>nutzcn-shortit</module>
 		
-		<module>nutzcn-weixinbase</module>
+		<module>nutzcn-weixin</module>
 	</modules>
 	<build>
 		<plugins>
