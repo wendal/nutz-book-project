@@ -12,7 +12,6 @@ import javax.management.ObjectName;
 
 import org.beetl.core.GroupTemplate;
 import org.beetl.ext.nutz.BeetlViewMaker;
-import org.nutz.dao.Chain;
 import org.nutz.dao.Dao;
 import org.nutz.dao.Sqls;
 import org.nutz.dao.entity.annotation.Table;
@@ -147,14 +146,6 @@ public class CoreMainSetup implements Setup {
                 groupTemplate.getSharedVars().put("cdnbase", "");// 暂时弃用
             }
         }
-		
-		dao.drop("t_test");
-		dao.execute(Sqls.create("create table t_test(id int AUTO_INCREMENT PRIMARY KEY , name varchar(256) )"));
-		NutMap map = new NutMap(".table", "t_test");
-		map.setv("+*id", 0);
-		map.setv("name", "wendal");
-		dao.insert(map);
-		System.out.println(map);
 	}
 
 	public void destroy(NutConfig conf) {
