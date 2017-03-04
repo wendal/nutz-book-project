@@ -15,7 +15,7 @@ var vueAppPushConfigList = new Vue({
 					if (re && re.ok) {
 						vueAppPushConfigList.jpush.enable = "true" == re.data["jpush.enable"];
 						vueAppPushConfigList.jpush.masterSecret = re.data["jpush.masterSecret"];
-						vueAppPushConfigList.jpush.appKey = re.data["jpush.appKey.msg"];
+						vueAppPushConfigList.jpush.appKey = re.data["jpush.appKey"];
 					} else if (re && re.msg) {
 						layer.alert(re.msg);
 					}
