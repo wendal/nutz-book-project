@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
 			<artifactId>nutzcn-core</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>3.0.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
