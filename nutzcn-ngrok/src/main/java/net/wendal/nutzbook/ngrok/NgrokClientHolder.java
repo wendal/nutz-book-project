@@ -30,6 +30,8 @@ public class NgrokClientHolder implements OnConfigureChange {
     }
 
     public void configureChanged(Map<String, Object> props) {
+        if (!props.containsKey("ngrok.auto_start"))
+            return;
         if (client.status == 1) {
             client.stop();
         }
