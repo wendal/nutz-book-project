@@ -34,6 +34,7 @@ public class HotplugModule extends BaseModule {
     @Inject
     protected Hotplug hotplug;
     
+    @Inject
     protected PubSubService pubSubService;
     
     protected String selfId = R.UU32();
