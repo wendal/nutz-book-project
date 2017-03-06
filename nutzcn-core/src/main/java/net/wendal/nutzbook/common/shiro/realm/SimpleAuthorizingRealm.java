@@ -29,7 +29,7 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 		if (principals == null) {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 		}
-		long userId = (Long) principals.getPrimaryPrincipal();
+		long userId = ((Number) principals.getPrimaryPrincipal()).longValue();
 		User user = dao().fetch(User.class, userId);
 		if (user == null)
 			return null;
