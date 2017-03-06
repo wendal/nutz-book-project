@@ -157,7 +157,7 @@ public class AppPushServiceImpl implements AppPushService, OnConfigureChange {
                     log.warn("xmpush using sandbox mode!");
                     Constants.useSandbox();
                 } else {
-                    Constants.useSandbox();
+                    Constants.useOfficial();
                 }
                 xmpush = new Sender(conf.get("xmpush.appSecret"));
             }
