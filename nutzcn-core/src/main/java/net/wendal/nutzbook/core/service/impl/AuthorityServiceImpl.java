@@ -60,8 +60,8 @@ public class AuthorityServiceImpl implements AuthorityService {
 				}
 			}
 		}
-		log.debugf("pkg=%s found %s", pkg, permissions);
-		log.debugf("pkg=%s found %s", pkg, roles);
+		log.debugf("pkg=%s found permissions=%s", pkg, permissions);
+		log.debugf("pkg=%s found roles=%s", pkg, roles);
 
 
         for (String permission : permissions) {

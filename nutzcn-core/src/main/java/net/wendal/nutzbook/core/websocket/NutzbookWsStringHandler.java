@@ -6,35 +6,28 @@ import java.util.Set;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
-import org.nutz.integration.jedis.JedisAgent;
 import org.nutz.json.Json;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.plugins.mvc.websocket.WsHandler;
+import org.nutz.plugins.mvc.websocket.WsRoomProvider;
 
-import redis.clients.jedis.Jedis;
-
-public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
-    
-    protected JedisAgent jedisAgent;
-    
-    protected Session session;
-    
-    protected NutMap attrs;
-    
-    protected Set<String> rooms;
-    
-    protected String uu32;
+public class NutzbookWsStringHandler implements WsHandler, MessageHandler.Whole<String> {
     
     private static final Log log = Logs.get();
     
-    public NutzbookWsStringHandler(String uu32, Session session, JedisAgent jedisAgent) {
-        this.jedisAgent = jedisAgent;
-        this.session = session;
-        attrs = new NutMap();
+    protected Set<String> rooms;
+    
+    protected WsRoomProvider roomProvider;
+    
+    protected Session session;
+    protected String prefix;
+    
+    public NutzbookWsStringHandler(String prefix) {
         rooms = new HashSet<>();
-        this.uu32 = uu32;
+        this.prefix = prefix;
     }
 
     public void onMessage(String message) {
@@ -61,35 +54,20 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
     
     public void join(String room) {
         if (!Strings.isBlank(room)) {
-            log.debugf("session(id=%s) join room(name=%s)", uu32, room);
-            try (Jedis jedis = jedisAgent.getResource()) {
-                rooms.add(room);
-                jedis.hset(NutzbookWebsocket.prefix+room, uu32, "");
-            }
+            rooms.add(room);
+            room = prefix + room;
+            log.debugf("session(id=%s) join room(name=%s)", session.getId(), room);
+            roomProvider.join(room, session.getId());
         }
     }
     
     public void left(String room) {
         if (!Strings.isBlank(room)) {
-            log.debugf("session(id=%s) left room(name=%s)", uu32, room);
-            try (Jedis jedis = jedisAgent.getResource()) {
-                rooms.add(room);
-                jedis.hdel(NutzbookWebsocket.prefix+room, uu32);
-            }
+            rooms.remove(room);
+            room = prefix + room;
+            log.debugf("session(id=%s) left room(name=%s)", session.getId(), room);
+            roomProvider.left(room, session.getId());
         }
-    }
-
-    public Session getSession() {
-        return session;
-    }
-    
-    public NutzbookWsStringHandler setAttr(String key, Object val) {
-        this.attrs.put(key, val);
-        return this;
-    }
-    
-    public Object getAttr(String key) {
-        return this.attrs.get(key);
     }
 
     public void depose() {
@@ -97,8 +75,13 @@ public class NutzbookWsStringHandler implements MessageHandler.Whole<String> {
             left(room);
         }
     }
-    
-    public String getUu32() {
-        return uu32;
+
+    public void setRoomProvider(WsRoomProvider roomProvider) {
+        this.roomProvider = roomProvider;
     }
+    
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
 }
