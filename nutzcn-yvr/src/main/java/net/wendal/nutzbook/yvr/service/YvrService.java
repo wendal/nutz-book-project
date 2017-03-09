@@ -46,7 +46,6 @@ import net.wendal.nutzbook.core.bean.CResult;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.service.AppPushService;
-import net.wendal.nutzbook.core.websocket.NutzbookWebsocket;
 import net.wendal.nutzbook.yvr.bean.SubForum;
 import net.wendal.nutzbook.yvr.bean.Topic;
 import net.wendal.nutzbook.yvr.bean.TopicReply;
@@ -521,7 +520,7 @@ public class YvrService implements RedisKey, PubSub {
         map.put("options", new NutMap().setv("tag", tag));
         map.put("byuser", byuser);
         String msg = Json.toJson(map, JsonFormat.compact());
-        pubSubService.fire(NutzbookWebsocket.prefix+room, msg);
+        pubSubService.fire("wsroom:"+room, msg);
     }
 
     @Override

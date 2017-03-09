@@ -10,6 +10,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.FieldFilter;
 import org.nutz.dao.pager.Pager;
 import org.nutz.dao.util.Daos;
+import org.nutz.integration.shiro.annotation.NutzRequiresPermissions;
 import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
@@ -49,7 +50,7 @@ public class AuthorityModule extends BaseModule {
     /**
      * 用户列表
      */
-    @RequiresPermissions("authority:user:query")
+    @NutzRequiresPermissions(value="authority:user:query", name="用户查询", tag="权限管理")
     @At
     @Ok("json:{locked:'password|salt',ignoreNull:true}") // 禁止把password和salt字段进行传输
     public Object users(@Param("query") String query, @Param("..") Pager pager) {
@@ -60,7 +61,7 @@ public class AuthorityModule extends BaseModule {
      * 角色列表
      */
     @Ok("json")
-    @RequiresPermissions("authority:role:query")
+    @NutzRequiresPermissions(value="authority:role:query", name="角色查询", tag="权限管理")
     @At
     public Object roles(@Param("query") String query, @Param("..") Pager pager) {
         return ajaxOk(query(Role.class, Cnd.NEW().asc("id"), pager, null));

@@ -39,7 +39,6 @@ public class HotplugModule extends BaseModule {
     
     protected String selfId = R.UU32();
     
-    @RequiresRoles("admin")
     @At
     public Object list(@Param("active")boolean activeOnly) throws Exception {
         List<HotplugConfig> activeList = Hotplug.getActiveHotPlugList();
