@@ -37,10 +37,12 @@
       <a href="${base}/ngrok/config/download">(点我下载)</button>
       <a href="${base}/ngrok/me">查看使用说明</a>
     </div>
+    <!--# if (has_hotplug("weixin")) { #-->
     <div class='header'>
-      <span class='col_fade'>小程序转发根地址</span>
-      <a href="https://nutz.cn/wxopenproxy/${obj.current_user.loginname}/">https://nutz.cn/wxopenproxy/${obj.current_user.loginname}/</button>
+    	<img alt="绑定微信登录" src="https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon32_appwx_logo.png">
+    	<a href="${base}/weixin/qrconnect">绑定微信登录</a>
     </div>
+    <!--# } #-->
     <div class='inner'>
       <span id="access-token-qrcode" style="display: none;"></span>
       <script type="text/javascript">
