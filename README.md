@@ -1,9 +1,6 @@
-# N平台
+# NutzCN平台
 
-Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
-
-[![Build Status](https://travis-ci.org/wendal/nutz-book-project.png?branch=v3.x)](https://travis-ci.org/wendal/nutz-book-project)
-[license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)]()
+恩,试试吧
 
 与nutzbook相关的2.x分支在这里[master分支](https://github.com/wendal/nutz-book-project/tree/master)
 
@@ -11,8 +8,8 @@ Nutz主库地址 https://github.com/nutzam/nutz 来个star呗
 
 * mysql/oracle/pgsql/h2 数据库
 * redis 3.0+
-* maven 3.3+
-* Jdk 8+
+* maven 3.3.9+
+* Jdk 8u121+
 
 **本项目必须依赖Redis数据库** http://redis.io
 
@@ -54,6 +51,4 @@ iOS客户端
 
 ## License
 
-MIT License或Apache License 双授权协议. -- 事实上我懒得选.
-
-极为宽松,请大胆商用,大胆闭源,本库的代码完全免费. 任选MIT/Apache协议执行即可.
+MIT License或Apache License 双授权协议
