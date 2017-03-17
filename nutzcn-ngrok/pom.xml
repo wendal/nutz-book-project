@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>net.wendal.nutzcn</groupId>
 		<artifactId>nutzcn-parent</artifactId>
-		<version>3.0.2-SNAPSHOT</version>
+		<version>3.0.2</version>
 	</parent>
 	<artifactId>nutzcn-ngrok</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
 			<artifactId>nutzcn-core</artifactId>
-			<version>3.0.2-SNAPSHOT</version>
+			<version>3.0.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-ngrok</artifactId>
-			<version>1.r.61-SNAPSHOT</version>
+			<version>1.r.60.r4</version>
 		</dependency>
 	</dependencies>
 	<build>

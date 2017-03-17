@@ -1,8 +1,8 @@
 {
 	name : "beepay",
-	version : "3.0.1",
+	version : "3.0.2",
 	base : "net.wendal.nutzbook.beepay",
-	describe : "N平台的支付模块,当前使用BeeCloud",
+	describe : "NutzCN的支付模块,当前使用BeeCloud",
 	menu : [{
 		name : "支付模块",
 		subs : [

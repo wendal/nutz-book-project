@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>net.wendal.nutzcn</groupId>
 		<artifactId>nutzcn-parent</artifactId>
-		<version>3.0.2-SNAPSHOT</version>
+		<version>3.0.2</version>
 	</parent>
 	<artifactId>nutzcn-yvr</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
 			<artifactId>nutzcn-core</artifactId>
-			<version>3.0.2-SNAPSHOT</version>
+			<version>3.0.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

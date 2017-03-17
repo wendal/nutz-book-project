@@ -1,8 +1,8 @@
 {
 	name : "core",
-	version : "3.0.1",
+	version : "3.0.2",
 	base : "net.wendal.nutzbook.core",
-	describe : "N平台的核心模块",
+	describe : "NutzCN的核心模块",
 	event : {
 		config_change : ["appPushService"]
 	}

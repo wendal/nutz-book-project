@@ -1,6 +1,6 @@
 {
 	name : "webhook",
-	version : "3.0.1",
+	version : "3.0.2",
 	base : "net.wendal.nutzbook.webhook",
-	describe : "N平台的Web钩子模块"
+	describe : "NutzCN的Web钩子模块"
 }

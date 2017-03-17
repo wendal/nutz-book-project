@@ -1,8 +1,8 @@
 {
 	name : "yvr",
-	version : "3.0.1",
+	version : "3.0.2",
 	base : "net.wendal.nutzbook.yvr",
-	describe : "N平台的社区模块",
+	describe : "NutzCN的社区模块",
 	menu : [{
 		name : "论坛管理",
 		subs : [

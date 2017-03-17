@@ -1,8 +1,8 @@
 {
 	name : "adminlte",
-	version : "3.0.1",
+	version : "3.0.2",
 	base : "net.wendal.nutzbook.adminlte",
-	describe : "N平台的后台管理模块",
+	describe : "NutzCN的后台管理模块",
 	menu : [
 		{
 			name : "Authority管理",

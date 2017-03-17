@@ -1,8 +1,8 @@
 {
 	name : "ngrok",
-	version : "3.0.1",
+	version : "3.0.2",
 	base : "net.wendal.nutzbook.ngrok",
-	describe : "N平台的Ngrok管理模块",
+	describe : "NutzCN的Ngrok管理模块",
 	menu : [{
 		name : "内网穿透",
 		subs : [

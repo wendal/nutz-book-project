@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>net.wendal.nutzcn</groupId>
 		<artifactId>nutzcn-parent</artifactId>
-		<version>3.0.2-SNAPSHOT</version>
+		<version>3.0.2</version>
 	</parent>
 	<artifactId>nutzcn-webapp</artifactId>
 	<packaging>war</packaging>
 	<properties>
-		<nutzcn.version>3.0.2-SNAPSHOT</nutzcn.version>
+		<nutzcn.version>3.0.2</nutzcn.version>
 	</properties>
 	<dependencies>
 		<dependency>
