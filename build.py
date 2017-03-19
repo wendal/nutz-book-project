@@ -4,51 +4,37 @@ import os.path, sys, subprocess
 import shutil, zipfile, urllib
 
 if os.path.exists("dst"):
-	shutil.rmtree("dst")
+    shutil.rmtree("dst")
 os.makedirs("dst/plugins")
 
 # 首先,全部模块安装一次
-subprocess.check_call("mvn clean install -Dmaven.test.skip=true", shell=True)
+subprocess.check_call("mvn clean package install -Dmaven.test.skip=true", shell=True)
 
 # 逐个插件模块进行编译
 for fname in os.listdir(os.getcwd()):
-	if not fname.startswith("nutzcn-") :
-		continue
-	if fname.startswith("nutzcn-webapp") or fname.startswith("nutzcn-core") or fname.startswith("nutzcn-adminlte"):
-		continue
-	subprocess.call("mvn package assembly:single -Dmaven.test.skip=true", shell=True, cwd=fname)
-	
+    if not fname.startswith("nutzcn-") :
+        continue
+    if fname.startswith("nutzcn-webapp") or fname.startswith("nutzcn-core") or fname.startswith("nutzcn-adminlte"):
+        continue
+    subprocess.call("mvn clean package assembly:single -Dmaven.test.skip=true -U", shell=True, cwd=fname)
+    
 for root, dirs, files in os.walk(os.getcwd()):
-		for name in files:
-			if name.endswith("jar-with-dependencies.jar") :
-				fsource = os.path.join(root, name)
-				shutil.copyfile(fsource, "dst/plugins/" + name[0:-26] + ".jar")
-			if name.startswith("nutzcn-webapp") and name.endswith(".war") :
-				fsource = os.path.join(root, name)
-				shutil.copyfile(fsource, "dst/ROOT.war")
+        for name in files:
+            if name.startswith("nutzcn-starter-") and name.endswith("jar-with-dependencies.jar"):
+                fsource = os.path.join(root, name)
+                shutil.copyfile(fsource, "dst/starter.jar")
+            elif name.endswith("jar-with-dependencies.jar") :
+                fsource = os.path.join(root, name)
+                shutil.copyfile(fsource, "dst/plugins/" + name[0:-26] + ".jar")
+            elif name.startswith("nutzcn-webapp") and name.endswith(".war") :
+                fsource = os.path.join(root, name)
+                shutil.copyfile(fsource, "dst/ROOT.war")
 				
-# 下载tomcat
-if not os.path.exists("apache-tomcat-8.5.12-windows-x64.zip"):
-	print "download tomcat , please wait"
-	urllib.urlretrieve ("http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.12/bin/apache-tomcat-8.5.12-windows-x64.zip", "apache-tomcat-8.5.12-windows-x64.zip")
-	print "download tomcat complete"
-	
-# 释放tomcat
-with zipfile.ZipFile("apache-tomcat-8.5.12-windows-x64.zip","r") as zip_ref:
-	zip_ref.extractall("dst/")
-	
-# 干掉webapps下的文件
-for fname in os.listdir(os.getcwd() + "/dst/apache-tomcat-8.5.12/webapps"):
-	shutil.rmtree(os.getcwd() + "/dst/apache-tomcat-8.5.12/webapps/" + fname)
-	
-# 释放ROOT.war
-with zipfile.ZipFile("dst/ROOT.war","r") as zip_ref:
-	zip_ref.extractall("dst/apache-tomcat-8.5.12/webapps/ROOT/")
+# 创建Runnable War
+subprocess.check_call("java -jar starter.jar -inject ROOT.war -output nutzcn.jar", shell=True, cwd="dst/")
+subprocess.check_call("pack200 -r -G nutzcn.jar", shell=True, cwd="dst/")
 os.remove("dst/ROOT.war")
-	
-# 设置必要的java属性
-with open("dst/apache-tomcat-8.5.12/bin/setenv.bat", "w") as f :
-	f.write("set JAVA_OPTS=-Dfile.encoding=UTF-8 -Dlog4j2.disable.jmx=true")
+os.remove("dst/starter.jar")
 
 # 拷贝redis
 os.makedirs("dst/redis")
@@ -57,36 +43,25 @@ shutil.copyfile("C:\\Program Files\\Redis\\redis-cli.exe", "dst/redis/redis-cli.
 shutil.copyfile("C:\\Program Files\\Redis\\redis.windows.conf", "dst/redis/redis.windows.conf")
 
 # 拷贝数据库配置文件
-os.makedirs("dst/apache-tomcat-8.5.12/webapps/ROOT/WEB-INF/classes/custom")
-shutil.copyfile("nutzcn-core/src/main/resources/custom/db.properties", "dst/apache-tomcat-8.5.12/webapps/ROOT/WEB-INF/classes/custom/db.properties")
+os.makedirs("dst/custom")
+shutil.copyfile("nutzcn-core/src/main/resources/custom/db.properties", "dst/custom/db.properties")
 
-if os.path.exists("notepad++.exe") :
-    shutil.copyfile("notepad++.exe", "dst/notepad++.exe")
-    with open(u"dst/修改数据库配置.bat", "w") as f :
-	    f.write('''cd %~dp0
-notepad++.exe %~dp0\\apache-tomcat-8.5.12\\webapps\\ROOT\\WEB-INF\\classes\\custom\\db.properties''')
-
-with open(u"dst/启动tomcat.bat", "w") as f :
-	f.write('''cd %~dp0
-cd	apache-tomcat-8.5.12\\
-bin\\startup.bat''')
-with open(u"dst/关闭tomcat.bat", "w") as f :
-	f.write('''cd %~dp0
-cd	apache-tomcat-8.5.12\\
-bin\\shutdown.bat''')
+with open(u"dst/启动.bat", "w") as f :
+    f.write('''cd %~dp0
+java -Dfile.encoding=UTF-8 -jar nutzcn.war ''')
 with open(u"dst/启动redis.bat", "w") as f :
-	f.write('''cd %~dp0
+    f.write('''cd %~dp0
 cd redis
 start redis-server.exe redis.windows.conf''')
 
 # 写一下说明文件
 with open(u"dst/读我.txt", "w") as f :
-	f.write('''
+    f.write('''
 # 启动须知
 
 1. 必须使用JDK8
 2. 本项目依赖Redis, 可以双击"启动redis.bat", 启动一个redis, 若已经安装redis,请无视
-3. 数据库账号密码位于 apache-tomcat-8.5.12\webapps\ROOT\WEB-INF\classes\custom\db.properties
+3. 数据库账号密码位于 custom\db.properties
 
 # 后台管理系统
 
@@ -102,4 +77,4 @@ with open(u"dst/读我.txt", "w") as f :
 项目地址: http://git.oschina.net/wendal/nutz-book-project
 
 反馈和意见,请访问 https://nutz.cn
-	''')
+    ''')

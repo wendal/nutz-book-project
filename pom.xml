@@ -25,6 +25,7 @@
 		<module>nutzcn-shortit</module>
 		
 		<module>nutzcn-weixin</module>
+		<module>nutzcn-starter</module>
 	</modules>
 	<build>
 		<plugins>

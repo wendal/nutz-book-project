@@ -131,7 +131,7 @@ public class AppPushServiceImpl implements AppPushService, OnConfigureChange {
 			return;
 		try {
 			Result re = xmpush.sendToAlias(message, alias, 3);
-			log.info("xmpush result=" + re.getData());
+			log.info("xmpush result=" + re);
 		} catch (Exception e) {
 			log.debugf("send to %s fail", alias, e);
 		}
