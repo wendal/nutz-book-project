@@ -252,6 +252,12 @@
 
 <script type="text/javascript">
 var base = "${base}";
+if (!String.prototype.startsWith) {
+	  String.prototype.startsWith = function(searchString, position) {
+	    position = position || 0;
+	    return this.indexOf(searchString, position) === position;
+	  };
+	}
 </script>
 <!-- jQuery 2.2.3 -->
 <script src="${base}/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js"></script>
