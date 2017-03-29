@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-jedis</artifactId>
-			<version>1.r.60.r4</version>
+			<version>1.r.61-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.40</version>
+			<version>5.1.41</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -248,6 +248,11 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-cache</artifactId>
 			<version>1.r.60.r4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutzwx</artifactId>
+			<version>1.r.61-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
