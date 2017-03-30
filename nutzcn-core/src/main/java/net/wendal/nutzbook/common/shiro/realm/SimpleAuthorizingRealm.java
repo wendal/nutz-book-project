@@ -42,6 +42,13 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
             dao().fetchLinks(user.getRoles(), null);
             for (Role role : user.getRoles()) {
                 auth.addRole(role.getName());
+                // 管理员有全部权限
+                if ("admin".equals(role.getName())) {
+                    for (Permission p : dao.query(Permission.class, null)) {
+                        auth.addStringPermission(p.getName());
+                        break;
+                    }
+                }
                 if (role.getPermissions() != null) {
                     for (Permission p : role.getPermissions()) {
                         auth.addStringPermission(p.getName());
