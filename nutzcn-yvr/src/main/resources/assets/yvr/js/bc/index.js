@@ -42,7 +42,7 @@ var bcListVue = new Vue({
 			});
 		},
 		do_pay: function(uid) {
-			pay_tips(uid, this.amount);
+			pay_tips(uid);
 		},
 		jump: function(to) {
 			this.pageNumber = to;
