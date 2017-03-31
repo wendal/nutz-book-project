@@ -8,7 +8,7 @@ if os.path.exists("dst"):
 os.makedirs("dst/plugins")
 
 # 首先,全部模块安装一次
-subprocess.check_call("mvn clean package install -Dmaven.test.skip=true", shell=True)
+subprocess.check_call("mvn package install -Dmaven.test.skip=true", shell=True)
 
 # 逐个插件模块进行编译
 for fname in os.listdir(os.getcwd()):
@@ -16,7 +16,7 @@ for fname in os.listdir(os.getcwd()):
         continue
     if fname.startswith("nutzcn-webapp") or fname.startswith("nutzcn-core") or fname.startswith("nutzcn-adminlte"):
         continue
-    subprocess.call("mvn clean package assembly:single -Dmaven.test.skip=true -U", shell=True, cwd=fname)
+    subprocess.call("mvn package assembly:single -Dmaven.test.skip=true -U", shell=True, cwd=fname)
     
 for root, dirs, files in os.walk(os.getcwd()):
         for name in files:
@@ -32,7 +32,7 @@ for root, dirs, files in os.walk(os.getcwd()):
 				
 # 创建Runnable War
 subprocess.check_call("java -jar starter.jar -inject ROOT.war -output nutzcn.jar", shell=True, cwd="dst/")
-subprocess.check_call("pack200 -r -G nutzcn.jar", shell=True, cwd="dst/")
+#subprocess.check_call("pack200 -r -G nutzcn.jar", shell=True, cwd="dst/")
 os.remove("dst/ROOT.war")
 os.remove("dst/starter.jar")
 
@@ -48,7 +48,7 @@ shutil.copyfile("nutzcn-core/src/main/resources/custom/db.properties", "dst/cust
 
 with open(u"dst/启动.bat", "w") as f :
     f.write('''cd %~dp0
-java -Dfile.encoding=UTF-8 -jar nutzcn.war ''')
+java -Dfile.encoding=UTF-8 -jar nutzcn.jar ''')
 with open(u"dst/启动redis.bat", "w") as f :
     f.write('''cd %~dp0
 cd redis

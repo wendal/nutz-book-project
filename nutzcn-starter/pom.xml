@@ -46,12 +46,12 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
-			<version>9.4.2.v20170220</version>
+			<version>9.4.3.v20170317</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty.websocket</groupId>
 			<artifactId>javax-websocket-server-impl</artifactId>
-			<version>9.4.2.v20170220</version>
+			<version>9.4.3.v20170317</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
