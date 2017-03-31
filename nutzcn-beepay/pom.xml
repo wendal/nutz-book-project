@@ -30,6 +30,11 @@
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.10</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-plugins-sfntly</artifactId>
+			<version>1.r.60.r3</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
