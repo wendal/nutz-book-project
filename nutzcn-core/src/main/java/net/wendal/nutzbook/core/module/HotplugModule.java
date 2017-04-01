@@ -62,7 +62,6 @@ public class HotplugModule extends BaseModule {
         return ajaxOk(new QueryResult(list, new Pager()));
     }
 
-    @SuppressWarnings("deprecation")
     @RequiresRoles("admin")
     @POST
     @At

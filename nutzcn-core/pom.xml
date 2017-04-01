@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.13</version>
+			<version>1.7.24</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ibeetl</groupId>
@@ -230,11 +230,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.pegdown</groupId>
-			<artifactId>pegdown</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-validation</artifactId>
 			<version>1.r.60.r4</version>
@@ -253,6 +248,11 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
 			<version>1.r.61-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.apiclub.tool</groupId>
+			<artifactId>simplecaptcha</artifactId>
+			<version>1.2.2</version>
 		</dependency>
 	</dependencies>
 	<build>

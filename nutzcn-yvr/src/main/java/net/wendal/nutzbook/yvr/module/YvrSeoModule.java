@@ -36,10 +36,10 @@ import com.rometools.rome.feed.synd.SyndFeedImpl;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedOutput;
 
-import net.wendal.nutzbook.common.util.Markdowns;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.yvr.bean.Topic;
+import net.wendal.nutzbook.yvr.util.Markdowns;
 
 /**
  * 负责输出rss和sitemap的模块

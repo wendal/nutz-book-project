@@ -1,4 +1,4 @@
-package net.wendal.nutzbook.common.util;
+package net.wendal.nutzbook.yvr.util;
 
 import static org.pegdown.FastEncoder.encode;
 

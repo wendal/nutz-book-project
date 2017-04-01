@@ -37,7 +37,6 @@ import org.nutz.mvc.view.HttpStatusView;
 import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.plugins.apidoc.annotation.ApiParam;
 
-import net.wendal.nutzbook.common.util.Markdowns;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.CResult;
 import net.wendal.nutzbook.core.bean.User;
@@ -52,6 +51,7 @@ import net.wendal.nutzbook.yvr.service.BigContentService;
 import net.wendal.nutzbook.yvr.service.LuceneSearchResult;
 import net.wendal.nutzbook.yvr.service.TopicSearchService;
 import net.wendal.nutzbook.yvr.service.YvrService;
+import net.wendal.nutzbook.yvr.util.Markdowns;
 
 /**
  * 对外公开的HTTP API, 使用http://apidocjs.com/的进行注释生成
