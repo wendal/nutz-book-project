@@ -3,6 +3,7 @@ package net.wendal.nutzbook.dwmaster.module;
 import java.util.Date;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.impl.PropertiesProxy;
@@ -36,7 +37,7 @@ public class DwConfigureModule extends BaseModule {
     @Inject
     protected PropertiesProxy conf;
 
-    @RequiresPermissions("nutzdw:add")
+    @RequiresRoles("admin")
     @At
     @POST
     public NutMap add(@Param("..")DwRecord dw) {
@@ -52,7 +53,7 @@ public class DwConfigureModule extends BaseModule {
     }
     
 
-    @RequiresPermissions("nutzdw:add")
+    @RequiresRoles("admin")
     @Ok("json:full")
     @At
     public NutMap uptoken() {
@@ -66,7 +67,7 @@ public class DwConfigureModule extends BaseModule {
     }
     
     
-    @RequiresPermissions("nutzdw:delete")
+    @RequiresRoles("admin")
     @DELETE
     @At("/?")
     @Ok("void")
@@ -74,7 +75,7 @@ public class DwConfigureModule extends BaseModule {
         dao.delete(DwRecord.class, id);
     }
     
-    @RequiresPermissions("nutzdw:delete")
+    @RequiresRoles("admin")
     @POST
     @At("/?")
     @Ok("void")
