@@ -84,6 +84,9 @@ public class AuthorityServiceImpl implements AuthorityService {
 		for (String permission : permissions) {
             addPermission(permission);
         }
+		// 刷新缓存
+        dao.update(Role.class, Chain.make("name", "XXX"), Cnd.where("name", "=", "XXX"));
+        dao.update(Permission.class, Chain.make("name", "XXX"), Cnd.where("name", "=", "XXX"));
 	}
 
 	public void checkBasicRoles() {
