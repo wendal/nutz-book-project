@@ -28,14 +28,13 @@
   <!--#if (null != obj.access_token!) { #-->
   <div class='panel'>
     <div class='header'>
-      <span class='col_fade'>AccessToken二维码</span>
-      <button onclick="$('#access-token-qrcode').show();">显示</button>
-      <button onclick="resetToken();">重置</button>
-    </div>
-    <div class='header'>
       <span class='col_fade'>Ngrok内网穿透配置文件</span>
       <a href="${base}/ngrok/config/download">(点我下载)</button>
       <a href="${base}/ngrok/me">查看使用说明</a>
+    </div>
+    <div class='header'>
+      <span class='col_fade'>微信小程序https转发地址(依赖ngrok服务)</span>
+      <a href="https://nutz.cn/wxopenproxy/${obj.c_user.loginname}/">https://nutz.cn/wxopenproxy/${obj.c_user.loginname}/</button>
     </div>
     <!--# if (has_hotplug("weixin")) { #-->
     <div class='header'>
@@ -43,6 +42,11 @@
     	<a href="${base}/weixin/qrconnect">绑定微信登录</a>
     </div>
     <!--# } #-->
+    <div class='header'>
+      <span class='col_fade'>AccessToken二维码,用于手机客户端</span>
+      <button onclick="$('#access-token-qrcode').show();">显示</button>
+      <button onclick="resetToken();">重置</button>
+    </div>
     <div class='inner'>
       <span id="access-token-qrcode" style="display: none;"></span>
       <script type="text/javascript">
