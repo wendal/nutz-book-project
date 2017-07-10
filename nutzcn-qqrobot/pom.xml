@@ -5,18 +5,18 @@
     <artifactId>nutzcn-parent</artifactId>
     <version>3.0.2</version>
   </parent>
-  <artifactId>nutzcn-weixin</artifactId>
+  <artifactId>nutzcn-qqrobot</artifactId>
   <dependencies>
   	<dependency>
-  		<groupId>org.nutz</groupId>
-  		<artifactId>nutzwx</artifactId>
-  		<version>1.r.62-SNAPSHOT</version>
+  		<groupId>net.wendal.nutzcn</groupId>
+  		<artifactId>nutzcn-yvr</artifactId>
+  		<version>3.0.2</version>
   		<scope>provided</scope>
   	</dependency>
   	<dependency>
-  		<groupId>javax.servlet</groupId>
-  		<artifactId>javax.servlet-api</artifactId>
-  		<version>3.1.0</version>
+  		<groupId>org.nutz</groupId>
+  		<artifactId>nutz-plugins-apidoc</artifactId>
+  		<version>1.r.62-SNAPSHOT</version>
   		<scope>provided</scope>
   	</dependency>
   	<dependency>
@@ -25,22 +25,11 @@
   		<version>3.0.2</version>
   		<scope>provided</scope>
   	</dependency>
+  	<dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>javax.servlet-api</artifactId>
+  		<version>3.1.0</version>
+  		<scope>provided</scope>
+  	</dependency>
   </dependencies>
-	<repositories>
-		<repository>
-			<id>nutz</id>
-			<url>https://jfrog.nutz.cn/artifactory/jcenter</url>
-		</repository>
-		<repository>
-			<id>nutz-snapshots</id>
-			<url>https://jfrog.nutz.cn/artifactory/snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
 </project>

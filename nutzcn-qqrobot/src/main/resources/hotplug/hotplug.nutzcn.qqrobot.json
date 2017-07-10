@@ -1,0 +1,12 @@
+{
+	name : "QQRobot",
+	version : "3.0.2",
+	base : "net.wendal.nutzbook.beepay",
+	describe : "NutzCN的机器人模块",
+	menu : [{
+		name : "QQ机器人",
+		subs : [
+			{name:"基本设置", page:"qqrobot/basic.html"}
+		]
+	}]
+}

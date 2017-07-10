@@ -1,16 +1,24 @@
-package net.wendal.nutzbook.yvr.module;
+package net.wendal.nutzbook.beepay.module;
 
+import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.List;
 
+import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.nutz.dao.Cnd;
 import org.nutz.http.Request;
 import org.nutz.http.Request.METHOD;
 import org.nutz.http.Response;
 import org.nutz.http.Sender;
+import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -26,6 +34,7 @@ import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.plugins.apidoc.annotation.Api;
 
+import net.wendal.nutzbook.beepay.bean.QQRobotHandlerBean;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.yvr.bean.Topic;
 import net.wendal.nutzbook.yvr.service.LuceneSearchResult;
@@ -34,6 +43,7 @@ import net.wendal.nutzbook.yvr.service.TopicSearchService;
 /**
  * 
  * @author Kerbores(kerbores@gmail.com)
+ * @author wendal(wendal1985@gmail.com)
  *
  * @project msg-web
  *
@@ -47,8 +57,8 @@ import net.wendal.nutzbook.yvr.service.TopicSearchService;
 @Api(name="QQ机器人", description="QQ机器人,对接查询和请求转发")
 @At("/robot")
 @Filters
-@IocBean
-public class YvrRobotModule extends BaseModule {
+@IocBean(create="init")
+public class QQRobotModule extends BaseModule {
     
     private static final Log log = Logs.get();
 
@@ -57,6 +67,9 @@ public class YvrRobotModule extends BaseModule {
 
     @Inject
     protected PropertiesProxy conf;
+    
+    @Inject("refer:$ioc")
+    protected Ioc ioc;
     /**
      * 命令开始符号
      */
@@ -65,6 +78,10 @@ public class YvrRobotModule extends BaseModule {
      * AT模板
      */
     public static final String AT_TPL = "@%s(%s)";
+    
+    private ScriptEngineManager engineManager;
+    
+    protected ScriptEngine jsScriptEngine;
 
     // TODO 加上KEY认证
     @At("/msg")
@@ -94,26 +111,53 @@ public class YvrRobotModule extends BaseModule {
         if (!Strings.startsWithChar(data.getString("Message"), cmd)) {
             return "";
         }
-        // String groupId = data.getString("GroupId");
-        // if (!checkGroupId(groupId)) {
-        // return "";
-        // }
         String key = data.getString("Message");
         if (key.length() == 1)
             return "";
         key = key.substring(1).trim();
         if (key.length() == 0)
             return "";
-        if (key.equals("签到"))
-            return "";
+        List<QQRobotHandlerBean> handlers = dao.query(QQRobotHandlerBean.class, Cnd.where("enable", "=", true).desc("priority").asc("name"));
+        for (QQRobotHandlerBean handler : handlers) {
+            String resp = execHandler(handler, key);
+            if (Strings.isBlank(resp))
+                continue;
+            if ("NOP".equals(resp))
+                return "";
+            return resp;
+        }
+        
+        return defaultAction(req, key);
+    }
+    
+    protected String execHandler(QQRobotHandlerBean handler, String key) {
+        if (!Strings.isBlank(handler.getMatch()) && !handler.getMatch().matches(key)) {
+            return null;
+        }
+        if ("text".equals(handler.getCtype())) {
+            return handler.getContent();
+        }
+        if ("js".equals(handler.getCtype())) {
+            Bindings bindings = jsScriptEngine.createBindings();
+            bindings.put("ioc", ioc);
+            bindings.put("arg", key);
+            try {
+                String jsStr = "function _nutzbook_robot_js(){" + handler.getContent() + "};_nutzbook_robot_js();";
+                Object obj = ((Compilable) jsScriptEngine).compile(jsStr).eval(bindings);
+                if (obj != null)
+                    return obj.toString();
+            }
+            catch (ScriptException e) {
+                log.debug("js eval fail", e);
+            }
+        }
+        return null;
+    }
 
-        // String at = String.format(AT_TPL, data.getString("SenderName"),
-        // data.getString("Sender"));
-        String at = "";
-
+    protected String defaultAction(HttpServletRequest req, String key) throws IOException, ParseException {
         List<LuceneSearchResult> results = topicSearchService.search(key, 3);
         if (results == null || results.size() == 0) {
-            return at + " 发帖问问吧 https://" + req.getHeader("Host") + "/yvr/add";
+            return " 发帖问问吧 https://" + req.getHeader("Host") + "/yvr/add";
         }
         final StringBuilder msgbBuilder = new StringBuilder();
         for (LuceneSearchResult result : results) {
@@ -130,18 +174,10 @@ public class YvrRobotModule extends BaseModule {
         msgbBuilder.append(String.format("完整结果: https://%s/yvr/search?q=%s", req.getHeader("Host"), URLEncoder.encode(key, Encoding.UTF8)));
         return msgbBuilder.toString();
     }
-
-    @Deprecated
-    public boolean checkGroupId(String groupId) {
-        if (groupId == null)
-            return false;
-        try {
-            groupId = groupId.trim();
-            String[] ids = conf.get("qqbot.groups").split(",");
-            return Arrays.asList(ids).contains(groupId);
-        }
-        catch (Exception e) {
-            return false;
-        }
+    
+    public void init() {
+        engineManager = new ScriptEngineManager(getClass().getClassLoader());
+        jsScriptEngine = engineManager.getEngineByExtension("js");
+        dao.create(QQRobotHandlerBean.class, false);
     }
 }
