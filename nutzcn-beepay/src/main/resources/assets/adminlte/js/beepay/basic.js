@@ -39,6 +39,9 @@ var vueBasicConfigList = new Vue({
 		},
 		do_save : function() {
 			var p = {};
+			for (var i in this.configs) {
+				p[this.configs[i].name] = this.configs[i].value;
+			}
 			$.ajax({
 				url : base + "/admin/config/save?notify=beePayModule",
 				type : "POST",
