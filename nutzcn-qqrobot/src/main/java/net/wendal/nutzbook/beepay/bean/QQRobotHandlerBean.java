@@ -36,7 +36,7 @@ public class QQRobotHandlerBean extends IdentityPojo {
      * 优先级配置
      */
     @Column("pri")
-    private int priority;
+    private Integer priority;
     
     /**
      * 是否启用
@@ -68,10 +68,10 @@ public class QQRobotHandlerBean extends IdentityPojo {
     public void setContent(String content) {
         this.content = content;
     }
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     } 
     

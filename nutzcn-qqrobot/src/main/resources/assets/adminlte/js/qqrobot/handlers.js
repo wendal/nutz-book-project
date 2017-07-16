@@ -77,6 +77,7 @@ var vueHandlerList = new Vue({
     	  			    		  layer.alert("出错了..." + re);
     	  			    	  }
                   	  });
+                	  layer.close(index);
                   },
                   cancel: function () { //点击关闭按钮
                   }
@@ -119,12 +120,17 @@ var vueHandlerList = new Vue({
       	  			    	  }
                     	  });
                       }
+                      layer.close(index);
                   },
                   cancel: function () { //点击关闭按钮
                   }
 				});
 		},
 		delete_handler: function(handler) {
+			if (handler.enable) {
+				layer.alert("请先禁用");
+				return;
+			}
 			layer.confirm('确定要删除吗? 处理器名称是 ' + handler.name, {
 				  btn: ['是的','我再想想'] //按钮
 				}, function(pass, index){
@@ -134,7 +140,7 @@ var vueHandlerList = new Vue({
 	  			    	  dataType : "json",
 	  			    	  data : {id:handler.id},
 	  			    	  success : function(re) {
-		  			    	layer.close(index);
+		  			    	//layer.close(index);
 	  			    		if (re && re.ok) {
 	  			    			layer.alert("删除成功");
 	  			    			vueHandlerList.dataReload();

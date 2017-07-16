@@ -104,7 +104,7 @@ public class QQRobotModule extends BaseModule {
         key = key.substring(1).trim();
         if (key.length() == 0)
             return "";
-        List<QQRobotHandlerBean> handlers = dao.query(QQRobotHandlerBean.class, Cnd.where("enable", "=", true).desc("priority").asc("name"));
+        List<QQRobotHandlerBean> handlers = dao.query(QQRobotHandlerBean.class, Cnd.where("enable", "=", true).asc("priority").asc("name"));
         for (QQRobotHandlerBean handler : handlers) {
             String resp = execHandler(handler, key);
             if (Strings.isBlank(resp))
@@ -118,7 +118,7 @@ public class QQRobotModule extends BaseModule {
     }
     
     protected String execHandler(QQRobotHandlerBean handler, String key) {
-        if (!Strings.isBlank(handler.getMatch()) && !handler.getMatch().matches(key)) {
+        if (!Strings.isBlank(handler.getMatch()) && key.matches(handler.getMatch())) {
             return null;
         }
         if ("text".equals(handler.getCtype())) {
