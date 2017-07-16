@@ -34,10 +34,11 @@
                 <tr v-for="permission in permissions">
                   <td>{{permission.id}}</td>
                   <td>{{permission.name}}</td>
-                  <td>{{permission.locked}}</td>
+                  <td>{{permission.alias}}</td>
                   <td>{{permission.createTime}}</td>
                   <td>
-                  	<button>详情</button>
+                  	<button @click="do_delete(permission.id, permission.name)">删除</button>
+                  	<button @click="update_alias(permission.id, permission.alias)">修改别名</button>
                   </td>
                 </tr>
                 </tbody>
@@ -48,6 +49,7 @@
 			<div class="box">
 				<div>
 					<div class='inner'>
+						<button class="btn" v-on:click="do_add" >新增</button>
 						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
 						<button class="btn" v-on:click="changePage(1)" :disabled="pager.pageNumber == 1">第一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" :disabled="pager.pageNumber == 1">上一页</button>

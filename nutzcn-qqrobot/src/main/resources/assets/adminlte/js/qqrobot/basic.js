@@ -1,6 +1,6 @@
 
 var config_map = {
-		"bc.appId" : "秒支付Button的App Id",
+		"qqrobot.admin.token" : "密钥设置(预留)",
 };
 var vueBasicConfigList = new Vue({
 	el : "#system_basic_div",
@@ -10,7 +10,7 @@ var vueBasicConfigList = new Vue({
 	methods : {
 		dataReload : function() {
 			$.ajax({
-				url : base + "/admin/config/list?prefix=bc",
+				url : base + "/admin/config/list?prefix=qqrobot.admin",
 				dataType : "json",
 				success : function(re) {
 					if (console)
@@ -39,8 +39,11 @@ var vueBasicConfigList = new Vue({
 		},
 		do_save : function() {
 			var p = {};
+			for (var i in this.configs) {
+				p[this.configs[i].name] = this.configs[i].value;
+			}
 			$.ajax({
-				url : base + "/admin/config/save?notify=beePayModule",
+				url : base + "/admin/config/save",
 				type : "POST",
 				data : p,
 				dataType : "json",

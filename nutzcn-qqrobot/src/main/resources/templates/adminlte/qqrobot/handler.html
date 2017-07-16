@@ -1,0 +1,135 @@
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>QQ机器人设置</h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">QQ机器人设置</a></li>
+        <li class="active">处理器管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="qqrobot_handlers_div">
+      <div class="row">
+        <div class="col-xs-12">
+          
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">处理器一览</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="user_table" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>id</th>
+                  <th>名称</th>
+                  <th>匹配模式</th>
+                  <th>类型</th>
+                  <th>优先级</th>
+                  <th>是否启用</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="handler in handlers">
+                  <td>{{handler.id}}</td>
+                  <td>{{handler.name}}</td>
+                  <td>{{handler.match}}</td>
+                  <td>{{handler.ctype == "js" ? "js脚本" : "固定文本"}}</td>
+                  <td>{{handler.priority}}</td>
+                  <td>{{handler.enable ? "已启用" : "已禁用"}}</td>
+                  <td>
+                  	<button @click="update_enable(handler.id, true)" v-if="!handler.enable">启用</button>
+                  	<button @click="update_enable(handler.id, false)" v-if="handler.enable">禁用</button>
+                  	<button @click="show_detail(handler)">详情</button>
+                  	<button @click="delete_handler(handler)">删除</button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+			<div class="box">
+				<div>
+					<div class='inner'>
+						<button class="btn" v-on:click="add_handler()">新增</button>
+						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
+						<button class="btn" v-on:click="changePage(1)">第一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+					</div>
+				</div>
+			</div>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    <div style="display: none;"  id="handler_detail">
+    	<form class="form-horizontal" id="handler_form">
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="id">id</label>
+   						<div class="col-sm-9">
+      						<input type="text" class="form-control" disabled="disabled">
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="名称">名称</label>
+   						<div class="col-sm-9">
+      						<input type="text" class="form-control" v-model="cur_handler.name" name="name">
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="匹配模式">匹配模式</label>
+   						<div class="col-sm-9">
+      						<input type="text" class="form-control" v-model="cur_handler.match" name="match" placeholder="正则表达式">
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="类型">处理器类型</label>
+   						<div class="col-sm-9">
+      						<select v-model="cur_handler.ctype" name="enable">
+    							<option disabled value="">请选择</option>
+    							<option value="js">js脚本</option>
+    							<option value="text">固定文本</option>
+  							</select>
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="优先级">优先级</label>
+   						<div class="col-sm-9">
+      						<input type="number" class="form-control" v-model="cur_handler.priority" name="priority" placeholder="数值越低,优先级越高">
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="是否启用">是否启用</label>
+   						<div class="col-sm-9">
+   							<select v-model="cur_handler.enable" name="enable">
+    							<option disabled value="">请选择</option>
+    							<option value="true">已启用</option>
+    							<option value="false">已禁用</option>
+  							</select>
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+            		
+    				<div class="form-group" >
+    					<label class="col-sm-2 control-label" align="left" title="内容">内容</label>
+   						<div class="col-sm-9">
+   							<textarea class="form-control" style="height: 250px;" v-model="cur_handler.content"></textarea>
+    					</div>
+    					<div class="col-sm-1"></div>
+            		</div>
+    	</form>
+    </div>
+    </section>
+    <!-- /.content -->
+    <script src="${base}/assets/adminlte/js/qqrobot/handlers.js"></script>

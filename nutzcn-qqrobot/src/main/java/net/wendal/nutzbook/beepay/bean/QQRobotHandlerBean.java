@@ -5,10 +5,10 @@ import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.Table;
 
-import net.wendal.nutzbook.core.bean.BasePojo;
+import net.wendal.nutzbook.core.bean.IdentityPojo;
 
 @Table("t_qq_robot_handler")
-public class QQRobotHandlerBean extends BasePojo {
+public class QQRobotHandlerBean extends IdentityPojo {
 
     private static final long serialVersionUID = -932039999573834899L;
     /**

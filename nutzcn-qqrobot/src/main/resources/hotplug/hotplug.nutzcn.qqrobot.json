@@ -6,7 +6,9 @@
 	menu : [{
 		name : "QQ机器人",
 		subs : [
-			{name:"基本设置", page:"qqrobot/basic.html"}
+			{name:"基本设置", page:"qqrobot/basic.html"},
+			{name:"处理器设置", page:"qqrobot/handler.html"},
+			{name:"路由转发设置", page:"qqrobot/route.html"}
 		]
 	}]
 }

@@ -336,7 +336,7 @@ public class AuthorityModule extends BaseModule {
     @POST
     @RequiresPermissions("authority:permission:update")
     @At("/permission/update")
-    public Object updatePermission(@Param("..") Permission permission) {
+    public Object updatePermission(@Param("permission") Permission permission) {
         if (permission == null)
             return ajaxFail("非法请求");
         if (dao.fetch(Permission.class, permission.getId()) == null)
