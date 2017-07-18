@@ -1,6 +1,6 @@
 {
 	name : "weixin",
-	version : "3.0.2",
+	version : "3.1.0",
 	base : "net.wendal.nutzbook.weixin",
 	describe : "NutzCN的微信模块",
 	menu : [

@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>net.wendal.nutzcn</groupId>
 		<artifactId>nutzcn-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.1.0</version>
 	</parent>
 	<artifactId>nutzcn-webapp</artifactId>
 	<packaging>war</packaging>
 	<properties>
-		<nutzcn.version>3.0.2</nutzcn.version>
+		<nutzcn.version>3.1.0</nutzcn.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.62-SNAPSHOT</version>
+			<version>1.r.62</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.websocket</groupId>

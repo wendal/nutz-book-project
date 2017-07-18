@@ -3,14 +3,14 @@
   <parent>
     <groupId>net.wendal.nutzcn</groupId>
     <artifactId>nutzcn-parent</artifactId>
-    <version>3.0.2</version>
+    <version>3.1.0</version>
   </parent>
   <artifactId>nutzcn-weixin</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>org.nutz</groupId>
   		<artifactId>nutzwx</artifactId>
-  		<version>1.r.62-SNAPSHOT</version>
+  		<version>1.r.62</version>
   		<scope>provided</scope>
   	</dependency>
   	<dependency>
@@ -22,7 +22,7 @@
   	<dependency>
   		<groupId>net.wendal.nutzcn</groupId>
   		<artifactId>nutzcn-core</artifactId>
-  		<version>3.0.2</version>
+  		<version>3.1.0</version>
   		<scope>provided</scope>
   	</dependency>
   </dependencies>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.wendal.nutzcn</groupId>
 		<artifactId>nutzcn-parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.1.0</version>
 	</parent>
 	<artifactId>nutzcn-core</artifactId>
 	<dependencies>
