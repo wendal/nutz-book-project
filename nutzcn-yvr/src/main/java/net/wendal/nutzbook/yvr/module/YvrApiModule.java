@@ -155,12 +155,8 @@ public class YvrApiModule extends BaseModule {
 		} else if (!Strings.isBlank(search)) {
 			try {
 				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), 30);
-				for (LuceneSearchResult result : results) {
-					Topic topic = dao.fetch(Topic.class, result.getId());
-					if (topic == null)
-						continue;
-					topics.add(topic);
-				}
+				List<Topic> luceneTopics = dao.query(Topic.class, Cnd.where("id", "in",  results.stream().map(LuceneSearchResult::getId).toArray()));
+				topics.addAll(luceneTopics);
 				pager.setRecordCount(list.size());
 			} catch (IOException | ParseException e) {
 				e.printStackTrace();
