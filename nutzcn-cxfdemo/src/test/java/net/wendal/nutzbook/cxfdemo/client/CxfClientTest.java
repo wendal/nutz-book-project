@@ -14,7 +14,7 @@ public class CxfClientTest extends Assert {
     public void test_local() throws MalformedURLException {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(EchoService.class);
-        factory.setAddress("http://localhost:8080/nutzcn/ws/EchoService");
+        factory.setAddress("http://localhost:8080/nutzcn/cxf/EchoService");
         EchoService client = (EchoService) factory.create();
          
         String reply = client.echo("hi, cxf");
