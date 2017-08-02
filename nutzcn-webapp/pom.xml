@@ -168,5 +168,15 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>cxfdemo</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-cxfdemo</artifactId>
+					<version>${nutzcn.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 </project>

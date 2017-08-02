@@ -47,7 +47,7 @@
 		</init-param>
 		<init-param>
 			<param-name>exclusions</param-name>
-			<param-value>/rs/*,/druid/*</param-value>
+			<param-value>/rs/*,/druid/*,/ws/*</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

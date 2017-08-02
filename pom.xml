@@ -27,6 +27,7 @@
 		<module>nutzcn-weixin</module>
 		<module>nutzcn-starter</module>
 		<module>nutzcn-qqrobot</module>
+		<module>nutzcn-cxfdemo</module>
 	</modules>
 	<build>
 		<plugins>
