@@ -10,7 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -72,19 +74,19 @@ import net.wendal.nutzbook.yvr.util.Markdowns;
 @Ok("json")
 @Fail("http:500")
 public class YvrApiModule extends BaseModule {
-	
+
 	@Inject("java:$conf.getInt('topic.pageSize', 15)")
 	protected int pageSize;
-	
+
 	@Inject
 	protected RedisDao redisDao;
-	
+
 	@Inject
 	protected TopicSearchService topicSearchService;
-	
+
     @Inject
     protected YvrService yvrService;
-	
+
 	@Inject
 	protected BigContentService bigContentService;
 
@@ -136,7 +138,7 @@ public class YvrApiModule extends BaseModule {
 	@GET
 	@At
 	@Aop("redis")
-	public Object topics(@Param("page")int page, 
+	public Object topics(@Param("page")int page,
 			@Param("tab")String type,
 			@Param("tag")String tag,
 			@Param("search")String search,
@@ -146,7 +148,7 @@ public class YvrApiModule extends BaseModule {
 		if (limit < 0 || limit > pageSize)
 			limit = pageSize;
 		Pager pager = dao.createPager(page, limit);
-		
+
 		HashMap<Long, UserProfile> authors = new HashMap<>();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		List<Topic> topics = new ArrayList<>();
@@ -155,12 +157,8 @@ public class YvrApiModule extends BaseModule {
 		} else if (!Strings.isBlank(search)) {
 			try {
 				List<LuceneSearchResult> results = topicSearchService.search(search.trim(), 30);
-				for (LuceneSearchResult result : results) {
-					Topic topic = dao.fetch(Topic.class, result.getId());
-					if (topic == null)
-						continue;
-					topics.add(topic);
-				}
+				List<Topic> luceneTopics = dao.query(Topic.class, Cnd.where("id", "in",  results.stream().map(LuceneSearchResult::getId).toArray()));
+				topics.addAll(luceneTopics.stream().filter(Objects::nonNull).collect(Collectors.toList()));
 				pager.setRecordCount(list.size());
 			} catch (IOException | ParseException e) {
 				e.printStackTrace();
@@ -518,24 +516,24 @@ public class YvrApiModule extends BaseModule {
 
 	// --------------------
 	// 辅助方法
-	
+
 	public String _avatar_url(String loginname) {
 		return urlbase + "/yvr/u/" + loginname + "/avatar";
 	}
-	
+
 	public NutMap _author(UserProfile profile) {
 		NutMap author = new NutMap();
 		author.setv("loginname", profile.getLoginname());
 		author.setv("avatar_url", _avatar_url(profile.getLoginname()));
 		return author;
 	}
-	
+
 	public String _time(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(date);
 	}
-	
+
 	public String _time_forread(Date date) {
 		return Times.formatForRead(date);
 	}
@@ -571,7 +569,7 @@ public class YvrApiModule extends BaseModule {
 		tp.put("author", _author(profile));
 		return tp;
 	}
-	
+
     /**
      * @api {get} /yvr/api/v1/content/:id 获取内容主体
      * @apiGroup Topic
@@ -582,7 +580,7 @@ public class YvrApiModule extends BaseModule {
      */
 	@Ok("raw:stream")
 	@At("/content/?")
-	public String getContent(String id, 
+	public String getContent(String id,
 	                         @Param("mdrender")String mdrender) {
 	    String cnt = bigContentService.getString(id);
 	    if (cnt == null)
