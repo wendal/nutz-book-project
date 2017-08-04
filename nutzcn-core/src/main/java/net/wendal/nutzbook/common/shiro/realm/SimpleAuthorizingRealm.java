@@ -10,19 +10,15 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.nutz.dao.Dao;
+import org.nutz.integration.shiro.AbstractSimpleAuthorizingRealm;
 import org.nutz.integration.shiro.SimpleShiroToken;
-import org.nutz.mvc.Mvcs;
 
 import net.wendal.nutzbook.core.bean.Permission;
 import net.wendal.nutzbook.core.bean.Role;
 import net.wendal.nutzbook.core.bean.User;
 
-public class SimpleAuthorizingRealm extends AuthorizingRealm {
-	
-	protected Dao dao;
+public class SimpleAuthorizingRealm extends AbstractSimpleAuthorizingRealm {
 
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		// null usernames are invalid
@@ -44,7 +40,7 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
                 auth.addRole(role.getName());
                 // 管理员有全部权限
                 if ("admin".equals(role.getName())) {
-                    for (Permission p : dao.query(Permission.class, null)) {
+                    for (Permission p : dao().query(Permission.class, null)) {
                         auth.addStringPermission(p.getName());
                         break;
                     }
@@ -74,12 +70,6 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 			throw new LockedAccountException("Account [" + user.getName() + "] is locked.");
 		return new SimpleAccount(user.getId(), user.getPassword(), getName());
 	}
-	
-	/**
-	 * 覆盖父类的验证,直接pass
-	 */
-	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
-	}
 
 	public SimpleAuthorizingRealm() {
 		this(null, null);
@@ -97,18 +87,5 @@ public class SimpleAuthorizingRealm extends AuthorizingRealm {
 	public SimpleAuthorizingRealm(CredentialsMatcher matcher) {
 		this(null, matcher);
 	}
-
-	public Dao dao() {
-		if (dao == null) {
-			dao = Mvcs.ctx().getDefaultIoc().get(Dao.class, "dao");
-			return dao;
-		}
-		return dao;
-	}
-
-	public void setDao(Dao dao) {
-		this.dao = dao;
-	}
-
 	
 }
