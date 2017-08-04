@@ -23,9 +23,9 @@ for root, dirs, files in os.walk(os.getcwd()):
             if name.startswith("nutzcn-starter-") and name.endswith("jar-with-dependencies.jar"):
                 fsource = os.path.join(root, name)
                 shutil.copyfile(fsource, "dst/starter.jar")
-            elif name.endswith("jar-with-dependencies.jar") :
+            elif name.endswith("shaded.jar") :
                 fsource = os.path.join(root, name)
-                shutil.copyfile(fsource, "dst/plugins/" + name[0:-26] + ".jar")
+                shutil.copyfile(fsource, "dst/plugins/" + name[0:-11] + ".jar")
             elif name.startswith("nutzcn-webapp") and name.endswith(".war") :
                 fsource = os.path.join(root, name)
                 shutil.copyfile(fsource, "dst/ROOT.war")
