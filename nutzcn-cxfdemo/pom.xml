@@ -46,6 +46,11 @@
 			<artifactId>cxf-rt-frontend-jaxws</artifactId>
 			<version>3.1.12</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutz-integration-cxf</artifactId>
+			<version>1.r.63-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
