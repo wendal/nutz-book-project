@@ -11,7 +11,7 @@
 	</properties>
 	<modules>
 		<module>nutzcn-core</module>
-		
+
 		<module>nutzcn-adminlte</module>
 		<module>nutzcn-webapp</module>
 		<module>nutzcn-yvr</module>
@@ -20,10 +20,10 @@
 		<module>nutzcn-beepay</module>
 		<module>nutzcn-webhook</module>
 		<module>nutzcn-dwmaster</module>
-		
+
 		<module>nutzcn-sysinfo</module>
 		<module>nutzcn-shortit</module>
-		
+
 		<module>nutzcn-weixin</module>
 		<module>nutzcn-starter</module>
 		<module>nutzcn-qqrobot</module>
@@ -71,6 +71,27 @@
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/cxf/bus-extensions.txt</resource>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

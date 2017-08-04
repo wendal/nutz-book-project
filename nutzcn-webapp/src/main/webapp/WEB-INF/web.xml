@@ -47,7 +47,7 @@
 		</init-param>
 		<init-param>
 			<param-name>exclusions</param-name>
-			<param-value>/rs/*,/druid/*,/ws/*</param-value>
+			<param-value>/rs/*,/druid/*</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
@@ -68,8 +68,4 @@
 		<error-code>500</error-code>
 		<location>/WEB-INF/jsp/500.jsp</location>
 	</error-page>
-	<session-config>
-		<!-- 新版jetty不支持超长timeout了 -->
-		<session-timeout>35791394</session-timeout>
-	</session-config>
 </web-app>
