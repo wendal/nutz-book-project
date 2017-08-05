@@ -130,7 +130,6 @@ public class YvrModule extends BaseModule {
 	}
 
 	@At({ "/list/?", "/list/?/?", "/list" })
-	@GET
 	@Ok("beetl:/yvr/index.html")
 	public Object list(String type, int page) {
 		long userId = Toolkit.uid();
@@ -140,7 +139,6 @@ public class YvrModule extends BaseModule {
 	}
 	
 	@At({ "/list/u/?/?", "/list/u/?/?/?" })
-	@GET
 	@Ok("beetl:/yvr/index.html")
 	public Object list(String loginname, String type, int page) {
 		long userId = Toolkit.uid();
@@ -165,7 +163,6 @@ public class YvrModule extends BaseModule {
 	}
 	
 	@At({ "/tag/?", "/tag/?/?" })
-	@GET
 	@Ok("beetl:/yvr/index.html")
 	public Object tag(String tagName, int page) {
 		long userId = Toolkit.uid();

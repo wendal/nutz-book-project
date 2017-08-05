@@ -28,6 +28,7 @@
 		<module>nutzcn-starter</module>
 		<module>nutzcn-qqrobot</module>
 		<module>nutzcn-cxfdemo</module>
+		<module>nutzcn-swagger</module>
 	</modules>
 	<build>
 		<plugins>

@@ -178,5 +178,15 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>swagger</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-swagger</artifactId>
+					<version>${nutzcn.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 </project>
