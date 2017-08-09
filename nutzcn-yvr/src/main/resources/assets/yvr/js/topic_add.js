@@ -87,4 +87,5 @@ $(function(){
 		   this.suggestions = resp.json().suggestions;
 	   });
 	});
+	layer.alert($("#tips_for_add").html());
 });

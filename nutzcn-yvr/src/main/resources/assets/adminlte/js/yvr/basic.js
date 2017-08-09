@@ -6,7 +6,8 @@ var config_map = {
 		//"yvr.description" : "网站简介",
 		//"yvr.author" : "网站作者",
 		"yvr.keywords" : "默认关键字",
-		//"yvr.long_description" : "网站完整描述"
+		//"yvr.long_description" : "网站完整描述",
+		"yvr.tips_of_add" : "发帖提示语"
 };
 var vueBasicConfigList = new Vue({
 	el : "#yvr_config_div",

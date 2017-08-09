@@ -7,7 +7,7 @@
 		name : "论坛管理",
 		subs : [
 			{name:"基本设置", page:"yvr/basic.html"},
-			{name:"帖子管理", page:"yvr/topic.html"},
+			{name:"帖子管理", page:"yvr/topic.html"}
 		]
 	}]
 }
