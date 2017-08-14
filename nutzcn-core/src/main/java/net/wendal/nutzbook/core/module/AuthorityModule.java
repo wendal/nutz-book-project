@@ -116,7 +116,7 @@ public class AuthorityModule extends BaseModule {
             return ajaxFail("不能删除当前用户!!");
         }
         dao.delete(User.class, id); // 再严谨一些的话,需要判断是否为>0
-        dao.clear(UserProfile.class, Cnd.where("userId", "=", me));
+        dao.clear(UserProfile.class, Cnd.where("userId", "=", id));
         return ajaxOk(null);
     }
 
