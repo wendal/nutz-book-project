@@ -41,11 +41,44 @@ layout("_layout.html",{title:'添加新帖子'}){
       </form>
       <button class='btn btn-primary' @click="topicSubmit" id="btn_submit">{{topicButtonTip}}</button>
       <button class='btn btn-info' @click="topicAddCode">插入代码或日志片段</button>
+      <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+      <button class='btn btn-info' id="topic_image_upload">插入图片</button>
+      <!--# } #-->
     </div>
   </div>
 </div>
-<div style="display: none;" id="tips_for_add">
-	${conf["yvr.tips_of_add"]}
-</div>
+<div style="display: none;" id="tips_for_add">${conf["yvr.tips_of_add"]}</div>
 <script src="${base}/assets/yvr/js/topic_add.js?v=5"></script>
+<!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+<script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
+<script >
+		function do_image_upload() {
+			$("#topic_image_upload").click();
+		}
+		var uploader2 = WebUploader.create({
+            swf: ctxPath+'/libs/webuploader/Uploader.swf',
+            server: ctxPath+'/yvr/upload',
+            pick: "#topic_image_upload",
+            //paste: document.body,
+            //dnd: this.$upload[0],
+            auto: true,
+            fileSingleSizeLimit: 10240 * 1024,
+            //sendAsBinary: true,
+            // 只允许选择图片文件
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader2.on('uploadSuccess', function(_file, _resp) {
+        	console.log(_resp);
+        	if (_resp.url) {
+        		window.upload_callback(_resp.url);
+        	} else if (_resp.msg) {
+        		layer.alert(_resp.msg);
+        	}
+		});
+</script>
+<!--# } #-->
 <!--#}  #-->

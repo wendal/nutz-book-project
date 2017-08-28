@@ -87,5 +87,10 @@ $(function(){
 		   this.suggestions = resp.json().suggestions;
 	   });
 	});
-	layer.alert($("#tips_for_add").html());
+	if ($("#tips_for_add").html()) {
+		layer.alert($("#tips_for_add").html());
+	}
+	window.upload_callback = function(_path) {
+		topicAddVue.topicContent += "\r\n![图片描述]("+_path+")\r\n";
+	}
 });

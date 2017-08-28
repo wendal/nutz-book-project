@@ -140,6 +140,9 @@ layout("_layout.html",{}){
       
       <button class='btn btn-primary' @click="replySubmit" id="reply_btn">回复</button>
       <button class='btn btn-info' @click="replyAddCode">插入代码或日志片段</button>
+      <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+      <button class='btn btn-info' id="topic_image_upload">插入图片</button>
+      <!--# } #-->
     <!--# } else { #-->
     	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
     <!--# }  #-->
@@ -307,3 +310,35 @@ $('#replyArea').atwho({
 <!--# 
 }
 #-->
+<!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+<script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
+<script >
+		function do_image_upload() {
+			$("#topic_image_upload").click();
+		}
+		var uploader2 = WebUploader.create({
+            swf: ctxPath+'/libs/webuploader/Uploader.swf',
+            server: ctxPath+'/yvr/upload',
+            pick: "#topic_image_upload",
+            //paste: document.body,
+            //dnd: this.$upload[0],
+            auto: true,
+            fileSingleSizeLimit: 10240 * 1024,
+            //sendAsBinary: true,
+            // 只允许选择图片文件
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader2.on('uploadSuccess', function(_file, _resp) {
+        	console.log(_resp);
+        	if (_resp.url) {
+        		window.upload_callback(_resp.url);
+        	} else if (_resp.msg) {
+        		layer.alert(_resp.msg);
+        	}
+		});
+</script>
+<!--# } #-->

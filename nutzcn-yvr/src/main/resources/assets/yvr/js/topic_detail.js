@@ -57,4 +57,8 @@ $(function(){
 			}
 		}
 	});
+
+	window.upload_callback = function(_path) {
+		replyAddVue.replyContent += "\r\n![图片描述]("+_path+")\r\n";
+	}
 });
