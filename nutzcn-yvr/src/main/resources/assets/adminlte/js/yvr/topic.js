@@ -32,8 +32,8 @@ var vueTopicList = new Vue({
 	    	this.pager.pageNumber = to_page;
 	    	this.dataReload();
 	    },
-	    update_title : function (topic_id) {
-	    	layer.prompt({title: '请输入新标题,然后确认', formType: 0}, function(new_title, index){
+	    update_title : function (topic_id, topic_title) {
+	    	layer.prompt({title: '请输入新标题,然后确认', formType: 0, value: topic_title}, function(new_title, index){
 	    		  layer.close(index);
 	    		  if (new_title) {
 	    			  $.ajax({
@@ -108,6 +108,9 @@ var vueTopicList = new Vue({
 		},
 	    do_delete: function(topic_id) {
 			layer.alert("暂未实现");
+		},
+		get_topic_uri : function(topic_id) {
+			return base + "/yvr/t/" + topic_id;
 		}
 	},
 	created: function () {

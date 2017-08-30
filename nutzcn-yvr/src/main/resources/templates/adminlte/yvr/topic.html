@@ -33,14 +33,14 @@
                 </thead>
                 <tbody>
                 <tr v-for="topic in topics">
-                  <td>{{topic.id}}</td>
+                  <td><a :href="get_topic_uri(topic.id)" target="_blank">{{topic.id}}</a></td>
                   <td>{{topic.title}}</td>
                   <td>{{topic.author.nickname}}</td>
                   <td>{{topic.type}}</td>
                   <td>{{topic.createTime}}</td>
                   <td>
                   	<button @click="update_type(topic.id)">修改类型</button>
-                  	<button @click="update_title(topic.id)">修改标题</button>
+                  	<button @click="update_title(topic.id, topic.title)">修改标题</button>
                   	<button @click="update_good(topic.id, true)" v-if="!topic.good">加精</button>
                   	<button @click="update_good(topic.id, false)" v-else>取消加精</button>
                   	<button @click="update_top(topic.id, true)" v-if="!topic.top">置顶</button>
