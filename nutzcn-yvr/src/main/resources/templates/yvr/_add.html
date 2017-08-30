@@ -42,7 +42,7 @@ layout("_layout.html",{title:'添加新帖子'}){
       <button class='btn btn-primary' @click="topicSubmit" id="btn_submit">{{topicButtonTip}}</button>
       <button class='btn btn-info' @click="topicAddCode">插入代码或日志片段</button>
       <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
-      <button class='btn btn-info' id="topic_image_upload">插入图片</button>
+      <label>可直接把图片拖入编辑框完成插入</label>
       <!--# } #-->
     </div>
   </div>
@@ -58,9 +58,9 @@ layout("_layout.html",{title:'添加新帖子'}){
 		var uploader2 = WebUploader.create({
             swf: ctxPath+'/libs/webuploader/Uploader.swf',
             server: ctxPath+'/yvr/upload',
-            pick: "#topic_image_upload",
-            //paste: document.body,
-            //dnd: this.$upload[0],
+            //pick: "#topic_image_upload",
+            paste: "#topicContent",
+            dnd: "#topicContent",
             auto: true,
             fileSingleSizeLimit: 10240 * 1024,
             //sendAsBinary: true,

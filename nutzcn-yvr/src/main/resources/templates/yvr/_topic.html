@@ -141,7 +141,7 @@ layout("_layout.html",{}){
       <button class='btn btn-primary' @click="replySubmit" id="reply_btn">回复</button>
       <button class='btn btn-info' @click="replyAddCode">插入代码或日志片段</button>
       <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
-      <button class='btn btn-info' id="topic_image_upload">插入图片</button>
+      <label>可直接把图片拖入编辑框完成插入</label>
       <!--# } #-->
     <!--# } else { #-->
     	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
@@ -319,7 +319,7 @@ $('#replyArea').atwho({
 		var uploader2 = WebUploader.create({
             swf: ctxPath+'/libs/webuploader/Uploader.swf',
             server: ctxPath+'/yvr/upload',
-            pick: "#topic_image_upload",
+            //pick: "#topic_image_upload",
             paste: "#replyArea",
             dnd: "#replyArea",
             auto: true,
