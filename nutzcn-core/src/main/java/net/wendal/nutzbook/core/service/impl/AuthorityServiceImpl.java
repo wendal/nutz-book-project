@@ -12,6 +12,7 @@ import org.nutz.dao.Chain;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.entity.Record;
+import org.nutz.integration.shiro.annotation.NutzRequiresPermissions;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.ContinueLoop;
@@ -48,6 +49,13 @@ public class AuthorityServiceImpl implements AuthorityService {
 				RequiresPermissions rp = method.getAnnotation(RequiresPermissions.class);
 				if (rp != null && rp.value() != null) {
 					for (String permission : rp.value()) {
+						if (permission != null && !permission.endsWith("*"))
+							permissions.add(permission);
+					}
+				}
+				NutzRequiresPermissions nutzrp = method.getAnnotation(NutzRequiresPermissions.class);
+				if (nutzrp != null && nutzrp.value() != null) {
+					for (String permission : nutzrp.value()) {
 						if (permission != null && !permission.endsWith("*"))
 							permissions.add(permission);
 					}
