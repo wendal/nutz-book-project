@@ -107,7 +107,25 @@ var vueTopicList = new Vue({
 	    	});
 		},
 	    do_delete: function(topic_id) {
-			layer.alert("暂未实现");
+	    	layer.prompt({title: '请输入y确认', formType: 0}, function(do_confim, index){
+	    		  layer.close(index);
+	    		  if (do_confim == 'y') {
+	    			  $.ajax({
+	  					url : base + "/yvr/admin/topic/delete",
+	  					type : "post",
+	  			    	dataType : "json",
+	  			    	data : "id="+topic_id,
+	  			    	success : function(re) {
+	  			    		if (re && re.ok) {
+	  			    			layer.alert("删除成功");
+	  			    			vueTopicList.dataReload();
+	  			    		} else if (re && re.msg) {
+	  							layer.alert(re.msg);
+	  						}
+	  			    	}
+	  				});
+	    		  }
+	    	});
 		},
 		get_topic_uri : function(topic_id) {
 			return base + "/yvr/t/" + topic_id;

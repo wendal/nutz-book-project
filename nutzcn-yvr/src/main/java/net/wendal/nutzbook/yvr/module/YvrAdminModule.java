@@ -3,6 +3,7 @@ package net.wendal.nutzbook.yvr.module;
 import static org.nutz.integration.jedis.RedisInterceptor.jedis;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.yvr.bean.Topic;
 import net.wendal.nutzbook.yvr.bean.TopicType;
+import net.wendal.nutzbook.yvr.service.TopicSearchService;
 import net.wendal.nutzbook.yvr.service.YvrService;
 import redis.clients.jedis.Jedis;
 
@@ -43,6 +45,9 @@ public class YvrAdminModule extends BaseModule{
 
     @Inject
     protected YvrService yvrService;
+    
+    @Inject
+    protected TopicSearchService topicSearchService;
 
 	@POST
 	@RequiresPermissions("topic:update")
@@ -195,4 +200,31 @@ public class YvrAdminModule extends BaseModule{
 			Streams.safeClose(ins);
 		}
 	}
+	
+	@RequiresPermissions("topic:delete")
+	@POST
+	@At("/topic/delete")
+	@Ok("json:full")
+	@Aop("redis")
+	public NutMap topicDelete(String id) {
+	    return yvrService.topicDelete(id);
+	}
+	
+	@RequiresPermissions("topic:rebuild:index")
+    @POST
+    @At("/rebuild/index")
+    @Ok("json:full")
+	public NutMap rebuildIndex() throws IOException {
+	    topicSearchService.rebuild();
+	    return new NutMap("ok", true);
+	}
+	
+	@RequiresPermissions("topic:rebuild:redis_list")
+    @POST
+    @At("/rebuild/index")
+    @Ok("json:full")
+    public NutMap rebuildRedisList() throws IOException {
+        yvrService.rebuildRedisUpdateList();
+        return new NutMap("ok", true);
+    }
 }

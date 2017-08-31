@@ -42,6 +42,7 @@ import org.nutz.mvc.upload.TempFile;
 
 import net.wendal.nutzbook.common.util.RedisKey;
 import net.wendal.nutzbook.common.util.Toolkit;
+import net.wendal.nutzbook.core.bean.BigContent;
 import net.wendal.nutzbook.core.bean.CResult;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
@@ -561,5 +562,49 @@ public class YvrService implements RedisKey, PubSub {
             jedis().zrem(RKEY_USER_TOPIC_MARK+uid, topicId);
         }
         return true;
+    }
+    
+    public NutMap topicDelete(String topicId) {
+     // 首先, 删除关系型数据库里面的记录
+        // 先删除t_topic表
+        Topic topic = dao.fetch(Topic.class, topicId);
+        if (topic == null)
+            return new NutMap("ok", false).setv("msg", "帖子不存在");
+        dao.delete(topic);
+        dao.delete(BigContent.class, topic.getContentId());
+        // 然后删除评论
+        List<TopicReply> replies = dao.query(TopicReply.class, Cnd.where("topicId", "=", topicId));
+        for (TopicReply reply : replies) {
+            dao.delete(reply);
+            dao.delete(BigContent.class, reply.getContentId());
+        }
+        
+        // 然后清除分类表里面的数据
+        jedis().zrem(RKEY_TOPIC_TAG+topic.getType(), topicId);
+        // 清除总索引
+        jedis().zrem(RKEY_TOPIC_UPDATE + "all", topic.getId());
+        // 如果是精华帖,那还得删掉精华帖里面的记录,可能性不大吧
+        if (topic.isGood()) {
+            jedis().zrem(RKEY_TOPIC_UPDATE + "good", topic.getId());
+        }
+        // 如果是置顶帖呢? 丧心病狂啊
+        if (topic.isTop()) {
+            jedis().zrem(RKEY_TOPIC_TOP, topic.getId());
+        }
+        // 还得清除访问计数器
+        jedis().zrem(RKEY_TOPIC_VISIT, topic.getId());
+        
+        // TODO 清除各用户的收藏记录
+        //jedis().del("");
+        
+        updateTopicTypeCount();
+        
+        return new NutMap("ok", true);
+    }
+    
+    // 先预留,还没想好怎么做
+    @Aop("redis")
+    public void rebuildRedisUpdateList() {
+        
     }
 }
