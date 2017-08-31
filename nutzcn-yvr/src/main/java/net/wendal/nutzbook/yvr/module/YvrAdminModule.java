@@ -23,6 +23,7 @@ import org.nutz.lang.Files;
 import org.nutz.lang.Lang;
 import org.nutz.lang.Streams;
 import org.nutz.lang.Strings;
+import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
@@ -47,14 +48,15 @@ public class YvrAdminModule extends BaseModule{
 	@RequiresPermissions("topic:update")
 	@At
 	@Aop("redis")
-	public void update(@Param("..")Topic topic, @Param("opt")String opt) {
+	@Ok("json")
+	public NutMap update(@Param("..")Topic topic, @Param("opt")String opt) {
 		if (topic == null)
-			return;
+			return _map("ok", false).setv("msg", "参数不合法");
 		if (Strings.isBlank(topic.getId()) || opt == null || !opt.matches("^(good|top|type|lock|title)$"))
-			return;
+		    return _map("ok", false).setv("msg", "参数不合法");
 		Topic old = dao.fetch(Topic.class, topic.getId());
 		if (old == null)
-			return;
+		    return _map("ok", false).setv("msg", "帖子不存在");
 		topic.setUpdateTime(new Date());
 		Daos.ext(dao, FieldFilter.create(Topic.class, opt + "|updateTime", true)).update(topic);
 
@@ -76,7 +78,7 @@ public class YvrAdminModule extends BaseModule{
 			    jedis.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
 			    jedis.zadd(RKEY_TOPIC_UPDATE+old.getType(), System.currentTimeMillis(), topic.getId());
 			}
-			return;
+			return _map("ok", true);
 		}
 
 		// 检查一下是不是修改了type
@@ -95,6 +97,7 @@ public class YvrAdminModule extends BaseModule{
 			}
 		}
 		yvrService.updateTopicTypeCount();
+        return _map("ok", true);
 	}
 
     @POST
