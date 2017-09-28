@@ -1,6 +1,6 @@
 # NutzCN平台
 
-恩,试试吧
+[![PowerByNutz](https://img.shields.io/badge/PowerBy-Nutz-green.svg?style=plastic)](https://github.com/nutzam/nutz)
 
 与nutzbook相关的2.x分支在这里[master分支](https://github.com/wendal/nutz-book-project/tree/master)
 
