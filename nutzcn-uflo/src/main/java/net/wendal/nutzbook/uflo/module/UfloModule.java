@@ -8,6 +8,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
@@ -16,6 +17,7 @@ import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 
 import com.bstek.uflo.console.UfloServlet;
+import com.bstek.uflo.service.SchedulerService;
 
 /**
  * 将UfloServlet代理为一个入口方法咯
@@ -26,6 +28,9 @@ import com.bstek.uflo.console.UfloServlet;
 public class UfloModule extends UfloServlet {
 
     private static final long serialVersionUID = 1L;
+    
+    @Inject
+    protected SchedulerService schedulerService;
 
     @Ok("void")
     @Fail("http:500")
