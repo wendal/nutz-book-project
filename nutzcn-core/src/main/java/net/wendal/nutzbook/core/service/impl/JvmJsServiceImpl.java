@@ -49,7 +49,7 @@ public class JvmJsServiceImpl implements JvmJsService {
 
     
     public void init() {
-        engineManager = new ScriptEngineManager(getClass().getClassLoader());
+        engineManager = new ScriptEngineManager();
         jsScriptEngine = engineManager.getEngineByExtension("js");
     }
 }
