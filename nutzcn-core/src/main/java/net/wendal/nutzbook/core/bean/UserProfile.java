@@ -2,15 +2,13 @@ package net.wendal.nutzbook.core.bean;
 
 import java.io.Serializable;
 
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.Id;
-import org.nutz.dao.entity.annotation.One;
-import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.*;
 import org.nutz.json.JsonField;
 
 import net.wendal.nutzbook.common.util.Toolkit;
 
 @Table("t_user_profile")
+@Comment("用户基本信息表")
 public class UserProfile extends BasePojo implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

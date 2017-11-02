@@ -12,20 +12,22 @@ import net.wendal.nutzbook.core.websocket.NutzbookWebsocket;
 
 public class MainSetup implements Setup {
 
+    @Override
     public void init(NutConfig nc) {
         ServerContainer sc = (ServerContainer)nc.getServletContext().getAttribute(ServerContainer.class.getName());
-        if (sc != null)
+        if (sc != null) {
             try {
                 sc.addEndpoint(NutzbookWebsocket.class);
-            }
-            catch (DeploymentException e) {
-                
+            } catch (DeploymentException e) {
+
                 e.printStackTrace();
             }
+        }
         Ioc ioc = nc.getIoc();
         ioc.get(Hotplug.class).setupInit();
     }
 
+    @Override
     public void destroy(NutConfig nc) {
         Ioc ioc = nc.getIoc();
         ioc.get(Hotplug.class).setupDestroy();

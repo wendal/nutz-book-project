@@ -22,18 +22,47 @@
   <!--[if lt IE 9]>
   <script src="${base}/assets/adminlte/libs/html5shiv/js/html5shiv.min.js"></script>
   <script src="${base}/assets/adminlte/libs/respond/js/respond.min.js"></script>
+  <!-- jQuery 2.2.3 -->
+  <script src="${base}/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js"></script>
   <![endif]-->
+
+  <style>
+    /*body{*/
+      /*background: url("https://picsum.photos/1399/1080/?image=15")no-repeat center;*/
+      /*background-size: 100%;*/
+    /*}*/
+    /**/
+
+    .nutz_bg{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -100;
+    }
+  </style>
 </head>
 <body class="hold-transition login-page">
+<img  src="https://picsum.photos/1399/1080/?image=15" alt="" class="nutz_bg">
+<script>
+  var url = 'https://picsum.photos/1399/1080/?image=';
+  var r = parseInt(Math.random(1000) * 1000 + 1);
+  console.log(r);
+  $('.nutz_bg').attr('src',url+r);
+</script>
 <div class="login-box">
-  <div class="login-logo">
-    <a href="${base}"><b>N</b>平台</a>
-  </div>
+
   <!-- /.login-logo -->
-  <div class="login-box-body">
-    <p class="login-box-msg">Sign in to start your session</p>
+  <div class="login-box-body" style="background: rgba(0,0,0,0.5);">
 
     <form action="#" method="post" id="login_form">
+
+      <div class="login-logo" style="background: rgba(0,0,0,0);">
+        <a href="${base}" style="color: #f0f0f0;"><b>N</b>平台</a>
+      </div>
+      <p class="login-box-msg" style="color: #f0f0f0;">Sign in to start your session</p>
+
       <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="Username" id="username" name="username" required="required">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -43,20 +72,20 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-      	<div class="row">
-      		<div class="col-xs-6">
+      	<div class="row" style="overflow: hidden">
+      		<div class="col-xs-6" style="position: relative; float:left;">
         		<input type="text" class="form-control" placeholder="验证码" id="captcha" name="captcha" required="required">
         		<span class="glyphicon glyphicon-robot form-control-feedback"></span>
         	</div>
-        	<div class="col-xs-6">
+        	<div class="col-xs-6" style="position: relative; float:left;">
         		<img src="${base}/captcha/next">
         	</div>
         </div>
       </div>
       <div class="row">
         <!-- /.col -->
-        <div class="col-xs-4">
-          <button type="button" class="btn btn-primary btn-block btn-flat" onclick="do_login()">登录</button>
+        <div class="col-xs-12" >
+          <button type="button" class="btn btn-primary btn-block btn-flat" onclick="do_login()" style="margin: 0 auto;">登录</button>
         </div>
         <!-- /.col -->
       </div>
@@ -71,8 +100,10 @@
     <!--# } #-->
     <!-- /.social-auth-links -->
 
-    <a href="#">忘记密码</a><br>
-    <a href="#" class="text-center">注册</a>
+    <div id="warpper" style="text-align: center; padding:10px 0;">
+      <a href="#">忘记密码</a>&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="#" class="text-center">注册</a>
+    </div>
 
   </div>
   <!-- /.login-box-body -->
@@ -82,8 +113,7 @@
 <script type="text/javascript">
 var base = "${base}";
 </script>
-<!-- jQuery 2.2.3 -->
-<script src="${base}/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js"></script>
+
 <!-- Bootstrap 3.3.6 -->
 <script src="${base}/assets/adminlte/bootstrap/js/bootstrap.min.js"></script>
 <!-- iCheck -->
