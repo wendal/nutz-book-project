@@ -42,8 +42,8 @@ public class SimpleAuthorizingRealm extends AbstractSimpleAuthorizingRealm {
                 if ("admin".equals(role.getName())) {
                     for (Permission p : dao().query(Permission.class, null)) {
                         auth.addStringPermission(p.getName());
-                        break;
                     }
+                    break;
                 }
                 if (role.getPermissions() != null) {
                     for (Permission p : role.getPermissions()) {
