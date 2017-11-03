@@ -2,6 +2,7 @@ package net.wendal.nutzbook.core;
 
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
@@ -23,6 +24,7 @@ import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.lang.Encoding;
 import org.nutz.lang.Mirror;
+import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
@@ -65,6 +67,8 @@ public class CoreMainSetup implements Setup {
 		// Log4j 2.x的JMX默认启用,会导致reload时内存不释放!!
 		if (!"true".equals(System.getProperty("log4j2.disable.jmx")))
 		    log.error("log4j2 jmx will case reload memory leak! pls add -Dlog4j2.disable.jmx=true to JAVA_OPTS");
+		
+		R.setR(new SecureRandom());
 
 		// 获取Ioc容器及Dao对象
 		Ioc ioc = nc.getIoc();

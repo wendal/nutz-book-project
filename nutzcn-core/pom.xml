@@ -22,12 +22,12 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-daocache</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-quartz</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
@@ -167,14 +167,14 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-mock</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-slog</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -184,12 +184,12 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-views</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-apidoc</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
@@ -210,7 +210,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-shiro</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-log4j12</artifactId>
@@ -232,28 +232,28 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-validation</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-websocket</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-plugins-cache</artifactId>
-			<version>1.r.62</version>
+			<version>1.r.63-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzwx</artifactId>
-			<version>1.r.62-SNAPSHOT</version>
+			<version>1.r.63-SNAPSHOT</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>cn.apiclub.tool</groupId>
-			<artifactId>simplecaptcha</artifactId>
-			<version>1.2.2</version>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-web</artifactId>
+			<version>1.3.2</version>
 		</dependency>
 	</dependencies>
 	<build>
