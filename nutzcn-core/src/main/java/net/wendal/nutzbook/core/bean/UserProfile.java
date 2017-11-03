@@ -16,27 +16,35 @@ public class UserProfile extends BasePojo implements Serializable {
 	/**关联的用户id*/
 	@Id(auto=false)
 	@Column("u_id")
+	@Comment("用户编号")
 	protected long userId;
 	/**用户昵称*/
 	@Column
+	@Comment("用户昵称")
 	protected String nickname;
 	/**用户邮箱*/
 	@Column
+	@Comment("用户邮箱")
 	protected String email;
 	/**邮箱是否已经验证过*/
 	@Column("email_checked")
+	@Comment("邮箱是否已经验证过")
 	protected boolean emailChecked;
 	/**头像的byte数据*/
 	@Column
 	@JsonField(ignore=true)
+	@Comment("用户头像")
 	protected byte[] avatar;
 	/**性别*/
 	@Column
+	@Comment("性别")
 	protected String gender;
 	/**自我介绍*/
 	@Column("dt")
+	@Comment("自我介绍")
 	protected String description;
 	@Column("loc")
+	@Comment("地址")
 	protected String location;
 	
 	@JsonField(ignore=true)
@@ -45,6 +53,7 @@ public class UserProfile extends BasePojo implements Serializable {
 	
 	// 升级为数据库字段
 	@Column
+	@Comment("登陆名")
 	protected String loginname;
 	
 	// 非数据库字段开始-----------------

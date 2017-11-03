@@ -13,16 +13,21 @@ public class User extends BasePojo implements Serializable {
 
 	@Id(auto=false)
 	@Prev(els=@EL("ig(view.tableName)"))
+	@Comment("用户编号")
 	protected long id;
 	@Name
 	@Column
+	@Comment("用户名")
 	protected String name;
 	@Column("passwd")
 	@ColDefine(width=128)
+	@Comment("用户密码")
 	protected String password;
 	@Column
+	@Comment("盐")
 	protected String salt;
 	@Column
+	@Comment("是否锁定")
 	protected boolean locked;
 	@ManyMany(from="u_id", relation="t_user_role", target=Role.class, to="role_id")
 	protected List<Role> roles;
