@@ -23,8 +23,8 @@ public class CaptchaModule {
 	@Ok("raw:png")
 	public BufferedImage next(HttpSession session, @Param("w") int w, @Param("h") int h) {
 		if (w * h < 1) { //长或宽为0?重置为默认长宽.
-			w = 200;
-			h = 60;
+			w = 145;
+			h = 35;
 		}
 		String text = R.captchaChar(4);
         session.setAttribute(Toolkit.captcha_attr, text);
