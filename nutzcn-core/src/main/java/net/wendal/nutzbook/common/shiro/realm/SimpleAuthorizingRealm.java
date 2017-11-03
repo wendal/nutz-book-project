@@ -20,6 +20,7 @@ import net.wendal.nutzbook.core.bean.User;
 
 public class SimpleAuthorizingRealm extends AbstractSimpleAuthorizingRealm {
 
+	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		// null usernames are invalid
 		if (principals == null) {
@@ -60,6 +61,7 @@ public class SimpleAuthorizingRealm extends AbstractSimpleAuthorizingRealm {
         return auth;
 	}
 
+	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		SimpleShiroToken upToken = (SimpleShiroToken) token;
 

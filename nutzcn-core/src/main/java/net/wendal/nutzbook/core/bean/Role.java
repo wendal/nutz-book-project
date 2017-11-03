@@ -3,14 +3,10 @@ package net.wendal.nutzbook.core.bean;
 import java.io.Serializable;
 import java.util.List;
 
-import org.nutz.dao.entity.annotation.ColDefine;
-import org.nutz.dao.entity.annotation.ColType;
-import org.nutz.dao.entity.annotation.Column;
-import org.nutz.dao.entity.annotation.ManyMany;
-import org.nutz.dao.entity.annotation.Name;
-import org.nutz.dao.entity.annotation.Table;
+import org.nutz.dao.entity.annotation.*;
 
 @Table("t_role")
+@Comment("角色表")
 public class Role extends IdentityPojo implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
