@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-web</artifactId>
-			<version>1.r.63-SNAPSHOT</version>
+			<version>1.r.65-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.jetty</groupId>
@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz</artifactId>
-			<version>1.r.63-SNAPSHOT</version>
+			<version>1.r.65-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>

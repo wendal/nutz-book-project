@@ -9,9 +9,11 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.resource.Scans;
 
@@ -19,6 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 import io.swagger.servlet.Reader;
 import io.swagger.util.Json;
@@ -58,9 +61,9 @@ public class SwaggerModule extends BaseModule {
         return new NutMap("ok", true).setv("data", "pong");
     }
 
-    @GET
+    @POST
     @ApiOperation(value = "回显接口", notes = "发我一个字符串,原样回复一个字符串")
-    @ApiImplicitParams({@ApiImplicitParam(name = "text", paramType="form", value = "想发啥就发啥", dataType="java.lang.String", required = true)})
+    @ApiImplicitParams({@ApiImplicitParam(name = "text", paramType="form", value = "想发啥就发啥", dataType="string", required = true)})
     @At
     @Ok("raw")
     public String echo(@Param("text") String text) {
@@ -73,7 +76,11 @@ public class SwaggerModule extends BaseModule {
 
     public void init() {
         log.info("init swagger ...");
+        Info info = new Info();
+        info.title("NutzCN");
         swagger = new Swagger();
+        swagger.setInfo(info);
+        swagger.setBasePath(Mvcs.getServletContext().getContextPath());
         HashSet<Class<?>> classes = new HashSet<>();
         for (Class<?> klass : Scans.me().scanPackage("net.wendal.nutzbook.swagger")) {
             classes.add(klass);
