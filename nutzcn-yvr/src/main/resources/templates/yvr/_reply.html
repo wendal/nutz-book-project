@@ -11,7 +11,7 @@
     <div class='user_info'>
       <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.nickname, escape}<!--#if (reply.author.nickname != reply.author.loginname){ #-->(${reply.author.loginname})<!--#} #--></a>
       <!--#if(null != obj.current_user! && obj.current_user.userId != reply.author.userId ){ #-->
-      <a onclick="pay_tips(${reply.author.userId})" title="微信打赏几毛钱" href="#">打赏</a>
+      <a onclick="pay_tips(${reply.author.userId})" title="不错,鼓励一下" href="#">打赏</a>
       <!--#} #-->
       <!--#if ( ! strutil.contain(reply.author.loginname, "_")){ #-->
     		<a href="https://github.com/${reply.author.loginname}"><img src="${base}/assets/yvr/logo/Octocat_32.png"></a>
