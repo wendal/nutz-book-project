@@ -140,12 +140,12 @@ layout("_layout.html",{}){
       
       <button class='btn btn-primary' @click="replySubmit" id="reply_btn">回复</button>
       <button class='btn btn-info' @click="replyAddCode">插入代码或日志片段</button>
-      <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
-      <button class="btn btn-info" id="topic_image_upload">图片:点击上传或直接拖入编辑框</button>
       <a href="https://gitee.com/nutz/nutz" title="给nutz点个star">nutz@码云</a>
       <a href="https://gitee.com/nutz/nutzboot" title="给nutzboot点个star">nutzboot@码云</a>
       <a href="https://github.com/nutzam/nutz/issues/819" title="我用Nutz我自豪,敬请留名">nutz@Github</a>
       <a href="https://github.com/nutzam/nutzboot/issues/62" title="给nutzboot点个star">nutzboot@Github</a>
+      <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+      <button class="btn btn-info" id="topic_image_upload">图片:点击上传或直接拖入编辑框</button>
       <!--# } #-->
     <!--# } else { #-->
     	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
