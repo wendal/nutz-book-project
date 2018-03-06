@@ -15,6 +15,22 @@
 		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
 	<filter>
+		<filter-name>whale</filter-name>
+		<filter-class>org.nutz.mvc.WhaleFilter</filter-class>
+		<init-param>
+			<param-name>enc.input</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>enc.output</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>whale</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
 		<filter-name>ShiroFilter</filter-name>
 		<filter-class>org.nutz.integration.shiro.ShiroFilter2</filter-class>
 	</filter>
