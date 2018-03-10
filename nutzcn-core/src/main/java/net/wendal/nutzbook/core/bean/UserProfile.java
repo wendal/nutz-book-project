@@ -1,9 +1,11 @@
 package net.wendal.nutzbook.core.bean;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import org.nutz.dao.entity.annotation.*;
 import org.nutz.json.JsonField;
+import org.nutz.lang.Strings;
 
 import net.wendal.nutzbook.common.util.Toolkit;
 
@@ -50,6 +52,12 @@ public class UserProfile extends BasePojo implements Serializable {
 	@JsonField(ignore=true)
 	@One(target=User.class, field="userId")
 	protected User user;
+
+    @Column("eth_addr")
+    protected String ethAddress;
+    @Column("eth_passwd")
+    @JsonField(ignore=true)
+    protected String ethPassword;
 	
 	// 升级为数据库字段
 	@Column
@@ -58,6 +66,7 @@ public class UserProfile extends BasePojo implements Serializable {
 	
 	// 非数据库字段开始-----------------
 	protected int score;
+    protected BigInteger ethBanlance;
 	
 	public long getUserId() {
 		return userId;
@@ -138,4 +147,24 @@ public class UserProfile extends BasePojo implements Serializable {
 	        return loginname;
 	    return nickname+"("+loginname+")";
 	}
+    public String getEthAddress() {
+        return ethAddress;
+    }
+    public void setEthAddress(String ethAddress) {
+        if (!Strings.isBlank(ethAddress))
+            this.ethAddress = ethAddress;
+    }
+    public String getEthPassword() {
+        return ethPassword;
+    }
+    public void setEthPassword(String ethPassword) {
+        if (!Strings.isBlank(ethPassword))
+            this.ethPassword = ethPassword;
+    }
+    public BigInteger getEthBanlance() {
+        return ethBanlance;
+    }
+    public void setEthBanlance(BigInteger ethBanlance) {
+        this.ethBanlance = ethBanlance;
+    }
 }

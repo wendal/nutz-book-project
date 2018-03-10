@@ -111,9 +111,13 @@ public class UserModule extends BaseModule {
     @RequiresAuthentication
     public Object updateProfile(@Param("..")UserProfile profile) {
         profile.setUserId(Toolkit.uid());
+        // 禁止更新登录名
         profile.setLoginname(null);
         profile.setCreateTime(null);
         profile.setUpdateTime(new Date());
+        // 禁止更新X币地址和密码
+        profile.setEthAddress(null);
+        profile.setEthPassword(null);
         dao.updateIgnoreNull(profile);
         return ajaxOk("");
     }

@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>org.nutz</groupId>
 			<artifactId>nutz-integration-cxf</artifactId>
-			<version>1.r.65-SNAPSHOT</version>
+			<version>1.r.66-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
