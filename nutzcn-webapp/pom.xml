@@ -48,7 +48,7 @@
 				<version>9.4.8.v20171121</version>
 				<configuration>
 					<jvmArgs>-Dfile.encoding=UTF-8</jvmArgs>
-					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<scanIntervalSeconds>-1</scanIntervalSeconds>
 				</configuration>
 				<dependencies>
 					<dependency>
