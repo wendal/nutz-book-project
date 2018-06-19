@@ -129,6 +129,17 @@ var vueTopicList = new Vue({
 		},
 		get_topic_uri : function(topic_id) {
 			return base + "/yvr/t/" + topic_id;
+		},
+		cleanup : function() {
+			$.ajax({
+				url : base + "/yvr/admin/topic/cleanup",
+				type : "POST",
+				success : function(re) {
+					if (re && re.ok) {
+						layer.alert("清理了"+re.count+"个帖子");
+					}
+				}
+			});
 		}
 	},
 	created: function () {

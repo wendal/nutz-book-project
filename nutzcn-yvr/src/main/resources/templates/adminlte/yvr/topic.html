@@ -61,6 +61,7 @@
 						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+						<button class="btn" v-on:click="cleanup">清理无用数据</button>
 					</div>
 				</div>
 			</div>
