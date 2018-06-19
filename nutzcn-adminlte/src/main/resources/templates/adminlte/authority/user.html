@@ -37,8 +37,8 @@
                   <td>{{user.createTime}}</td>
                   <td>
                   	<button @click="user_change_password(user.id)">修改密码</button>
-                  	<button @click="user_setLock(false)" v-if="user.locked">解锁</button>
-                  	<button @click="user_setLock(true)"  v-else>锁定</button>
+                  	<button @click="user_setLock(user.id)" v-if="user.locked">解锁</button>
+                  	<button @click="user_setLock(user.id)"  v-else>锁定</button>
                   </td>
                 </tr>
                 </tbody>

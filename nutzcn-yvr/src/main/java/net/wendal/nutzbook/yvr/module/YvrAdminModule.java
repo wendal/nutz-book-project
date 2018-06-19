@@ -210,6 +210,25 @@ public class YvrAdminModule extends BaseModule{
 	    return yvrService.topicDelete(id);
 	}
 	
+	@RequiresPermissions("topic:cleanup")
+    @POST
+    @At("/topic/cleanup")
+    @Ok("json:full")
+    @Aop("redis")
+    public NutMap topicCleanup() {
+	    int count = 0;
+        for (TopicType tt : TopicType.values()) {
+            String tkey = RKEY_TOPIC_UPDATE+tt.getName();
+            for (String id : jedis().zrange(tkey, 0, System.currentTimeMillis())) {
+                if (dao.count(Topic.class, Cnd.where("id", "=", id)) == 0) {
+                    count ++;
+                    jedis().zrem(tkey, id);
+                }
+            }
+        }
+        return new NutMap("ok", true).setv("count", count);
+    }
+	
 	@RequiresPermissions("topic:rebuild:index")
     @POST
     @At("/rebuild/index")

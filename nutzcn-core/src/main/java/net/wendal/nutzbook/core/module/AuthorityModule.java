@@ -54,7 +54,11 @@ public class AuthorityModule extends BaseModule {
     @At
     @Ok("json:{locked:'password|salt',ignoreNull:true}") // 禁止把password和salt字段进行传输
     public Object users(@Param("query") String query, @Param("..") Pager pager) {
-        return ajaxOk(query(User.class, Cnd.NEW().asc("id"), pager, null));
+        Cnd cnd = Cnd.NEW();
+        if (!Strings.isBlank(query))
+            cnd.and("name", "like", query + "%");
+        cnd.asc("id");
+        return ajaxOk(query(User.class, cnd, pager, null));
     }
 
     /**
@@ -103,6 +107,20 @@ public class AuthorityModule extends BaseModule {
         if (Strings.isBlank(password) || password.length() < 6)
             return ajaxFail("密码不符合要求");
         userService.updatePassword(id, password);
+        return ajaxOk(null);
+    }
+    
+    @Ok("json")
+    @POST
+    @RequiresPermissions("authority:user:update")
+    @At("/user/update/lock")
+    @Slog(tag = "锁定用户", before = "用户[${id}] ok=${re.ok}")
+    public Object lockUser(@Param("id") int id) {
+        User user =dao.fetch(User.class, id);
+        if (user == null)
+            return ajaxOk(null);
+        user.setLocked(!user.isLocked());
+        dao.update(user, "^locked$");
         return ajaxOk(null);
     }
 

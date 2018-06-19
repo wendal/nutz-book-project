@@ -580,7 +580,7 @@ public class YvrService implements RedisKey, PubSub {
         }
         
         // 然后清除分类表里面的数据
-        jedis().zrem(RKEY_TOPIC_TAG+topic.getType(), topicId);
+        jedis().zrem(RKEY_TOPIC_UPDATE+topic.getType().getName(), topicId);
         // 清除总索引
         jedis().zrem(RKEY_TOPIC_UPDATE + "all", topic.getId());
         // 如果是精华帖,那还得删掉精华帖里面的记录,可能性不大吧

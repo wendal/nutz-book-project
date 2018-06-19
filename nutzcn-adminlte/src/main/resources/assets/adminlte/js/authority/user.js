@@ -59,8 +59,15 @@ var vueUserList = new Vue({
 				});
 			}
 		},
-		user_setLock : function(locked) {
-			layer.alert("暂未实现");
+		user_setLock : function(uid) {
+			$.ajax({
+				url : base + "/admin/authority/user/update/lock",
+				type : "POST",
+				data : {id:uid},
+				success : function(re){
+					vueUserList.dataReload();
+				}
+			});
 		},
 	    userAdd: function() {
 			var username = prompt("输入用户名");
