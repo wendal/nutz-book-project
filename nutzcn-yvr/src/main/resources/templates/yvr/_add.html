@@ -56,6 +56,7 @@ layout("_layout.html",{title:'添加新帖子'}){
 </div>
 <div style="display: none;" id="tips_for_add">${conf["yvr.tips_of_add"]}</div>
 <script src="${base}/assets/yvr/js/topic_add.js?v=6"></script>
+<script src="${base}/assets/yvr/js/gt.js?z=9"></script>
 <script>
     var handler2 = function (captchaObj) {
         // 将验证码加到id为captcha的元素里，同时会有三个input的值用于表单提交
@@ -87,7 +88,6 @@ layout("_layout.html",{title:'添加新帖子'}){
 </script>
 <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
 <script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
-<script src="${base}/assets/yvr/js/gt.js?z=9"></script>
 <script >
 		function do_image_upload() {
 			$("#topic_image_upload").click();
