@@ -38,6 +38,13 @@ layout("_layout.html",{title:'添加新帖子'}){
             	</div>
             </div>
             <textarea id="topicContent" v-model="topicContent" class='editor' name='content' rows='50' placeholder='本站使用Markdown语法,下方有粘贴代码和日志的按钮,会有代码高亮'></textarea>
+      		
+    <div>
+        <label>完成验证：</label>
+        <div id="captcha2">
+            <p id="wait2" class="show">正在加载验证码......</p>
+        </div>
+    </div>
       </form>
       <button class='btn btn-primary' @click="topicSubmit" id="btn_submit">{{topicButtonTip}}</button>
       <button class='btn btn-info' @click="topicAddCode">插入代码或日志片段</button>
@@ -51,6 +58,7 @@ layout("_layout.html",{title:'添加新帖子'}){
 <script src="${base}/assets/yvr/js/topic_add.js?v=5"></script>
 <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
 <script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
+<script src="${base}/assets/yvr/js/gt.js"></script>
 <script >
 		function do_image_upload() {
 			$("#topic_image_upload").click();
@@ -79,6 +87,35 @@ layout("_layout.html",{title:'添加新帖子'}){
         		layer.alert(_resp.msg);
         	}
 		});
+</script>
+<script>
+    var handler2 = function (captchaObj) {
+        // 将验证码加到id为captcha的元素里，同时会有三个input的值用于表单提交
+        captchaObj.appendTo("#captcha2");
+        captchaObj.onReady(function () {
+            $("#wait2").hide();
+        });
+        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+    };
+    $.ajax({
+        url: "${base}/gt/captcha?t=" + (new Date()).getTime(), // 加随机数防止缓存
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            // 调用 initGeetest 初始化参数
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                new_captcha: data.new_captcha, // 用于宕机时表示是新验证码的宕机
+                offline: !data.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                product: "popup", // 产品形式，包括：float，popup
+                width: "100%"
+                // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+            }, handler2);
+        }
+    });
 </script>
 <!--# } #-->
 <!--#}  #-->

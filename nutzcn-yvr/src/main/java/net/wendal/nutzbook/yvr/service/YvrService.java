@@ -155,6 +155,13 @@ public class YvrService implements RedisKey, PubSub {
 		if (userId < 1) {
 			return _fail("请先登录");
 		}
+		User user = dao.fetch(User.class, userId);
+        if (user == null) {
+            return _fail("用户不存在");
+        }
+        if (user.isLocked()) {
+            return _fail("用户已锁定");
+        }
 		if (Strings.isBlank(topic.getTitle()) || topic.getTitle().length() > 1024 || topic.getTitle().length() < 5) {
 			return _fail("标题长度不合法");
 		}
@@ -167,6 +174,7 @@ public class YvrService implements RedisKey, PubSub {
 		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
 			return _fail("相同标题已经发过了");
 		}
+		// 检查关键字
 		Set<String> tags = topic.getTags();
 		topic.setTags(new HashSet<>());
 		String oldTitle = topic.getTitle().trim();
@@ -231,6 +239,13 @@ public class YvrService implements RedisKey, PubSub {
 		if (reply == null || reply.getContent() == null || reply.getContent().trim().isEmpty()) {
 			return _fail("内容不能为空");
 		}
+        User user = dao.fetch(User.class, userId);
+        if (user == null) {
+            return _fail("用户不存在");
+        }
+        if (user.isLocked()) {
+            return _fail("用户已锁定");
+        }
 		final String cnt = reply.getContent().trim();
 		final Topic topic = dao.fetch(Topic.class, topicId); // TODO 改成只fetch出type属性
 		if (topic == null) {

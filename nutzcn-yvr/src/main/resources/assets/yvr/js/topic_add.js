@@ -11,6 +11,10 @@ $(function(){
 		},
 		methods : {
 			topicSubmit : function() {
+				if ( ! $("input[name=geetest_challenge]").val()) {
+					layer.alert("请先完成验证");
+					return;
+				}
 				this.topicTitle = this.topicTitle.trim();
 				if (this.topicTitle.length < 10) {
 					layer.alert("标题起码10个字");
@@ -38,7 +42,10 @@ $(function(){
 						"type":this.topicType,
 						"title":this.topicTitle,
 						"content":this.topicContent,
-						"_tags" : this.topicTag
+						"_tags" : this.topicTag,
+						"challenge" : $("input[name=geetest_challenge]").val(),
+						"validate" : $("input[name=geetest_validate]").val(),
+						"seccode" : $("input[name=geetest_seccode]").val()
 				};
 				this.$http.post(ctxPath+"/yvr/add", tmpData).then(function(resp){
 					this.topicButtonTip = "我要答案";

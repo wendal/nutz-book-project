@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -56,6 +57,7 @@ import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.core.service.AppPushService;
+import net.wendal.nutzbook.core.service.GtService;
 import net.wendal.nutzbook.core.service.RedisDao;
 import net.wendal.nutzbook.yvr.bean.SubForum;
 import net.wendal.nutzbook.yvr.bean.Topic;
@@ -99,6 +101,9 @@ public class YvrModule extends BaseModule {
 	
 	@Inject
 	protected AppPushService appPushService;
+	
+	@Inject
+	protected GtService gtService;
 
 	@GET
 	@At
@@ -121,8 +126,19 @@ public class YvrModule extends BaseModule {
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
 	@AdaptBy(type=WhaleAdaptor.class)
-	public CResult add(@Param("..")Topic topic, @Param("_tags")String tags) {
+	public CResult add(@Param("..")Topic topic, @Param("_tags")String tags, 
+	                   HttpServletRequest req,
+	                   @Param("challenge")String challenge,
+	                   @Param("validate")String validate,
+	                   @Param("seccode")String seccode) {
+	    if (Strings.isBlank(challenge) || Strings.isBlank(validate) || Strings.isBlank(seccode)) {
+	        return CResult._fail("未提供校验参数,请刷新页面后重试");
+	    }
 		long userId = Toolkit.uid();
+		String msg =  gtService.verify(challenge, validate, seccode, userId+"", Lang.getIP(req));
+		if (msg != null) {
+            return CResult._fail(msg);
+        }
 		if (!Strings.isBlank(tags)) {
 		    topic.setTags(new HashSet<>(Lang.list(Strings.splitIgnoreBlank(tags))));
 		}
@@ -376,6 +392,7 @@ public class YvrModule extends BaseModule {
 	    yvrService.topicMark(topicId, Toolkit.uid());
 	}
 
+	@Aop("redis")
 	public void init() {
 		log.debug("Image Dir = " + imageDir);
 		Files.createDirIfNoExists(new File(imageDir));
