@@ -226,6 +226,12 @@ public class YvrAdminModule extends BaseModule{
                 }
             }
         }
+        for (String id : jedis().zrange(RKEY_TOPIC_UPDATE_ALL, 0, System.currentTimeMillis())) {
+            if (dao.count(Topic.class, Cnd.where("id", "=", id)) == 0) {
+                count ++;
+                jedis().zrem(RKEY_TOPIC_UPDATE_ALL, id);
+            }
+        }
         return new NutMap("ok", true).setv("count", count);
     }
 	
