@@ -180,7 +180,7 @@ public class YvrService implements RedisKey, PubSub {
 		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
 			return _fail("相同标题已经发过了");
 		}
-        if (!needUserActive(userId, null)) {
+        if (needUserActive(userId, null)) {
             return CResult._fail("用户未激活,请前往打赏页激活");
         }
 		// 检查关键字
@@ -263,7 +263,7 @@ public class YvrService implements RedisKey, PubSub {
 		if (topic.isLock()) {
 			return _fail("该帖子已经锁定,不能回复");
 		}
-        if (!needUserActive(userId, null)) {
+        if (needUserActive(userId, null)) {
             return CResult._fail("用户未激活,请前往打赏页激活");
         }
 		reply.setTopicId(topicId);
