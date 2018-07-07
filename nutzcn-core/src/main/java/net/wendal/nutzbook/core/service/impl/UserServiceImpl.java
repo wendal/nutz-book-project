@@ -101,8 +101,20 @@ public class UserServiceImpl extends IdNameEntityService<User> implements RedisK
         }
     }
     public UserProfile getUserProfile(long uid, boolean avatar) {
+        UserProfile profile = null;
         if (avatar)
-            return dao().fetch(UserProfile.class, uid);
-        return Daos.ext(dao(), FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, uid);
+            profile = dao().fetch(UserProfile.class, uid);
+        profile = Daos.ext(dao(), FieldFilter.locked(UserProfile.class, "avatar")).fetch(UserProfile.class, uid);
+        if (profile == null) {
+            User user = dao().fetch(User.class, uid);
+            if (user == null)
+                return null;
+            profile = new UserProfile();
+            profile.setUserId(user.getId());
+            profile.setLoginname(user.getName());
+            profile.setNickname(user.getName());
+            dao().insert(profile);
+        }
+        return profile;
     }
 }

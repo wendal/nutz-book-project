@@ -105,15 +105,15 @@ public class BeePayModule extends BaseModule implements OnConfigureChange {
                          @Param("title")String title, 
                          @Param("amount")int amount,
                          @ReqHeader("Referer")String referer) {
-        if (amount == 0) {
-            amount = R.random(88, 1088);
-        }
-        else if (amount < 88)
-            amount = 188;
+        if (amount < 38)
+            amount = 38;
         String id = R.UU32();
         if (Strings.isBlank(title)) {
             UserProfile profile = dao.fetch(UserProfile.class, toUserId);
-            title = String.format("打赏给%s %s", profile.getDisplayName(), id);
+            if (profile == null)
+                title = String.format("打赏给%s %s", "管理员", id);
+            else
+                title = String.format("打赏给%s %s", profile.getDisplayName(), id);
             if (title.length() > 16)
                 title = title.substring(0, 16);
         }

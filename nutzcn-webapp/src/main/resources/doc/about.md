@@ -21,10 +21,7 @@ iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id108219
 
 * [Nutz官网](https://www.nutzam.com)
 * [NutzBook Nutz入门指南](http://nutzbook.wendal.net)
-* [查找网](http://www.chazhao.me)
-* [七牛云存储 移动时代的云存储服务商](http://www.qiniu.com/)
 * [一米阳光(大鲨鱼的个人博客)](http://www.wizzer.cn/)
-* [邓华锋](http://www.denghuafeng.com/)
 
 ### 有爱的公众号
 

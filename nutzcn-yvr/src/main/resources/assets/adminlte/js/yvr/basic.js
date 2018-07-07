@@ -8,7 +8,8 @@ var config_map = {
 		"yvr.keywords" : "默认关键字",
 		//"yvr.long_description" : "网站完整描述",
 		"yvr.tips_of_add" : "发帖提示语",
-		"yvr.allow_image_upload" : "是否允许上传图片"
+		"yvr.allow_image_upload" : "是否允许上传图片",
+		"yvr.pay_before_first_topic" : "是否先打赏才能发帖"
 };
 var vueBasicConfigList = new Vue({
 	el : "#yvr_config_div",

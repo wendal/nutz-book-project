@@ -38,54 +38,22 @@ layout("_layout.html",{title:'添加新帖子'}){
             	</div>
             </div>
             <textarea id="topicContent" v-model="topicContent" class='editor' name='content' rows='50' placeholder='本站使用Markdown语法,下方有粘贴代码和日志的按钮,会有代码高亮'></textarea>
-      		
-    <div>
-        <label>完成验证：</label>
-        <div id="captcha2">
-            <p id="wait2" class="show">正在加载验证码......</p>
-        </div>
-    </div>
       </form>
+      <!--# if (obj.need_user_active) { #-->
+      <button class='btn btn-primary' disabled="disabled">{{topicButtonTip}}</button>
+      <a href="${base}/pay/bc">为防范机器人刷帖,2018年7月6号注册的新用户,需要先打赏才可以发帖/回帖</a>
+      <!--# } else { #-->
       <button class='btn btn-primary' @click="topicSubmit" id="btn_submit">{{topicButtonTip}}</button>
       <button class='btn btn-info' @click="topicAddCode">插入代码或日志片段</button>
-      <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+      <!--#    if (conf["yvr.allow_image_upload"]! == 'true') { #-->
       <button class="btn btn-info" id="topic_image_upload">图片:点击上传或直接拖入编辑框</button>
+      <!--#    } #-->
       <!--# } #-->
     </div>
   </div>
 </div>
 <div style="display: none;" id="tips_for_add">${conf["yvr.tips_of_add"]}</div>
-<script src="${base}/assets/yvr/js/topic_add.js?v=6"></script>
-<script src="${base}/assets/yvr/js/gt.js?z=9"></script>
-<script>
-    var handler2 = function (captchaObj) {
-        // 将验证码加到id为captcha的元素里，同时会有三个input的值用于表单提交
-        captchaObj.appendTo("#captcha2");
-        captchaObj.onReady(function () {
-            $("#wait2").hide();
-        });
-        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
-    };
-    $.ajax({
-        url: "${base}/gt/captcha?t=" + (new Date()).getTime(), // 加随机数防止缓存
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            // 调用 initGeetest 初始化参数
-            // 参数1：配置参数
-            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
-            initGeetest({
-                gt: data.gt,
-                challenge: data.challenge,
-                new_captcha: data.new_captcha, // 用于宕机时表示是新验证码的宕机
-                offline: !data.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
-                product: "popup", // 产品形式，包括：float，popup
-                width: "100%"
-                // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
-            }, handler2);
-        }
-    });
-</script>
+<script src="${base}/assets/yvr/js/topic_add.js?v=7"></script>
 <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
 <script src="${base}/assets/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
 <script >

@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.nutz.aop.interceptor.async.Async;
 import org.nutz.dao.Cnd;
@@ -26,6 +28,7 @@ import org.nutz.dao.sql.Sql;
 import org.nutz.integration.jedis.pubsub.PubSub;
 import org.nutz.integration.jedis.pubsub.PubSubService;
 import org.nutz.ioc.aop.Aop;
+import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.json.Json;
@@ -79,6 +82,9 @@ public class YvrService implements RedisKey, PubSub {
 
 	@Inject("java:$conf.get('topic.global.watchers')")
 	protected String topicGlobalWatchers;
+	
+	@Inject
+	PropertiesProxy conf;
 
 	protected Set<Long> globalWatcherIds = new HashSet<>();
 
@@ -174,6 +180,9 @@ public class YvrService implements RedisKey, PubSub {
 		if (0 != dao.count(Topic.class, Cnd.where("title", "=", topic.getTitle().trim()))) {
 			return _fail("相同标题已经发过了");
 		}
+        if (!needUserActive(userId, null)) {
+            return CResult._fail("用户未激活,请前往打赏页激活");
+        }
 		// 检查关键字
 		Set<String> tags = topic.getTags();
 		topic.setTags(new HashSet<>());
@@ -254,6 +263,9 @@ public class YvrService implements RedisKey, PubSub {
 		if (topic.isLock()) {
 			return _fail("该帖子已经锁定,不能回复");
 		}
+        if (!needUserActive(userId, null)) {
+            return CResult._fail("用户未激活,请前往打赏页激活");
+        }
 		reply.setTopicId(topicId);
 		reply.setUserId(userId);
 		reply.setContent(Toolkit.filteContent(reply.getContent()));
@@ -459,7 +471,7 @@ public class YvrService implements RedisKey, PubSub {
 		Set<String> newTags = new HashSet<>(tags);
 		newTags.removeAll(oldTags);
 		Set<String> removeTags = new HashSet<>(oldTags);;
-		removeTags.remove(tags);
+		removeTags.removeAll(tags);
 		fillTopic(topic, null);
 		Date lastReplyTime = topic.getCreateTime();
 		if (topic.getLastComment() != null)
@@ -621,5 +633,25 @@ public class YvrService implements RedisKey, PubSub {
     @Aop("redis")
     public void rebuildRedisUpdateList() {
         
+    }
+    
+    public boolean needUserActive(long userId, HttpSession session) {
+        if (!conf.getBoolean("yvr.pay_before_first_topic", true)) {
+            return false;
+        }
+        User user = dao.fetch(User.class, userId);
+        if (user == null)
+            return true;
+        if (user.isLocked()) {
+            if (session != null)
+                session.invalidate();
+            return true;
+        }
+        // 2018-07-06 00:00:00 之后注册的用户,要先打赏才能发帖或评论
+        if (user.getCreateTime().getTime() < 1530806400000L) {
+            return false;
+        }
+        int sum = dao.func("t_bee_payment", "sum", "transaction_fee", Cnd.where("trade_success", "=", true).and("from_user", "=", userId));
+        return sum < 38;
     }
 }

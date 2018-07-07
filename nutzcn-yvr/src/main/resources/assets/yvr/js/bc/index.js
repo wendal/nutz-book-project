@@ -41,8 +41,8 @@ var bcListVue = new Vue({
 				}
 			});
 		},
-		do_pay: function(uid) {
-			pay_tips(uid);
+		do_pay: function(uid, tips) {
+			pay_tips(uid, tips);
 		},
 		jump: function(to) {
 			this.pageNumber = to;

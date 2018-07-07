@@ -116,6 +116,7 @@ public class CoreMainSetup implements Setup {
 		if (admin == null) {
 			admin = us.add("admin", "123456");
 		}
+		us.getUserProfile(admin.getId(), false);
 		// 初始化游客用户
 		User guest = dao.fetch(User.class, "guest");
 		if (guest == null) {
@@ -124,6 +125,7 @@ public class CoreMainSetup implements Setup {
 			profile.setNickname("游客");
 			dao.update(profile, "nickname");
 		}
+		us.getUserProfile(guest.getId(), false);
 
 		// 获取NutQuartzCronJobFactory从而触发计划任务的初始化与启动
 		ioc.get(NutQuartzCronJobFactory.class);

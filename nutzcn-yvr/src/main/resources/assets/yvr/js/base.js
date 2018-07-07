@@ -87,10 +87,16 @@ function startGuide(){
 
 // 支付功能
 
-      	function pay_tips(toUser) {
+      	function pay_tips(toUser, tips) {
+      		if (!tips) {
+      			tips = '' + Math.round(Math.random()*800 + 500);
+      		}
+      		else {
+      			tips = '' + tips;
+      		}
 			layer.prompt({
 				  formType: 0,
-				  value: '' + Math.round(Math.random()*800 + 500),
+				  value: tips,
 				  title: '请输入金额,单位是分,按确定后将出现微信二维码'
 				}, function(value, index, elem){
 					layer.close(index);

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -57,7 +56,6 @@ import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.core.service.AppPushService;
-import net.wendal.nutzbook.core.service.GtService;
 import net.wendal.nutzbook.core.service.RedisDao;
 import net.wendal.nutzbook.yvr.bean.SubForum;
 import net.wendal.nutzbook.yvr.bean.Topic;
@@ -101,9 +99,6 @@ public class YvrModule extends BaseModule {
 	
 	@Inject
 	protected AppPushService appPushService;
-	
-	@Inject
-	protected GtService gtService;
 
 	@GET
 	@At
@@ -112,12 +107,12 @@ public class YvrModule extends BaseModule {
 	public Object add(HttpSession session) {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
-
 		String csrf = R.UU32();
 		jedis().setex("csrf:"+csrf, 900, "1");
 		long userId = Toolkit.uid();
 		re.put("current_user", fetch_userprofile(userId));
 		re.put("sub_forums", dao.query(SubForum.class, Cnd.NEW().asc("tagname")));
+		re.put("need_user_active", yvrService.needUserActive(userId, session));
 		return re;
 	}
 
@@ -126,19 +121,8 @@ public class YvrModule extends BaseModule {
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
 	@AdaptBy(type=WhaleAdaptor.class)
-	public CResult add(@Param("..")Topic topic, @Param("_tags")String tags, 
-	                   HttpServletRequest req,
-	                   @Param("challenge")String challenge,
-	                   @Param("validate")String validate,
-	                   @Param("seccode")String seccode) {
-	    if (Strings.isBlank(challenge) || Strings.isBlank(validate) || Strings.isBlank(seccode)) {
-	        return CResult._fail("未提供校验参数,请刷新页面后重试");
-	    }
+	public CResult add(@Param("..")Topic topic, @Param("_tags")String tags) {
 		long userId = Toolkit.uid();
-		String msg =  gtService.verify(challenge, validate, seccode, userId+"", Lang.getIP(req));
-		if (msg != null) {
-            return CResult._fail(msg);
-        }
 		if (!Strings.isBlank(tags)) {
 		    topic.setTags(new HashSet<>(Lang.list(Strings.splitIgnoreBlank(tags))));
 		}
@@ -302,6 +286,7 @@ public class YvrModule extends BaseModule {
         re.put("next_topic_id", redisDao.znext(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
         re.put("prev_topic_id", redisDao.zprev(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
         re.put("user_topic_marked", topic.getCollectors().contains(""+Toolkit.uid()));
+        re.put("need_user_active", yvrService.needUserActive(userId, null));
 		//re.put("top_tags", yvrService.fetchTopTags());
 		return re;
 	}
@@ -329,7 +314,7 @@ public class YvrModule extends BaseModule {
 	@Filters(@By(type = CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")
-	public Object addReply(String topicId, @Param("..") TopicReply reply) {
+	public Object addReply(String topicId, @Param("..") TopicReply reply, HttpSession session) {
 		long userId = Toolkit.uid();
 		return yvrService.addReply(topicId, reply, userId);
 	}
