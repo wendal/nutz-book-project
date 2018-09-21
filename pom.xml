@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.wendal.nutzcn</groupId>
 	<artifactId>nutzcn-nutzboot</artifactId>
-	<version>3.1.0</version>
+	<version>5.0.1</version>
 	<packaging>jar</packaging>
 	<name>NutzCN的NutzBoot版本</name>
 	<properties>
@@ -55,6 +55,12 @@
 					</archive>
 				</configuration>
 			</plugin>
+			
+            <plugin>
+                <groupId>org.nutz.boot</groupId>
+                <artifactId>nutzboot-maven-plugin</artifactId>
+                <version>${nutzboot.version}</version>
+            </plugin>
 		</plugins>
 	</build>
 	<repositories>
@@ -208,7 +214,13 @@
 		<dependency>
 			<groupId>org.pegdown</groupId>
 			<artifactId>pegdown</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-util</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<dependency>
@@ -236,6 +248,12 @@
 			<groupId>org.brickred</groupId>
 			<artifactId>socialauth</artifactId>
 			<version>4.9</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
@@ -250,6 +268,17 @@
 			<groupId>cn.jpush.api</groupId>
 			<artifactId>jpush-client</artifactId>
 			<version>3.2.8</version>
+		</dependency>
+		<dependency>
+			    <groupId>org.parboiled</groupId>
+    			<artifactId>parboiled-java</artifactId>
+    			<version>1.2.0</version>
+    			<exclusions>
+    				<exclusion>
+    					<groupId>org.ow2.asm</groupId>
+    					<artifactId>asm-util</artifactId>
+    				</exclusion>
+    			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

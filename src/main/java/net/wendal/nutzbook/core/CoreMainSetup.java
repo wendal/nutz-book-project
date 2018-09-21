@@ -36,6 +36,7 @@ import org.nutz.plugins.slog.service.SlogService;
 import org.nutz.resource.Scans;
 import org.quartz.Scheduler;
 
+import net.wendal.nutzbook.MainSetup;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.IdentityPojo;
 import net.wendal.nutzbook.core.bean.SysConfigure;
@@ -74,8 +75,8 @@ public class CoreMainSetup implements Setup {
 		Ioc ioc = nc.getIoc();
 
         Dao dao = ioc.get(Dao.class);
-        dao.create(SysConfigure.class, false);
-        Daos.migration(dao, UserProfile.class, true, false);
+        Daos.createTablesInPackage(dao, MainSetup.class, false);
+        //Daos.migration(dao, UserProfile.class, true, false);
         // 获取配置对象
         conf = ioc.get(PropertiesProxy.class, "conf");
         ioc.get(ConfigureService.class).doReload();
