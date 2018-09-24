@@ -1,0 +1,12 @@
+{
+	name : "dwmaster",
+	version : "3.1.0",
+	base : "net.wendal.nutzbook.dwmaster",
+	describe : "NutzCN的资源下载模块",
+	menu : [{
+		name : "简易下载模块",
+		subs : [
+			{name:"下载列表管理", page:"nutzdw/basic.html"}
+		]
+	}]
+}

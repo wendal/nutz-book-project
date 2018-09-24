@@ -39,7 +39,6 @@ import org.quartz.Scheduler;
 import net.wendal.nutzbook.MainSetup;
 import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.IdentityPojo;
-import net.wendal.nutzbook.core.bean.SysConfigure;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.bean.UserProfile;
 import net.wendal.nutzbook.core.ig.RedisIdGenerator;

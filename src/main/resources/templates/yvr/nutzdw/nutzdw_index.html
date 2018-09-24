@@ -1,0 +1,36 @@
+<!--# layout("../_layout.html",{title:'下载列表'}){#-->
+<!--# layout("../sidebar.html",{"c_user":obj.current_user!}){}#-->
+<div id='content'>
+	<div class='panel'>
+		<div class='header'>
+			<ol class='breadcrumb'>
+				<li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+				<li class='active'>下载列表</li>
+			</ol>
+		</div>
+		<div class='inner' id="nutzdw">
+			<table class="table table-hover">
+				<thead>
+					<tr class="cell">
+						<th>文件名</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class='cell' v-for="item in list">
+						<td>{{item.name}}</td>
+						<td>{{item.updateTime}}</td>
+						<td><a :href="item.url" target="_blank">下载</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var dw_domain = "${conf['qiniu.domain']}";
+var dw_prefix="dw/nutz/";
+</script>
+<script src="${base}/assets/yvr/js/nutzdw/nutzdw.js"></script>
+<!--#}  #-->
