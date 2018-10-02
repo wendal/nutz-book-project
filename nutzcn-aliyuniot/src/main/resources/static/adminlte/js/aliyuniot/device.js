@@ -9,6 +9,9 @@ var vueDeviceList = new Vue({
 			iccid : "",
 			deviceName : "",
 			online : false
+		},
+		ui : {
+			show_deviceSecret : false
 		}
 	},
 	methods : {
@@ -53,7 +56,7 @@ var vueDeviceList = new Vue({
 			layer.prompt({
 				  formType: 2,
 				  value: '',
-				  title: '请输入设备IMEI'
+				  title: '请输入设备名称,通常是IMEI,可以用输入多个,用英文逗号或换行分隔'
 				},function(value, index, elem){
 				  layer.close(index);
 				  if (!value)
@@ -61,7 +64,7 @@ var vueDeviceList = new Vue({
 				  $.ajax({
 						url : base + "/aliyuniot/admin/add",
 						type : "POST",
-						data : {imeis:value},
+						data : {deviceNames:value},
 						success : function(re) {
 							if (re && re.ok) {
 								layer.alert("添加成功");

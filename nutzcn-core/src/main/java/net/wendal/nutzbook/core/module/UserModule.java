@@ -121,4 +121,17 @@ public class UserModule extends BaseModule {
         dao.updateIgnoreNull(profile);
         return ajaxOk("");
     }
+	
+	@POST
+	@At("/changepasswd")
+	@RequiresAuthentication
+    public Object changePassword(String password) {
+        if (Strings.isBlank(password))
+            return ajaxFail("密码不能是空");
+        password = password.trim();
+        if (password.length() < 6)
+            return ajaxFail("密码不能少于六位");
+        userService.updatePassword((int)Toolkit.uid(), password);
+        return ajaxOk("");
+    }
 }

@@ -1,5 +1,6 @@
 package net.wendal.nutzbook.aliyuniot.module;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -19,6 +20,8 @@ import org.nutz.mvc.annotation.Param;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.iot.model.v20170420.PubRequest;
+import com.aliyuncs.iot.model.v20170420.PubResponse;
 import com.aliyuncs.iot.model.v20170420.QueryDeviceRequest;
 import com.aliyuncs.iot.model.v20170420.QueryDeviceResponse;
 import com.aliyuncs.iot.model.v20170420.QueryDeviceResponse.DeviceInfo;
@@ -87,13 +90,13 @@ public class AliyunIotModule {
     
     @RequiresPermissions("aliyuniot.admin")
     @At("/add")
-    public NutMap addDevice(String imeis) {
+    public NutMap addDevice(String deviceNames) {
         NutMap re = new NutMap();
-        if (Strings.isBlank(imeis)) {
+        if (Strings.isBlank(deviceNames)) {
             return re.setv("ok", false).setv("msg", "imei不能是空");
         }
-        imeis = imeis.trim();
-        if (imeis.length() < 10) {
+        deviceNames = deviceNames.trim();
+        if (deviceNames.length() < 10) {
             return re.setv("ok", false).setv("msg", "imei不能少于10位");
         }
         DefaultAcsClient client = getDefaultAcsClient();
@@ -101,7 +104,7 @@ public class AliyunIotModule {
         String productKey = conf.get("aliyuniot.productKey");
         // 逐个添加并记录状态
         NutMap data = new NutMap();
-        for (String imei : Strings.splitIgnoreBlank(imeis)) {
+        for (String imei : Strings.splitIgnoreBlank(deviceNames, "[,\\\n]")) {
             RegistDeviceRequest req = new RegistDeviceRequest();
             req.setDeviceName(imei);
             req.setProductKey(productKey);
@@ -189,6 +192,35 @@ public class AliyunIotModule {
         catch (Throwable e) {
             return new NutMap("ok", false).setv("msg", "请求失败 " + e.getMessage());
         }
+    }
+    
+    @RequiresPermissions("aliyuniot.admin")
+    @At("/publish")
+    public NutMap publish(String deviceNames, String cnt, int qos) {
+        DefaultAcsClient client = getDefaultAcsClient();
+        cnt = Base64.getEncoder().encodeToString(cnt.getBytes());
+        PubRequest req = new PubRequest();
+        String productKey = conf.get("aliyuniot.productKey");
+        NutMap re = new NutMap("ok", true);
+        NutMap data = new NutMap();
+        for (String deviceName : Strings.splitIgnoreBlank(deviceNames, "[,\\\n]")) {
+            try {
+                req.setTopicFullName("/" + productKey + "/" + deviceName + "/get");
+                req.setProductKey(productKey);
+                req.setMessageContent(cnt);
+                req.setQos(qos);
+                PubResponse resp = client.getAcsResponse(req);
+                data.put(deviceName, resp);
+            }
+            catch (Throwable e) {
+                log.debugf("发布到 /%s/%s/get 的时候抛错了", e);
+                PubResponse resp = new PubResponse();
+                resp.setSuccess(false);
+                resp.setErrorMessage(e.getMessage());
+                data.put(deviceName, resp);
+            }
+        }
+        return re;
     }
     
     protected DefaultAcsClient getDefaultAcsClient() {

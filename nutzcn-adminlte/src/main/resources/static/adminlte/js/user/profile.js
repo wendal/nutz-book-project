@@ -55,7 +55,33 @@ var vueUserProfile = new Vue({
 			layer.alert("暂无实现");
 		},
 		update_password : function() {
-			layer.alert("暂无实现");
+			layer.prompt({
+				  value: '',
+				  title: '请输入最少6位的新密码'
+				},function(value, index, elem){
+				  layer.close(index);
+				  if (!value)
+					  return;
+				  $.ajax({
+						url : base + "/user/changepasswd",
+						type : "POST",
+						data : {password:value},
+						success : function(re) {
+							if (re && re.ok) {
+								layer.alert("修改成功");
+							}
+							else {
+								layer.alert("修改失败: " + re.msg);
+							}
+						},
+				    	fail : function(err) {
+				    		layer.alert("加载失败:" + err);
+				    	},
+				    	error : function (err){
+				    		layer.alert("加载失败:" + err);
+				    	}
+					});
+				});
 		}
 	},
 	created : function() {

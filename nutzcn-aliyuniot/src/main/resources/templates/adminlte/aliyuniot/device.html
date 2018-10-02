@@ -20,6 +20,7 @@
             </div>
             <div class="box-header">
             	<div>
+            		显示设备密钥<input type="checkbox" v-model="ui.show_deviceSecret">
             		仅显示在线<input type="checkbox" v-model="query.online" @change="dataReload">
             		过滤设备名<input type="text" v-model="query.deviceName" @change="dataReload">
             	</div>
@@ -29,16 +30,16 @@
               <table id="user_table" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                  <th>产品key</th>
                   <th>设备名称</th>
+                  <th>设备密钥</th>
                   <th>在线状态</th>
                   <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="device in devices">
-                  <td>{{device.productKey}}</td>
                   <td>{{device.deviceName}}</td>
+                  <td>{{ui.show_deviceSecret ? device.deviceSecret : "*****"}}</td>
                   <td>{{device.online ? "在线" : "离线"}}</td>
                   <td>
                   	<button @click="show_device_detail(device.id)">详情</button>
