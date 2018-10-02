@@ -1,0 +1,29 @@
+<div class='user_card'>
+  <div>
+    <a class='user_avatar' href="${ctxPath}/yvr/u/${user.loginname}">
+      <img src="${cdnbase}${ctxPath}/yvr/u/${user.loginname}/avatar" title="${user.loginname}"/>
+    </a>
+    <span class='user_nickname'>
+    	<a class='dark' href="${ctxPath}/yvr/u/${user.loginname}">${user.nickname, escape}<!--#if (user.nickname != user.loginname){ #-->(${user.loginname})<!--#} #--></a>
+    	
+    	<!--#if ( ! strutil.contain(user.loginname, "_")){ #-->
+    		<a href="https://github.com/${user.loginname}"><img src="${base}/yvr/logo/Octocat_32.png"></a>
+    	<!--#} #-->
+    </span>
+
+    <div class='board clearfix'>
+      <div class='floor'>
+        <span class='big'>积分: ${user.score}</span>
+      </div>
+    </div>
+    <div class="space clearfix"></div>
+    <span class="signature" id="MySign" >
+        <!--# if ( null == user.description! || "" == user.description!) { #-->
+            这家伙很懒，什么个性签名都没有留下。
+        <!--#} else { #-->
+           ${user.description, escape}
+        <!--#} #-->
+
+    </span>
+  </div>
+</div>

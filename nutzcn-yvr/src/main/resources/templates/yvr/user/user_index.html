@@ -1,0 +1,110 @@
+
+<!--# layout("../_layout.html", {}){ #-->
+<!--# layout("../sidebar.html",{"c_user":obj.c_user}){}; #-->
+<div id='content'>
+  <div class='panel'>
+    <div class='header'>
+      <ul class='breadcrumb'>
+        <li><a href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+      </ul>
+    </div>
+    <div class='inner userinfo'>
+      <style>
+		.webuploader-pick{padding: 5px 10px 5px 10px;background-color: #ffffff;line-height: 24px;}
+      </style>
+      <div class='user_big_avatar' id="user_index_avatar">
+        <img src="${cdnbase}${ctxPath}/yvr/u/${obj.c_user.loginname}/avatar" class="user_avatar" title="点击修改头像"/>
+      </div>
+      <a class='dark' id="user_index_nickname"> ${obj.c_user.nickname, escape}</a>
+      <div class='user_profile'>
+        <ul class='unstyled'>
+          <span class='big'>${obj.c_user.score}</span> 积分
+        </ul>
+      </div>
+      <p class='col_fade'>注册时间 ${obj.c_user.createAt}</p>
+    </div>
+  </div>
+  
+  <!--#if (null != obj.access_token!) { #-->
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>Ngrok内网穿透配置文件</span>
+      <a href="${base}/ngrok/config/download">(点我下载)</button>
+      <a href="${base}/ngrok/me">查看使用说明</a>
+    </div>
+    <div class='header'>
+      <span class='col_fade'>微信小程序https转发地址(依赖ngrok服务)</span>
+      <a href="https://nutz.cn/wxopenproxy/${obj.c_user.loginname}/">https://nutz.cn/wxopenproxy/${obj.c_user.loginname}/</button>
+    </div>
+    <!--# if (has_hotplug("weixin")) { #-->
+    <div class='header'>
+    	<img alt="绑定微信登录" src="https://open.weixin.qq.com/zh_CN/htmledition/res/res-design-download/icon32_appwx_logo.png">
+    	<a href="${base}/weixin/qrconnect">绑定微信登录</a>
+    </div>
+    <!--# } #-->
+    <div class='header'>
+      <span class='col_fade'>AccessToken二维码,用于手机客户端</span>
+      <button onclick="$('#access-token-qrcode').show();">显示</button>
+      <button onclick="resetToken();">重置</button>
+    </div>
+    <div class='inner'>
+      <span id="access-token-qrcode" style="display: none;"></span>
+      <script type="text/javascript">
+  	  // qrcode generate
+  	  $(function (){
+  	    var accessToken = "${obj.access_token}";
+        new QRCode(document.getElementById("access-token-qrcode"), {
+     	  text: accessToken,
+    	  width: 200,
+    	  height: 200,
+  	    });
+  	  });
+  	  // END qrcode generate
+	  </script>
+    </div>
+  </div>
+  <!--#} #-->
+  
+  <!--# if ( null != obj.marked_topics && obj.marked_topics.~size > 0 ) {  #-->
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>收藏的话题</span>
+    </div>
+    <!--# layout("../list.html", {"topics":obj.marked_topics}){};  #-->
+    <!--# if (obj.marked_topics.~size == 5) { #-->
+    <div class='cell more'>
+      <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/mark">查看更多»</a>
+    </div>
+    <!--# }  #-->
+  </div>
+  <!--# }  #-->
+  
+  <!--# if ( null != obj.recent_topics && obj.recent_topics.~size > 0 ) {  #-->
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>最近创建的话题</span>
+    </div>
+    <!--# layout("../list.html", {"topics":obj.recent_topics}){};  #-->
+    <!--# if (obj.recent_topics.~size == 5) { #-->
+    <div class='cell more'>
+      <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/topic">查看更多»</a>
+    </div>
+    <!--# }  #-->
+  </div>
+  <!--# }  #-->
+  
+  <!--# if ( null != obj.recent_replies && obj.recent_replies.~size > 0 ) {  #-->
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>最近回复的话题</span>
+    </div>
+    <!--# layout("../list.html", {"topics":obj.recent_replies}){};  #-->
+    <!--# if (obj.recent_replies.~size == 5) { #-->
+    <div class='cell more'>
+      <a class='dark' href="${ctxPath}/yvr/list/u/${obj.c_user.loginname}/reply">查看更多»</a>
+    </div>
+    <!--# }  #-->
+  </div>
+  <!--# }  #-->
+</div>
+<!--#} #-->

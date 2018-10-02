@@ -1,0 +1,352 @@
+<!--#
+layout("_layout.html",{}){
+ #-->
+<!--#layout("sidebar.html", {"c_user":obj.topic.author}){} #-->
+<style>
+.markdown-text ul li, .markdown-text ol li {
+    list-style: unset;
+}
+</style>
+<div id='content'>
+  <div class='panel'>
+    <div class='header'>
+      <ol class='breadcrumb' vocab="http://schema.org/" typeof="BreadcrumbList">
+        <li property="itemListElement" typeof="ListItem">
+        	<a data-pjax href='${ctxPath}/yvr/list' property="item" typeof="WebPage"><span property="name">主页</span></a><span class='divider'>/</span>
+        </li>
+        <li class='active' property="itemListElement" typeof="ListItem" >
+        	<a data-pjax href='${ctxPath}/yvr/list/${obj.topic.type}' property="item" typeof="WebPage"><span property="name">${obj.topic.type.display}</span></a>
+        	<meta property="position" content="2">
+        </li>
+      </ol>
+    </div>
+    <div itemscope itemtype="http://schema.org/NewsArticle">
+    <meta itemprop="datePublished" content="${obj.topic.createTime, ISO_8601}"/>
+    <div style="display: none;"><img itemprop="image" src="${cdnbase}${ctxPath}/rs/logo/logo.png" alt="NutzCN Logo"/></div>
+    <div class='header topic_header'>
+      <span class="topic_full_title" itemprop="headline">
+        <!--#
+		layout("_top_good.html",{"topic":obj.topic}){}
+		 #-->
+		 <span id="TopicTitleSpan">${obj.topic.title}</span>
+      </span>
+      <div class="changes">
+        <span>
+          发布于 ${obj.topic.createAt}
+        </span>
+        <span>
+          作者 <a data-pjax href="${ctxPath}/yvr/u/${obj.topic.author.loginname}">${obj.topic.author.nickname!, escape}</a>
+        </span>
+        <span>
+          ${obj.topic.visitCount} 次浏览
+        </span>
+        <!--# if (null != obj.current_user!) {  #-->
+        <span id="send_to_phone_btn">
+          <a href="#" onclick="send_to_phone();" title="瞬间推送到手机客户端" data-intro="瞬间推送到手机客户端,传说中的'瞬移' (我的世界乱入...)">推送到手机</a>
+        </span>
+        <span id="topic_mark_btn">
+          <a href="#" onclick="topic_mark('${obj.topic.id}');" title="收藏或取消收藏" data-intro="收藏或取消收藏">
+          ${obj.user_topic_marked ? "取消收藏" : "收藏"}(${obj.topic.collectors.~size})
+          </a>
+        </span>
+        <!--#} #-->
+        <span>
+          <a id="copy_link_btn" href="#" class="zclip" title="复制标题和地址" data-intro="可以复制标题和地址">复制</a>
+        </span>
+        <!--# if (null != obj.prev_topic_id!) {  #-->
+        <span>
+          <a href="${base}/yvr/t/${obj.prev_topic_id}" title="跳转到上一个同类型的帖子">上一个帖子</a>
+        </span>
+        <!--#} #-->
+        <!--# if (null != obj.next_topic_id!) {  #-->
+        <span>
+          <a href="${base}/yvr/t/${obj.next_topic_id}" title="跳转到下一个同类型的帖子">下一个帖子</a>
+        </span>
+        <!--#} #-->
+      </div>
+      
+      <div class="changes">
+      		<span id="TopicTagSpan">
+      		标签:</span>
+      	<!--# if (null != obj.topic.tags && obj.topic.tags.~size > 0){ #-->
+      		<!--#for(_tag in obj.topic.tags) { #-->
+      		<a data-pjax href='${ctxPath}/yvr/tag/${_tag}' property="item" typeof="WebPage" class="topic_tag">${_tag}</a>
+      		<!--#} #-->
+      	<!--#} else { #-->
+      		无
+      	<!--#} #-->
+      </div>
+      <!--# if (shiro.hasPermit("topic:update")) {  #-->
+      <div id="manage_topic">
+         <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.top}, 'top');">
+            <!--# if (obj.topic.top) {  #-->
+              <i class="fa fa-lg fa-star-o" title='取消置顶'></i>
+            <!--# } else {  #-->
+              <i class="fa fa-lg fa-star" title='置顶'/></i>
+            <!--# }  #-->
+          </a>
+          
+          <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.good}, 'good');">
+            <!--# if (obj.topic.good) {  #-->
+              <i class="fa fa-lg fa-heart-o" title="取消精华"></i>
+            <!--# } else {  #-->
+              <i class="fa fa-lg fa-heart" title="加精华"></i>
+            <!--# }  #-->
+          </a>
+
+          <a href='#' onclick="topic_update('${obj.topic.id}', ${!obj.topic.lock}, 'lock');">
+            <!--# if (obj.topic.lock) {  #-->
+              <i class="fa fa-lg fa-unlock" title='取消锁定'></i>
+            <!--# } else {  #-->
+              <i class="fa fa-lg fa-lock" title='锁定(不可再回复)'/></i>
+            <!--# }  #-->
+          </a>
+      </div>
+      <!--# }  #-->
+    </div>
+    <div class='inner topic'>
+
+      <div class='topic_content' itemprop="articleBody">
+        <div class="markdown-text">
+        ${markdown(obj.topic.content)}
+		</div>
+      </div>
+    </div>
+    </div>
+  </div>
+  <!--# if ( null != obj.topic.replies!) {  #-->
+  <div class='panel'>
+    <div class='header'>
+      <span class='col_fade'>${obj.topic.replies.~size} 回复</span>
+    </div>
+    <!--#
+    var _i = 0;
+    for (reply in obj.topic.replies) {
+    	layout("_reply.html", {"reply":reply, "indexInCollection":_i}){};
+    	_i = _i + 1;
+    }
+     #-->
+  </div>
+  <!--# }  #-->
+  <div class='panel' data-intro="回帖回帖回帖!!" data-position="top" id="replyAdd">
+    <div class='header'>
+      <span class='col_fade'>添加回复</span>
+    </div>
+    <div class='inner reply'>
+    <!--# if (obj.topic.lock) { #-->
+    	<span class='col_fade'>该帖子已被锁定,不能回复.</span>
+    <!--# } else if (null != obj.current_user!){  #-->
+      <form action='#'>
+      	  <input id="input_topic_id" type="hidden" name="id" value="${obj.topic.id}">
+          <input type='hidden' name='_csrf' id="_csrf" value='${obj._csrf!}'/>
+          <textarea id="replyArea" v-model="replyContent" class='editor' name='content' rows='50' placeholder='本站使用Markdown语法,下方有粘贴代码和日志的按钮,会有代码高亮'></textarea>
+      </form>
+      
+      <button class='btn btn-primary' @click="replySubmit" id="reply_btn">回复</button>
+      <button class='btn btn-info' @click="replyAddCode">插入代码或日志片段</button>
+      <a href="https://gitee.com/nutz/nutz" title="给nutz点个star">nutz@码云</a>
+      <a href="https://gitee.com/nutz/nutzboot" title="给nutzboot点个star">nutzboot@码云</a>
+      <a href="https://github.com/nutzam/nutz/issues/819" title="我用Nutz我自豪,敬请留名">nutz@Github</a>
+      <a href="https://github.com/nutzam/nutzboot/issues/62" title="给nutzboot点个star">nutzboot@Github</a>
+      <!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+      <button class="btn btn-info" id="topic_image_upload">图片:点击上传或直接拖入编辑框</button>
+      <!--# } #-->
+    <!--# } else { #-->
+    	<span class='col_fade' data-intro="登陆是回帖的必要且充分条件,推荐使用github登陆">请先登陆</span>
+    <!--# }  #-->
+    </div>
+  </div>
+</div>
+
+<div class="replies_history">
+  <div class="inner_content"></div>
+  <div class="anchor"></div>
+</div>
+<!--# if (null != obj.current_user!){  #-->
+<script src="${base}/yvr/libs/markdownit.js?v=1"></script>
+<script src="${base}/yvr/libs/code-prettify/prettify.js?v=1"></script>
+<script src="${base}/yvr/js/topic_detail.js?v=4"></script>
+<script src="${base}/yvr/js/jquery.atwho.min.js?v=1.4.1"></script>
+
+<!--#} #-->
+<script type="text/javascript">
+  (function(){
+    var timer = null; //对话框延时定时器
+    // 初始化 $('.replies_history')
+    var $repliesHistory = $('.replies_history');
+    var $repliesHistoryContent = $repliesHistory.find('.inner_content');
+    $repliesHistory.hide();
+    // END
+    // 鼠标移入对话框清除隐藏定时器；移出时隐藏对话框
+    $repliesHistory.on('mouseenter', function(){
+      clearTimeout(timer);
+    }).on('mouseleave', function(){
+      $repliesHistory.fadeOut('fast');
+    });
+  })();
+</script>
+
+<!--#}  #-->
+
+<script>
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  } 
+    return query_string;
+}();
+function send_to_phone() {
+	$.ajax({
+		url : "${base}/yvr/t/${obj.topic.id}/push",
+		method : "POST",
+		success : function(){
+			layer.alert("已推送到手机");
+		},
+		fail : function() {
+			layer.alert("服务器走神了");
+		},
+		error : function() {
+			layer.alert("服务器走神了");
+		}
+	});
+}
+$(function() {
+	prettyPrint();
+	$("#copy_link_btn").zclip({
+		copy:function() {
+			return "${obj.topic.title} " + location.href;
+		},
+		path : '${base}/yvr/js/ZeroClipboard.swf'
+	});
+	$("#TopicTagSpan").editInPlace({
+		method : "POST",
+    	url: "${base}/yvr/admin/update/tags",
+    	textarea_rows : 5,
+    	text_size:100,
+		bg_over: "none",
+		bg_out: "none",
+    	field_type: "textarea",
+		value_required: "true",
+		params : "id=${obj.topic.id}",
+		success: function(data){
+			location.reload();
+		},
+		error: function(e){
+			layer.alert("当前仅管理员可以修改");
+		}
+	});
+});
+	function topic_update(tid, val, tp) {
+		var param = {id:tid, "opt":tp};
+		param[tp] = val;
+		$.ajax({
+			method:"POST",
+			url : "${base}/yvr/admin/update",
+			data : param,
+			dataType : "json",
+			success : function(data) {
+				location.reload();
+			}
+		});
+	};
+	function topic_mark(tid) {
+		$.ajax({
+			method:"POST",
+			url : "${base}/yvr/t/"+tid+"/mark",
+			success : function() {
+				location.reload();
+			}
+		});
+	}
+</script>
+<script type="text/plain">
+$(function(){
+$("#TopicTitleSpan").editInPlace({
+	method : "POST",
+	url: "${base}/yvr/admin/update/title",
+	textarea_rows : 5,
+	text_size:100,
+	bg_over: "none",
+	bg_out: "none",
+	field_type: "textarea",
+	value_required: "true",
+	params : "id=${obj.topic.id}&opt=title",
+	success: function(data){
+		location.reload();
+	},
+	error: function(e){
+		layer.alert("当前仅管理员可以修改");
+	}
+});
+});
+</script>
+<!--# 
+if (obj.topic.replies.~size > 0) {
+	var reply_authors = "";
+	var reply_authors_array = [];
+	for (_reply in obj.topic.replies) {
+		if (array.contain(reply_authors_array, _reply.author.loginname)) {
+		
+		} else {
+			array.add(reply_authors_array, _reply.author.loginname);
+			reply_authors = reply_authors + '"' + _reply.author.loginname + '",';
+		}
+	}
+	#-->
+<script type="text/javascript">
+$('#replyArea').atwho({
+    at: "@",
+    data:[${reply_authors}]
+})
+</script>
+<!--# 
+}
+#-->
+<!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+<script src="${base}/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
+<script >
+		function do_image_upload() {
+			$("#topic_image_upload").click();
+		}
+		var uploader2 = WebUploader.create({
+            swf: ctxPath+'/libs/webuploader/Uploader.swf',
+            server: ctxPath+'/yvr/upload',
+            pick: "#topic_image_upload",
+            paste: "#replyArea",
+            dnd: "#replyArea",
+            auto: true,
+            fileSingleSizeLimit: 10240 * 1024,
+            //sendAsBinary: true,
+            // 只允许选择图片文件
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader2.on('uploadSuccess', function(_file, _resp) {
+        	console.log(_resp);
+        	if (_resp.url) {
+        		window.upload_callback(_resp.url);
+        	} else if (_resp.msg) {
+        		layer.alert(_resp.msg);
+        	}
+		});
+</script>
+<!--# } #-->

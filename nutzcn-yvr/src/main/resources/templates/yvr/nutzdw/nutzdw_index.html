@@ -1,0 +1,65 @@
+<!--# layout("../_layout.html",{title:'下载列表'}){#-->
+<!--# layout("../sidebar.html",{"c_user":obj.current_user!}){}#-->
+<div id='content'>
+	<div class='panel'>
+		<div class='header'>
+			<ol class='breadcrumb'>
+				<li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+				<li class='active'>下载列表</li>
+			</ol>
+		</div>
+		<!--# if (null != obj.current_user!) { #-->
+		<div class='inner'>
+			<div id="container">
+				<button class="btn" id="pickfiles">新增</button>
+			</div>
+			<div style="display: none" id="success" class="col-md-12">
+				<div class="alert-success">队列全部文件处理完毕</div>
+			</div>
+			<div class="col-md-12 ">
+				<table class="table table-striped table-hover text-left" style="margin-top: 40px; display: none">
+					<thead>
+						<tr>
+							<th class="col-md-4">Filename</th>
+							<th class="col-md-2">Size</th>
+							<th class="col-md-6">Detail</th>
+						</tr>
+					</thead>
+					<tbody id="fsUploadProgress">
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!--# } #-->
+		<div class='inner' id="nutzdw">
+			<table class="table table-hover">
+				<thead>
+					<tr class="cell">
+						<th>文件名</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class='cell' v-for="item in list">
+						<td>{{item.name}}</td>
+						<td>{{item.updateTime}}</td>
+						<td><a :href="item.url" target="_blank">下载</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var dw_domain = "${conf['qiniu.domain']}";
+var dw_prefix="dw/nutz/";
+</script>
+<!--# if (null != obj.current_user!) { #-->
+<script src="//cdn.staticfile.org/plupload/2.1.9/moxie.js"></script>
+<script src="//cdn.staticfile.org/plupload/2.1.9/plupload.min.js"></script>
+<script src="//cdn.staticfile.org/qiniu-js-sdk/1.0.14-beta/qiniu.js"></script>
+<script src="${base}/yvr/js/nutzdw/ui.js"></script>
+<!--# } #-->
+<script src="${base}/yvr/js/nutzdw/nutzdw.js"></script>
+<!--#}  #-->

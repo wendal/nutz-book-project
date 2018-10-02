@@ -1,0 +1,6 @@
+{
+	name : "sysinfo",
+	version : "3.1.0",
+	base : "net.wendal.nutzbook.sysinfo",
+	describe : "NutzCN的系统状态模块"
+}

@@ -1,0 +1,89 @@
+<!--#
+layout("_layout.html",{title:'添加新帖子'}){
+ #-->
+<!--# layout("editor_sidebar.html"){}  #-->
+<div id='content'>
+  <div class='panel'>
+    <div class='header'>
+      <ol class='breadcrumb'>
+        <li><a data-pjax href='${ctxPath}/yvr/list'>主页</a><span class='divider'>/</span></li>
+        <li class='active'>发布话题</li>
+      </ol>
+    </div>
+    <div class='inner' id="topicAdd">
+        <form id='create_topic_form' action='#' method='post'>
+            <span>选择版块：</span>
+            <select v-model="topicType" data-intro="请根据内容正确的选择板块">
+              <!--# for (ttype in obj.types) { #-->
+              <option value="${ttype}" >${ttype.display}</option>
+              <!--# }  #-->
+            </select>
+            <p/>
+            <span>选择子版块：</span>
+            <select v-model="topicTag">
+              <option value="" >默认</option>
+              <!--# for (sub_forum in obj.sub_forums) { #-->
+              	<option value="${sub_forum.tagname}" >${sub_forum.display}</option>
+              <!--# }  #-->
+            </select>
+            <p/>
+            <span class="tab-selector">标题:</span>
+			<input v-model="topicTitle" autofocus="" class="span9" id="title" 
+				name="title" rows="1" placeholder="字数 10 字以上,概括问题很关键!! 认真的提问才会有好的回复!!"
+				autocomplete="off">
+            <p/>
+            <div>
+            	<div class='list-group' v-for="item in suggestions">
+            		<a class="list-group-item list-group-item-action list-group-item-info" href='${ctxPath}/yvr/t/{{item.id}}' target="_blank">{{item.title}}</a>
+            	</div>
+            </div>
+            <textarea id="topicContent" v-model="topicContent" class='editor' name='content' rows='50' placeholder='本站使用Markdown语法,下方有粘贴代码和日志的按钮,会有代码高亮'></textarea>
+      </form>
+      <!--# if (obj.need_user_active) { #-->
+      <button class='btn btn-primary' disabled="disabled">{{topicButtonTip}}</button>
+      <a href="${base}/pay/bc">为防范机器人刷帖,2018年7月6号注册的新用户,需要先打赏才可以发帖/回帖</a>
+      <!--# } else { #-->
+      <button class='btn btn-primary' @click="topicSubmit" id="btn_submit">{{topicButtonTip}}</button>
+      <button class='btn btn-info' @click="topicAddCode">插入代码或日志片段</button>
+      <!--#    if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+      <button class="btn btn-info" id="topic_image_upload">图片:点击上传或直接拖入编辑框</button>
+      <!--#    } #-->
+      <!--# } #-->
+    </div>
+  </div>
+</div>
+<div style="display: none;" id="tips_for_add">${conf["yvr.tips_of_add"]}</div>
+<script src="${base}/yvr/js/topic_add.js?v=7"></script>
+<!--# if (conf["yvr.allow_image_upload"]! == 'true') { #-->
+<script src="${base}/yvr/libs/webuploader/webuploader.withoutimage.js"></script>
+<script >
+		function do_image_upload() {
+			$("#topic_image_upload").click();
+		}
+		var uploader2 = WebUploader.create({
+            swf: ctxPath+'/libs/webuploader/Uploader.swf',
+            server: ctxPath+'/yvr/upload',
+            pick: "#topic_image_upload",
+            paste: "#topicContent",
+            dnd: "#topicContent",
+            auto: true,
+            fileSingleSizeLimit: 10240 * 1024,
+            //sendAsBinary: true,
+            // 只允许选择图片文件
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader2.on('uploadSuccess', function(_file, _resp) {
+        	console.log(_resp);
+        	if (_resp.url) {
+        		window.upload_callback(_resp.url);
+        	} else if (_resp.msg) {
+        		layer.alert(_resp.msg);
+        	}
+		});
+</script>
+<!--# } #-->
+<!--#}  #-->

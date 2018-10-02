@@ -1,0 +1,3 @@
+2018-07-06 23:10:00,161 INFO  org.nutz.log.impl.Slf4jLogAdapter.canWork(Slf4jLogAdapter.java:22) - Using Slf4jLogger
+2018-07-06 23:10:14,081 INFO  org.nutz.log.impl.Slf4jLogAdapter.canWork(Slf4jLogAdapter.java:22) - Using Slf4jLogger
+2018-07-06 23:11:37,229 INFO  org.nutz.log.impl.Slf4jLogAdapter.canWork(Slf4jLogAdapter.java:22) - Using Slf4jLogger

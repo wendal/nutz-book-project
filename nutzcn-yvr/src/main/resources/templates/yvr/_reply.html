@@ -1,0 +1,38 @@
+<div class='cell reply_area reply_item
+  <!--# if ( reply.ups.~size > 3) { #--> reply_highlight <!--#} #-->'
+  id="reply${indexInCollection+1}" reply_id="${reply.id}" reply_to_id="${reply.replyTo}">
+  <a class="anchor" id="${reply.id}"></a>
+
+  <div class='author_content'>
+    <a href="${ctxPath}/yvr/u/${reply.author.loginname!}" class="user_avatar">
+      <img src="${cdnbase}${ctxPath}/yvr/u/${reply.author.loginname}/avatar" title="${reply.author.loginname!}"/>
+    </a>
+
+    <div class='user_info'>
+      <a class='dark reply_author' href="${ctxPath}/yvr/u/${reply.author.loginname!}">${reply.author.nickname, escape}<!--#if (reply.author.nickname != reply.author.loginname){ #-->(${reply.author.loginname})<!--#} #--></a>
+      <!--#if(null != obj.current_user! && obj.current_user.userId != reply.author.userId ){ #-->
+      <a onclick="pay_tips(${reply.author.userId})" title="不错,鼓励一下" href="#">打赏</a>
+      <!--#} #-->
+      <!--#if ( ! strutil.contain(reply.author.loginname, "_")){ #-->
+    		<a href="https://github.com/${reply.author.loginname}"><img src="${base}/yvr/logo/Octocat_32.png"></a>
+      <!--#} #-->
+      <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
+    </div>
+    <!-- user_action -->
+    <!--# if (false) { #-->
+    <div class='user_action'>
+      <span>
+        <!--# if (null != obj.current_user! && reply.author.userId == obj.current_user.userId){  #-->
+          <i class="fa fa-reply reply2_btn" title="修改"></i>
+        <!--# }  #-->
+      </span>
+    </div>
+    <!--# } #-->
+  </div>
+  <!-- reply_content -->
+  <div class='reply_content from-${null == reply.author.loginname! ? 'admin' : reply.author.loginname}'>
+    <div class="markdown-text">
+    ${markdown(reply.content, reply.author.loginname)}
+    </div>
+  </div>
+</div>

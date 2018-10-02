@@ -24,7 +24,25 @@ Redis-Windows 下载地址  https://github.com/MSOpenTech/redis/releases 或者 
 
 ## 模块简介
 
-* 运行
+* nutzcn-core 核心模块,其他模块均依赖它
+* nutzcn-webapp web项目模块, 用于启动
+* nutzcn-adminlte 后台管理界面
+* nutzcn-yvr 论坛模块
+* nutzcn-cxfdemo WebService(CXF)的demo
+* nutzcn-swagger Swagger API的demo
+* nutzcn-qqrobot 对接`第五代QQ机器人`的Web Callback
+* nutzcn-shortit 文件文本短地址服务
+* nutzcn-weixin 微信集成模块
+* nutzcn-uflo UFLO2工作流demo
+* nutzcn-oauth 第三方OAuth登录模块
+
+## 如何开发
+
+默认情况下, webapp模块仅依赖了core和adminlte,所以启动后只有后台可访问.
+
+在eclipes下, 单击nutzcn-webapp模块, 然后按 Ctrl+Alt+P, 按需加载的模块
+
+若新建模块, 务必按hotplug插件规范的要求添加必要的文件
 
 ## 手机客户端
 
