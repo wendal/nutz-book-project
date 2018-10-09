@@ -1,6 +1,5 @@
 package net.wendal.nutzbook.aliyuniot.module;
 
-import java.util.Base64;
 import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -8,6 +7,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
+import org.nutz.dao.sql.OrderBy;
 import org.nutz.ioc.impl.PropertiesProxy;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -16,7 +16,9 @@ import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
+import org.nutz.repo.Base64;
 
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.exceptions.ClientException;
@@ -31,6 +33,8 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 
 import net.wendal.nutzbook.aliyuniot.bean.AliyunDev;
+import net.wendal.nutzbook.aliyuniot.bean.AliyunDevMessage;
+import net.wendal.nutzbook.aliyuniot.bean.AliyunDevStatusLog;
 import net.wendal.nutzbook.aliyuniot.service.AliyunIotService;
 
 @IocBean
@@ -48,25 +52,25 @@ public class AliyunIotModule {
     @Inject
     protected PropertiesProxy conf;
 
-    @RequiresPermissions("aliyuniot.admin")
+    @RequiresPermissions("aliyuniot:admin")
     @At("/listen/start")
     public void startListen() {
         aliyunIotService.startListen();
     }
     
-    @RequiresPermissions("aliyuniot.admin")
-    @At("/listen/top")
+    @RequiresPermissions("aliyuniot:admin")
+    @At("/listen/stop")
     public void topListen() {
         aliyunIotService.stopListen();
     }
 
-    @RequiresPermissions("aliyuniot.admin")
+    @RequiresPermissions("aliyuniot:admin")
     @At("/listen/status")
     public boolean getListenStatus() {
         return aliyunIotService.isListening();
     }
     
-    @RequiresPermissions("aliyuniot.admin")
+    @RequiresPermissions("aliyuniot:admin")
     @At("/query")
     public NutMap queryDev(@Param("..")Pager pager, String nickname, String imei, Boolean online, String deviceName) {
         Cnd cnd = Cnd.NEW();
@@ -88,7 +92,7 @@ public class AliyunIotModule {
         return new NutMap("ok", true).setv("data", new QueryResult(list, pager));
     }
     
-    @RequiresPermissions("aliyuniot.admin")
+    @RequiresPermissions("aliyuniot:admin")
     @At("/add")
     public NutMap addDevice(String deviceNames) {
         NutMap re = new NutMap();
@@ -111,6 +115,7 @@ public class AliyunIotModule {
             try {
                 RegistDeviceResponse resp = client.getAcsResponse(req);
                 if (resp.getSuccess() != null && resp.getSuccess()) {
+                    aliyunIotService.insertAliyunDev(productKey, imei, resp.getDeviceSecret(), resp.getDeviceId(), false);
                     data.put(imei, "ok");
                 } else {
                     data.put(imei, resp.getErrorMessage());
@@ -126,7 +131,7 @@ public class AliyunIotModule {
         return re;
     }
     
-    @RequiresPermissions("aliyuniot.admin")
+    @RequiresPermissions("aliyuniot:admin")
     @At("/sync/aliyun")
     public NutMap syncAliyun() {
         DefaultAcsClient client = getDefaultAcsClient();
@@ -162,15 +167,7 @@ public class AliyunIotModule {
                         AliyunDev dev = dao.fetch(AliyunDev.class, cnd);
                         if (dev == null) {
                             log.debugf("新设备 deviceName=%s", deviceName);
-                            dev = new AliyunDev();
-                            dev.setProductKey(productKey);
-                            dev.setDeviceName(deviceName);
-                            dev.setDeviceSecret(deviceSecret);
-                            dev.setAliyunId(aliyunId);
-                            dev.setOnline(info.getDeviceStatus().equalsIgnoreCase("ONLINE"));
-                            dev.setOnlineTime(System.currentTimeMillis());
-                            dev.setCreateAt(System.currentTimeMillis());
-                            dao.insert(dev);
+                            aliyunIotService.insertAliyunDev(productKey, deviceName, deviceSecret, aliyunId, info.getDeviceStatus().equals("ONLINE"));
                             insertCount++;
                         }
                         else if (dev.getAliyunId() == null || !info.getDeviceId().equals(dev.getAliyunId())) {
@@ -194,33 +191,82 @@ public class AliyunIotModule {
         }
     }
     
-    @RequiresPermissions("aliyuniot.admin")
-    @At("/publish")
-    public NutMap publish(String deviceNames, String cnt, int qos) {
+    @POST
+    @RequiresPermissions("aliyuniot:admin")
+    @At("/publish/mqtt")
+    public NutMap publishMqtt(String ids, String cnt, int qos) {
         DefaultAcsClient client = getDefaultAcsClient();
-        cnt = Base64.getEncoder().encodeToString(cnt.getBytes());
+        cnt = Base64.encodeToString(cnt.getBytes(), false);
         PubRequest req = new PubRequest();
-        String productKey = conf.get("aliyuniot.productKey");
         NutMap re = new NutMap("ok", true);
         NutMap data = new NutMap();
-        for (String deviceName : Strings.splitIgnoreBlank(deviceNames, "[,\\\n]")) {
+        re.put("data", data);
+        for (String _id : Strings.splitIgnoreBlank(ids, "[,\\\n]")) {
+            long id = Long.parseLong(_id);
+            AliyunDev dev = dao.fetch(AliyunDev.class, id);
+            if (dev == null) {
+                data.put(_id, false);
+                continue;
+            }
+            String deviceName = dev.getDeviceName();
+            String productKey = dev.getProductKey();
             try {
-                req.setTopicFullName("/" + productKey + "/" + deviceName + "/get");
+                String topic = "/" + productKey + "/" + deviceName + "/get";
+                log.debugf("send to topic=%s", topic);
+                req.setTopicFullName(topic);
                 req.setProductKey(productKey);
                 req.setMessageContent(cnt);
                 req.setQos(qos);
                 PubResponse resp = client.getAcsResponse(req);
-                data.put(deviceName, resp);
+                data.put(_id, resp);
+                AliyunDevMessage msg = new AliyunDevMessage();
+                msg.setDeviceId(dev.getId());
+                msg.setTopic(topic);
+                msg.setQos(qos);
+                msg.setDir(1);
+                msg.setTime(System.currentTimeMillis());
+                msg.setCnt(cnt);
+                dao.insert(msg);
             }
             catch (Throwable e) {
                 log.debugf("发布到 /%s/%s/get 的时候抛错了", e);
                 PubResponse resp = new PubResponse();
                 resp.setSuccess(false);
                 resp.setErrorMessage(e.getMessage());
-                data.put(deviceName, resp);
+                data.put(_id, resp);
             }
         }
         return re;
+    }
+    
+    @RequiresPermissions("aliyuniot:admin")
+    @At("/statlog/query")
+    public NutMap queryStatLog(long deviceId, @Param("..")Pager pager) {
+        QueryResult qr = new QueryResult();
+        OrderBy cnd = Cnd.where("deviceId", "=", deviceId).desc("time");
+        if (pager.getPageNumber() < 1)
+            pager.setPageNumber(1);
+        if (pager.getPageSize() < 10)
+            pager.setPageSize(20);
+        qr.setList(dao.query(AliyunDevStatusLog.class, cnd, pager));
+        pager.setRecordCount(dao.count(AliyunDevStatusLog.class, cnd));
+        qr.setPager(pager);
+        return new NutMap("ok", true).setv("data", qr);
+    }
+    
+    @RequiresPermissions("aliyuniot:admin")
+    @At("/mqttmsg/query")
+    public NutMap queryMqtttMsg(long deviceId, @Param("..")Pager pager) {
+        QueryResult qr = new QueryResult();
+        if (pager.getPageNumber() < 1)
+            pager.setPageNumber(1);
+        if (pager.getPageSize() < 10)
+            pager.setPageSize(20);
+        OrderBy cnd = Cnd.where("deviceId", "=", deviceId).desc("time");
+        qr.setList(dao.query(AliyunDevMessage.class, cnd, pager));
+        pager.setRecordCount(dao.count(AliyunDevMessage.class, cnd));
+        qr.setPager(pager);
+        return new NutMap("ok", true).setv("data", qr);
     }
     
     protected DefaultAcsClient getDefaultAcsClient() {

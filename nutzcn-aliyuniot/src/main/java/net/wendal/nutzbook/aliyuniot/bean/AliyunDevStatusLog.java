@@ -11,10 +11,10 @@ import org.nutz.dao.entity.annotation.TableIndexes;
 public class AliyunDevStatusLog {
 
     @Id
-    private int id;
+    private long id;
     
     @Column("did")
-    private int deviceId;
+    private long deviceId;
     
     @Column("ot")
     private boolean online;
@@ -22,19 +22,19 @@ public class AliyunDevStatusLog {
     @Column("t")
     private long time;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getDeviceId() {
+    public long getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(int deviceId) {
+    public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
     }
 

@@ -14,6 +14,7 @@ import org.nutz.lang.segment.Segments;
 import org.nutz.lang.util.NutMap;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.repo.Base64;
 
 import com.aliyun.openservices.iot.api.Profile;
 import com.aliyun.openservices.iot.api.message.MessageClientFactory;
@@ -23,6 +24,7 @@ import com.aliyun.openservices.iot.api.message.entity.Message;
 import com.aliyun.openservices.iot.api.message.entity.MessageToken;
 
 import net.wendal.nutzbook.aliyuniot.bean.AliyunDev;
+import net.wendal.nutzbook.aliyuniot.bean.AliyunDevMessage;
 import net.wendal.nutzbook.aliyuniot.bean.AliyunDevStatusLog;
 
 @IocBean
@@ -79,6 +81,7 @@ public class AliyunIotService implements MessageCallback {
         // endPoint:  https://${uid}.iot-as-http2.${region}.aliyuncs.com
         String endPoint = "https://" + uid + ".iot-as-http2." + regionId + ".aliyuncs.com";
         Profile profile = Profile.getAccessKeyProfile(endPoint, regionId, accessKey, accessSecret);
+        profile.setMultiConnection(false);
         client = MessageClientFactory.messageClient(profile);
         client.setMessageListener("/"+productKey+"/#", this);
         client.setMessageListener("/as/mqtt/status/"+productKey+"/#", this);
@@ -120,25 +123,9 @@ public class AliyunIotService implements MessageCallback {
                  */
                 log.debug(Segments.create("设备状态报告 ${productKey} ${deviceName} ${status}").render(Lang.context(payload)));
                 // 首先,查一下有没有这个设备
-                Cnd cnd = Cnd.where("productKey", "=", payload.get("productKey"));
-                cnd.and("deviceName", "=", payload.get("deviceName"));
                 boolean online = "online".equals(payload.get("status"));
                 long time = Times.parse("yyyy-MM-dd HH:mm:ss.SSS", payload.getString("time")).getTime();
-                AliyunDev dev = dao.fetch(AliyunDev.class, cnd);
-                if (dev == null) {
-                    dev = new AliyunDev();
-                    dev.setProductKey(payload.getString("productKey"));
-                    dev.setDeviceName(payload.getString("deviceName"));
-                    dev.setCreateAt(System.currentTimeMillis());
-                    dev.setOnlineTime(0);
-                    try {
-                        dao.insert(dev);
-                    }
-                    catch (Throwable e) {
-                        log.debug("似乎其他线程已经插入了记录,那直接查询吧 : " + cnd);
-                        dev = dao.fetch(AliyunDev.class, cnd);
-                    }
-                }
+                AliyunDev dev = getOrCreate(payload.getString("productKey"), payload.getString("deviceName"));
                 // 插入记录
                 AliyunDevStatusLog stat = new AliyunDevStatusLog();
                 stat.setDeviceId(dev.getId());
@@ -149,12 +136,60 @@ public class AliyunIotService implements MessageCallback {
                 // 触发online/offline脚本
             }
             else {
-                
+                String[] tmp = Strings.splitIgnoreBlank(topic, "/");
+                String productKey = tmp[0];
+                String deviceName = tmp[1];
+                String _topic = "/" + tmp[2];
+                Cnd cnd = Cnd.where("productKey", "=", productKey);
+                cnd.and("deviceName", "=", deviceName);
+                AliyunDev dev = getOrCreate(productKey, deviceName);
+                AliyunDevMessage msg = new AliyunDevMessage();
+                msg.setDeviceId(dev.getId());
+                msg.setTopic(_topic);
+                msg.setQos(m.getQos());
+                msg.setDir(1);
+                msg.setTime(m.getGenerateTime());
+                msg.setCnt(Base64.encodeToString(m.getPayload(), false));
+                dao.insert(msg);
             }
         }
         catch (Throwable e) {
             log.info("bug?", e);
         }
         return MessageCallback.Action.CommitSuccess;
+    }
+    
+    public AliyunDev getOrCreate(String productKey, String deviceName) {
+        Cnd cnd = Cnd.where("productKey", "=", productKey);
+        cnd.and("deviceName", "=", deviceName);
+        AliyunDev dev = dao.fetch(AliyunDev.class, cnd);
+        if (dev == null) {
+            dev = new AliyunDev();
+            dev.setProductKey(productKey);
+            dev.setDeviceName(deviceName);
+            dev.setCreateAt(System.currentTimeMillis());
+            dev.setOnlineTime(0);
+            try {
+                dao.insert(dev);
+            }
+            catch (Throwable e) {
+                log.debug("似乎其他线程已经插入了记录,那直接查询吧 : " + cnd);
+                dev = dao.fetch(AliyunDev.class, cnd);
+            }
+        }
+        return dev;
+    }
+    
+    public AliyunDev insertAliyunDev(String productKey, String deviceName, String deviceSecret, String aliyunId, boolean online) {
+        AliyunDev dev = new AliyunDev();
+        dev.setProductKey(productKey);
+        dev.setDeviceName(deviceName);
+        dev.setDeviceSecret(deviceSecret);
+        dev.setAliyunId(aliyunId);
+        dev.setOnline(online);
+        dev.setOnlineTime(System.currentTimeMillis());
+        dev.setCreateAt(System.currentTimeMillis());
+        dao.insert(dev);
+        return dev;
     }
 }

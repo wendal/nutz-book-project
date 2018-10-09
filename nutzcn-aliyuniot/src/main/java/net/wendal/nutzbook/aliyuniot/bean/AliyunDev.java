@@ -18,7 +18,7 @@ public class AliyunDev {
      * 设备本地id
      */
     @Id
-    private int id;
+    private long id;
     /**
      * 设备所属的productKey
      */
@@ -45,8 +45,12 @@ public class AliyunDev {
     private String iccid;
     @Column("phone")
     private String phoneNumber;
+    // 网卡mac地址
     @Column
     private String mac;
+    // 软件版本号
+    @Column("swv")
+    private String swversion;
     // ====位置信息====
     @Column
     private double lat;
@@ -79,10 +83,10 @@ public class AliyunDev {
     private String whenMessage;
     
     
-    public int getId() {
+    public long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
     public String getProductKey() {

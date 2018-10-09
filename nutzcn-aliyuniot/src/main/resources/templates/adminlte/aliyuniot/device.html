@@ -43,6 +43,9 @@
                   <td>{{device.online ? "在线" : "离线"}}</td>
                   <td>
                   	<button @click="show_device_detail(device.id)">详情</button>
+                  	<button @click="publish_msg(device.id)">发送mqtt消息</button>
+                  	<button @click="show_stat_log(device.id)">查看上线离线记录</button>
+                  	<button @click="show_msg_log(device.id)">查看上下行信息</button>
                   </td>
                 </tr>
                 </tbody>
