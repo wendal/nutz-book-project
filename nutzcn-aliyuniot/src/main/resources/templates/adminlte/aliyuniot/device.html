@@ -20,8 +20,16 @@
             </div>
             <div class="box-header">
             	<div>
-            		显示设备密钥<input type="checkbox" v-model="ui.show_deviceSecret">
-            		仅显示在线<input type="checkbox" v-model="query.online" @change="dataReload">
+            		<div class="form-check form-check-inline">
+  						<input class="form-check-input" type="checkbox" id="cb_show_deviceSecret" v-model="ui.show_deviceSecret">
+  						<label class="form-check-label" for="cb_show_deviceSecret">显示设备密钥</label>
+  						<input class="form-check-input" type="checkbox" id="cb_query_online" v-model="query.online"  @change="dataReload">
+  						<label class="form-check-label" for="cb_query_online">仅显示在线设备</label>
+  						<input class="form-check-input" type="checkbox" id="cb_auto_reload" v-model="ui.auto_reload"  @change="dataReload">
+  						<label class="form-check-label" for="cb_auto_reload">自动刷新</label>
+					</div>
+            		<div class="form-check form-check-inline">
+					</div>
             		过滤设备名<input type="text" v-model="query.deviceName" @change="dataReload">
             	</div>
             </div>

@@ -35,7 +35,8 @@ var vueDeviceList = new Vue({
 			online : true
 		},
 		ui : {
-			show_deviceSecret : false
+			show_deviceSecret : false,
+			auto_reload : false
 		}
 	},
 	methods : {
@@ -55,8 +56,8 @@ var vueDeviceList = new Vue({
 		    	dataType : "json",
 		    	data : q,
 		    	success : function(re) {
-		    		if (console)
-		    			console.info(re);
+		    		//if (console)
+		    		//	console.info(re);
 		    		if (re && re.ok) {
 		    			vueDeviceList.devices = re.data.list;
 		    			vueDeviceList.pager = re.data.pager;
@@ -267,3 +268,8 @@ var vueDeviceList = new Vue({
 	    this.dataReload();
     }
 });
+setInterval(function() {
+	if (vueDeviceList.ui.auto_reload) {
+		vueDeviceList.dataReload();
+	}
+}, 3000);

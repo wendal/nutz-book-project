@@ -54,7 +54,7 @@ public class AliyunIotModule {
 
     @RequiresPermissions("aliyuniot:admin")
     @At("/listen/start")
-    public void startListen() {
+    public synchronized void startListen() {
         aliyunIotService.startListen();
     }
     

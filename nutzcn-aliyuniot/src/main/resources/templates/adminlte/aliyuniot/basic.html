@@ -41,6 +41,21 @@
             </div>
             <!-- /.box-body -->
           </div>
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title" id="title_http2stat">服务器订阅({{http2stat?"运行中":"未启动"}})</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="row">
+            	<div class="col-xs-12">
+            		<button type="button" class="btn btn-default" v-if="!http2stat" @click="start_http2">启动</button>
+            		<button type="button" class="btn btn-default" v-else @click="stop_http2">关闭</button>
+            	</div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
         </div>
         <!-- /.col -->
       </div>

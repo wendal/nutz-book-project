@@ -7,12 +7,13 @@ var config_map = {
 		"aliyuniot.accessSecret" : "AccessSecret",
 		"aliyuniot.productKey" : "ProductKey",
 		"aliyuniot.productSecret" : "ProductSecret",
-		"aliyuniot.http2Enable" : "是否使用http2监听",
+		//"aliyuniot.http2Enable" : "是否使用http2监听",
 };
 var vueBasicConfigList = new Vue({
 	el : "#aliyuniot_config_div",
 	data : {
-		configs : []
+		configs : [],
+		http2stat : false
 	},
 	methods : {
 		dataReload : function() {
@@ -43,6 +44,7 @@ var vueBasicConfigList = new Vue({
 					layer.alert("加载失败:" + err);
 				}
 			});
+			$.ajax()
 		},
 		do_save : function() {
 			var p = {};
@@ -71,9 +73,69 @@ var vueBasicConfigList = new Vue({
 					layer.alert("加载失败:" + err);
 				}
 			});
+		},
+		get_http2stat : function(auto_check) {
+			$.ajax({
+				url : base + "/aliyuniot/admin/listen/status",
+				dataType : "json",
+				success : function(re) {
+					if (re) {
+						vueBasicConfigList.http2stat = true;
+					}
+					else {
+						vueBasicConfigList.http2stat = false;
+					}
+				},
+				fail : function(err) {
+					if (!auto_check)
+						layer.alert("加载失败:" + err);
+				},
+				error : function(err) {
+					if (!auto_check)
+						layer.alert("加载失败:" + err);
+				}
+			});
+		},
+		start_http2 : function(auto_check) {
+			$.ajax({
+				url : base + "/aliyuniot/admin/listen/start",
+				dataType : "json",
+				success : function() {
+					layer.alert("启动中...");
+				},
+				fail : function(err) {
+					if (!auto_check)
+						layer.alert("失败了" + err);
+				},
+				error : function(err) {
+					if (!auto_check)
+						layer.alert("加载失败:" + err);
+				}
+			});
+		},
+		stop_http2 : function(auto_check) {
+			$.ajax({
+				url : base + "/aliyuniot/admin/listen/stop",
+				dataType : "json",
+				success : function() {
+					layer.alert("关闭中...");
+				},
+				fail : function(err) {
+					if (!auto_check)
+						layer.alert("加载失败:" + err);
+				},
+				error : function(err) {
+					if (!auto_check)
+						layer.alert("加载失败:" + err);
+				}
+			});
 		}
 	},
 	created : function() {
 		this.dataReload();
+		this.get_http2stat();
 	}
 });
+setInterval(function() {
+	vueBasicConfigList.get_http2stat(true);
+}, 3000);

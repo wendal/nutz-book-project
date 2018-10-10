@@ -99,6 +99,7 @@ public class AliyunIotService implements MessageCallback {
         if (!isListening())
             return false;
         client.disconnect();
+        client = null;
         return true;
     }
 
@@ -139,13 +140,12 @@ public class AliyunIotService implements MessageCallback {
                 String[] tmp = Strings.splitIgnoreBlank(topic, "/");
                 String productKey = tmp[0];
                 String deviceName = tmp[1];
-                String _topic = "/" + tmp[2];
                 Cnd cnd = Cnd.where("productKey", "=", productKey);
                 cnd.and("deviceName", "=", deviceName);
                 AliyunDev dev = getOrCreate(productKey, deviceName);
                 AliyunDevMessage msg = new AliyunDevMessage();
                 msg.setDeviceId(dev.getId());
-                msg.setTopic(_topic);
+                msg.setTopic(topic);
                 msg.setQos(m.getQos());
                 msg.setDir(1);
                 msg.setTime(m.getGenerateTime());
