@@ -19,6 +19,7 @@ import org.nutz.repo.Base64;
 import com.aliyun.openservices.iot.api.Profile;
 import com.aliyun.openservices.iot.api.message.MessageClientFactory;
 import com.aliyun.openservices.iot.api.message.api.MessageClient;
+import com.aliyun.openservices.iot.api.message.callback.ConnectionCallback;
 import com.aliyun.openservices.iot.api.message.callback.MessageCallback;
 import com.aliyun.openservices.iot.api.message.entity.Message;
 import com.aliyun.openservices.iot.api.message.entity.MessageToken;
@@ -83,8 +84,8 @@ public class AliyunIotService implements MessageCallback {
         Profile profile = Profile.getAccessKeyProfile(endPoint, regionId, accessKey, accessSecret);
         profile.setMultiConnection(false);
         client = MessageClientFactory.messageClient(profile);
-        client.setMessageListener("/"+productKey+"/#", this);
         client.setMessageListener("/as/mqtt/status/"+productKey+"/#", this);
+        client.setMessageListener("/"+productKey+"/#", this);
         client.connect(new MessageCallback() {
             public Action consume(MessageToken messageToken) {
                 Message m = messageToken.getMessage();
@@ -147,7 +148,7 @@ public class AliyunIotService implements MessageCallback {
                 msg.setDeviceId(dev.getId());
                 msg.setTopic(topic);
                 msg.setQos(m.getQos());
-                msg.setDir(1);
+                msg.setDir(0);
                 msg.setTime(m.getGenerateTime());
                 msg.setCnt(Base64.encodeToString(m.getPayload(), false));
                 dao.insert(msg);

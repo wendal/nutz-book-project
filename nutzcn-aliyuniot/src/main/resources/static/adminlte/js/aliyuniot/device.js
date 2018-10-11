@@ -270,6 +270,7 @@ var vueDeviceList = new Vue({
 });
 setInterval(function() {
 	if (vueDeviceList.ui.auto_reload) {
+		//console.log("vueDeviceList.ui.auto_reload=" + vueDeviceList.ui.auto_reload);
 		vueDeviceList.dataReload();
 	}
 }, 3000);
