@@ -183,6 +183,17 @@ public class YvrService implements RedisKey, PubSub {
         if (needUserActive(userId, null)) {
             return CResult._fail("用户未激活,请前往打赏页激活");
         }
+        String blackWorks = conf.get("yvr.black_words");
+        if (!Strings.isBlank(blackWorks)) {
+            for (String word : Strings.splitIgnoreBlank(blackWorks)) {
+                if (topic.getTitle().contains(word)) {
+                    log.infof("发帖标题[%s]黑名单[%s]命中!!! 锁定用户!! 拒绝发帖!!!", topic.getTitle(), word);
+                    user.setLocked(true);
+                    dao.update(user, "locked");
+                    return CResult._fail("发帖标题被黑名单命中,你的账号已被锁定! 如果你认为这是错误,请与管理员联系");
+                }
+            }
+        }
 		// 检查关键字
 		Set<String> tags = topic.getTags();
 		topic.setTags(new HashSet<>());
@@ -652,6 +663,9 @@ public class YvrService implements RedisKey, PubSub {
             return false;
         }
         int sum = dao.func("t_bee_payment", "sum", "transaction_fee", Cnd.where("trade_success", "=", true).and("from_user", "=", userId));
-        return sum < 38;
+        if (sum >= 38 && user.getCreateTime().getTime() <= 1545316950000L) { // 大概是2018-12-21 00:00:00
+            return false;
+        }
+        return sum < conf.getInt("yvr.tips_for_active", 200);
     }
 }

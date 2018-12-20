@@ -9,7 +9,10 @@ var config_map = {
 		//"yvr.long_description" : "网站完整描述",
 		"yvr.tips_of_add" : "发帖提示语",
 		"yvr.allow_image_upload" : "是否允许上传图片",
-		"yvr.pay_before_first_topic" : "是否先打赏才能发帖"
+		"yvr.pay_before_first_topic" : "是否先打赏才能发帖",
+		"yvr.tips_for_active" : "用于激活的打赏金额",
+		"yvr.black_words" : "发帖黑名单字符串",
+		"yvr.tips_notify" : "打赏提示语"
 };
 var vueBasicConfigList = new Vue({
 	el : "#yvr_config_div",

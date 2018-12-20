@@ -117,10 +117,10 @@ var vueTopicList = new Vue({
 	  			    	data : "id="+topic_id,
 	  			    	success : function(re) {
 	  			    		if (re && re.ok) {
-	  			    			layer.alert("删除成功");
+	  			    			layer.msg("删除成功");
 	  			    			vueTopicList.dataReload();
 	  			    		} else if (re && re.msg) {
-	  							layer.alert(re.msg);
+	  							layer.msg(re.msg);
 	  						}
 	  			    	}
 	  				});

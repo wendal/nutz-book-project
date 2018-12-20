@@ -13,18 +13,21 @@
     	<b>推荐登录后打赏, 未登录的打赏将作为匿名打赏哦.</b>
     </div>
     <div class='inner'>
+    	<b>${conf['yvr.tips_notify']} </b>
+    </div>
+    <div class='inner'>
     	<!-- TODO 可配置 -->
     	<button @click="do_pay(2)">打赏给wendal</button>
         <button @click="do_pay(5)">打赏给大鲨鱼(NutzWK)</button>
-        <button @click="do_pay(2, 38)">我只想激活账户</button>
+        <button @click="do_pay(2, ${conf['yvr.tips_for_active']})">我只想激活账户</button>
     </div>
     <!--#} #-->
     <div class='inner'>
     	<button class="btn" v-on:click="doReload" disabled>当前页数{{pageNumber}}</button>
-    	<button class="btn" v-on:click="jump(1)" v-if="pageCount > 1 && pageNumber > 1" >第一页</button>
-    	<button class="btn" v-on:click="jump(pageNumber-1)" v-if="pageNumber > 1">上一页</button>
-    	<button class="btn" v-on:click="jump(pageNumber+1)" v-if="pageNumber < pageCount">下一页</button>
-    	<button class="btn" v-on:click="jump(pageCount)" v-if="pageCount > 1 && pageNumber < pageCount">最后页</button>
+    	<button class="btn" v-on:click="jump(1)">第一页</button>
+    	<button class="btn" v-on:click="jump(pageNumber-1)">上一页</button>
+    	<button class="btn" v-on:click="jump(pageNumber+1)">下一页</button>
+    	<button class="btn" v-on:click="jump(pageCount)">最后页</button>
     </div>
     <div class='inner'>
     	<table class="table table-bordered">
