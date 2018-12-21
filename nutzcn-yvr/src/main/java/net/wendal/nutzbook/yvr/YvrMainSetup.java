@@ -3,6 +3,7 @@ package net.wendal.nutzbook.yvr;
 import org.beetl.ext.nutz.BeetlViewMaker;
 import org.nutz.ioc.Ioc;
 import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.NutConfig;
@@ -15,6 +16,7 @@ import net.wendal.nutzbook.yvr.beetl.MarkdownFunction;
 import net.wendal.nutzbook.yvr.service.YvrService;
 import net.wendal.nutzbook.yvr.util.Markdowns;
 
+@IocBean
 public class YvrMainSetup implements Setup {
     
     private static final Log log = Logs.get();

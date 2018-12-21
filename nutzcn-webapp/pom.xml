@@ -43,6 +43,12 @@
 			<groupId>org.nutz</groupId>
 			<artifactId>nutzboot-starter-nutz-mvc</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-util</artifactId>
+			<version>6.1.1</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

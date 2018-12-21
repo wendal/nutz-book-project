@@ -11,6 +11,17 @@
         <nutzboot.version>2.3-SNAPSHOT</nutzboot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.nutz</groupId>
+                <artifactId>nutzboot-parent</artifactId>
+                <version>${nutzboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 	<modules>
 		<module>nutzcn-core</module>
 		<module>nutzcn-adminlte</module>
@@ -49,6 +60,12 @@
 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 			</plugin>
+			
+            <plugin>
+                <groupId>org.nutz.boot</groupId>
+                <artifactId>nutzboot-maven-plugin</artifactId>
+                <version>${nutzboot.version}</version>
+            </plugin>
 		</plugins>
 	</build>
 	<repositories>
