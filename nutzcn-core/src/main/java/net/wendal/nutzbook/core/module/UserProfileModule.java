@@ -41,7 +41,7 @@ import net.wendal.nutzbook.core.bean.UserProfile;
 @Api(name="用户配置文件", description="UserProfile的增删改查")
 @IocBean
 @At("/user/profile")
-public abstract class UserProfileModule extends BaseModule {
+public class UserProfileModule extends BaseModule {
 	
 	private static final Log log = Logs.get();
 	
@@ -65,6 +65,7 @@ public abstract class UserProfileModule extends BaseModule {
 		profile.setUpdateTime(new Date());
 		profile.setAvatar(null); // 不准通过这个方法更新
 		UserProfile old = get();
+		profile.setScore(old.getScore());
 		// 检查email相关的更新
 		if (old.getEmail() == null) {
 			// 老的邮箱为null,所以新的肯定是未check的状态

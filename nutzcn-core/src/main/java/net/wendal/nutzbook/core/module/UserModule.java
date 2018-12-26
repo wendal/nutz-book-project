@@ -118,6 +118,8 @@ public class UserModule extends BaseModule {
         // 禁止更新X币地址和密码
         profile.setEthAddress(null);
         profile.setEthPassword(null);
+        UserProfile old = dao.fetch(UserProfile.class, profile.getUserId());
+        profile.setScore(old.getScore());
         dao.updateIgnoreNull(profile);
         return ajaxOk("");
     }
