@@ -134,7 +134,7 @@ public class YvrSeoModule extends BaseModule {
 	@At({"/links/?"})
 	@Ok("beetl:/yvr/website/links.html")
 	public Object page(String type) throws IOException {
-		String path = "/doc/" + type + ".md";
+		String path = "doc/" + type + ".md";
 		InputStream ins = getClass().getClassLoader().getResourceAsStream(path);
 		if (ins == null)
 			return HTTP_404;

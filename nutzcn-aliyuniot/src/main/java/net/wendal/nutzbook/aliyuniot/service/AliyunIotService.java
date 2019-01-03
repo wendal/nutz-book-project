@@ -19,7 +19,6 @@ import org.nutz.repo.Base64;
 import com.aliyun.openservices.iot.api.Profile;
 import com.aliyun.openservices.iot.api.message.MessageClientFactory;
 import com.aliyun.openservices.iot.api.message.api.MessageClient;
-import com.aliyun.openservices.iot.api.message.callback.ConnectionCallback;
 import com.aliyun.openservices.iot.api.message.callback.MessageCallback;
 import com.aliyun.openservices.iot.api.message.entity.Message;
 import com.aliyun.openservices.iot.api.message.entity.MessageToken;
@@ -38,6 +37,9 @@ public class AliyunIotService implements MessageCallback {
     
     @Inject
     protected Dao dao;
+    
+    @Inject
+    protected JsIotService jsIotService;
     
     protected  MessageClient client;
 
@@ -136,6 +138,12 @@ public class AliyunIotService implements MessageCallback {
                 dao.insert(stat);
                 dao.update(AliyunDev.class, Chain.make("online", online).add("onlineTime", time), Cnd.where("id", "=", dev.getId()).and("onlineTime", "<", time));
                 // 触发online/offline脚本
+                String jsStr = online ? dev.getWhenOnline() : dev.getWhenOffline();
+                if (!Strings.isBlank(jsStr)) {
+                    NutMap context = new NutMap();
+                    context.put("iot_dev", dev);
+                    jsIotService.call(jsStr, context);
+                }
             }
             else {
                 String[] tmp = Strings.splitIgnoreBlank(topic, "/");
@@ -145,13 +153,24 @@ public class AliyunIotService implements MessageCallback {
                 cnd.and("deviceName", "=", deviceName);
                 AliyunDev dev = getOrCreate(productKey, deviceName);
                 AliyunDevMessage msg = new AliyunDevMessage();
+                byte[] payload = m.getPayload();
                 msg.setDeviceId(dev.getId());
                 msg.setTopic(topic);
                 msg.setQos(m.getQos());
                 msg.setDir(0);
                 msg.setTime(m.getGenerateTime());
-                msg.setCnt(Base64.encodeToString(m.getPayload(), false));
+                msg.setCnt(Base64.encodeToString(payload, false));
                 dao.insert(msg);
+                // 触发message脚本
+                if (payload.length > 0 && payload[0] == '{' && payload[payload.length-1] == '}') {
+                    String jsStr = dev.getWhenMessage();
+                    if (!Strings.isBlank(jsStr)) {
+                        NutMap context = new NutMap();
+                        context.put("iot_dev", dev);
+                        context.put("iot_msg", Json.fromJson(new String(payload)));
+                        jsIotService.call(jsStr, context);
+                    }
+                }
             }
         }
         catch (Throwable e) {
