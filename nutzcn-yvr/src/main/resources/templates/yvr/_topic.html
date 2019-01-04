@@ -314,6 +314,37 @@ $('#replyArea').atwho({
     at: "@",
     data:[${reply_authors}]
 })
+  // 点赞
+  $('.up_btn').click(function (e) {
+    var $this = $(this);
+    var replyId = $this.closest('.reply_area').attr('reply_id');
+    $.ajax({
+      url: '${ctxPath}/yvr/t/${obj.topic.id}/reply/' + replyId + '/up',
+      method: 'POST',
+      dataType : "json"
+    }).done(function (data) {
+      if (data.ok) {
+        $this.removeClass('invisible');
+        var currentCount = Number($this.next('.up-count').text().trim()) || 0;
+        if (data.data === 'up') {
+          $this.next('.up-count').text(currentCount + 1);
+          $this.addClass('uped');
+        } else {
+          if (data.data === 'down') {
+            $this.next('.up-count').text(currentCount - 1);
+            $this.removeClass('uped');
+          }
+        }
+      } else {
+        layer.alert(data.msg);
+      }
+    }).fail(function (xhr) {
+      if (xhr.status === 403) {
+        alert('请先登录，登陆后即可点赞。');
+      }
+    });
+  });
+  // END 点赞
 </script>
 <!--# 
 }

@@ -262,7 +262,7 @@ public class YvrModule extends BaseModule {
 		//-------------------------------------
 		// 点赞功能已废弃
 		for (TopicReply reply : topic.getReplies()) {
-			reply.setUps(Collections.EMPTY_SET);
+		    reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
 		}
 		bigContentService.fill(topic);
 		// 收藏列表
