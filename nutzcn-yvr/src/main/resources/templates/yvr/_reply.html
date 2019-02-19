@@ -17,12 +17,14 @@
     		<a href="https://github.com/${reply.author.loginname}"><img src="${base}/yvr/logo/Octocat_32.png"></a>
       <!--#} #-->
       <a class="reply_time" href="#${reply.id}">${indexInCollection+1}楼•${reply.createAt}</a>
+      <!--#if(null != obj.current_user! && obj.current_user.userId != reply.author.userId ){ #-->
       <i class="fa up_btn
         	${ array.contain(reply.ups, ""+ obj.current_user.userId) ? 'fa-thumbs-up uped' : 'fa-thumbs-o-up' }
         	" title="喜欢"></i>
         	<span class="up-count">
         		${reply.ups.~size > 0 ? reply.ups.~size : '' }
         	</span>
+       <!--#} #-->
     </div>
   </div>
   <!-- reply_content -->
