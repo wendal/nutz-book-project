@@ -37,6 +37,7 @@
 		<module>nutzcn-weixin</module>
 		<module>nutzcn-qqrobot</module>
 		<module>nutzcn-aliyuniot</module>
+		<module>nutzcn-luat</module>
 	</modules>
 	<build>
 		<plugins>

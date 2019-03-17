@@ -189,6 +189,16 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>luat</id>
+			<dependencies>
+				<dependency>
+					<groupId>net.wendal.nutzcn</groupId>
+					<artifactId>nutzcn-luat</artifactId>
+					<version>${nutzcn.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
 	</profiles>
 	<build>
 		<plugins>

@@ -1,0 +1,132 @@
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>升级计划</h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Luat管理</a></li>
+        <li class="active">升级计划</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="plan_manager_div">
+      <div class="row">
+        <div class="col-xs-12" v-if="ui.mode == 'list'">
+          
+          <div class="box">
+            <div class="box-header">
+            	<div>
+            		过滤升级计划描述  : <input type="text" v-model="query.content" @change="dataReload">
+            	</div>
+            	<div class="form-group">
+            		<select class="form-control input-sm" id="project_select" @change="change_project">
+            			<option :value="project.id" v-for="project in projects" v-if="project.id == query.projectId" selected>{{project.nickname}}</option>
+    					<option :value="project.id" v-for="project in projects" v-if="project.id != query.projectId" >{{project.nickname}}</option>
+    				</select>
+            	</div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="plan_table" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>计划id</th>
+                  <th>名称</th>
+                  <th>描述</th>
+                  <th>关联的升级包</th>
+                  <th>是否生效</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="plan in plans">
+                  <td>{{plan.id}}</td>
+                  <td>{{plan.name}}</td>
+                  <td>{{plan.content}}</td>
+                  <td>{{plan.pkg ? plan.pkg.versionStr : '-'}}</td>
+                  <td>{{plan.enable ? '激活' : '已禁用'}}</td>
+                  <td>
+                  	<button @click="show_plan(plan)" class="btn btn-info">详情</button>
+                  	<button @click="do_enable(plan.id, true)" v-if="!plan.enable" class="btn btn-success">激活它</button>
+                  	<button @click="do_enable(plan.id, false)" v-if="plan.enable" class="btn btn-danger">禁用它</button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+		  <div class="box">
+				<div>
+					<div class='inner'>
+						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
+						<button class="btn" v-on:click="changePage(1)">第一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+						<button class="btn btn-info" v-on:click="add_plan">新增升级计划</button>
+					</div>
+				</div>
+			</div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-12" v-if="ui.mode != 'list'">
+      	  <div class="box">
+            <div class="box-header">
+            	
+            </div>
+            <div class="box-body">
+            	<div class="form-group">
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">id</span>
+  						<input v-model="cur_plan.id" type="text" class="form-control" placeholder="id" aria-describedby="cur_plan_id" disabled="disabled">
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">名称</span>
+  						<input v-model="cur_plan.name" type="text" class="form-control" placeholder="名称" aria-describedby="cur_plan_id">
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">描述</span>
+  						<input v-model="cur_plan.content" type="text" class="form-control" placeholder="名称" aria-describedby="cur_plan_id">
+					</div>
+					<div class="input-group input-group-sm">
+						<span class="input-group-addon" >关联的固件包</span>
+						<select class="form-control input-sm" id="pkg_select" @change="select_pkg">
+            				<option :value="pkg.id" v-for="pkg in packages" v-if="pkg.id == cur_plan.pkgId" selected>{{pkg.versionStr}}</option>
+    						<option :value="pkg.id" v-for="pkg in packages" v-if="pkg.id != cur_plan.pkgId" >{{pkg.versionStr}}</option>
+    					</select>
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">限定IMEI</span>
+  						<input v-model="cur_plan.imeis" type="text" class="form-control" placeholder="设备的imei,不填就是不限制" aria-describedby="cur_plan_id">
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">限定ICCID</span>
+  						<input v-model="cur_plan.iccids" type="text" class="form-control" placeholder="不填就是不限制" aria-describedby="cur_plan_id">
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">限定原版本号</span>
+  						<input v-model="cur_plan.versionEq" type="text" class="form-control" placeholder="不填就是不限制" aria-describedby="cur_plan_id">
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">限定省份</span>
+  						<input v-model="cur_plan.provinces" type="text" class="form-control" placeholder="不填就是不限制" aria-describedby="cur_plan_id">
+					</div>
+            		<div class="input-group input-group-sm">
+  						<span class="input-group-addon" id="cur_plan_id">限定城市</span>
+  						<input v-model="cur_plan.cities" type="text" class="form-control" placeholder="不填就是不限制" aria-describedby="cur_plan_id">
+					</div>
+            	</div>
+            	<button class="btn btn-info" @click="add_plan_action()" v-if="ui.mode == 'add'">新增</button>
+            	<button class="btn btn-info" @click="update_plan_action()" v-if="ui.mode == 'update'">更新</button>
+            	<button class="btn btn-default" @click="ui.mode='list';dataReload();">返回</button>
+            </div>
+          </div>
+      	</div>
+      </div>
+      <!-- /.row -->
+      
+    </section>
+    <!-- /.content -->
+    <script src="${base}/adminlte/js/luat/upgrade_plan.js?v=1"></script>

@@ -1,0 +1,17 @@
+{
+	name : "luat",
+	version : "5.1.0",
+	base : "net.wendal.nutzbook.luat",
+	describe : "Luat管理模块",
+	menu : [{
+		name : "Luat管理模块",
+		subs : [
+			{name:"基本设置", page:"luat/basic.html"},
+			{name:"项目管理", page:"luat/project.html"},
+			{name:"设备管理", page:"luat/device.html"},
+			{name:"固件管理", page:"luat/upgrade_package.html"},
+			{name:"升级计划", page:"luat/upgrade_plan.html"},
+			{name:"升级日志", page:"luat/upgrade_history.html"}
+		]
+	}]
+}

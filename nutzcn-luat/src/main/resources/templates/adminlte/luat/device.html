@@ -1,0 +1,77 @@
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>设备管理</h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Luat管理</a></li>
+        <li class="active">设备管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="device_manager_div">
+      <div class="row">
+        <div class="col-xs-12">
+          
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">设备一览</h3>
+            </div>
+            <div class="box-header">
+            	<div>
+            		过滤IMEI  : <input type="text" v-model="query.imei" @change="dataReload">
+            	</div>
+            	<div>
+            		<select id="project_select" @change="change_project">
+            			<option :value="project.id" v-for="project in projects" v-if="project.id == query.projectId" selected>{{project.nickname}}</option>
+    					<option :value="project.id" v-for="project in projects" v-if="project.id != query.projectId" >{{project.nickname}}</option>
+    				</select>
+            	</div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="user_table" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>设备id</th>
+                  <th>设备IMEI</th>
+                  <th>固件类型</th>
+                  <th>脚本版本号</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="device in devices">
+                  <td>{{device.id}}</td>
+                  <td>{{device.imei}}</td>
+                  <td>{{device.firmwareName}}</td>
+                  <td>{{device.versionStr}}</td>
+                  <td>
+                  	<button @click="show_device_detail(device.id)">详情</button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+			<div class="box">
+				<div>
+					<div class='inner'>
+						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
+						<button class="btn" v-on:click="changePage(1)">第一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+						<button class="btn" v-on:click="add_device">新增设备</button>
+					</div>
+				</div>
+			</div>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    <script src="${base}/adminlte/js/luat/device.js?v=1"></script>

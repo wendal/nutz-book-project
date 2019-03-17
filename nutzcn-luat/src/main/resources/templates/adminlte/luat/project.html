@@ -1,0 +1,75 @@
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>项目管理</h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Luat管理</a></li>
+        <li class="active">项目管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" id="project_manager_div">
+      <div class="row">
+        <div class="col-xs-12">
+          
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">项目一览</h3>
+            </div>
+            <div class="box-header">
+            	<div>
+            		<div class="form-check form-check-inline">
+					</div>
+            		过滤项目名称<input type="text" v-model="query.projectName" @change="dataReload">
+            	</div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="project_table" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>项目id</th>
+                  <th>项目名称</th>
+                  <th>项目ProductKey</th>
+                  <th>已知设备数</th>
+                  <th>固件数量</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="project in projects">
+                  <td>{{project.id}}</td>
+                  <td>{{project.nickname}}</td>
+                  <td>{{project.name}}</td>
+                  <td>{{project.deviceCount}}</td>
+                  <td>{{project.packageCount}}</td>
+                  <td>
+                  	<button @click="show_device_detail(device.id)">详情</button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+			<div class="box">
+				<div>
+					<div class='inner'>
+						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
+						<button class="btn" v-on:click="changePage(1)">第一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
+						<button class="btn" v-on:click="add_project">新增项目</button>
+					</div>
+				</div>
+			</div>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    <script src="${base}/adminlte/js/luat/project.js?v=1"></script>

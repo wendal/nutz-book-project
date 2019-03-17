@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import org.nutz.dao.Cnd;
 import org.nutz.dao.Condition;
 import org.nutz.dao.Dao;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
 import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.View;
@@ -105,5 +107,18 @@ public abstract class BaseModule implements RedisKey {
 	
 	protected static View _download(String f) {
 		return new ViewWrapper(new RawView("stream"), new File(f));
+	}
+	
+	protected static NutMap _ok(Object data) {
+        return _map("ok", true, "data", data);
+    }
+	
+	protected static NutMap _fail(String msg) {
+        return _map("ok", false, "msg", msg);
+    }
+	
+	protected static void _like(Cnd cnd, String fieldName, String value) {
+	    if (!Strings.isBlank(value))
+	        cnd.and(Cnd.exps(fieldName, "like", "%"+value).or(fieldName, "like", value + "%").or(fieldName, "=", value));
 	}
 }
