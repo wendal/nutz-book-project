@@ -50,15 +50,22 @@ public class LuatDevice extends BasePojo {
     @Column
     private String tags;
     @Column
-    private long lockedTime;
+    private long lockUpgradeUtil;
     @Column
-    private String lockedReson;
+    private long unlockUpgradeUtil;
+
+    @Column
+    private long lastUpgradeCheckTime;
 
     @One
     private User user;
 
     @One
     private LuatProject project;
+
+    // 非数据库字段
+    protected String lastUpgradeCheckTimeStr;
+    protected boolean upgradeLocked;
 
     public long getId() {
         return id;
@@ -106,6 +113,14 @@ public class LuatDevice extends BasePojo {
 
     public void setProjectId(long projectId) {
         this.projectId = projectId;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getFirmwareName() {
@@ -180,28 +195,20 @@ public class LuatDevice extends BasePojo {
         this.tags = tags;
     }
 
-    public long getLockedTime() {
-        return lockedTime;
+    public long getLockUpgradeUtil() {
+        return lockUpgradeUtil;
     }
 
-    public void setLockedTime(long lockedTime) {
-        this.lockedTime = lockedTime;
+    public void setLockUpgradeUtil(long lockUpgradeUtil) {
+        this.lockUpgradeUtil = lockUpgradeUtil;
     }
 
-    public String getLockedReson() {
-        return lockedReson;
+    public long getUnlockUpgradeUtil() {
+        return unlockUpgradeUtil;
     }
 
-    public void setLockedReson(String lockedReson) {
-        this.lockedReson = lockedReson;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUnlockUpgradeUtil(long unlockUpgradeUtil) {
+        this.unlockUpgradeUtil = unlockUpgradeUtil;
     }
 
     public User getUser() {
@@ -220,4 +227,31 @@ public class LuatDevice extends BasePojo {
         this.project = project;
     }
 
+    public long getLastUpgradeCheckTime() {
+        return lastUpgradeCheckTime;
+    }
+
+    public void setLastUpgradeCheckTime(long lastUpgradeCheckTime) {
+        this.lastUpgradeCheckTime = lastUpgradeCheckTime;
+    }
+
+    public String getLastUpgradeCheckTimeStr() {
+        return lastUpgradeCheckTime == 0 ? "Never" : ((System.currentTimeMillis() - lastUpgradeCheckTime) / 60000 + 1) + " mins ago";
+    }
+    
+    public void setLastUpgradeCheckTimeStr(String lastUpgradeCheckTimeStr) {
+    }
+
+    public boolean isUpgradeLocked() {
+        long now = System.currentTimeMillis();
+        if (unlockUpgradeUtil > now)
+            return false;
+        if (lockUpgradeUtil > now)
+            return true;
+        return false;
+    }
+    
+    public void setUpgradeLocked(boolean upgradeLocked) {
+        this.upgradeLocked = upgradeLocked;
+    }
 }

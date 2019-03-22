@@ -22,7 +22,7 @@
             	<div>
             		<div class="form-check form-check-inline">
 					</div>
-            		过滤项目名称<input type="text" v-model="query.projectName" @change="dataReload">
+            		过滤项目名称<input type="text" v-model="query.nickname" @change="dataReload">
             	</div>
             </div>
             <!-- /.box-header -->
@@ -46,7 +46,7 @@
                   <td>{{project.deviceCount}}</td>
                   <td>{{project.packageCount}}</td>
                   <td>
-                  	<button @click="show_device_detail(device.id)">详情</button>
+                  	<button class="btn btn-warn" @click="change_key(project.id)">修改项目密钥</button>
                   </td>
                 </tr>
                 </tbody>
@@ -57,12 +57,12 @@
 			<div class="box">
 				<div>
 					<div class='inner'>
-						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
-						<button class="btn" v-on:click="changePage(1)">第一页</button>
-						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
-						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
-						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
-						<button class="btn" v-on:click="add_project">新增项目</button>
+						<button class="btn btn-info" v-on:click="add_project">新增项目</button>
+						<button class="btn btn-default" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
+						<button class="btn btn-default" v-on:click="changePage(1)">第一页</button>
+						<button class="btn btn-default" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn btn-default" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn btn-default" v-on:click="changePage(pager.pageCount)">最后页</button>
 					</div>
 				</div>
 			</div>

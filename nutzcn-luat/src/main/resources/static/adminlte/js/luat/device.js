@@ -77,7 +77,7 @@ var vueDeviceList = new Vue({
 			layer.prompt({
 				  formType: 2,
 				  value: '',
-				  title: '请输入设备imei'
+				  title: '请输入设备imei,可以输入多行'
 				},function(value, index, elem){
 				  layer.close(index);
 				  if (!value)
@@ -88,7 +88,7 @@ var vueDeviceList = new Vue({
 						data : {imei:value},
 						success : function(re) {
 							if (re && re.ok) {
-								layer.alert("添加成功", {shadeClose:true});
+								layer.alert("添加成功"+re.data.added+",重复"+re.data.exists, {shadeClose:true});
 								vueDeviceList.dataReload();
 							}
 							else {
@@ -104,7 +104,23 @@ var vueDeviceList = new Vue({
 					});
 				});
 		},
-		
+		unlock_device : function(device_id) {
+			$.ajax({
+		    	url : base + "/luat/admin/device/unlock_upgrade",
+		    	dataType : "json",
+		    	type : "POST",
+		    	data : "id=" + device_id,
+		    	success : function(re) {
+		    		if (re && re.ok) {
+		    			layer.alert("解锁成功,一小时内无限制", {shadeClose:true});
+		    		}
+		    		else{
+		    			layer.alert("解锁失败", {shadeClose:true});
+		    		}
+	    			vueDeviceList.dataReload();
+		    	}
+		    });
+		},
 		//----------------------------
 		// 选项目
 		load_project_list: function() {

@@ -46,7 +46,8 @@ var _app = new Vue({
 					pageSize : this.pager.pageSize,
 					pageNumber : this.pager.pageNumber,
 					imei : this.query.imei,
-					iccid : this.query.iccid
+					iccid : this.query.iccid,
+					nickname : this.query.nickname
 			}
 			$.ajax({
 		    	url : base + "/luat/admin/upgrade/plan/query",
@@ -154,6 +155,31 @@ var _app = new Vue({
 		select_pkg : function() {
 			this.cur_plan.pkgId = $("#pkg_select").find(":selected").val();
 			console.log(this.cur_plan.pkgId);
+		},
+		do_predict : function(plan_id) {
+			$.ajax({
+		    	url : base + "/luat/admin/upgrade/plan/do_predict",
+		    	dataType : "json",
+		    	type : "POST",
+		    	data : "id=" + plan_id,
+		    	success : function(re) {
+		    		if (re && re.ok) {
+		    			layer.alert("已知设备数"+re.data.deviceCount + ",符合升级条件" + re.data.matchCount, {shadeClose:true});
+		    		}
+		    	}
+		    });
+		},
+		disable_all_plan : function() {
+			$.ajax({
+		    	url : base + "/luat/admin/upgrade/plan/disable_all",
+		    	dataType : "json",
+		    	type : "POST",
+		    	success : function(re) {
+		    		if (re && re.ok) {
+		    			layer.alert("禁用了" + re.data.changed+"个升级计划", {shadeClose:true});
+		    		}
+		    	}
+		    });
 		},
 		//----------------------------
 		// 选项目

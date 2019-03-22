@@ -5,7 +5,6 @@ import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.EL;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Index;
-import org.nutz.dao.entity.annotation.Name;
 import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Prev;
 import org.nutz.dao.entity.annotation.Table;
@@ -22,8 +21,8 @@ public class LuatUpgradePackage extends BasePojo {
     @Id(auto = false)
     @Prev(els = @EL("ig(view.tableName)"))
     private long id;
-    @Name
-    private String name;
+    @Column
+    private String originName;
     @Column
     private String content;
     @Column
@@ -58,12 +57,12 @@ public class LuatUpgradePackage extends BasePojo {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getOriginName() {
+        return originName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOriginName(String name) {
+        this.originName = name;
     }
 
     public String getContent() {

@@ -22,21 +22,16 @@ Date.prototype.Format = function(fmt)
   fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
   return fmt;   
 };
-var vueProjectList = new Vue({
-	el : "#project_manager_div",
+var _app = new Vue({
+	el : "#history_manager_div",
 	data : {
+		histories : [],
 		projects : [],
 		pager : {pageNumber:1,pageCount:1,pageSize:10},
 		query : {
-			nickname : "",
 			imei : "",
 			iccid : "",
-			deviceName : "",
-			online : true
-		},
-		ui : {
-			show_deviceSecret : false,
-			auto_reload : false
+			projectId : ""
 		}
 	},
 	methods : {
@@ -44,18 +39,19 @@ var vueProjectList = new Vue({
 			var q = {
 					pageSize : this.pager.pageSize,
 					pageNumber : this.pager.pageNumber,
-					nickname : this.query.nickname
+					imei : this.query.imei,
+					iccid : this.query.iccid
 			}
 			$.ajax({
-		    	url : base + "/luat/admin/project/query",
+		    	url : base + "/luat/admin/upgrade/history/query",
 		    	dataType : "json",
 		    	data : q,
 		    	success : function(re) {
 		    		//if (console)
 		    		//	console.info(re);
 		    		if (re && re.ok) {
-		    			vueProjectList.projects = re.data.list;
-		    			vueProjectList.pager = re.data.pager;
+		    			_app.histories = re.data.list;
+		    			_app.pager = re.data.pager;
 		    		} else if (re && re.msg) {
 						layer.alert(re.msg);
 					}
@@ -72,68 +68,52 @@ var vueProjectList = new Vue({
 	    	this.pager.pageNumber = to_page;
 	    	this.dataReload();
 	    },
-		add_project : function() {
-			layer.prompt({
-				  value: '',
-				  title: '请输入项目名称,不要超过12个字符'
-				},function(value, index, elem){
-				  layer.close(index);
-				  if (!value)
-					  return;
-				  $.ajax({
-						url : base + "/luat/admin/project/add",
-						type : "POST",
-						data : {nickname:value},
-						success : function(re) {
-							if (re && re.ok) {
-								layer.alert("添加成功", {shadeClose:true});
-								vueProjectList.dataReload();
-							}
-							else {
-								layer.alert("添加失败: " + re.msg, {shadeClose:true});
-							}
-						},
-				    	fail : function(err) {
-				    		layer.alert("加载失败:" + err, {shadeClose:true});
-				    	},
-				    	error : function (err){
-				    		layer.alert("加载失败:" + err, {shadeClose:true});
-				    	}
-					});
-				});
+		
+		//----------------------------
+		// 选项目
+		load_project_list: function() {
+			$.ajax({
+		    	url : base + "/luat/admin/project/query",
+		    	dataType : "json",
+		    	success : function(re) {
+		    		if (re && re.ok) {
+		    			_app.projects = re.data.list;
+		    			_app.pager = re.data.pager;
+		    		}
+		    	}
+		    });
 		},
-		change_key : function(project_id) {
-			layer.prompt({
-				  value: '',
-				  title: '请输入项目密钥, 不少于10个字符,不能与其他项目重复'
-				},function(value, index, elem){
-				  layer.close(index);
-				  if (!value)
-					  return;
-				  $.ajax({
-						url : base + "/luat/admin/project/change_key",
-						type : "POST",
-						data : {newKey:value, id:project_id},
-						success : function(re) {
-							if (re && re.ok) {
-								layer.alert("修改成功", {shadeClose:true});
-								vueProjectList.dataReload();
-							}
-							else {
-								layer.alert("修改失败: " + re.msg, {shadeClose:true});
-							}
-						},
-				    	fail : function(err) {
-				    		layer.alert("加载失败:" + err, {shadeClose:true});
-				    	},
-				    	error : function (err){
-				    		layer.alert("加载失败:" + err, {shadeClose:true});
-				    	}
-					});
-				});
+		change_project : function() {
+			console.log($("#project_select").find(":selected").val())
+			$.ajax({
+		    	url : base + "/luat/admin/project/select",
+		    	dataType : "json",
+		    	type : "POST",
+		    	data : {id: $("#project_select").find(":selected").val()},
+		    	success : function(re) {
+		    		_app.dataReload();
+		    	}
+		    });
+		},
+		get_current_project: function() {
+			$.ajax({
+		    	url : base + "/luat/admin/project/current",
+		    	dataType : "json",
+		    	success : function(re) {
+		    		console.log(re)
+		    		if (re && re.ok && re.data) {
+		    			_app.query.projectId = re.data.id;
+		    		}
+		    		_app.load_project_list();
+		    	}
+		    });
+		},
+		clear_old_history : function() {
+			
 		}
 	},
 	created: function () {
 	    this.dataReload();
+	    this.get_current_project();
     }
 });

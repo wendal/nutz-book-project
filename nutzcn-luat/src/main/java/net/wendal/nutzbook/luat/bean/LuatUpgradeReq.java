@@ -3,7 +3,7 @@ package net.wendal.nutzbook.luat.bean;
 import org.nutz.json.JsonField;
 import org.nutz.mvc.annotation.Param;
 
-public class LuatUpgradeRequest {
+public class LuatUpgradeReq {
 
     @Param("project_key")
     @JsonField("project_key")

@@ -22,11 +22,15 @@
             	<div>
             		过滤IMEI  : <input type="text" v-model="query.imei" @change="dataReload">
             	</div>
-            	<div>
-            		<select id="project_select" @change="change_project">
-            			<option :value="project.id" v-for="project in projects" v-if="project.id == query.projectId" selected>{{project.nickname}}</option>
-    					<option :value="project.id" v-for="project in projects" v-if="project.id != query.projectId" >{{project.nickname}}</option>
-    				</select>
+            	
+            	<div class="form-group row">
+            		<div class="col-sm-4">
+            			<select class="form-control input-sm" id="project_select" @change="change_project">
+            				<option :value="project.id" v-for="project in projects" v-if="project.id == query.projectId" selected>{{project.nickname}}</option>
+    						<option :value="project.id" v-for="project in projects" v-if="project.id != query.projectId" >{{project.nickname}}</option>
+    					</select>
+            		</div>
+            		<div class="col-sm-8"></div>
             	</div>
             </div>
             <!-- /.box-header -->
@@ -38,6 +42,7 @@
                   <th>设备IMEI</th>
                   <th>固件类型</th>
                   <th>脚本版本号</th>
+                  <th>最后一次更新请求</th>
                   <th>操作</th>
                 </tr>
                 </thead>
@@ -47,8 +52,10 @@
                   <td>{{device.imei}}</td>
                   <td>{{device.firmwareName}}</td>
                   <td>{{device.versionStr}}</td>
+                  <td>{{device.lastUpgradeCheckTimeStr}}</td>
                   <td>
-                  	<button @click="show_device_detail(device.id)">详情</button>
+                  	<button class="btn btn-info" @click="show_device_detail(device.id)">详情</button>
+                  	<button class="btn btn-warn" @click="unlock_device(device.id)" v-if="device.upgradeLocked" title="设备反复升级,被系统锁定" v-if="">解锁升级</button>
                   </td>
                 </tr>
                 </tbody>
@@ -59,12 +66,12 @@
 			<div class="box">
 				<div>
 					<div class='inner'>
-						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
-						<button class="btn" v-on:click="changePage(1)">第一页</button>
-						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
-						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
-						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
-						<button class="btn" v-on:click="add_device">新增设备</button>
+						<button class="btn btn-success" v-on:click="add_device">新增设备</button>
+						<button class="btn btn-default" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
+						<button class="btn btn-default" v-on:click="changePage(1)">第一页</button>
+						<button class="btn btn-default" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
+						<button class="btn btn-default" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
+						<button class="btn btn-default" v-on:click="changePage(pager.pageCount)">最后页</button>
 					</div>
 				</div>
 			</div>

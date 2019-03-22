@@ -21,7 +21,7 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 
 import net.wendal.nutzbook.core.module.BaseModule;
-import net.wendal.nutzbook.luat.bean.LuatUpgradeRequest;
+import net.wendal.nutzbook.luat.bean.LuatUpgradeReq;
 import net.wendal.nutzbook.luat.bean.LuatUpgradeResp;
 import net.wendal.nutzbook.luat.service.LuatUpdateService;
 
@@ -39,8 +39,9 @@ public class LuatUpgradeModule extends BaseModule {
     @Fail("http:500")
     @Ok("void")
     @At(value = {"/luat/upgrade/get", "/api/site/firmware_upgrade"}, top = true)
-    public void get(@Param("..") LuatUpgradeRequest req, HttpServletResponse resp) throws FileNotFoundException, IOException {
+    public void get(@Param("..") LuatUpgradeReq req, HttpServletResponse resp) throws FileNotFoundException, IOException {
         LuatUpgradeResp _resp = luatUpgradeService.exec(req);
+        luatUpgradeService.addHistory(req, _resp);
         // 判断版本号
         if (!_resp.isMatched()) {
             resp.setStatus(400); // 不需要升级
@@ -59,7 +60,7 @@ public class LuatUpgradeModule extends BaseModule {
     @POST
     @Ok("json:full")
     @At
-    public NutMap check(@Param("..") LuatUpgradeRequest req) throws FileNotFoundException, IOException {
+    public NutMap check(@Param("..") LuatUpgradeReq req) throws FileNotFoundException, IOException {
         LuatUpgradeResp _resp = luatUpgradeService.exec(req);
         return _map("ok", true, "data", _resp);
     }

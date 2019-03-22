@@ -1,28 +1,26 @@
 
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>固件管理</h1>
+      <h1>升级日志</h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="#">Luat管理</a></li>
-        <li class="active">固件管理</li>
+        <li class="active">升级日志</li>
       </ol>
     </section>
 
     <!-- Main content -->
-    <section class="content" id="package_manager_div">
+    <section class="content" id="history_manager_div">
       <div class="row">
         <div class="col-xs-12">
           
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">固件一览</h3>
-            </div>
-            <div class="box-header">
             	<div>
-            		过滤固件描述  : <input type="text" v-model="query.content" @change="dataReload">
+            		<div class="form-check form-check-inline">
+					</div>
+            		过滤imei<input type="text" v-model="query.imei" @change="dataReload">
             	</div>
-            	
             	<div class="form-group row">
             		<div class="col-sm-4">
             			<select class="form-control input-sm" id="project_select" @change="change_project">
@@ -35,24 +33,28 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <table id="package_table" class="table table-bordered table-hover">
+              <table id="history_table" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                  <th>固件id</th>
-                  <th>固件底层</th>
-                  <th>版本号</th>
-                  <th>描述</th>
+                  <th>设备imei</th>
+                  <th>上报版本号</th>
+                  <th>匹配升级计划</th>
+                  <th>下发更新包</th>
+                  <th>响应码</th>
+                  <th>原因</th>
                   <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="pkg in packages">
-                  <td><a :title="pkg.finger">{{pkg.id}}</a></td>
-                  <td><a :title="pkg.originName">{{pkg.firmwareName}}</a></td>
-                  <td><a :title="pkg.versionInt">{{pkg.versionStr}}</a></td>
-                  <td>{{pkg.content}}</td>
+                <tr v-for="history in histories">
+                  <td>{{history.imei}}</td>
+                  <td>{{history.versionReport}}</td>
+                  <td>{{history.plan ? history.plan.nickname : '-'}}</td>
+                  <td>{{history.pkg  ? history.pkg.originName : '-'}}</td>
+                  <td>{{history.respCode == 200 ? '成功' : '失败'}}</td>
+                  <td>{{history.respReson ? history.respReson : '-'}}</td>
                   <td>
-                  	<button class="btn btn-info btn-sm" @click="show_package_detail(pkg.id)">详情</button>
+                  	<button class="btn btn-info" @click="show_history_detail(history.id)">详情</button>
                   </td>
                 </tr>
                 </tbody>
@@ -63,9 +65,8 @@
 			<div class="box">
 				<div>
 					<div class='inner'>
-						<!--用来存放文件信息-->
-    					<button class="btn btn-default" id="picker">选择固件文件并上传</button>
-        				<button id="ctlBtn" class="btn btn-default" style="display: none;">开始上传</button>
+						<button class="btn btn-info" v-on:click="clear_old_history">清除1个月之前的日志</button>
+						<button class="btn btn-default" v-on:click="dataReload">刷新</button>
 						<button class="btn btn-default" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
 						<button class="btn btn-default" v-on:click="changePage(1)">第一页</button>
 						<button class="btn btn-default" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
@@ -80,6 +81,4 @@
       <!-- /.row -->
     </section>
     <!-- /.content -->
-    <link rel="stylesheet" type="text/css" href="${base}/adminlte/js/luat/webuploader.css">
-    <script src="${base}/adminlte/js/luat/webuploader.min.js?v=1"></script>
-    <script src="${base}/adminlte/js/luat/upgrade_package.js?v=1"></script>
+    <script src="${base}/adminlte/js/luat/upgrade_history.js?v=1"></script>

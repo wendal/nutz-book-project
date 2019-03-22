@@ -16,14 +16,20 @@
           
           <div class="box">
             <div class="box-header">
-            	<div>
-            		过滤升级计划描述  : <input type="text" v-model="query.content" @change="dataReload">
+            	<div class="form-group row">
+            		<label for="filter_nickname" class="col-sm-1 col-form-label">过滤名称</label>
+            		<div class="col-sm-11">
+            			<input id="filter_nickname" type="text" v-model="query.nickname" @change="dataReload">
+            		</div>
             	</div>
-            	<div class="form-group">
-            		<select class="form-control input-sm" id="project_select" @change="change_project">
-            			<option :value="project.id" v-for="project in projects" v-if="project.id == query.projectId" selected>{{project.nickname}}</option>
-    					<option :value="project.id" v-for="project in projects" v-if="project.id != query.projectId" >{{project.nickname}}</option>
-    				</select>
+            	<div class="form-group row">
+            		<div class="col-sm-4">
+            			<select class="form-control input-sm" id="project_select" @change="change_project">
+            				<option :value="project.id" v-for="project in projects" v-if="project.id == query.projectId" selected>{{project.nickname}}</option>
+    						<option :value="project.id" v-for="project in projects" v-if="project.id != query.projectId" >{{project.nickname}}</option>
+    					</select>
+            		</div>
+            		<div class="col-sm-8"></div>
             	</div>
             </div>
             <!-- /.box-header -->
@@ -32,9 +38,9 @@
                 <thead>
                 <tr>
                   <th>计划id</th>
-                  <th>名称</th>
-                  <th>描述</th>
-                  <th>关联的升级包</th>
+                  <th>计划名称</th>
+                  <th>升级包脚本版本</th>
+                  <th>升级包固件版本</th>
                   <th>是否生效</th>
                   <th>操作</th>
                 </tr>
@@ -42,14 +48,15 @@
                 <tbody>
                 <tr v-for="plan in plans">
                   <td>{{plan.id}}</td>
-                  <td>{{plan.name}}</td>
-                  <td>{{plan.content}}</td>
+                  <td>{{plan.nickname}}</td>
                   <td>{{plan.pkg ? plan.pkg.versionStr : '-'}}</td>
+                  <td>{{plan.pkg ? plan.pkg.firmwareName : '-'}}</td>
                   <td>{{plan.enable ? '激活' : '已禁用'}}</td>
                   <td>
-                  	<button @click="show_plan(plan)" class="btn btn-info">详情</button>
-                  	<button @click="do_enable(plan.id, true)" v-if="!plan.enable" class="btn btn-success">激活它</button>
-                  	<button @click="do_enable(plan.id, false)" v-if="plan.enable" class="btn btn-danger">禁用它</button>
+                  	<button @click="show_plan(plan)" class="btn btn-info btn-sm">详情</button>
+                  	<button @click="do_enable(plan.id, true)" v-if="!plan.enable" class="btn btn-success btn-sm">激活它</button>
+                  	<button @click="do_enable(plan.id, false)" v-if="plan.enable" class="btn btn-danger btn-sm">禁用它</button>
+                  	<button @click="do_predict(plan.id)" class="btn btn-info btn-sm" title="测算符合本升级计划的设备数量">测算设备数量</button>
                   </td>
                 </tr>
                 </tbody>
@@ -60,12 +67,13 @@
 		  <div class="box">
 				<div>
 					<div class='inner'>
+						<button class="btn btn-info" v-on:click="add_plan">新增升级计划</button>
 						<button class="btn" v-on:click="dataReload" disabled>第{{pager.pageNumber}}页,共{{pager.pageCount}}页</button>
 						<button class="btn" v-on:click="changePage(1)">第一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageNumber-1)" v-if="pager.pageNumber > 1">上一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageNumber+1)" v-if="pager.pageNumber < pager.pageCount">下一页</button>
 						<button class="btn" v-on:click="changePage(pager.pageCount)">最后页</button>
-						<button class="btn btn-info" v-on:click="add_plan">新增升级计划</button>
+						<button class="btn btn-info" v-on:click="disable_all_plan">全部禁用</button>
 					</div>
 				</div>
 			</div>
@@ -83,12 +91,12 @@
   						<input v-model="cur_plan.id" type="text" class="form-control" placeholder="id" aria-describedby="cur_plan_id" disabled="disabled">
 					</div>
             		<div class="input-group input-group-sm">
-  						<span class="input-group-addon" id="cur_plan_id">名称</span>
-  						<input v-model="cur_plan.name" type="text" class="form-control" placeholder="名称" aria-describedby="cur_plan_id">
+  						<span class="input-group-addon" id="cur_plan_id">计划名称</span>
+  						<input v-model="cur_plan.nickname" type="text" class="form-control" placeholder="名称" aria-describedby="cur_plan_id">
 					</div>
             		<div class="input-group input-group-sm">
   						<span class="input-group-addon" id="cur_plan_id">描述</span>
-  						<input v-model="cur_plan.content" type="text" class="form-control" placeholder="名称" aria-describedby="cur_plan_id">
+  						<input v-model="cur_plan.content" type="text" class="form-control" placeholder="描述" aria-describedby="cur_plan_id">
 					</div>
 					<div class="input-group input-group-sm">
 						<span class="input-group-addon" >关联的固件包</span>
@@ -99,7 +107,7 @@
 					</div>
             		<div class="input-group input-group-sm">
   						<span class="input-group-addon" id="cur_plan_id">限定IMEI</span>
-  						<input v-model="cur_plan.imeis" type="text" class="form-control" placeholder="设备的imei,不填就是不限制" aria-describedby="cur_plan_id">
+  						<input v-model="cur_plan.imeis" type="text" class="form-control" placeholder="不填就是不限制" aria-describedby="cur_plan_id">
 					</div>
             		<div class="input-group input-group-sm">
   						<span class="input-group-addon" id="cur_plan_id">限定ICCID</span>
