@@ -105,8 +105,8 @@ public class BeePayModule extends BaseModule implements OnConfigureChange {
                          @Param("title")String title, 
                          @Param("amount")int amount,
                          @ReqHeader("Referer")String referer) {
-        if (amount < 38)
-            amount = 38;
+        if (amount < 100)
+            amount = 200;
         String id = R.UU32();
         if (Strings.isBlank(title)) {
             UserProfile profile = dao.fetch(UserProfile.class, toUserId);

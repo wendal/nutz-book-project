@@ -68,26 +68,7 @@ var vueBasicConfigList = new Vue({
 			});
 		},
 		get_http2stat : function(auto_check) {
-			$.ajax({
-				url : base + "/luat/admin/listen/status",
-				dataType : "json",
-				success : function(re) {
-					if (re) {
-						vueBasicConfigList.http2stat = true;
-					}
-					else {
-						vueBasicConfigList.http2stat = false;
-					}
-				},
-				fail : function(err) {
-					if (!auto_check)
-						layer.alert("加载失败:" + err);
-				},
-				error : function(err) {
-					if (!auto_check)
-						layer.alert("加载失败:" + err);
-				}
-			});
+			//
 		},
 		start_http2 : function(auto_check) {
 			$.ajax({

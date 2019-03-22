@@ -333,6 +333,7 @@ public class YvrModule extends BaseModule {
 	public Object search(@Param("q") String keys, @Param("format")String format) throws Exception {
 	    if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
+	    keys = keys.replace('.', ' ').replace('(', ' ').replace(')', ' ').replace(':', ' ').replace('>', ' ').replace('<', ' ');
 		List<LuceneSearchResult> results = topicSearchService.search(keys, "json".equals(format) ? 5 : 30);
         List<Topic> list = new ArrayList<Topic>();
 		for (LuceneSearchResult result : results) {
