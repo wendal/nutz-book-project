@@ -29,6 +29,7 @@ import org.nutz.mvc.annotation.POST;
 import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 
+import net.wendal.nutzbook.common.util.Toolkit;
 import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.luat.bean.LuatDevice;
@@ -55,9 +56,9 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/project/add")
-    public NutMap projectAdd(@Param("..") LuatProject project, @Attr("me") User me) {
+    public NutMap projectAdd(@Param("..") LuatProject project) {
         project.setAccessKey(R.UU32());
-        project.setUserId(me.getId());
+        project.setUserId(Toolkit.uid());
         dao.insert(project);
         return _ok(project);
     }
@@ -66,12 +67,12 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/project/update")
-    public NutMap projectUpdate(@Param("..") LuatProject project, @Attr("me") User me) {
+    public NutMap projectUpdate(@Param("..") LuatProject project) {
         LuatProject prj = dao.fetch(LuatProject.class, project.getId());
         if (prj == null) {
             return _fail("no_such_project");
         }
-        if (prj.getUserId() != me.getId()) {
+        if (prj.getUserId() != Toolkit.uid()) {
             return _fail("not_your_project");
         }
         project.setUpdateTime(new Date());
@@ -83,12 +84,12 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/project/delete")
-    public NutMap projectDelete(@Param("..") LuatProject project, @Attr("me") User me) {
+    public NutMap projectDelete(@Param("..") LuatProject project) {
         LuatProject prj = dao.fetch(LuatProject.class, project.getId());
         if (prj == null) {
             return _fail("no_such_project");
         }
-        if (prj.getUserId() != me.getId()) {
+        if (prj.getUserId() != Toolkit.uid()) {
             return _fail("not_your_project");
         }
         return _fail("not_allow_yet"); // 当前无论如何都不允许删除,哈哈
@@ -97,8 +98,8 @@ public class LuatAdminModule extends BaseModule {
     // 查询
     @RequiresAuthentication
     @At("/project/query")
-    public NutMap projectQuery(@Param("..") Pager pager, @Param("nickname") String nickname, @Param("id") long id, @Attr("me") User me) {
-        Cnd cnd = Cnd.where("userId", "=", me.getId());
+    public NutMap projectQuery(@Param("..") Pager pager, @Param("nickname") String nickname, @Param("id") long id) {
+        Cnd cnd = Cnd.where("userId", "=", Toolkit.uid());
         _like(cnd, "nickname", nickname);
         if (id > 0) {
             cnd.and("id", "=", id);
@@ -117,14 +118,14 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @At("/project/select")
     @POST
-    public NutMap projectSelect(long id, @Attr("me") User me, HttpSession session) {
+    public NutMap projectSelect(long id, HttpSession session) {
         if (id == 0)
             return _ok(null);
         LuatProject project = dao.fetch(LuatProject.class, id);
         if (project == null) {
             return _fail("no_such_project");
         }
-        if (project.getUserId() != me.getId()) {
+        if (project.getUserId() != Toolkit.uid()) {
             return _fail("not_your_project");
         }
         session.setAttribute("luat_project", project);
@@ -154,7 +155,7 @@ public class LuatAdminModule extends BaseModule {
         LuatProject project = dao.fetch(LuatProject.class, id);
         if (project == null)
             return _fail("no_such_project");
-        if (project.getUserId() != me.getId())
+        if (project.getUserId() != Toolkit.uid())
             return _fail("not_your_project");
         int c = dao.count(LuatProject.class, Cnd.where("name", "=", newKey));
         if (c > 0)
@@ -170,17 +171,17 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/device/add")
-    public NutMap deviceAdd(@Param("..") LuatDevice device, @Attr("me") User me, @Attr("luat_project") LuatProject project) {
+    public NutMap deviceAdd(@Param("..") LuatDevice device, @Attr("luat_project") LuatProject project) {
         if (Strings.isBlank(device.getImei()))
             return _fail("need_imei");
         if (project == null) {
             return _fail("select_one_project_first");
         }
-        if (project.getUserId() != me.getId()) {
+        if (project.getUserId() != Toolkit.uid()) {
             return _fail("not_your_project");
         }
         String[] imeis = Strings.splitIgnoreBlank(device.getImei(), "[\\r\\n,]");
-        device.setUserId(me.getId());
+        device.setUserId(Toolkit.uid());
         device.setProjectId(project.getId());
         int added = 0;
         int exists = 0;
@@ -201,12 +202,15 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/device/update")
-    public NutMap deviceUpdate(@Param("..") LuatDevice device, @Attr("me") User me) {
+    public NutMap deviceUpdate(@Param("..") LuatDevice device, @Attr("luat_project") LuatProject project) {
         LuatDevice dev = dao.fetch(LuatDevice.class, device.getId());
         if (dev == null) {
             return _fail("no_such_device");
         }
-        if (dev.getUserId() != me.getId()) {
+        if (project == null) {
+            return _fail("select_one_project_first");
+        }
+        if (dev.getProjectId() != project.getId()) {
             return _fail("not_your_device");
         }
         device.setUpdateTime(new Date());
@@ -218,12 +222,15 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/device/delete")
-    public NutMap deviceDelete(@Param("..") LuatDevice device, @Attr("me") User me) {
+    public NutMap deviceDelete(@Param("..") LuatDevice device, @Attr("luat_project") LuatProject project) {
         LuatDevice dev = dao.fetch(LuatDevice.class, device.getId());
         if (dev == null) {
             return _fail("no_such_device");
         }
-        if (dev.getUserId() != me.getId()) {
+        if (project == null) {
+            return _fail("select_one_project_first");
+        }
+        if (dev.getProjectId() != project.getId()) {
             return _fail("not_your_device");
         }
         return _fail("not_allow_yet"); // 当前无论如何都不允许删除,哈哈
@@ -232,11 +239,11 @@ public class LuatAdminModule extends BaseModule {
     // 查询
     @RequiresAuthentication
     @At("/device/query")
-    public NutMap deviceQuery(@Param("..") Pager pager, @Param("..") LuatDevice device, @Attr("me") User me, @Attr("luat_project") LuatProject project) {
+    public NutMap deviceQuery(@Param("..") Pager pager, @Param("..") LuatDevice device, @Attr("luat_project") LuatProject project) {
         if (project == null) {
             return _fail("select_one_project_first");
         }
-        Cnd cnd = Cnd.where("userId", "=", me.getId()).and("projectId", "=", project.getId());
+        Cnd cnd = Cnd.where("projectId", "=", project.getId());
         _like(cnd, "imei", device.getImei());
         _like(cnd, "iccid", device.getIccid());
         _like(cnd, "imsi", device.getImsi());
@@ -279,9 +286,9 @@ public class LuatAdminModule extends BaseModule {
     @POST
     @At("/upgrade/package/upload")
     @Ok("json:full")
-    public NutMap packageUpload(@Param("file") TempFile tf, @Param("content") String content, @Attr("luat_project") LuatProject project, @Attr("me") User me) throws IOException {
+    public NutMap packageUpload(@Param("file") TempFile tf, @Param("content") String content, @Attr("luat_project") LuatProject project) throws IOException {
         if (project == null)
-            return _fail("select_on_project_first");
+            return _fail("select_one_project_first");
         // 解析文件名
         String[] tmp = tf.getSubmittedFileName().split("_", 3);
         if (tmp.length != 3) {
@@ -295,7 +302,7 @@ public class LuatAdminModule extends BaseModule {
         pkg.setContent(content);
         pkg.setFinger(Lang.md5(tf.getFile()));
         pkg.setProjectId(project.getId());
-        pkg.setUserId(me.getId());
+        pkg.setUserId(Toolkit.uid());
         pkg.setFirmwareName(tmp[0] + "_" + tmp[2].substring(0, tmp[2].indexOf('.')));
         pkg.setVersionStr(tmp[1]);
         pkg.setVersionInt(luatUpdateService.getVersionInt(pkg.getVersionStr()));
@@ -308,10 +315,10 @@ public class LuatAdminModule extends BaseModule {
     // 查询
     @RequiresAuthentication
     @At("/upgrade/package/query")
-    public NutMap packageQuery(@Param("..") Pager pager, @Param("..") LuatUpgradePackage pkg, @Attr("me") User me, @Attr("luat_project") LuatProject project) {
+    public NutMap packageQuery(@Param("..") Pager pager, @Param("..") LuatUpgradePackage pkg, @Attr("luat_project") LuatProject project) {
         if (project == null)
-            return _fail("select_on_project_first");
-        Cnd cnd = Cnd.where("userId", "=", me.getId()).and("projectId", "=", project.getId());
+            return _fail("select_one_project_first");
+        Cnd cnd = Cnd.where("projectId", "=", project.getId());
         _like(cnd, "firmwareName", pkg.getFirmwareName());
         _like(cnd, "versionStr", pkg.getVersionStr());
         _like(cnd, "finger", pkg.getFinger());
@@ -332,10 +339,10 @@ public class LuatAdminModule extends BaseModule {
     @POST
     @At("/upgrade/plan/add")
     @AdaptBy(type = WhaleAdaptor.class)
-    public NutMap upgradePlanAdd(@Param("..") LuatUpgradePlan plan, @Attr("me") User me, @Attr("luat_project") LuatProject project) {
+    public NutMap upgradePlanAdd(@Param("..") LuatUpgradePlan plan, @Attr("luat_project") LuatProject project) {
         if (project == null)
             return _fail("select_one_project_first");
-        plan.setUserId(me.getId());
+        plan.setUserId(Toolkit.uid());
         plan.setProjectId(project.getId());
         dao.insert(plan);
         return _ok(plan);
@@ -346,12 +353,14 @@ public class LuatAdminModule extends BaseModule {
     @POST
     @At("/upgrade/plan/update")
     @AdaptBy(type = WhaleAdaptor.class)
-    public NutMap upgradePlanUpdate(@Param("..") LuatUpgradePlan device, @Attr("me") User me) {
+    public NutMap upgradePlanUpdate(@Param("..") LuatUpgradePlan device, @Attr("luat_project") LuatProject project) {
+        if (project == null)
+            return _fail("select_one_project_first");
         LuatUpgradePlan plan = dao.fetch(LuatUpgradePlan.class, device.getId());
         if (plan == null) {
             return _fail("no_such_upgrade_plan");
         }
-        if (plan.getUserId() != me.getId()) {
+        if (plan.getProjectId() != project.getId()) {
             return _fail("not_your_upgrade_plan");
         }
         device.setUpdateTime(new Date());
@@ -363,12 +372,14 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/upgrade/plan/delete")
-    public NutMap upgradePlanDelete(@Param("..") LuatUpgradePlan plan, @Attr("me") User me) {
+    public NutMap upgradePlanDelete(@Param("..") LuatUpgradePlan plan, @Attr("luat_project") LuatProject project) {
+        if (project == null)
+            return _fail("select_one_project_first");
         LuatUpgradePlan pl = dao.fetch(LuatUpgradePlan.class, plan.getId());
         if (pl == null) {
             return _fail("no_such_upgrade_plan");
         }
-        if (pl.getUserId() != me.getId()) {
+        if (pl.getProjectId() != project.getId()) {
             return _fail("not_your_upgrade_plan");
         }
         return _fail("not_allow_yet"); // 当前无论如何都不允许删除,哈哈
@@ -379,12 +390,15 @@ public class LuatAdminModule extends BaseModule {
     @At("/upgrade/plan/enable")
     public NutMap upgradePlanEnable(@Param("id") long id, 
                                     @Param("enable") boolean enable, 
-                                    @Attr("me") User me) {
+                                    @Attr("me") User me, 
+                                    @Attr("luat_project") LuatProject project) {
+        if (project == null)
+            return _fail("select_one_project_first");
         LuatUpgradePlan plan = dao.fetch(LuatUpgradePlan.class, id);
         if (plan == null) {
             return _fail("no_such_upgrade_plan");
         }
-        if (plan.getUserId() != me.getId()) {
+        if (plan.getProjectId() != project.getId()) {
             return _fail("not_your_upgrade_plan");
         }
         plan.setEnable(enable);
@@ -397,7 +411,7 @@ public class LuatAdminModule extends BaseModule {
     @At("/upgrade/plan/disable_all")
     public NutMap upgradePlanDisableAll(@Attr("luat_project") LuatProject project) {
         if (project == null)
-            return _fail("select_on_project_first");
+            return _fail("select_one_project_first");
         int changed = dao.update(LuatUpgradePlan.class, Cnd.where("projectId", "=", project.getId()));
         return _ok(_map("changed", changed));
     }
@@ -406,10 +420,10 @@ public class LuatAdminModule extends BaseModule {
 
     @RequiresAuthentication
     @At("/upgrade/plan/query")
-    public NutMap upgradePlanQuery(@Param("..") Pager pager, @Param("..") LuatUpgradePlan plan, @Attr("me") User me, @Attr("luat_project") LuatProject project) {
+    public NutMap upgradePlanQuery(@Param("..") Pager pager, @Param("..") LuatUpgradePlan plan, @Attr("luat_project") LuatProject project) {
         if (project == null)
-            return _fail("select_on_project_first");
-        Cnd cnd = Cnd.where("userId", "=", me.getId()).and("projectId", "=", project.getId());
+            return _fail("select_one_project_first");
+        Cnd cnd = Cnd.where("userId", "=", Toolkit.uid()).and("projectId", "=", project.getId());
         _like(cnd, "nickname", plan.getNickname());
         // cnd.and("enable", "=", plan.isEnable());
         cnd.desc("id");
@@ -424,12 +438,12 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @POST
     @At("/upgrade/plan/do_predict")
-    public NutMap upgradePlanPredict(@Param("id") long id, @Param("enable") boolean enable, @Attr("me") User me) {
+    public NutMap upgradePlanPredict(@Param("id") long id, @Param("enable") boolean enable) {
         LuatUpgradePlan plan = dao.fetch(LuatUpgradePlan.class, id);
         if (plan == null) {
             return _fail("no_such_upgrade_plan");
         }
-        if (plan.getUserId() != me.getId()) {
+        if (plan.getUserId() != Toolkit.uid()) {
             return _fail("not_your_upgrade_plan");
         }
         Cnd cnd = Cnd.where("projectId", "=", plan.getProjectId());
@@ -458,7 +472,7 @@ public class LuatAdminModule extends BaseModule {
     // -------------------------------------------------------------------------------------------------
     @RequiresAuthentication
     @At("/upgrade/history/query")
-    public NutMap upgradeHistoryQuery(@Param("..") Pager pager, @Param("..") LuatUpgradeHistory his, @Attr("me") User me, @Attr("luat_project") LuatProject project) {
+    public NutMap upgradeHistoryQuery(@Param("..") Pager pager, @Param("..") LuatUpgradeHistory his, @Attr("luat_project") LuatProject project) {
         if (project == null)
             return _fail("select_one_project_first");
         Cnd cnd = Cnd.where("projectId", "=", project.getId());
