@@ -1,10 +1,12 @@
 package net.wendal.nutzbook.core.module;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.subject.Subject;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -27,9 +29,18 @@ public class HotplugModule extends BaseModule {
         List<NutResource> _list = Scans.me().scan("hotplug/", ".+.(js|json)$");
         List<NutMap> list = new ArrayList<>();
         for (NutResource nr : _list) {
-            if (nr.getName().contains("hotplug.nutzcn.adminlte.json") && !SecurityUtils.getSubject().hasRole("admin"))
-                continue;
             list.add(Json.fromJson(NutMap.class, nr.getReader()));
+        }
+        Subject su = SecurityUtils.getSubject();
+        // 限制一下, 仅管理员能看到其他菜单,直至想到其他办法
+        if (!SecurityUtils.getSubject().hasRole("admin")) {
+            Iterator<NutMap> it = list.iterator();
+            while (it.hasNext()) {
+                NutMap cur = it.next();
+                if (cur.has("role") && !su.hasRole(cur.getString("role"))) {
+                    it.remove();
+                }
+            }
         }
         return ajaxOk(new QueryResult(list, new Pager()));
     }
