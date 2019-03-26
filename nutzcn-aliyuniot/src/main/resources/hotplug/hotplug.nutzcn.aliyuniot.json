@@ -1,5 +1,5 @@
 {
-	name : "yvr",
+	name : "aliyuniot",
 	version : "3.1.0",
 	base : "net.wendal.nutzbook.aliyuniot",
 	describe : "阿里云物联网模块",
@@ -8,6 +8,7 @@
 		subs : [
 			{name:"基本设置", page:"aliyuniot/basic.html"},
 			{name:"设备管理", page:"aliyuniot/device.html"}
-		]
+		],
+		role : "admin"
 	}]
 }

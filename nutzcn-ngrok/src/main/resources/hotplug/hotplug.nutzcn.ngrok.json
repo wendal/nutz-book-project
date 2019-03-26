@@ -8,7 +8,8 @@
 		subs : [
 			{name:"Token管理", page:"ngrok/tokens.html"},
 			{name:"Ngrok客户端", page:"ngrok/client.html"},
-		]
+		],
+		role : "admin"
 	}],
 	event : {
 		config_change : ["ngrokClientHolder"]

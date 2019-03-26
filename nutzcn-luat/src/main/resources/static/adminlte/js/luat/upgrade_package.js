@@ -71,7 +71,9 @@ var vuePackageList = new Vue({
 	    },
 		add_package : function() {
 		},
-		
+		show_package_detail : function() {
+			layer.alert("暂未实现", {shadeClose:true});
+		},
 		//----------------------------
 		// 选项目
 		load_project_list: function() {

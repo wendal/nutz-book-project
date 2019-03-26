@@ -6,7 +6,7 @@
 	menu : [{
 		name : "Luat管理模块",
 		subs : [
-			{name:"基本设置", page:"luat/basic.html"},
+			//{name:"基本设置", page:"luat/basic.html"},
 			{name:"项目管理", page:"luat/project.html"},
 			{name:"设备管理", page:"luat/device.html"},
 			{name:"固件管理", page:"luat/upgrade_package.html"},

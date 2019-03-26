@@ -8,7 +8,8 @@
 			name : "第三方登录管理",
 			subs : [
 				{name:"基本设置",page:"oauth/basic.html"}
-			]
+			],
+			role : "admin"
 		}
 	]
 }

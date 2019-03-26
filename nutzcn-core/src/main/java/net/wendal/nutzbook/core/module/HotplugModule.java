@@ -37,8 +37,15 @@ public class HotplugModule extends BaseModule {
             Iterator<NutMap> it = list.iterator();
             while (it.hasNext()) {
                 NutMap cur = it.next();
-                if (cur.has("role") && !su.hasRole(cur.getString("role"))) {
-                    it.remove();
+                List<NutMap> menus = cur.getAsList("menu", NutMap.class);
+                if (menus == null)
+                    continue;
+                Iterator<NutMap> it2 = menus.iterator();
+                while (it2.hasNext()) {
+                    NutMap menu = it2.next();
+                    if (menu.containsKey("role") && !su.hasRole(menu.getString("role"))) {
+                        it2.remove();
+                    }
                 }
             }
         }

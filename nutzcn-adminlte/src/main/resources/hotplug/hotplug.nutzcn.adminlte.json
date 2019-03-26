@@ -10,7 +10,8 @@
 				{name:"用户管理", page:"authority/user.html"},
 				{name:"角色管理", page:"authority/role.html"},
 				{name:"权限管理", page:"authority/permission.html"}
-			]
+			],
+			role : "admin"
 		},
 		{
 			name : "系统设置",
@@ -22,7 +23,8 @@
 				{name:"插件管理", page:"system/hotplug_manager.html"},
 				{name:"插件仓库", page:"system/hotplug_repo.html"},
 				{name:"系统日志", page:"system/slog.html"}
-			]
+			],
+			role : "admin"
 		},
 		
 	]

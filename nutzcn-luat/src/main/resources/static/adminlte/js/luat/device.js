@@ -121,6 +121,9 @@ var vueDeviceList = new Vue({
 		    	}
 		    });
 		},
+		show_device_detail : function() {
+			layer.alert("暂未实现", {shadeClose:true});
+		},
 		//----------------------------
 		// 选项目
 		load_project_list: function() {

@@ -7,6 +7,7 @@
 		name : "简易下载模块",
 		subs : [
 			{name:"下载列表管理", page:"nutzdw/basic.html"}
-		]
+		],
+		role : "admin"
 	}]
 }

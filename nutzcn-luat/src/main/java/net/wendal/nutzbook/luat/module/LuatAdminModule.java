@@ -20,6 +20,7 @@ import org.nutz.lang.Lang;
 import org.nutz.lang.Strings;
 import org.nutz.lang.random.R;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Mvcs;
 import org.nutz.mvc.adaptor.WhaleAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
@@ -30,7 +31,6 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.upload.TempFile;
 
 import net.wendal.nutzbook.common.util.Toolkit;
-import net.wendal.nutzbook.core.bean.User;
 import net.wendal.nutzbook.core.module.BaseModule;
 import net.wendal.nutzbook.luat.bean.LuatDevice;
 import net.wendal.nutzbook.luat.bean.LuatProject;
@@ -135,14 +135,14 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @At("/project/current")
     public NutMap projectCurrent(@Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         return _ok(project);
     }
     
     @RequiresAuthentication
     @At("/project/change_key")
     @POST
-    public NutMap projectChangeName(long id, String newKey, 
-                                    @Attr("me") User me) {
+    public NutMap projectChangeName(long id, String newKey) {
         if (id < 0)
             return _fail("no_such_project");
         if (Strings.isBlank(newKey))
@@ -174,6 +174,7 @@ public class LuatAdminModule extends BaseModule {
     public NutMap deviceAdd(@Param("..") LuatDevice device, @Attr("luat_project") LuatProject project) {
         if (Strings.isBlank(device.getImei()))
             return _fail("need_imei");
+        project = _currentLuatProject(project);
         if (project == null) {
             return _fail("select_one_project_first");
         }
@@ -207,6 +208,7 @@ public class LuatAdminModule extends BaseModule {
         if (dev == null) {
             return _fail("no_such_device");
         }
+        project = _currentLuatProject(project);
         if (project == null) {
             return _fail("select_one_project_first");
         }
@@ -227,6 +229,7 @@ public class LuatAdminModule extends BaseModule {
         if (dev == null) {
             return _fail("no_such_device");
         }
+        project = _currentLuatProject(project);
         if (project == null) {
             return _fail("select_one_project_first");
         }
@@ -268,6 +271,9 @@ public class LuatAdminModule extends BaseModule {
         if (dev == null) {
             return _fail("no_such_device");
         }
+        project = _currentLuatProject(project);
+        if (project == null)
+            return _fail("select_one_project_first");
         if (dev.getProjectId() != project.getId()) {
             return _fail("not_your_device");
         }
@@ -287,6 +293,7 @@ public class LuatAdminModule extends BaseModule {
     @At("/upgrade/package/upload")
     @Ok("json:full")
     public NutMap packageUpload(@Param("file") TempFile tf, @Param("content") String content, @Attr("luat_project") LuatProject project) throws IOException {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         // 解析文件名
@@ -316,6 +323,7 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @At("/upgrade/package/query")
     public NutMap packageQuery(@Param("..") Pager pager, @Param("..") LuatUpgradePackage pkg, @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         Cnd cnd = Cnd.where("projectId", "=", project.getId());
@@ -340,6 +348,7 @@ public class LuatAdminModule extends BaseModule {
     @At("/upgrade/plan/add")
     @AdaptBy(type = WhaleAdaptor.class)
     public NutMap upgradePlanAdd(@Param("..") LuatUpgradePlan plan, @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         plan.setUserId(Toolkit.uid());
@@ -354,6 +363,7 @@ public class LuatAdminModule extends BaseModule {
     @At("/upgrade/plan/update")
     @AdaptBy(type = WhaleAdaptor.class)
     public NutMap upgradePlanUpdate(@Param("..") LuatUpgradePlan device, @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         LuatUpgradePlan plan = dao.fetch(LuatUpgradePlan.class, device.getId());
@@ -373,6 +383,7 @@ public class LuatAdminModule extends BaseModule {
     @POST
     @At("/upgrade/plan/delete")
     public NutMap upgradePlanDelete(@Param("..") LuatUpgradePlan plan, @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         LuatUpgradePlan pl = dao.fetch(LuatUpgradePlan.class, plan.getId());
@@ -390,8 +401,8 @@ public class LuatAdminModule extends BaseModule {
     @At("/upgrade/plan/enable")
     public NutMap upgradePlanEnable(@Param("id") long id, 
                                     @Param("enable") boolean enable, 
-                                    @Attr("me") User me, 
                                     @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         LuatUpgradePlan plan = dao.fetch(LuatUpgradePlan.class, id);
@@ -410,6 +421,7 @@ public class LuatAdminModule extends BaseModule {
     @POST
     @At("/upgrade/plan/disable_all")
     public NutMap upgradePlanDisableAll(@Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         int changed = dao.update(LuatUpgradePlan.class, Cnd.where("projectId", "=", project.getId()));
@@ -421,6 +433,7 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @At("/upgrade/plan/query")
     public NutMap upgradePlanQuery(@Param("..") Pager pager, @Param("..") LuatUpgradePlan plan, @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         Cnd cnd = Cnd.where("userId", "=", Toolkit.uid()).and("projectId", "=", project.getId());
@@ -473,6 +486,7 @@ public class LuatAdminModule extends BaseModule {
     @RequiresAuthentication
     @At("/upgrade/history/query")
     public NutMap upgradeHistoryQuery(@Param("..") Pager pager, @Param("..") LuatUpgradeHistory his, @Attr("luat_project") LuatProject project) {
+        project = _currentLuatProject(project);
         if (project == null)
             return _fail("select_one_project_first");
         Cnd cnd = Cnd.where("projectId", "=", project.getId());
@@ -484,5 +498,16 @@ public class LuatAdminModule extends BaseModule {
         int count = dao.count(LuatUpgradeHistory.class, cnd);
         pager.setRecordCount(count);
         return _ok(new QueryResult(list, pager));
+    }
+    
+    protected LuatProject _currentLuatProject(LuatProject project) {
+        if (project == null && dao.count(LuatProject.class, Cnd.where("userId", "=", Toolkit.uid())) > 0) {
+            LuatProject prj = dao.fetch(LuatProject.class, Cnd.where("userId", "=", Toolkit.uid()));
+            if (prj != null) {
+                Mvcs.getHttpSession().setAttribute("luat_project", prj);
+                project = prj;
+            }
+        }
+        return project;
     }
 }

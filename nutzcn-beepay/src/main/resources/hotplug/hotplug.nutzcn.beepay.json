@@ -7,7 +7,8 @@
 		name : "支付模块",
 		subs : [
 			{name:"BeeCloud设置", page:"beepay/basic.html"}
-		]
+		],
+		role : "admin"
 	}],
 	event : {
 		config_change : ["beePayModule"]
