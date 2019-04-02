@@ -3,10 +3,11 @@ package net.wendal.nutzbook.luat.bean;
 import org.nutz.json.JsonField;
 
 public class LuatUpgradeResp {
-
+    // {"code": 26, "msg": "\u65e0\u6548\u7684\u56fa\u4ef6"}
     private int code;
     @JsonField(ignore = true)
     private boolean matched;
+    @JsonField("msg")
     private String reson;
     @JsonField(ignore = true)
     private LuatUpgradePackage pkg;

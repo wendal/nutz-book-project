@@ -34,6 +34,7 @@ import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.view.HttpStatusView;
+import org.nutz.mvc.view.ServerRedirectView;
 import org.nutz.plugins.apidoc.annotation.Api;
 import org.nutz.plugins.slog.service.SlogService;
 
@@ -80,6 +81,9 @@ public class OauthModule extends BaseModule {
 		Mvcs.getResp().setHeader("Location", url);
 		Mvcs.getResp().setStatus(302);
 		session.setAttribute("openid_manager", manager);
+		String rt = req.getParameter("rt");
+		if (!Strings.isBlank(rt) && !rt.contains("oauth")) // 防止环路重定向
+		    session.setAttribute("login_return_url", req.getParameter("rt"));
 	}
 
 	/**
@@ -124,6 +128,9 @@ public class OauthModule extends BaseModule {
 			oAuthUser = new OAuthUser(p.getProviderId(), p.getValidatedId(), user.getId(), p.getProfileImageURL());
 			dao.insert(oAuthUser);
 			doShiroLogin(user.getId(), _providerId);
+	        if (session.getAttribute("login_return_url") != null) {
+	            return new ServerRedirectView((String) session.getAttribute("login_return_url"));
+	        }
 			return null;
 		} else {
 			if (oAuthUser.getAvatar_url() == null && !Strings.isBlank(p.getProfileImageURL())) {
@@ -138,6 +145,9 @@ public class OauthModule extends BaseModule {
 			return new HttpStatusView(500);
 		}
 		doShiroLogin(user.getId(), _providerId);
+		if (session.getAttribute("login_return_url") != null) {
+		    return new ServerRedirectView((String) session.getAttribute("login_return_url"));
+		}
 		return null;
 	}
 	

@@ -8,6 +8,7 @@
 		subs : [
 			{name:"基本设置", page:"yvr/basic.html"},
 			{name:"帖子管理", page:"yvr/topic.html"}
-		]
+		],
+		role : "admin"
 	}]
 }

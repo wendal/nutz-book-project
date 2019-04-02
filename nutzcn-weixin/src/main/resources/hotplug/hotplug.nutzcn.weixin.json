@@ -9,7 +9,8 @@
 			subs : [
 				{name:"公众号基本设置",page:"weixin/basic.html"},
 				{name:"微信登录设置",page:"weixin/wxlogin.html"}
-			]
+			],
+			role : "admin"
 		}
 	],
 	event : {
