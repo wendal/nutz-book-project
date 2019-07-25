@@ -28,4 +28,4 @@ iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id108219
 
 * zozoh(nutz的发起者)的"雨打沙滩点点坑"
 
-![雨打沙滩点点坑](/rs/images/zozoh_mp.jpg)
+![雨打沙滩点点坑](/yvr/images/zozoh_mp.jpg)
