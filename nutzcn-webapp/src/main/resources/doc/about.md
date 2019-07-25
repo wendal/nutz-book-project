@@ -4,11 +4,11 @@ Nutz社区, 一个有爱的社区 ^_^
 
 源码地址 https://github.com/wendal/nutz-book-project
 
-果断[Power By Nutz](http://www.nutzam.com)
+果断[Power By Nutz](http://www.nutzam.com) and [Power By NutzBoot](https://nutz.io)
 
 ### 移动客户端
 
-Android官方客户端 下载地址 http://app.xiaomi.com/detail/419235 当前由[@wendal](http://wendal.net)维护
+Android官方客户端 下载地址 https://www.pgyer.com/KEn9 当前由[@wendal](http://wendal.net)维护
 
 iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id1082195150) [@tuwei1992](https://github.com/TuWei1992/NutzCommunity)
 
@@ -22,6 +22,7 @@ iOS客户端 [ios客户端](https://itunes.apple.com/us/app/nutz-she-qu/id108219
 * [Nutz官网](https://www.nutzam.com)
 * [NutzBook Nutz入门指南](http://nutzbook.wendal.net)
 * [一米阳光(大鲨鱼的个人博客)](http://www.wizzer.cn/)
+* [NutzBoot](https://nutz.io)
 
 ### 有爱的公众号
 
