@@ -15,7 +15,7 @@
   	<dependency>
   		<groupId>org.nutz</groupId>
   		<artifactId>nutzboot-starter-weixin</artifactId>
-  		<version>2.3-SNAPSHOT</version>
+  		<version>2.4.0.v20200427</version>
   	</dependency>
   </dependencies>
 	<repositories>
