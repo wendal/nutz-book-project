@@ -36,7 +36,7 @@
 	<repositories>
 		<repository>
 			<id>nutz</id>
-			<url>https://jfrog.nutz.cn/artifactory/jcenter</url>
+			<url>https://jfrog.nutz.cn/artifactory/libs-release</url>
 		</repository>
 		<repository>
 			<id>nutz-snapshots</id>
