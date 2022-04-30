@@ -8,7 +8,7 @@
 	<name>NutzCN的根项目</name>
 	<properties>
 		<nutzcn.version>3.1.0</nutzcn.version>
-		<nutzboot.version>2.4.0.v20200427</nutzboot.version>
+		<nutzboot.version>2.5.1.v20220215</nutzboot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
     <dependencyManagement>

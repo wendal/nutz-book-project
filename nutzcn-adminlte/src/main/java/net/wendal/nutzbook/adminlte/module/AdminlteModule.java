@@ -11,6 +11,7 @@ import org.nutz.lang.Lang;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Fail;
 import org.nutz.mvc.annotation.GET;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.annotation.POST;
@@ -24,6 +25,7 @@ import net.wendal.nutzbook.core.service.UserService;
 
 @IocBean
 @At("/adminlte")
+@Fail(">>:/500.html")
 public class AdminlteModule extends BaseModule {
     
     private static final Log log = Logs.get();

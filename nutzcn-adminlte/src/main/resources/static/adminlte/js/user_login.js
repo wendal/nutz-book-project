@@ -36,4 +36,6 @@ function do_login() {
 	});
 }
 
-
+function next_captcha(base) {
+	$("#captcha_img").prop("src",  base + "/captcha/next?t=" + new Date());
+}

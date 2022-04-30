@@ -65,7 +65,7 @@ public class UserModule extends BaseModule {
 		}
 		// 比对验证码
 		String _captcha = (String) session.getAttribute(Toolkit.captcha_attr);
-		if (!"guest".equals(username) || Strings.isBlank(_captcha) || !_captcha.equalsIgnoreCase(captcha)) {
+		if (Strings.isBlank(_captcha) || !_captcha.equalsIgnoreCase(captcha)) {
 			return re.setv("msg", "验证码错误");
 		}
 		// 检查用户名密码

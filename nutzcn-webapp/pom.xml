@@ -11,7 +11,6 @@
 	<packaging>jar</packaging>
 	<properties>
 		<nutzcn.version>${project.version}</nutzcn.version>
-		<nutzboot.version>2.4.0.v20200427</nutzboot.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencyManagement>
