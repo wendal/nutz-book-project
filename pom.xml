@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.wendal.nutzcn</groupId>
 	<artifactId>nutzcn-parent</artifactId>
-	<version>3.1.0</version>
+	<version>6.0.1</version>
 	<packaging>pom</packaging>
 	<name>NutzCN的根项目</name>
 	<properties>
