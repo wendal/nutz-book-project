@@ -10,12 +10,11 @@
   	<dependency>
   		<groupId>net.wendal.nutzcn</groupId>
   		<artifactId>nutzcn-core</artifactId>
-  		<version>6.0.1</version>
+  		<version>${project.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>org.nutz</groupId>
   		<artifactId>nutzboot-starter-weixin</artifactId>
-  		<version>2.4.0.v20200427</version>
   	</dependency>
   </dependencies>
 	<repositories>

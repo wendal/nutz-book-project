@@ -10,7 +10,7 @@
 	<artifactId>nutzcn-webapp</artifactId>
 	<packaging>jar</packaging>
 	<properties>
-		<nutzcn.version>3.1.0</nutzcn.version>
+		<nutzcn.version>${project.version}</nutzcn.version>
 		<nutzboot.version>2.4.0.v20200427</nutzboot.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

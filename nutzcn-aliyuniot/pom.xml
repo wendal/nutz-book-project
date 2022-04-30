@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>net.wendal.nutzcn</groupId>
 			<artifactId>nutzcn-core</artifactId>
-			<version>6.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.aliyun.openservices</groupId>
