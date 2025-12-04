@@ -76,6 +76,7 @@ public class CoreMainSetup implements Setup {
         Dao dao = ioc.get(Dao.class);
         dao.create(SysConfigure.class, false);
         Daos.migration(dao, UserProfile.class, true, false);
+        Daos.migration(dao, "net.wendal.nutzbook", true, false);
         // 获取配置对象
         conf = ioc.get(PropertiesProxy.class, "conf");
         ioc.get(ConfigureService.class).doReload();

@@ -204,14 +204,10 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.10.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					<compilerArgs>
-						<arg>-parameters</arg>
-					</compilerArgs>
-					<useIncrementalCompilation>false</useIncrementalCompilation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -227,6 +223,18 @@
 				<artifactId>nutzboot-maven-plugin</artifactId>
 				<version>${nutzboot.version}</version>
 			</plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.9</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>

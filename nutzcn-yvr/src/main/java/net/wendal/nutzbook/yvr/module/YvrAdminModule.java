@@ -41,92 +41,91 @@ import redis.clients.jedis.Jedis;
 
 @At("/yvr/admin")
 @IocBean
-public class YvrAdminModule extends BaseModule{
+public class YvrAdminModule extends BaseModule {
 
-    @Inject
-    protected YvrService yvrService;
-    
-    @Inject
-    protected TopicSearchService topicSearchService;
+	@Inject
+	protected YvrService yvrService;
+
+	@Inject
+	protected TopicSearchService topicSearchService;
 
 	@POST
 	@RequiresPermissions("topic:update")
 	@At
 	@Aop("redis")
 	@Ok("json")
-	public NutMap update(@Param("..")Topic topic, @Param("opt")String opt) {
+	public NutMap update(@Param("..") Topic topic, @Param("opt") String opt) {
 		if (topic == null)
 			return _map("ok", false).setv("msg", "参数不合法");
 		if (Strings.isBlank(topic.getId()) || opt == null || !opt.matches("^(good|top|type|lock|title)$"))
-		    return _map("ok", false).setv("msg", "参数不合法");
+			return _map("ok", false).setv("msg", "参数不合法");
 		Topic old = dao.fetch(Topic.class, topic.getId());
 		if (old == null)
-		    return _map("ok", false).setv("msg", "帖子不存在");
+			return _map("ok", false).setv("msg", "帖子不存在");
 		topic.setUpdateTime(new Date());
 		Daos.ext(dao, FieldFilter.create(Topic.class, opt + "|updateTime", true)).update(topic);
 
-        Jedis jedis = jedis();
+		Jedis jedis = jedis();
 		if ("good".equals(opt)) {
 			if (topic.isGood()) {
 				jedis.zadd(RKEY_TOPIC_UPDATE + "good", System.currentTimeMillis(), topic.getId());
 			} else {
 				jedis.zrem(RKEY_TOPIC_UPDATE + "good", topic.getId());
 			}
-		}
-		else if ("top".equals(opt)) {
+		} else if ("top".equals(opt)) {
 			if (topic.isTop()) {
-			    jedis.zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
-			    jedis.zrem(RKEY_TOPIC_UPDATE_ALL, topic.getId());
-			    jedis.zadd(RKEY_TOPIC_TOP, System.currentTimeMillis(), topic.getId());
-			}else {
-			    jedis.zrem(RKEY_TOPIC_TOP, topic.getId());
-			    jedis.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
-			    jedis.zadd(RKEY_TOPIC_UPDATE+old.getType(), System.currentTimeMillis(), topic.getId());
+				jedis.zrem(RKEY_TOPIC_UPDATE + old.getType(), topic.getId());
+				jedis.zrem(RKEY_TOPIC_UPDATE_ALL, topic.getId());
+				jedis.zadd(RKEY_TOPIC_TOP, System.currentTimeMillis(), topic.getId());
+			} else {
+				jedis.zrem(RKEY_TOPIC_TOP, topic.getId());
+				jedis.zadd(RKEY_TOPIC_UPDATE_ALL, System.currentTimeMillis(), topic.getId());
+				jedis.zadd(RKEY_TOPIC_UPDATE + old.getType(), System.currentTimeMillis(), topic.getId());
 			}
 			return _map("ok", true);
 		}
 
 		// 检查一下是不是修改了type
 		if (topic.getType() != null && old.getType() != null && !topic.getType().equals(old.getType())) {
-			Double old_d = jedis().zscore(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
-			Double new_d = jedis().zscore(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId());
+			Double old_d = jedis().zscore(RKEY_TOPIC_UPDATE + old.getType(), topic.getId());
+			Double new_d = jedis().zscore(RKEY_TOPIC_UPDATE + topic.getType(), topic.getId());
 			if (old_d != null) {
 				if (new_d == null) {
-					jedis().zadd(RKEY_TOPIC_UPDATE+topic.getType(), old_d, topic.getId());
+					jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), old_d, topic.getId());
 				}
-				jedis().zrem(RKEY_TOPIC_UPDATE+old.getType(), topic.getId());
+				jedis().zrem(RKEY_TOPIC_UPDATE + old.getType(), topic.getId());
 			} else {
 				if (new_d == null) {
-					jedis().zadd(RKEY_TOPIC_UPDATE+topic.getType(), old.getUpdateTime().getTime(), topic.getId());
+					jedis().zadd(RKEY_TOPIC_UPDATE + topic.getType(), old.getUpdateTime().getTime(), topic.getId());
 				}
 			}
 		}
 		yvrService.updateTopicTypeCount();
-        return _map("ok", true);
+		return _map("ok", true);
 	}
 
-    @POST
-    @RequiresPermissions("topic:update:tags")
-    @At("/update/tags")
-    @Aop("redis")
-    @Ok("json")
-    public boolean updateTags(@Param("id")String topicId, @Param("tags")String[] tags, @Param("update_value")String[] tags2) {
-        return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags != null ? tags : tags2)));
-    }
-    
+	@POST
+	@RequiresPermissions("topic:update:tags")
+	@At("/update/tags")
+	@Aop("redis")
+	@Ok("json")
+	public boolean updateTags(@Param("id") String topicId, @Param("tags") String[] tags,
+			@Param("update_value") String[] tags2) {
+		return yvrService.updateTags(topicId, new HashSet<>(Lang.array2list(tags != null ? tags : tags2)));
+	}
 
-    @POST
-    @RequiresPermissions("topic:update:title")
-    @At("/update/title")
-    @Aop("redis")
-    @Ok("json")
-    public boolean updateTitle(@Param("id")String topicId, @Param("update_value")String val) {
-        return 0 < dao.update(Topic.class, Chain.make("title", val), Cnd.where("id", "=", topicId));
-    }
+	@POST
+	@RequiresPermissions("topic:update:title")
+	@At("/update/title")
+	@Aop("redis")
+	@Ok("json")
+	public boolean updateTitle(@Param("id") String topicId, @Param("update_value") String val) {
+		return 0 < dao.update(Topic.class, Chain.make("title", val), Cnd.where("id", "=", topicId));
+	}
 
 	@Ok("json")
 	@At
-	public Object query(@Param("..")Pager pager, @Param("type")TopicType tp) {
+	public Object query(@Param("..") Pager pager, @Param("type") TopicType tp) {
 		Cnd cnd = tp == null ? Cnd.NEW() : Cnd.where("type", "=", tp.toString());
 		cnd.desc("createTime");
 		if (pager == null)
@@ -156,11 +155,11 @@ public class YvrAdminModule extends BaseModule{
 
 		// 输出列表页
 		for (TopicType tt : TopicType.values()) {
-			Long count = jedis().zcount(RKEY_TOPIC_UPDATE+tt.name(), "-inf", "+inf");
-			visitAndWrite(root, "/yvr/list/"+tt.name()+"/", dst);
+			Long count = jedis().zcount(RKEY_TOPIC_UPDATE + tt.name(), "-inf", "+inf");
+			visitAndWrite(root, "/yvr/list/" + tt.name() + "/", dst);
 			if (count != null && count.longValue() > 0) {
 				for (int i = 0; i < count.intValue(); i++) {
-					visitAndWrite(root, "/yvr/list/"+tt.name()+"/"+i+"/", dst);
+					visitAndWrite(root, "/yvr/list/" + tt.name() + "/" + i + "/", dst);
 				}
 			}
 		}
@@ -168,13 +167,13 @@ public class YvrAdminModule extends BaseModule{
 		List<Topic> topics = Daos.ext(dao, FieldFilter.create(Topic.class, "id")).query(Topic.class, null);
 		for (Topic topic : topics) {
 			String id = topic.getId();
-			visitAndWrite(root, "/yvr/t/"+id+"/", dst);
+			visitAndWrite(root, "/yvr/t/" + id + "/", dst);
 		}
 
 		// 用户页及用户头像
 		for (User user : Daos.ext(dao, FieldFilter.create(User.class, "name")).query(User.class, null)) {
-			visitAndWrite(root, "/yvr/u/"+user.getName()+"/", dst);
-			visitAndWrite(root, "/yvr/u/"+user.getName()+"/avatar", dst);
+			visitAndWrite(root, "/yvr/u/" + user.getName() + "/", dst);
+			visitAndWrite(root, "/yvr/u/" + user.getName() + "/avatar", dst);
 		}
 
 		// SEO页
@@ -200,56 +199,76 @@ public class YvrAdminModule extends BaseModule{
 			Streams.safeClose(ins);
 		}
 	}
-	
+
 	@RequiresPermissions("topic:delete")
 	@POST
 	@At("/topic/delete")
 	@Ok("json:full")
 	@Aop("redis")
 	public NutMap topicDelete(String id) {
-	    return yvrService.topicDelete(id);
+		return yvrService.topicDelete(id);
 	}
-	
+
 	@RequiresPermissions("topic:cleanup")
-    @POST
-    @At("/topic/cleanup")
-    @Ok("json:full")
-    @Aop("redis")
-    public NutMap topicCleanup() {
-	    int count = 0;
-        for (TopicType tt : TopicType.values()) {
-            String tkey = RKEY_TOPIC_UPDATE+tt.getName();
-            for (String id : jedis().zrange(tkey, 0, System.currentTimeMillis())) {
-                if (dao.count(Topic.class, Cnd.where("id", "=", id)) == 0) {
-                    count ++;
-                    jedis().zrem(tkey, id);
-                }
-            }
-        }
-        for (String id : jedis().zrange(RKEY_TOPIC_UPDATE_ALL, 0, System.currentTimeMillis())) {
-            if (dao.count(Topic.class, Cnd.where("id", "=", id)) == 0) {
-                count ++;
-                jedis().zrem(RKEY_TOPIC_UPDATE_ALL, id);
-            }
-        }
-        return new NutMap("ok", true).setv("count", count);
-    }
-	
-	@RequiresPermissions("topic:rebuild:index")
-    @POST
-    @At("/rebuild/index")
-    @Ok("json:full")
-	public NutMap rebuildIndex() throws IOException {
-	    topicSearchService.rebuild();
-	    return new NutMap("ok", true);
+	@POST
+	@At("/topic/cleanup")
+	@Ok("json:full")
+	@Aop("redis")
+	public NutMap topicCleanup() {
+		int count = 0;
+		for (TopicType tt : TopicType.values()) {
+			String tkey = RKEY_TOPIC_UPDATE + tt.getName();
+			for (String id : jedis().zrange(tkey, 0, System.currentTimeMillis())) {
+				if (dao.count(Topic.class, Cnd.where("id", "=", id)) == 0) {
+					count++;
+					jedis().zrem(tkey, id);
+				}
+			}
+		}
+		for (String id : jedis().zrange(RKEY_TOPIC_UPDATE_ALL, 0, System.currentTimeMillis())) {
+			if (dao.count(Topic.class, Cnd.where("id", "=", id)) == 0) {
+				count++;
+				jedis().zrem(RKEY_TOPIC_UPDATE_ALL, id);
+			}
+		}
+		return new NutMap("ok", true).setv("count", count);
 	}
-	
+
+	@RequiresPermissions("topic:cleanup")
+	@POST
+	@At("/topic/clean_by_user")
+	@Ok("json:full")
+	@Aop("redis")
+	public NutMap topicCleanByUser(@Param("username") String username) {
+		if (Strings.isBlank(username))
+			return new NutMap("ok", false).setv("msg", "用户名不能为空");
+		User user = dao.fetch(User.class, Cnd.where("name", "=", username));
+		if (user == null)
+			return new NutMap("ok", false).setv("msg", "用户不存在");
+		List<Topic> topics = dao.query(Topic.class, Cnd.where("u_id", "=", user.getId()));
+		int count = 0;
+		for (Topic topic : topics) {
+			yvrService.topicDelete(topic.getId());
+			count++;
+		}
+		return new NutMap("ok", true).setv("count", count);
+	}
+
+	@RequiresPermissions("topic:rebuild:index")
+	@POST
+	@At("/rebuild/index")
+	@Ok("json:full")
+	public NutMap rebuildIndex() throws IOException {
+		topicSearchService.rebuild();
+		return new NutMap("ok", true);
+	}
+
 	@RequiresPermissions("topic:rebuild:redis_list")
-    @POST
-    @At("/rebuild/index")
-    @Ok("json:full")
-    public NutMap rebuildRedisList() throws IOException {
-        yvrService.rebuildRedisUpdateList();
-        return new NutMap("ok", true);
-    }
+	@POST
+	@At("/rebuild/index")
+	@Ok("json:full")
+	public NutMap rebuildRedisList() throws IOException {
+		yvrService.rebuildRedisUpdateList();
+		return new NutMap("ok", true);
+	}
 }
