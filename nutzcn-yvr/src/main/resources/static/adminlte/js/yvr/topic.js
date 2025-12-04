@@ -161,6 +161,22 @@ var vueTopicList = new Vue({
 					});
 				}
 			});
+		},
+		rebuildIndex: function () {
+			layer.prompt({ title: '请输入y确认', formType: 0 }, function (do_confim, index) {
+				layer.close(index);
+				if (do_confim == 'y') {
+					$.ajax({
+						url: base + "/yvr/admin/rebuild/index",
+						type: "POST",
+						success: function (re) {
+							if (re && re.ok) {
+								layer.alert("重建索引成功");
+							}
+						}
+					});
+				}
+			});
 		}
 	},
 	created: function () {

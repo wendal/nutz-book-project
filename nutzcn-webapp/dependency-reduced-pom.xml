@@ -7,24 +7,39 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>nutzcn-webapp</artifactId>
-  <packaging>war</packaging>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.8.v20171121</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-server</artifactId>
-            <version>9.4.8.v20171121</version>
-          </dependency>
-        </dependencies>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
         <configuration>
-          <jvmArgs>-Dfile.encoding=UTF-8</jvmArgs>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.nutz.boot</groupId>
+        <artifactId>nutzboot-maven-plugin</artifactId>
+        <version>${nutzboot.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.9</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -35,7 +50,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-yvr</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -45,7 +61,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-beepay</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -55,7 +72,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-shortit</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -65,7 +83,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-dwmaster</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -85,7 +104,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-oauth</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -95,7 +115,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-ngrok</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -105,7 +126,8 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-weixin</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -115,37 +137,30 @@
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
           <artifactId>nutzcn-qqrobot</artifactId>
-          <version>${nutzcn.version}</version>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
     <profile>
-      <id>cxfdemo</id>
+      <id>aliyuniot</id>
       <dependencies>
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
-          <artifactId>nutzcn-cxfdemo</artifactId>
-          <version>${nutzcn.version}</version>
+          <artifactId>nutzcn-aliyuniot</artifactId>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
     <profile>
-      <id>swagger</id>
+      <id>luat</id>
       <dependencies>
         <dependency>
           <groupId>net.wendal.nutzcn</groupId>
-          <artifactId>nutzcn-swagger</artifactId>
-          <version>${nutzcn.version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>uflo</id>
-      <dependencies>
-        <dependency>
-          <groupId>net.wendal.nutzcn</groupId>
-          <artifactId>nutzcn-uflo</artifactId>
-          <version>${nutzcn.version}</version>
+          <artifactId>nutzcn-luat</artifactId>
+          <version>3.1.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>
@@ -166,22 +181,20 @@
       <url>https://jfrog.nutz.cn/artifactory/snapshots</url>
     </repository>
   </repositories>
-  <dependencies>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.websocket</groupId>
-      <artifactId>javax.websocket-api</artifactId>
-      <version>1.1</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.nutz</groupId>
+        <artifactId>nutzboot-parent</artifactId>
+        <version>${nutzboot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <properties>
     <nutzcn.version>3.1.0</nutzcn.version>
+    <nutzboot.version>2.4.0.v20200427</nutzboot.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>
-

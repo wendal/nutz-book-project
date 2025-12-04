@@ -66,7 +66,7 @@ import net.wendal.nutzbook.yvr.service.LuceneSearchResult;
 import net.wendal.nutzbook.yvr.service.TopicSearchService;
 import net.wendal.nutzbook.yvr.service.YvrService;
 
-@Api(name="论坛模块", description="论坛相关的API")
+@Api(name = "论坛模块", description = "论坛相关的API")
 @IocBean(create = "init")
 @At("/yvr")
 @Fail("void")
@@ -79,13 +79,13 @@ public class YvrModule extends BaseModule {
 
 	@Inject("java:$conf.get('topic.image.dir')")
 	protected String imageDir;
-	
+
 	@Inject
 	protected RedisDao redisDao;
-	
-    @Inject
-    protected YvrService yvrService;
-	
+
+	@Inject
+	protected YvrService yvrService;
+
 	@Inject
 	protected BigContentService bigContentService;
 
@@ -96,7 +96,7 @@ public class YvrModule extends BaseModule {
 
 	@Inject
 	protected TopicSearchService topicSearchService;
-	
+
 	@Inject
 	protected AppPushService appPushService;
 
@@ -108,7 +108,7 @@ public class YvrModule extends BaseModule {
 		NutMap re = new NutMap();
 		re.put("types", TopicType.values());
 		String csrf = R.UU32();
-		jedis().setex("csrf:"+csrf, 900, "1");
+		jedis().setex("csrf:" + csrf, 900, "1");
 		long userId = Toolkit.uid();
 		re.put("current_user", fetch_userprofile(userId));
 		re.put("sub_forums", dao.query(SubForum.class, Cnd.NEW().asc("tagname")));
@@ -120,11 +120,11 @@ public class YvrModule extends BaseModule {
 	@At
 	@Ok("json")
 	@Filters(@By(type = CsrfActionFilter.class))
-	@AdaptBy(type=WhaleAdaptor.class)
-	public CResult add(@Param("..")Topic topic, @Param("_tags")String tags) {
+	@AdaptBy(type = WhaleAdaptor.class)
+	public CResult add(@Param("..") Topic topic, @Param("_tags") String tags) {
 		long userId = Toolkit.uid();
 		if (!Strings.isBlank(tags)) {
-		    topic.setTags(new HashSet<>(Lang.list(Strings.splitIgnoreBlank(tags))));
+			topic.setTags(new HashSet<>(Lang.list(Strings.splitIgnoreBlank(tags))));
 		}
 		return yvrService.add(topic, userId);
 	}
@@ -135,9 +135,11 @@ public class YvrModule extends BaseModule {
 		long userId = Toolkit.uid();
 		Pager pager = dao.createPager(page > 0 ? page : 1, pageSize);
 		String zkey = RKEY_TOPIC_UPDATE + (type == null ? "all" : type);
-		return _query_topic_by_zset(zkey, pager, userId, (type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, pager.getPageNumber() == 1, "list/" + (type == null ? "all" : type));
+		return _query_topic_by_zset(zkey, pager, userId,
+				(type == null || "all".equals(type)) ? null : TopicType.valueOf(type), null, pager.getPageNumber() == 1,
+				"list/" + (type == null ? "all" : type));
 	}
-	
+
 	@At({ "/list/u/?/?", "/list/u/?/?/?" })
 	@Ok("beetl:/yvr/index.html")
 	public Object list(String loginname, String type, int page) {
@@ -148,20 +150,21 @@ public class YvrModule extends BaseModule {
 		if (user == null)
 			return HTTP_404;
 		switch (type) {
-        case "topic":
-            list = yvrService.getRecentTopics(user.getId(), pager);
-            break;
-        case "reply":
-            list = yvrService.getRecentReplyTopics(user.getId(), pager);
-            break;
-        case "mark":
-            return _query_topic_by_zset(RKEY_USER_TOPIC_MARK+user.getId(), pager, userId, null, null, pager.getPageNumber() == 1, "list/u/" + loginname + "/" + type);
-        default:
-            return HTTP_404;
-        }
+			case "topic":
+				list = yvrService.getRecentTopics(user.getId(), pager);
+				break;
+			case "reply":
+				list = yvrService.getRecentReplyTopics(user.getId(), pager);
+				break;
+			case "mark":
+				return _query_topic_by_zset(RKEY_USER_TOPIC_MARK + user.getId(), pager, userId, null, null,
+						pager.getPageNumber() == 1, "list/u/" + loginname + "/" + type);
+			default:
+				return HTTP_404;
+		}
 		return _process_query_list(pager, list, userId, null, null, false, "list/u/" + loginname + "/" + type);
 	}
-	
+
 	@At({ "/tag/?", "/tag/?/?" })
 	@Ok("beetl:/yvr/index.html")
 	public Object tag(String tagName, int page) {
@@ -172,26 +175,25 @@ public class YvrModule extends BaseModule {
 		String zkey = RKEY_TOPIC_TAG + tagName.toLowerCase().trim();
 		return _query_topic_by_zset(zkey, pager, userId, null, tagName, false, "tag/" + tagName);
 	}
-	
-	protected NutMap _query_topic_by_zset(String zkey, Pager pager, 
-										long userId, TopicType topicType, 
-										String tagName, boolean addTop,
-										String ppath) {
+
+	protected NutMap _query_topic_by_zset(String zkey, Pager pager,
+			long userId, TopicType topicType,
+			String tagName, boolean addTop,
+			String ppath) {
 		List<Topic> list = redisDao.queryByZset(Topic.class, zkey, pager);
 		return _process_query_list(pager, list, userId, topicType, tagName, addTop, ppath);
 	}
-	
 
 	@Aop("redis")
-	protected NutMap _process_query_list(Pager pager, List<Topic> list, 
-										long userId, TopicType topicType, 
-										String tagName, boolean addTop,
-										String ppath) {
+	protected NutMap _process_query_list(Pager pager, List<Topic> list,
+			long userId, TopicType topicType,
+			String tagName, boolean addTop,
+			String ppath) {
 		Map<Long, UserProfile> authors = new HashMap<>();
 		for (Topic topic : list) {
 			yvrService.fillTopic(topic, authors);
 		}
-		
+
 		// 查一下未回复的帖子, 最近的5条的就好了
 		Set<String> no_replies_ids = jedis().zrevrangeByScore(RKEY_TOPIC_NOREPLY, Long.MAX_VALUE, 0, 0, 5);
 		List<Topic> no_replies = new ArrayList<Topic>();
@@ -201,7 +203,7 @@ public class YvrModule extends BaseModule {
 				no_replies.add(tmp);
 			}
 		}
-		
+
 		NutMap re = new NutMap();
 		re.put("list", list);
 		re.put("pager", pager);
@@ -221,7 +223,7 @@ public class YvrModule extends BaseModule {
 		re.put("pages", pager.getPageCount());
 		if (userId > 0)
 			re.put("current_user", fetch_userprofile(userId));
-		
+
 		// 添加未回复的列表
 		if (!no_replies.isEmpty())
 			re.put("no_reply_topics", no_replies);
@@ -229,49 +231,49 @@ public class YvrModule extends BaseModule {
 			re.put("top_topics", yvrService.fetchTop());
 		else
 			re.put("top_topics", new ArrayList<>());
-		
+
 		re.put("top_tags", yvrService.fetchTopTags());
 		re.put("sub_forums", dao.query(SubForum.class, Cnd.NEW().asc("tagname")));
 		return re;
 	}
 
 	@SuppressWarnings("unchecked")
-    @GET
+	@GET
 	@At("/t/?")
 	@Ok("beetl:yvr/_topic.html")
 	@Aop("redis")
-	public Object topic(String id, @ReqHeader("If-None-Match")String _etag,  HttpServletResponse response) {
-	    Topic topic;
-	    if (id.length() == 6) {
-	        topic = dao.fetch(Topic.class, Cnd.where("id", "like", id +"%"));
-	        if (topic != null)
-	            return new ServerRedirectView("/yvr/t/"+topic.getId());
-	    } else {
-	        topic = dao.fetch(Topic.class, id);
-	    }
+	public Object topic(String id, @ReqHeader("If-None-Match") String _etag, HttpServletResponse response) {
+		Topic topic;
+		if (id.length() == 6) {
+			topic = dao.fetch(Topic.class, Cnd.where("id", "like", id + "%"));
+			if (topic != null)
+				return new ServerRedirectView("/yvr/t/" + topic.getId());
+		} else {
+			topic = dao.fetch(Topic.class, id);
+		}
 		if (topic == null) {
 			return HttpStatusView.HTTP_404;
 		}
 		if (topic.getUserId() == 0)
 			topic.setUserId(1);
-        Double visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
-        
+		Double visited = jedis().zincrby(RKEY_TOPIC_VISIT, 1, id);
+
 		topic.setAuthor(fetch_userprofile(topic.getUserId()));
 		dao.fetchLinks(topic, "replies", Cnd.orderBy().asc("createTime"));
 		dao.fetchLinks(topic.getReplies(), null);
-		//-------------------------------------
+		// -------------------------------------
 		// 点赞功能已废弃
 		for (TopicReply reply : topic.getReplies()) {
-		    reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
+			reply.setUps(jedis().zrange(RKEY_REPLY_LIKE + reply.getId(), 0, System.currentTimeMillis()));
 		}
 		bigContentService.fill(topic);
 		// 收藏列表
-		topic.setCollectors(jedis().smembers(RKEY_TOPIC_MARK+topic.getId()));
+		topic.setCollectors(jedis().smembers(RKEY_TOPIC_MARK + topic.getId()));
 		if (topic.getCollectors() == null) {
-		    topic.setCollectors(Collections.EMPTY_SET);
+			topic.setCollectors(Collections.EMPTY_SET);
 		}
-		
-		//------------------------------------
+
+		// ------------------------------------
 		NutMap re = new NutMap();
 		re.put("topic", topic);
 		long userId = Toolkit.uid();
@@ -281,13 +283,13 @@ public class YvrModule extends BaseModule {
 			re.put("_csrf", csrf);
 			re.put("current_user", fetch_userprofile(userId));
 		}
-        topic.setVisitCount((visited == null) ? 0 : visited.intValue());
+		topic.setVisitCount((visited == null) ? 0 : visited.intValue());
 		re.put("recent_topics", yvrService.getRecentTopics(topic.getUserId(), dao.createPager(1, 5)));
-        re.put("next_topic_id", redisDao.znext(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
-        re.put("prev_topic_id", redisDao.zprev(RKEY_TOPIC_UPDATE+topic.getType(), topic.getId()));
-        re.put("user_topic_marked", topic.getCollectors().contains(""+Toolkit.uid()));
-        re.put("need_user_active", yvrService.needUserActive(userId, null));
-		//re.put("top_tags", yvrService.fetchTopTags());
+		re.put("next_topic_id", redisDao.znext(RKEY_TOPIC_UPDATE + topic.getType(), topic.getId()));
+		re.put("prev_topic_id", redisDao.zprev(RKEY_TOPIC_UPDATE + topic.getType(), topic.getId()));
+		re.put("user_topic_marked", topic.getCollectors().contains("" + Toolkit.uid()));
+		re.put("need_user_active", yvrService.needUserActive(userId, null));
+		// re.put("top_tags", yvrService.fetchTopTags());
 		return re;
 	}
 
@@ -310,7 +312,7 @@ public class YvrModule extends BaseModule {
 		return f;
 	}
 
-	@AdaptBy(type=WhaleAdaptor.class)
+	@AdaptBy(type = WhaleAdaptor.class)
 	@Filters(@By(type = CsrfActionFilter.class))
 	@At("/t/?/reply")
 	@Ok("json")
@@ -330,12 +332,13 @@ public class YvrModule extends BaseModule {
 	@At
 	@Ok("beetl:/yvr/index.html")
 	@Aop("redis")
-	public Object search(@Param("q") String keys, @Param("format")String format) throws Exception {
-	    if (Strings.isBlank(keys))
+	public Object search(@Param("q") String keys, @Param("format") String format) throws Exception {
+		if (Strings.isBlank(keys))
 			return new ForwardView("/yvr/list");
-	    keys = keys.replace('.', ' ').replace('(', ' ').replace(')', ' ').replace(':', ' ').replace('>', ' ').replace('<', ' ');
+		keys = keys.replace('.', ' ').replace('(', ' ').replace(')', ' ').replace(':', ' ').replace('>', ' ')
+				.replace('<', ' ');
 		List<LuceneSearchResult> results = topicSearchService.search(keys, "json".equals(format) ? 5 : 30);
-        List<Topic> list = new ArrayList<Topic>();
+		List<Topic> list = new ArrayList<Topic>();
 		for (LuceneSearchResult result : results) {
 			Topic topic = dao.fetch(Topic.class, result.getId());
 			if (topic == null)
@@ -343,9 +346,9 @@ public class YvrModule extends BaseModule {
 			topic.setTitle(result.getResult());
 			list.add(topic);
 		}
-        if ("json".equals(format)) {
-            return new ViewWrapper(new UTF8JsonView(), new NutMap().setv("suggestions", list));
-        }
+		if ("json".equals(format)) {
+			return new ViewWrapper(new UTF8JsonView(), new NutMap().setv("suggestions", list));
+		}
 		Pager pager = dao.createPager(1, 30);
 		pager.setRecordCount(list.size());
 		long userId = Toolkit.uid();
@@ -357,7 +360,7 @@ public class YvrModule extends BaseModule {
 	public void rebuild() throws IOException {
 		topicSearchService.rebuild();
 	}
-	
+
 	@POST
 	@At("/t/?/push")
 	public void push(String topicId) {
@@ -369,13 +372,13 @@ public class YvrModule extends BaseModule {
 		extras.put("action", "open_topic");
 		appPushService.message(userId, "应用户要求推送到客户端打开帖子", extras);
 	}
-	
+
 	@RequiresAuthentication
 	@POST
 	@At("/t/?/mark")
 	@Ok("void")
 	public void mark(String topicId) {
-	    yvrService.topicMark(topicId, Toolkit.uid());
+		yvrService.topicMark(topicId, Toolkit.uid());
 	}
 
 	@Aop("redis")
